@@ -1,0 +1,9 @@
+^simaerep\.Rproj$
+^\.Rproj\.user$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
+^LICENSE\.md$
+^vignettes$
+
+^README\.Rmd$

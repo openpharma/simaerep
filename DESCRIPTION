@@ -1,0 +1,41 @@
+Package: simaerep
+Title: Simulate adverse event reporting in clinical trials with the goal of detecting under-reporting sites
+Version: 0.0.0.9000
+Authors@R: 
+    person(given = "Bjoern",
+           family = "Koneswarakantha",
+           role = c("aut", "cre"),
+           email = "datistics@gmail.com",
+           comment = c(ORCID = "0000-0003-4585-7799"))
+Description: Monitoring of Adverse Event (AE) reporting in clinical trials is important for patient safety. We
+  use bootstrap-based simulation to assign an AE under-reporting probability to each site in a clinical trial.
+  The method is inspired by the 'infer' R package and Alen Downey's blog article: "There is only one test!"
+  (http://allendowney.blogspot.com/2011/05/there-is-only-one-test.html).
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Depends:
+    ggplot2,
+    dplyr
+Imports:
+    lintr,
+    tidyr,
+    tibble,
+    magrittr,
+    purrr,
+    rlang,
+    stringr,
+    knitr,
+    forcats,
+    cowplot,
+    RColorBrewer,
+    feather,
+    furrr,
+    future
+Suggests:
+    testthat,
+    devtools,
+    pkgdown
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.0
+

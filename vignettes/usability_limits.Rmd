@@ -1,0 +1,264 @@
+---
+title: "Address Usability Limits of the Bootstrap Method"
+output:
+  html_document:
+    toc: true
+    toc_depth: 3
+    toc_float: true
+    number_sections: true
+    code_folding: show
+    collapse: false
+editor_options:
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, cache = TRUE)
+```
+
+# Load
+```{r}
+suppressPackageStartupMessages( library(tidyverse) )
+suppressPackageStartupMessages( library(knitr) )
+suppressPackageStartupMessages( library(furrr) )
+suppressPackageStartupMessages( library(future) )
+suppressPackageStartupMessages( library(simaerep) )
+```
+
+# Introduction
+
+There limits to the use of the bootstrapping method to detect rare events. 
+- the higher the fraction of AE under-reporting sites the less likely it should become to flag under-reporting sites
+- negative deviations from overall small integer values (3 or less) will also be hard to detect
+
+# Parameter Grid
+  
+**Fixed Parameters:**  
+- n_pat: 1000  
+- n_sites: 100  
+- max_visit_mean: 20  
+- max_visit_sd: 4  
+  
+**Variable Parameters:**  
+- ae_visit: 0.05 - 2  
+- frac_sites_wit_ur: 0.05 - 0.75  
+- ur_rate: 0.05 - 1  
+  
+```{r}
+set.seed(1)
+
+df_grid <- tibble( ae_per_visit_mean = seq(0.05, 2, length.out = 10)) %>%
+  mutate(frac_site_with_ur = list(seq(0.05, 0.75, length.out = 10))) %>%
+  unnest(frac_site_with_ur) %>%
+  mutate(ur_rate = list(seq(0.05, 1, length.out = 10)) ) %>%
+  unnest(ur_rate) 
+
+df_grid
+```
+
+# Apply
+
+```{r}
+suppressWarnings(future::plan(multiprocess))
+```
+
+## Simulate Test Data
+
+```{r}
+
+df_grid <- df_grid %>%
+  mutate( df_visit = furrr::future_pmap(list(am = ae_per_visit_mean,
+                                             fr = frac_site_with_ur,
+                                             ur = ur_rate),
+                                        function(am, fr, ur) boot_sim_test_data_study(n_pat = 1000, n_sites = 100,
+                                                                                      max_visit_mean = 20, max_visit_sd = 4,
+                                                                                      ae_per_visit_mean = am,
+                                                                                      frac_site_with_ur = fr,
+                                                                                      ur_rate = ur),
+                                        .progress = FALSE
+                                        )
+  )
+```
+
+## Aggregate Test Data
+
+- calculate visit_med75 and mean ae count at visit_med75
+
+```{r}
+df_grid <- df_grid %>%
+  mutate( df_visit = map2(df_visit, row_number(), function(x,y) mutate(x, study_roche = paste("S", y))),
+          df_site = furrr::future_map(df_visit,
+                                      site_aggr,
+                                      .progress = FALSE
+                                      )
+  )
+
+```
+
+## Simulate Sites
+
+Simulate how likely a given mean ae count or lower is for each site is by randomly sampling with replacement of new patients from the study patient pool.
+
+```{r}
+df_grid <- df_grid %>%
+  mutate( df_sim_sites = furrr::future_map2(df_site, df_visit,
+                                            sim_sites,
+                                            r = 1000,
+                                            ttest = TRUE,
+                                            prob_lower = TRUE,
+                                            .progress = FALSE
+                                            )
+  )
+
+```
+
+## Evaluate Sites
+
+We balance the simulated under reporting probabilites with the expected FP rates and calculate the P vs FP ratio and the resulting adjusted AE under-reporting probability.
+
+```{r}
+
+df_grid <- df_grid %>%
+  mutate( df_eval = furrr::future_map(df_sim_sites,
+                                      eval_sites,
+                                      r_sim_sites = 1000,
+                                      .progress = FALSE
+                                      )
+  )
+```
+
+
+## Get Metrics
+
+We choose a 95% threshold for detecting AE under-reporting sites and will calculate standard classification metrics.
+
+```{r}
+get_metrics <- function(df_visit, df_eval, method) {
+  
+  if (method == "ttest") {
+    prob_ur_adj = "pval_prob_ur"
+    prob_ur_unadj = "pval"
+  } else {
+    prob_ur_adj = "prob_low_prob_ur"
+    prob_ur_unadj = "prob_low"
+  }
+  
+  df_ur <- df_visit %>%
+    select(site_number, is_ur) %>%
+    distinct()
+
+  df_metric_prep <- df_eval %>%
+    left_join(df_ur, "site_number") %>%
+    rename( prob_ur_adj = !! as.name(prob_ur_adj),
+            prob_ur_unadj = !! as.name(prob_ur_unadj) )
+  
+  df_metric_adjusted <- df_metric_prep %>%
+    select(study_roche, site_number, is_ur, prob_ur_adj) %>%
+    mutate( tp = ifelse(is_ur & prob_ur_adj >= 0.95, 1, 0),
+            fn = ifelse(is_ur & prob_ur_adj < 0.95, 1, 0),
+            tn = ifelse((! is_ur) & prob_ur_adj < 0.95, 1, 0),
+            fp = ifelse((! is_ur) & prob_ur_adj >= 0.95, 1, 0),
+            p = ifelse(prob_ur_adj >= 0.95, 1, 0),
+            n = ifelse(prob_ur_adj < 0.95, 1, 0),
+            P = ifelse(is_ur, 1, 0),
+            N = ifelse(! is_ur, 1, 0)
+    ) %>%
+    group_by(study_roche) %>%
+    select(-site_number, - is_ur, - prob_ur_adj) %>%
+    summarize_all(sum) %>%
+    mutate(prob_type = "adjusted")
+  
+  df_metric_unadjusted <- df_metric_prep %>%
+    select(study_roche, site_number, is_ur, prob_ur_unadj) %>%
+    mutate( tp = ifelse(is_ur & prob_ur_unadj <= 0.05, 1, 0),
+            fn = ifelse(is_ur & prob_ur_unadj > 0.05, 1, 0),
+            tn = ifelse((! is_ur) & prob_ur_unadj > 0.05, 1, 0),
+            fp = ifelse((! is_ur) & prob_ur_unadj <= 0.05, 1, 0),
+            p = ifelse(prob_ur_unadj <= 0.05, 1, 0),
+            n = ifelse(prob_ur_unadj > 0.05, 1, 0),
+            P = ifelse(is_ur, 1, 0),
+            N = ifelse(! is_ur, 1, 0)
+    ) %>%
+    group_by(study_roche) %>%
+    select(-site_number, - is_ur, - prob_ur_unadj) %>%
+    summarize_all(sum) %>%
+    mutate(prob_type = "unadjusted")
+  
+  df_metric <- bind_rows(df_metric_adjusted, df_metric_unadjusted) %>%
+    mutate(method = method)
+}
+
+df_grid <- df_grid %>%
+  mutate(df_metric_pval = furrr::future_map2(df_visit, df_eval,
+                                              get_metrics,
+                                              method = "ttest"),
+         df_metric_prob_low = furrr::future_map2(df_visit, df_eval,
+                                                get_metrics,
+                                                method = "bootstrap"),
+         df_metric = map2(df_metric_pval, df_metric_prob_low, bind_rows)
+         )
+```
+
+# Plot
+
+```{r}
+df_plot <- df_grid %>%
+  select(ae_per_visit_mean, frac_site_with_ur, ur_rate, df_metric) %>%
+  unnest(df_metric)
+```
+
+
+# True positive rate - P - tp/P
+
+```{r fig.asp=1, fig.width=10}
+
+p <- df_plot %>%
+  mutate( tp_P_ratio = tp/P) %>%
+  select(ae_per_visit_mean, frac_site_with_ur, ur_rate, tp_P_ratio, method, prob_type) %>%
+  mutate_if(is.numeric, round, 3) %>%
+  mutate(metric = case_when(method == "ttest" & prob_type == "unadjusted" ~ "ttest unadjusted",
+                           method == "ttest" & prob_type == "adjusted" ~ "ttest adjusted",
+                           method == "bootstrap" & prob_type == "unadjusted" ~ "bootstrap unadjusted",
+                           method == "bootstrap" & prob_type == "adjusted" ~ "bootstrap adjusted"),
+         metric = fct_relevel(metric, c("ttest unadjusted", "ttest adjusted",
+                                        "bootstrap unadjusted", "bootstrap adjusted"))) %>%
+  ggplot(aes(ae_per_visit_mean, tp_P_ratio, color = metric)) +
+    geom_line(aes(linetype = prob_type), size = 0.5, alpha = 0.5) +
+    facet_grid( frac_site_with_ur ~ ur_rate) +
+    scale_color_manual(values = c("dodgerblue3", "skyblue1", "sienna4", "peru")) +
+    theme(panel.grid = element_blank(), legend.position = "right") + 
+    labs(title = "AE Under Reporting Rate ~ Rate of AE Under-Reporting Sites",
+         y = "True positive rate - tp/P",
+         x = "AEs per Visit")
+p
+```
+
+# False positive rate fp/N
+
+```{r fig.asp=1, fig.width=10}
+p <- df_plot %>%
+  mutate( fpr = fp/N) %>%
+  select(ae_per_visit_mean, frac_site_with_ur, ur_rate, fpr, method, prob_type) %>%
+  mutate_if(is.numeric, round, 3) %>%
+  mutate(metric = case_when(method == "ttest" & prob_type == "unadjusted" ~ "ttest unadjusted",
+                           method == "ttest" & prob_type == "adjusted" ~ "ttest adjusted",
+                           method == "bootstrap" & prob_type == "unadjusted" ~ "bootstrap unadjusted",
+                           method == "bootstrap" & prob_type == "adjusted" ~ "bootstrap adjusted"),
+         metric = fct_relevel(metric, c("ttest unadjusted", "ttest adjusted",
+                                        "bootstrap unadjusted", "bootstrap adjusted"))) %>%
+  ggplot(aes(ae_per_visit_mean, fpr, color = metric, linetype = prob_type)) +
+    geom_line(size = 0.5, alpha = 0.5) +
+    facet_grid( frac_site_with_ur ~ ur_rate) +
+    scale_color_manual(values = c("dodgerblue3", "skyblue1", "sienna4", "peru")) +
+    theme(panel.grid = element_blank(), legend.position = "right") + 
+    labs(title = "AE Under Reporting Rate by Rate of AE Under-Reporting Sites",
+         y = "False positive rate - fp/N",
+         x = "AEs per Visit")
+p
+```
+
+# Conclusion
+
+We can show that adjusting the AE under-reporting probability for the expected number of false positives is quite effective. However, this also comes at a cost lowering the true positive rate as well.
+When comparing the ttest and the bootstrap method, we find that they perform mostly similar but the bootstrap method has a limit it is outperformed by the ttest if the rate of under-reporting sites is greater 0.5 and if AE per visits is around 0.05.
+During a clinical trial the occurrence of AE's is not totally stochastic as our simulated data might suggest. The ae per visit rate is actually patient not study specific and the visits are not evenly spaced in time. The bootstrap method is non-parametric so it does not depend on the cumulative mean ae counts being normally distributed which they might not always be for all sites at all visit_med75 evaluation points. It is thus the safer method to use. AE per visit rates of around 0.05 are extremely low and rare in studies with non-healthy participants and should raise suspicion, it also seems very unlikely that more than 50% of all sites should be under-reporting AEs if the study is properly conducted.
