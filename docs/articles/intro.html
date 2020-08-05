@@ -54,6 +54,9 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
+      <a href="../articles/check_poisson.html">Checking the Applicability of a Poisson Test</a>
+    </li>
+    <li>
       <a href="../articles/intro.html">Introduction to {simaerep}</a>
     </li>
     <li>
@@ -95,7 +98,17 @@
 <div id="introduction" class="section level1">
 <h1 class="hasAnchor">
 <a href="#introduction" class="anchor"></a>Introduction</h1>
-<p>Here we describe how to use <code>simaerep</code> to calculate an adverse event under-reporting probability for clinical trial sites. We will perform the following steps.</p>
+<p>Simulate adverse event reporting in clinical trials with the goal of detecting under-reporting sites.</p>
+<p>Monitoring of Adverse Event (AE) reporting in clinical trials is important for patient safety. We use bootstrap-based simulation to assign an AE under-reporting probability to each site in a clinical trial. The method is inspired by the ‘infer’ R package and Alen Downey’s blog article: <a href="http://allendowney.blogspot.com/2011/05/there-is-only-one-test.html">“There is only one test!”</a>.</p>
+<div id="adverse-events" class="section level2">
+<h2 class="hasAnchor">
+<a href="#adverse-events" class="anchor"></a>Adverse Events</h2>
+<p>An adverse event (AE) is any untoward medical occurrence in a patient or clinical investigation subject administered a pharmaceutical product and which does not necessarily have a causal relationship with this treatment. It is important for patient safety that AEs are reported back to the sponsor. An important part of quality monitoring is to detect clinical trial sites that are not propagating all of the AEs reported to them by their patients to the sponsor. In a clinical trial patients follow a strict visiting schedule at which times treatments are given and exams are being performed. Typically AEs get reported by a patient when they are at an on-site visit at the clinic. So the total number of AEs reported by a site depends on the number of patients enrolled at the site and the total number of visits.</p>
+</div>
+<div id="algorithm" class="section level2">
+<h2 class="hasAnchor">
+<a href="#algorithm" class="anchor"></a>Algorithm</h2>
+<p>In a nutshell we will perform the following steps.</p>
 <ol style="list-style-type: decimal">
 <li>Record visit_med75, number of patients that have reached visit_med75, mean cumulative AE count at visit_med75 for a clinical trial site.</li>
 <li>Create patient pool with all patients in study that have reached visit_med75 as determined in 1) and their cumulative AE count at visit_med75.</li>
@@ -103,14 +116,10 @@
 <li>Repeat 3) 1000 times.</li>
 <li>Calculate probability of obtaining mean cumulative AE count or lower as obtained in 1) based on results of 4).</li>
 <li>Repeat 1-5) for all sites in trial</li>
-<li>For a probability determined in 6) calculate expected FP as probability * number of clinical trial sites.</li>
-<li>For a probability determined in 5) calculated TP as the count of sites with the same probability or lower.</li>
-<li>Calculate AE under-reporting probability for all sites as TP/FP / (TP/FP + 1) with results from 7-8)</li>
+<li>For a probability determined in 6) calculate expected false positive rate (FP) as probability * number of clinical trial sites.</li>
+<li>For a probability determined in 5) calculate all positives (p) as the count of sites with the same probability or lower.</li>
+<li>Calculate AE under-reporting probability for all sites as 1 - FP/p with results from 7-8)</li>
 </ol>
-<div id="adverse-events" class="section level2">
-<h2 class="hasAnchor">
-<a href="#adverse-events" class="anchor"></a>Adverse Events</h2>
-<p>An adverse event (AE) is any untoward medical occurrence in a patient or clinical investigation subject administered a pharmaceutical product and which does not necessarily have a causal relationship with this treatment. It is important for patient safety that AEs are reported back to the sponsor. An important part of quality monitoring is to detect clinical trial sites that are not propagating all of the AEs reported to them by their patients to the sponsor. In a clinical trial patients follow a strict visiting schedule at which times treatments are given and exams are being performed. Typically AEs get reported by a patient when they are at an on-site visit at the clinic. So the total number of AEs reported by a site depends on the number of patients enrolled at the site and the total number of visits.</p>
 </div>
 <div id="sample-data" class="section level2">
 <h2 class="hasAnchor">
@@ -204,15 +213,34 @@
 <div class="sourceCode" id="cb10"><html><body><pre class="r"><span class="fu"><a href="../reference/plot_visit_med75.html">plot_visit_med75</a></span>(<span class="no">df_visit</span>, <span class="no">df_site</span>, <span class="kw">study_roche_str</span> <span class="kw">=</span> <span class="st">"A"</span>, <span class="kw">n_site</span> <span class="kw">=</span> <span class="fl">6</span>)</pre></body></html></div>
 <pre><code>## Warning: Removed 591 row(s) containing missing values (geom_path).</code></pre>
 <p><img src="intro_files/figure-html/unnamed-chunk-4-1.png" width="700"></p>
-<p>Using the visit_med75 will drop a few patients (dashed lines) but will by definietion at least include 50% of all patients favouring patients that have higher number of visits. By looking at the mean ae development (purple line) we can already easily spot the two under-reporting sites. Same goes for looking at the <code>mean_ae_site_med75</code> column in <code>df_site</code>. Next we will use bootstrap simulations to determine the probability for obtaining each mean ae value at visit_med75 by chance.</p>
+<p>Using the visit_med75 will drop a few patients (dashed lines) but will by definietion at least include 50% of all patients favouring patients that have higher number of visits. By looking at the mean ae development (purple line) we can already easily spot the two under-reporting sites. Same goes for looking at the <code>mean_ae_site_med75</code> column in <code>df_site</code>. Next we will use bootstrap simulations to determine the probability for obtaining each mean ae value or lower at visit_med75 by chance.</p>
 </div>
 <div id="bootstrap-simulations" class="section level2">
 <h2 class="hasAnchor">
 <a href="#bootstrap-simulations" class="anchor"></a>Bootstrap Simulations</h2>
-<div id="advantage" class="section level3">
+<div id="advantage-over-classic-statistical-tests" class="section level3">
 <h3 class="hasAnchor">
-<a href="#advantage" class="anchor"></a>Advantage</h3>
-<p>The</p>
+<a href="#advantage-over-classic-statistical-tests" class="anchor"></a>Advantage Over Classic Statistical Tests</h3>
+<p>We could use a classical parametric test and calculate the probability with which we can reject the NULL hypothesis for the AE counts that we observe at the visit_med75.</p>
+<p>As we sample from a poisson distribution an exact test about the ratio of the two rate parameters of the two samples with the AE count data would be appropriate.</p>
+<p>But there are four major problems that we often encounter when we try to describe real life count data with the poisson distribution which is only described by a single parameter:</p>
+<ul>
+<li>over and underdispersion</li>
+<li>skewness (long right tail)</li>
+<li>inflated zeros</li>
+<li>variance mean relationship might not be fixed</li>
+</ul>
+<p>(see <a href="https://www.gamlss.com/wp-content/uploads/2018/01/DistributionsForModellingLocationScaleandShape.pdf">Distiributuion for Modelling Location Scale and Shape 5.1.2</a>)</p>
+<p>The true distribution of the AE counts will vary from study to study with the degree of the influence of these 4 problems being unknown unless thoroughly investigated.</p>
+<p>With the non-parametric approach that we propose we do not need to worry about these statistical assumptions. Since the distribution of the AE count from the simulated patient pool we draw from will be very close to the unknown true distribution of the underlying AE generating process.</p>
+</div>
+<div id="disadvantages-over-classic-statistical-tests" class="section level3">
+<h3 class="hasAnchor">
+<a href="#disadvantages-over-classic-statistical-tests" class="anchor"></a>Disadvantages Over Classic Statistical Tests</h3>
+<ul>
+<li>The number of repeats determines the smallest probability greater than zero, for example a for r=1000 the smalles value greater than zero is 0.001</li>
+<li>Computationally more expensive</li>
+</ul>
 </div>
 <div id="methodology" class="section level3">
 <h3 class="hasAnchor">
@@ -227,19 +255,19 @@
 <div id="application" class="section level3">
 <h3 class="hasAnchor">
 <a href="#application" class="anchor"></a>Application</h3>
-<p>We can run the above described simulation and alternatively also run a ttest.</p>
-<div class="sourceCode" id="cb13"><html><body><pre class="r"><span class="no">df_sim_sites</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/sim_sites.html">sim_sites</a></span>(<span class="no">df_site</span>, <span class="no">df_visit</span>, <span class="kw">r</span> <span class="kw">=</span> <span class="fl">1000</span>, <span class="kw">ttest</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
+<p>We can run the above described simulation and as a becnhmark also perform a poisson test.</p>
+<div class="sourceCode" id="cb13"><html><body><pre class="r"><span class="no">df_sim_sites</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/sim_sites.html">sim_sites</a></span>(<span class="no">df_site</span>, <span class="no">df_visit</span>, <span class="kw">r</span> <span class="kw">=</span> <span class="fl">1000</span>, <span class="kw">poisson_test</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
 <span class="no">df_sim_sites</span></pre></body></html></div>
 <pre><code>## # A tibble: 6 x 7
 ## # Groups:   study_roche, site_number [6]
-##   study_roche site_number visit_med75 mean_ae_site_me… mean_ae_study_m…     pval
-##   &lt;chr&gt;       &lt;chr&gt;             &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;    &lt;dbl&gt;
-## 1 A           S0001                15             3                6.71 4.87e-11
-## 2 A           S0002                14             3.35             6.02 2.78e- 6
-## 3 A           S0003                16             8.12             6.27 1.00e+ 0
-## 4 A           S0004                14             7                5.35 1.00e+ 0
-## 5 A           S0005                15             6.89             5.94 1.00e+ 0
-## 6 A           S0006                15             7.85             5.69 1.00e+ 0
+##   study_roche site_number visit_med75 mean_ae_site_me… mean_ae_study_m…    pval
+##   &lt;chr&gt;       &lt;chr&gt;             &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;   &lt;dbl&gt;
+## 1 A           S0001                15             3                6.71 1.00e-9
+## 2 A           S0002                14             3.35             6.02 7.46e-6
+## 3 A           S0003                16             8.12             6.27 1.00e+0
+## 4 A           S0004                14             7                5.35 1.00e+0
+## 5 A           S0005                15             6.89             5.94 1.00e+0
+## 6 A           S0006                15             7.85             5.69 1.00e+0
 ## # … with 1 more variable: prob_low &lt;dbl&gt;</code></pre>
 <p>We find that the probability of getting a mean ae at visit_med75 for sites S0001 and S0002 is 0 or near zero.</p>
 </div>

@@ -25,7 +25,20 @@ suppressPackageStartupMessages( library(simaerep) )
 
 # Introduction
 
-Here we describe how to use `simaerep` to calculate an adverse event under-reporting probability for clinical trial sites. We will perform the following steps.
+Simulate adverse event reporting in clinical trials with the goal of detecting under-reporting sites.
+
+Monitoring of Adverse Event (AE) reporting in clinical trials is important for patient safety. We
+use bootstrap-based simulation to assign an AE under-reporting probability to each site in a clinical trial.
+The method is inspired by the 'infer' R package and Alen Downey's blog article: ["There is only one test!"](
+http://allendowney.blogspot.com/2011/05/there-is-only-one-test.html).
+
+## Adverse Events
+
+An adverse event (AE) is any untoward medical occurrence in a patient or clinical investigation subject administered a pharmaceutical product and which does not necessarily have a causal relationship with this treatment. It is important for patient safety that AEs are reported back to the sponsor. An important part of quality monitoring is to detect clinical trial sites that are not propagating all of the AEs reported to them by their patients to the sponsor. In a clinical trial patients follow a strict visiting schedule at which times treatments are given and exams are being performed. Typically AEs get reported by a patient when they are at an on-site visit at the clinic. So the total number of AEs reported by a site depends on the number of patients enrolled at the site and the total number of visits. 
+
+## Algorithm
+
+In a nutshell we will perform the following steps.
 
 1) Record visit_med75, number of patients that have reached visit_med75, mean cumulative AE count at visit_med75 for a clinical trial site.
 2) Create patient pool with all patients in study that have reached visit_med75 as determined in 1) and their cumulative AE count at visit_med75.
@@ -33,14 +46,11 @@ Here we describe how to use `simaerep` to calculate an adverse event under-repor
 4) Repeat 3) 1000 times.
 5) Calculate probability of obtaining mean cumulative AE count or lower as obtained in 1) based on results of 4).
 6) Repeat 1-5) for all sites in trial
-7) For a probability determined in 6) calculate expected FP as probability * number of clinical trial sites.
-8) For a probability determined in 5) calculated TP as the count of sites with the same probability or lower.
-9) Calculate AE under-reporting probability for all sites  as TP/FP / (TP/FP + 1) with results from 7-8)
+7) For a probability determined in 6) calculate expected false positive rate (FP) as probability * number of clinical trial sites.
+8) For a probability determined in 5) calculate all positives (p) as the count of sites with the same probability or lower.
+9) Calculate AE under-reporting probability for all sites  as 1 - FP/p with results from 7-8)
 
 
-## Adverse Events
-
-An adverse event (AE) is any untoward medical occurrence in a patient or clinical investigation subject administered a pharmaceutical product and which does not necessarily have a causal relationship with this treatment. It is important for patient safety that AEs are reported back to the sponsor. An important part of quality monitoring is to detect clinical trial sites that are not propagating all of the AEs reported to them by their patients to the sponsor. In a clinical trial patients follow a strict visiting schedule at which times treatments are given and exams are being performed. Typically AEs get reported by a patient when they are at an on-site visit at the clinic. So the total number of AEs reported by a site depends on the number of patients enrolled at the site and the total number of visits. 
 
 ## Sample Data
 
@@ -102,13 +112,35 @@ df_site
 plot_visit_med75(df_visit, df_site, study_roche_str = "A", n_site = 6)
 ```
 
-Using the visit_med75 will drop a few patients (dashed lines) but will by definietion at least include 50% of all patients favouring patients that have higher number of visits. By looking at the mean ae development (purple line) we can already easily spot the two under-reporting sites. Same goes for looking at the `mean_ae_site_med75` column in `df_site`. Next we will use bootstrap simulations to determine the probability for obtaining each mean ae value at visit_med75 by chance.
+Using the visit_med75 will drop a few patients (dashed lines) but will by definietion at least include 50% of all patients favouring patients that have higher number of visits. By looking at the mean ae development (purple line) we can already easily spot the two under-reporting sites. Same goes for looking at the `mean_ae_site_med75` column in `df_site`. Next we will use bootstrap simulations to determine the probability for obtaining each mean ae value or lower at visit_med75 by chance.
 
 ## Bootstrap Simulations
 
-### Advantage
+### Advantage Over Classic Statistical Tests
 
-The 
+We could use a classical parametric test and calculate the probability with which we can reject the NULL hypothesis for the AE counts that we observe at the visit_med75.
+
+As we sample from a poisson distribution an exact test about the ratio of the two rate parameters of the two samples with the AE count data would be appropriate.
+
+But there are four major problems that we often encounter when we try to describe real life count data with the poisson distribution which is only described by a single parameter:
+
+- over and underdispersion
+- skewness (long right tail)
+- inflated zeros
+- variance mean relationship might not be fixed
+
+(see [Distiributuion for Modelling Location Scale and Shape 5.1.2](https://www.gamlss.com/wp-content/uploads/2018/01/DistributionsForModellingLocationScaleandShape.pdf))
+
+The true distribution of the AE counts will vary from study to study with the degree of the influence of these 4 problems being unknown unless thoroughly investigated.
+
+With the non-parametric approach that we propose we do not need to worry about these statistical assumptions. Since the distribution of the AE count from the simulated patient pool we draw from will be very close to the unknown true distribution of the underlying AE generating process.
+
+
+### Disadvantages Over Classic Statistical Tests
+
+- The number of repeats determines the smallest probability greater than zero, for example a for r=1000 the smalles value greater than zero is 0.001
+- Computationally more expensive
+
 
 ### Methodology
 
@@ -127,10 +159,10 @@ plot_sim_examples(size_dot = 3, size_raster_label = 10)
 
 ### Application
 
-We can run the above described simulation and alternatively also run a ttest.
+We can run the above described simulation and as a becnhmark also perform a poisson test.
 
 ```{r}
-df_sim_sites <- sim_sites(df_site, df_visit, r = 1000, ttest = TRUE)
+df_sim_sites <- sim_sites(df_site, df_visit, r = 1000, poisson_test = TRUE)
 df_sim_sites
 ```
 

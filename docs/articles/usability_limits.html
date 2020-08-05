@@ -54,6 +54,9 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
+      <a href="../articles/check_poisson.html">Checking the Applicability of a Poisson Test</a>
+    </li>
+    <li>
       <a href="../articles/intro.html">Introduction to {simaerep}</a>
     </li>
     <li>
@@ -98,6 +101,7 @@
 <h1 class="hasAnchor">
 <a href="#introduction" class="anchor"></a>Introduction</h1>
 <p>There limits to the use of the bootstrapping method to detect rare events. - the higher the fraction of AE under-reporting sites the less likely it should become to flag under-reporting sites - negative deviations from overall small integer values (3 or less) will also be hard to detect</p>
+<p>Here we are going to test the bootstrapped-based under-reporting detection method against the poisson.test-based benchmark in different AE under-reporting scenarios.</p>
 </div>
 <div id="parameter-grid" class="section level1">
 <h1 class="hasAnchor">
@@ -177,7 +181,7 @@
   <span class="fu">mutate</span>( <span class="kw">df_sim_sites</span> <span class="kw">=</span> <span class="kw pkg">furrr</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/furrr/man/future_map2.html">future_map2</a></span>(<span class="no">df_site</span>, <span class="no">df_visit</span>,
                                             <span class="no">sim_sites</span>,
                                             <span class="kw">r</span> <span class="kw">=</span> <span class="fl">1000</span>,
-                                            <span class="kw">ttest</span> <span class="kw">=</span> <span class="fl">TRUE</span>,
+                                            <span class="kw">poisson_test</span> <span class="kw">=</span> <span class="fl">TRUE</span>,
                                             <span class="kw">prob_lower</span> <span class="kw">=</span> <span class="fl">TRUE</span>,
                                             <span class="kw">.progress</span> <span class="kw">=</span> <span class="fl">FALSE</span>
                                             )
@@ -201,7 +205,7 @@
 <p>We choose a 95% threshold for detecting AE under-reporting sites and will calculate standard classification metrics.</p>
 <div class="sourceCode" id="cb9"><html><body><pre class="r"><span class="no">get_metrics</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">df_visit</span>, <span class="no">df_eval</span>, <span class="no">method</span>) {
 
-  <span class="kw">if</span> (<span class="no">method</span> <span class="kw">==</span> <span class="st">"ttest"</span>) {
+  <span class="kw">if</span> (<span class="no">method</span> <span class="kw">==</span> <span class="st">"ptest"</span>) {
     <span class="no">prob_ur_adj</span> <span class="kw">=</span> <span class="st">"pval_prob_ur"</span>
     <span class="no">prob_ur_unadj</span> <span class="kw">=</span> <span class="st">"pval"</span>
   } <span class="kw">else</span> {
@@ -257,7 +261,7 @@
 <span class="no">df_grid</span> <span class="kw">&lt;-</span> <span class="no">df_grid</span> <span class="kw">%&gt;%</span>
   <span class="fu">mutate</span>(<span class="kw">df_metric_pval</span> <span class="kw">=</span> <span class="kw pkg">furrr</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/furrr/man/future_map2.html">future_map2</a></span>(<span class="no">df_visit</span>, <span class="no">df_eval</span>,
                                               <span class="no">get_metrics</span>,
-                                              <span class="kw">method</span> <span class="kw">=</span> <span class="st">"ttest"</span>),
+                                              <span class="kw">method</span> <span class="kw">=</span> <span class="st">"ptest"</span>),
          <span class="kw">df_metric_prob_low</span> <span class="kw">=</span> <span class="kw pkg">furrr</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/furrr/man/future_map2.html">future_map2</a></span>(<span class="no">df_visit</span>, <span class="no">df_eval</span>,
                                                 <span class="no">get_metrics</span>,
                                                 <span class="kw">method</span> <span class="kw">=</span> <span class="st">"bootstrap"</span>),
@@ -274,16 +278,16 @@
 </div>
 <div id="true-positive-rate---p---tpp" class="section level1">
 <h1 class="hasAnchor">
-<a href="#true-positive-rate---p---tpp" class="anchor"></a>True positive rate - P - tp/P</h1>
+<a href="#true-positive-rate---p---tpp" class="anchor"></a>True positive rate - P - TP/P</h1>
 <div class="sourceCode" id="cb11"><html><body><pre class="r"><span class="no">p</span> <span class="kw">&lt;-</span> <span class="no">df_plot</span> <span class="kw">%&gt;%</span>
   <span class="fu">mutate</span>( <span class="kw">tp_P_ratio</span> <span class="kw">=</span> <span class="no">tp</span>/<span class="no">P</span>) <span class="kw">%&gt;%</span>
   <span class="fu">select</span>(<span class="no">ae_per_visit_mean</span>, <span class="no">frac_site_with_ur</span>, <span class="no">ur_rate</span>, <span class="no">tp_P_ratio</span>, <span class="no">method</span>, <span class="no">prob_type</span>) <span class="kw">%&gt;%</span>
   <span class="fu">mutate_if</span>(<span class="no">is.numeric</span>, <span class="no">round</span>, <span class="fl">3</span>) <span class="kw">%&gt;%</span>
-  <span class="fu">mutate</span>(<span class="kw">metric</span> <span class="kw">=</span> <span class="fu">case_when</span>(<span class="no">method</span> <span class="kw">==</span> <span class="st">"ttest"</span> <span class="kw">&amp;</span> <span class="no">prob_type</span> <span class="kw">==</span> <span class="st">"unadjusted"</span> ~ <span class="st">"ttest unadjusted"</span>,
-                           <span class="no">method</span> <span class="kw">==</span> <span class="st">"ttest"</span> <span class="kw">&amp;</span> <span class="no">prob_type</span> <span class="kw">==</span> <span class="st">"adjusted"</span> ~ <span class="st">"ttest adjusted"</span>,
+  <span class="fu">mutate</span>(<span class="kw">metric</span> <span class="kw">=</span> <span class="fu">case_when</span>(<span class="no">method</span> <span class="kw">==</span> <span class="st">"ptest"</span> <span class="kw">&amp;</span> <span class="no">prob_type</span> <span class="kw">==</span> <span class="st">"unadjusted"</span> ~ <span class="st">"ptest unadjusted"</span>,
+                           <span class="no">method</span> <span class="kw">==</span> <span class="st">"ptest"</span> <span class="kw">&amp;</span> <span class="no">prob_type</span> <span class="kw">==</span> <span class="st">"adjusted"</span> ~ <span class="st">"ptest adjusted"</span>,
                            <span class="no">method</span> <span class="kw">==</span> <span class="st">"bootstrap"</span> <span class="kw">&amp;</span> <span class="no">prob_type</span> <span class="kw">==</span> <span class="st">"unadjusted"</span> ~ <span class="st">"bootstrap unadjusted"</span>,
                            <span class="no">method</span> <span class="kw">==</span> <span class="st">"bootstrap"</span> <span class="kw">&amp;</span> <span class="no">prob_type</span> <span class="kw">==</span> <span class="st">"adjusted"</span> ~ <span class="st">"bootstrap adjusted"</span>),
-         <span class="kw">metric</span> <span class="kw">=</span> <span class="fu">fct_relevel</span>(<span class="no">metric</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"ttest unadjusted"</span>, <span class="st">"ttest adjusted"</span>,
+         <span class="kw">metric</span> <span class="kw">=</span> <span class="fu">fct_relevel</span>(<span class="no">metric</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"ptest unadjusted"</span>, <span class="st">"ptest adjusted"</span>,
                                         <span class="st">"bootstrap unadjusted"</span>, <span class="st">"bootstrap adjusted"</span>))) <span class="kw">%&gt;%</span>
   <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="no">ae_per_visit_mean</span>, <span class="no">tp_P_ratio</span>, <span class="kw">color</span> <span class="kw">=</span> <span class="no">metric</span>)) +
     <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="kw">linetype</span> <span class="kw">=</span> <span class="no">prob_type</span>), <span class="kw">size</span> <span class="kw">=</span> <span class="fl">0.5</span>, <span class="kw">alpha</span> <span class="kw">=</span> <span class="fl">0.5</span>) +
@@ -298,16 +302,16 @@
 </div>
 <div id="false-positive-rate-fpn" class="section level1">
 <h1 class="hasAnchor">
-<a href="#false-positive-rate-fpn" class="anchor"></a>False positive rate fp/N</h1>
+<a href="#false-positive-rate-fpn" class="anchor"></a>False positive rate FP/N</h1>
 <div class="sourceCode" id="cb12"><html><body><pre class="r"><span class="no">p</span> <span class="kw">&lt;-</span> <span class="no">df_plot</span> <span class="kw">%&gt;%</span>
   <span class="fu">mutate</span>( <span class="kw">fpr</span> <span class="kw">=</span> <span class="no">fp</span>/<span class="no">N</span>) <span class="kw">%&gt;%</span>
   <span class="fu">select</span>(<span class="no">ae_per_visit_mean</span>, <span class="no">frac_site_with_ur</span>, <span class="no">ur_rate</span>, <span class="no">fpr</span>, <span class="no">method</span>, <span class="no">prob_type</span>) <span class="kw">%&gt;%</span>
   <span class="fu">mutate_if</span>(<span class="no">is.numeric</span>, <span class="no">round</span>, <span class="fl">3</span>) <span class="kw">%&gt;%</span>
-  <span class="fu">mutate</span>(<span class="kw">metric</span> <span class="kw">=</span> <span class="fu">case_when</span>(<span class="no">method</span> <span class="kw">==</span> <span class="st">"ttest"</span> <span class="kw">&amp;</span> <span class="no">prob_type</span> <span class="kw">==</span> <span class="st">"unadjusted"</span> ~ <span class="st">"ttest unadjusted"</span>,
-                           <span class="no">method</span> <span class="kw">==</span> <span class="st">"ttest"</span> <span class="kw">&amp;</span> <span class="no">prob_type</span> <span class="kw">==</span> <span class="st">"adjusted"</span> ~ <span class="st">"ttest adjusted"</span>,
+  <span class="fu">mutate</span>(<span class="kw">metric</span> <span class="kw">=</span> <span class="fu">case_when</span>(<span class="no">method</span> <span class="kw">==</span> <span class="st">"ptest"</span> <span class="kw">&amp;</span> <span class="no">prob_type</span> <span class="kw">==</span> <span class="st">"unadjusted"</span> ~ <span class="st">"ptest unadjusted"</span>,
+                           <span class="no">method</span> <span class="kw">==</span> <span class="st">"ptest"</span> <span class="kw">&amp;</span> <span class="no">prob_type</span> <span class="kw">==</span> <span class="st">"adjusted"</span> ~ <span class="st">"ptest adjusted"</span>,
                            <span class="no">method</span> <span class="kw">==</span> <span class="st">"bootstrap"</span> <span class="kw">&amp;</span> <span class="no">prob_type</span> <span class="kw">==</span> <span class="st">"unadjusted"</span> ~ <span class="st">"bootstrap unadjusted"</span>,
                            <span class="no">method</span> <span class="kw">==</span> <span class="st">"bootstrap"</span> <span class="kw">&amp;</span> <span class="no">prob_type</span> <span class="kw">==</span> <span class="st">"adjusted"</span> ~ <span class="st">"bootstrap adjusted"</span>),
-         <span class="kw">metric</span> <span class="kw">=</span> <span class="fu">fct_relevel</span>(<span class="no">metric</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"ttest unadjusted"</span>, <span class="st">"ttest adjusted"</span>,
+         <span class="kw">metric</span> <span class="kw">=</span> <span class="fu">fct_relevel</span>(<span class="no">metric</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"ptest unadjusted"</span>, <span class="st">"ptest adjusted"</span>,
                                         <span class="st">"bootstrap unadjusted"</span>, <span class="st">"bootstrap adjusted"</span>))) <span class="kw">%&gt;%</span>
   <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="no">ae_per_visit_mean</span>, <span class="no">fpr</span>, <span class="kw">color</span> <span class="kw">=</span> <span class="no">metric</span>, <span class="kw">linetype</span> <span class="kw">=</span> <span class="no">prob_type</span>)) +
     <span class="fu">geom_line</span>(<span class="kw">size</span> <span class="kw">=</span> <span class="fl">0.5</span>, <span class="kw">alpha</span> <span class="kw">=</span> <span class="fl">0.5</span>) +
@@ -323,7 +327,9 @@
 <div id="conclusion" class="section level1">
 <h1 class="hasAnchor">
 <a href="#conclusion" class="anchor"></a>Conclusion</h1>
-<p>We can show that adjusting the AE under-reporting probability for the expected number of false positives is quite effective. However, this also comes at a cost lowering the true positive rate as well. When comparing the ttest and the bootstrap method, we find that they perform mostly similar but the bootstrap method has a limit it is outperformed by the ttest if the rate of under-reporting sites is greater 0.5 and if AE per visits is around 0.05. During a clinical trial the occurrence of AE’s is not totally stochastic as our simulated data might suggest. The ae per visit rate is actually patient not study specific and the visits are not evenly spaced in time. The bootstrap method is non-parametric so it does not depend on the cumulative mean ae counts being normally distributed which they might not always be for all sites at all visit_med75 evaluation points. It is thus the safer method to use. AE per visit rates of around 0.05 are extremely low and rare in studies with non-healthy participants and should raise suspicion, it also seems very unlikely that more than 50% of all sites should be under-reporting AEs if the study is properly conducted.</p>
+<p>We can show that adjusting the AE under-reporting probability for the expected number of false positives is quite effective.As the false positive rate is almost zero for all tested scenarios. However, this also comes at a cost lowering the true positive rate as well.</p>
+<p>When comparing bootstrap method against the poisson.test becnhmark test, we find that they perform mostly similar from a 0.05 - 0.3 ratio of under-reporting sites. Its performance is still acceptable from a 0.3 - 0.5 ratio and then becomes pretty useless.</p>
+<p>As expected detection of under-reporting sites is close too impossible when the ae/visit ratio is very low (0.05) with detection rates close to zero for all tested scenarios.</p>
 </div>
   </div>
 

@@ -7,8 +7,8 @@
 sim_studies(
   df_visit,
   df_site,
-  r = r,
-  ttest = TRUE,
+  r = 1000,
+  poisson_test = TRUE,
   prob_lower = TRUE,
   r_prob_lower = 1000,
   parallel = FALSE,
@@ -25,7 +25,7 @@ sim_studies(
 
 \item{r}{integer, denotes number of simulations, Default: 1000}
 
-\item{ttest}{logical, calculates ttest pvalue, Default: T}
+\item{poisson_test}{logical, calculates poisson.test pvalue, Default: T}
 
 \item{prob_lower}{logical, calculates probability for getting a lower value,
 Default: F}

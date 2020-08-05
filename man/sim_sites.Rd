@@ -2,9 +2,9 @@
 % Please edit documentation in R/boot.R
 \name{sim_sites}
 \alias{sim_sites}
-\title{calculate prob_lower and ttest pvalue for study sites}
+\title{calculate prob_lower and poisson.test pvalue for study sites}
 \usage{
-sim_sites(df_site, df_visit, r = 1000, ttest = T, prob_lower = T)
+sim_sites(df_site, df_visit, r = 1000, poisson_test = TRUE, prob_lower = TRUE)
 }
 \arguments{
 \item{df_site}{dataframe}
@@ -13,7 +13,7 @@ sim_sites(df_site, df_visit, r = 1000, ttest = T, prob_lower = T)
 
 \item{r}{integer, denotes number of simulations, default = 1000}
 
-\item{ttest}{logical, calculates ttest pvalue}
+\item{poisson_test}{logical, calculates poisson.test pvalue}
 
 \item{prob_lower}{logical, calculates probability for getting a lower value}
 }
@@ -22,7 +22,7 @@ datafram with columns study_roche, site_number, visit_med75, pval, prob_low
 }
 \description{
 collects the number of AEs of all eligible patients from that
-meet med75 criteria of site. Then uses calculates ttest pvalue and
+meet med75 criteria of site. Then uses calculates poisson.test pvalue and
 probability of having a lower mean value using simulation.
 }
 \details{
@@ -34,7 +34,4 @@ df_visit <- boot_sim_test_data_study(n_pat = 100, n_sites = 5,
 df_visit$study_roche <- "A"
 df_site <- site_aggr(df_visit)
 df_sim_sites <- sim_sites(df_site, df_visit, r = 100)
-}
-\seealso{
-\code{\link[future]{plan}} \code{\link[furrr]{future_map2}}
 }

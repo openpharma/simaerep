@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>calculate prob_lower and ttest pvalue for study sites — sim_sites • simaerep</title>
+<title>calculate prob_lower and poisson.test pvalue for study sites — sim_sites • simaerep</title>
 
 
 <!-- jquery -->
@@ -39,9 +39,9 @@
 
 
 
-<meta property="og:title" content="calculate prob_lower and ttest pvalue for study sites — sim_sites" />
+<meta property="og:title" content="calculate prob_lower and poisson.test pvalue for study sites — sim_sites" />
 <meta property="og:description" content="collects the number of AEs of all eligible patients from that
-meet med75 criteria of site. Then uses calculates ttest pvalue and
+meet med75 criteria of site. Then uses calculates poisson.test pvalue and
 probability of having a lower mean value using simulation." />
 
 
@@ -97,6 +97,9 @@ probability of having a lower mean value using simulation." />
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
+      <a href="../articles/check_poisson.html">Checking the Applicability of a Poisson Test</a>
+    </li>
+    <li>
       <a href="../articles/intro.html">Introduction to {simaerep}</a>
     </li>
     <li>
@@ -120,18 +123,18 @@ probability of having a lower mean value using simulation." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>calculate prob_lower and ttest pvalue for study sites</h1>
+    <h1>calculate prob_lower and poisson.test pvalue for study sites</h1>
     
     <div class="hidden name"><code>sim_sites.Rd</code></div>
     </div>
 
     <div class="ref-description">
     <p>collects the number of AEs of all eligible patients from that
-meet med75 criteria of site. Then uses calculates ttest pvalue and
+meet med75 criteria of site. Then uses calculates poisson.test pvalue and
 probability of having a lower mean value using simulation.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>sim_sites</span>(<span class='no'>df_site</span>, <span class='no'>df_visit</span>, <span class='kw'>r</span> <span class='kw'>=</span> <span class='fl'>1000</span>, <span class='kw'>ttest</span> <span class='kw'>=</span> <span class='no'>T</span>, <span class='kw'>prob_lower</span> <span class='kw'>=</span> <span class='no'>T</span>)</pre>
+    <pre class="usage"><span class='fu'>sim_sites</span>(<span class='no'>df_site</span>, <span class='no'>df_visit</span>, <span class='kw'>r</span> <span class='kw'>=</span> <span class='fl'>1000</span>, <span class='kw'>poisson_test</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>prob_lower</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -149,8 +152,8 @@ probability of having a lower mean value using simulation.</p>
       <td><p>integer, denotes number of simulations, default = 1000</p></td>
     </tr>
     <tr>
-      <th>ttest</th>
-      <td><p>logical, calculates ttest pvalue</p></td>
+      <th>poisson_test</th>
+      <td><p>logical, calculates poisson.test pvalue</p></td>
     </tr>
     <tr>
       <th>prob_lower</th>
@@ -164,9 +167,6 @@ probability of having a lower mean value using simulation.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>" "</p>
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
-    <div class='dont-index'><p><code><a href='https://rdrr.io/pkg/future/man/plan.html'>plan</a></code> <code><a href='https://rdrr.io/pkg/furrr/man/future_map2.html'>future_map2</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='no'>df_visit</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='boot_sim_test_data_study.html'>boot_sim_test_data_study</a></span>(<span class='kw'>n_pat</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>n_sites</span> <span class='kw'>=</span> <span class='fl'>5</span>,

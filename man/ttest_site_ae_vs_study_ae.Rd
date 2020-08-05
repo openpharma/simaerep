@@ -15,7 +15,7 @@ ttest_site_ae_vs_study_ae(site_ae, study_ae)
 pval
 }
 \description{
-sets pvalue=1 if mean AE site is greater than mean AE study or ttest gives error
+sets pvalue=1 if mean AE site is greater than mean AE study or poisson.test gives error
 }
 \details{
 " "

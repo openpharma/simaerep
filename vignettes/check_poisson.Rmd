@@ -1,0 +1,141 @@
+---
+title: "Checking the Applicability of a Poisson Test"
+output:
+  html_document:
+    toc: true
+    toc_depth: 3
+    toc_float: true
+    number_sections: true
+    code_folding: show
+    collapse: false
+editor_options:
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, cache = TRUE)
+```
+
+# Load
+```{r}
+suppressPackageStartupMessages( library(tidyverse) )
+suppressPackageStartupMessages( library(knitr) )
+suppressPackageStartupMessages( library(furrr) )
+suppressPackageStartupMessages( library(future) )
+suppressPackageStartupMessages( library(simaerep) )
+```
+
+# Introduction
+
+Perhaps there might be scenarios in which one prefers to use a parametric test vs the non-parametric bootstrap-based resampling method to calculate AE under-reporting. `simaerep` provides a function that does bootstrap resampling of the entire study preserving the actual site parameters such as number of patients and visit_med75.
+
+Using this pool we can check whether the p-values calculated by poisson.test represent accurate probabilities.
+
+
+## Simulate Test Data
+
+```{r}
+
+df_visit1 <- boot_sim_test_data_study(
+  n_pat = 1000,
+  n_sites = 100,
+  frac_site_with_ur = 0.2,
+  ur_rate = 0.5,
+  max_visit_mean = 20,
+  max_visit_sd = 4,
+  ae_per_visit_mean = 0.5
+)
+
+df_visit1$study_roche <- "ae_per_visit: 0.5"
+
+df_visit2 <- boot_sim_test_data_study(
+  n_pat = 1000,
+  n_sites = 100,
+  frac_site_with_ur = 0.2,
+  ur_rate = 0.5,
+  max_visit_mean = 20,
+  max_visit_sd = 4,
+  ae_per_visit_mean = 0.2
+)
+
+df_visit2$study_roche <- "ae_per_visit: 0.2"
+
+df_visit3 <- boot_sim_test_data_study(
+  n_pat = 1000,
+  n_sites = 100,
+  frac_site_with_ur = 0.2,
+  ur_rate = 0.5,
+  max_visit_mean = 20,
+  max_visit_sd = 4,
+  ae_per_visit_mean = 0.05
+)
+
+df_visit3$study_roche <- "ae_per_visit: 0.05"
+
+df_visit <- bind_rows(df_visit1, df_visit2, df_visit3)
+
+df_site <- site_aggr(df_visit)
+
+df_sim_sites <- sim_sites(df_site, df_visit)
+```
+
+## Simulate Studies
+
+```{r}
+df_sim_studies <- sim_studies(df_visit, df_site,
+                              parallel = TRUE,
+                              poisson_test = TRUE,
+                              prob_lower = TRUE,
+                              .progress = FALSE)
+```
+
+## Train ecdf on simulated Studies
+
+```{r}
+df_ecdf <- df_sim_studies %>%
+  group_by(study_roche) %>%
+  summarise( .ecdf_pval = list(ecdf(pval)),
+             .ecdf_prob_low = list(ecdf(prob_low)))
+
+df_ecdf
+```
+
+## Convert Probabilities from Site Simulation into Probabilities from Study Simulation
+
+```{r}
+df_comp <- df_sim_sites %>%
+  left_join(df_ecdf, by = "study_roche") %>%
+  mutate(pval_ecdf = map2_dbl(pval, .ecdf_pval, function(p,f) f(p)),
+         prob_low_ecdf = map2_dbl(prob_low, .ecdf_prob_low, function(p,f) f(p)))
+```
+
+## Plot
+
+### Poisson Test
+
+```{r}
+df_comp %>%
+  ggplot(aes(log(pval, base = 10), log(pval_ecdf, base = 10))) +
+    geom_point(alpha = 0.5, size = 2) +
+    facet_wrap(~ study_roche) +
+    geom_abline(slope = 1, linetype = 2) +
+    coord_cartesian( xlim = c(-5,0), ylim = c(-5,0) ) +
+    theme(aspect.ratio = 1)
+```
+
+### Bootstrap
+
+```{r}
+df_comp %>%
+  ggplot(aes(log(prob_low, base = 10), log(prob_low, base = 10))) +
+    geom_point(alpha = 0.5, size = 2) +
+    facet_wrap(~ study_roche) +
+    geom_abline(slope = 1, linetype = 2) +
+    coord_cartesian( xlim = c(-5,0), ylim = c(-5,0) ) +
+    theme(aspect.ratio = 1)
+```
+
+
+## Conclusion
+
+We see that the bootstrap method gives us more accurate probabilities than the p-values derived from poisson.test even though the AE generation in the sample data follows a strict poisson process. For real clinical trial data with different types of studies for which it is not clear whether AE generation is truly based on a pure poisson process we reommend to use the bootstrap method. If poisson.test shall be used we recommend checking the applicability as we just demonstrated.

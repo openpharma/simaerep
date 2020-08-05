@@ -31,6 +31,8 @@ There limits to the use of the bootstrapping method to detect rare events.
 - the higher the fraction of AE under-reporting sites the less likely it should become to flag under-reporting sites
 - negative deviations from overall small integer values (3 or less) will also be hard to detect
 
+Here we are going to test the bootstrapped-based under-reporting detection method against the poisson.test-based benchmark in different AE under-reporting scenarios.
+
 # Parameter Grid
   
 **Fixed Parameters:**  
@@ -104,7 +106,7 @@ df_grid <- df_grid %>%
   mutate( df_sim_sites = furrr::future_map2(df_site, df_visit,
                                             sim_sites,
                                             r = 1000,
-                                            ttest = TRUE,
+                                            poisson_test = TRUE,
                                             prob_lower = TRUE,
                                             .progress = FALSE
                                             )
@@ -135,7 +137,7 @@ We choose a 95% threshold for detecting AE under-reporting sites and will calcul
 ```{r}
 get_metrics <- function(df_visit, df_eval, method) {
   
-  if (method == "ttest") {
+  if (method == "ptest") {
     prob_ur_adj = "pval_prob_ur"
     prob_ur_unadj = "pval"
   } else {
@@ -191,7 +193,7 @@ get_metrics <- function(df_visit, df_eval, method) {
 df_grid <- df_grid %>%
   mutate(df_metric_pval = furrr::future_map2(df_visit, df_eval,
                                               get_metrics,
-                                              method = "ttest"),
+                                              method = "ptest"),
          df_metric_prob_low = furrr::future_map2(df_visit, df_eval,
                                                 get_metrics,
                                                 method = "bootstrap"),
@@ -208,7 +210,7 @@ df_plot <- df_grid %>%
 ```
 
 
-# True positive rate - P - tp/P
+# True positive rate - P - TP/P
 
 ```{r fig.asp=1, fig.width=10}
 
@@ -216,11 +218,11 @@ p <- df_plot %>%
   mutate( tp_P_ratio = tp/P) %>%
   select(ae_per_visit_mean, frac_site_with_ur, ur_rate, tp_P_ratio, method, prob_type) %>%
   mutate_if(is.numeric, round, 3) %>%
-  mutate(metric = case_when(method == "ttest" & prob_type == "unadjusted" ~ "ttest unadjusted",
-                           method == "ttest" & prob_type == "adjusted" ~ "ttest adjusted",
+  mutate(metric = case_when(method == "ptest" & prob_type == "unadjusted" ~ "ptest unadjusted",
+                           method == "ptest" & prob_type == "adjusted" ~ "ptest adjusted",
                            method == "bootstrap" & prob_type == "unadjusted" ~ "bootstrap unadjusted",
                            method == "bootstrap" & prob_type == "adjusted" ~ "bootstrap adjusted"),
-         metric = fct_relevel(metric, c("ttest unadjusted", "ttest adjusted",
+         metric = fct_relevel(metric, c("ptest unadjusted", "ptest adjusted",
                                         "bootstrap unadjusted", "bootstrap adjusted"))) %>%
   ggplot(aes(ae_per_visit_mean, tp_P_ratio, color = metric)) +
     geom_line(aes(linetype = prob_type), size = 0.5, alpha = 0.5) +
@@ -233,18 +235,18 @@ p <- df_plot %>%
 p
 ```
 
-# False positive rate fp/N
+# False positive rate FP/N
 
 ```{r fig.asp=1, fig.width=10}
 p <- df_plot %>%
   mutate( fpr = fp/N) %>%
   select(ae_per_visit_mean, frac_site_with_ur, ur_rate, fpr, method, prob_type) %>%
   mutate_if(is.numeric, round, 3) %>%
-  mutate(metric = case_when(method == "ttest" & prob_type == "unadjusted" ~ "ttest unadjusted",
-                           method == "ttest" & prob_type == "adjusted" ~ "ttest adjusted",
+  mutate(metric = case_when(method == "ptest" & prob_type == "unadjusted" ~ "ptest unadjusted",
+                           method == "ptest" & prob_type == "adjusted" ~ "ptest adjusted",
                            method == "bootstrap" & prob_type == "unadjusted" ~ "bootstrap unadjusted",
                            method == "bootstrap" & prob_type == "adjusted" ~ "bootstrap adjusted"),
-         metric = fct_relevel(metric, c("ttest unadjusted", "ttest adjusted",
+         metric = fct_relevel(metric, c("ptest unadjusted", "ptest adjusted",
                                         "bootstrap unadjusted", "bootstrap adjusted"))) %>%
   ggplot(aes(ae_per_visit_mean, fpr, color = metric, linetype = prob_type)) +
     geom_line(size = 0.5, alpha = 0.5) +
@@ -259,6 +261,8 @@ p
 
 # Conclusion
 
-We can show that adjusting the AE under-reporting probability for the expected number of false positives is quite effective. However, this also comes at a cost lowering the true positive rate as well.
-When comparing the ttest and the bootstrap method, we find that they perform mostly similar but the bootstrap method has a limit it is outperformed by the ttest if the rate of under-reporting sites is greater 0.5 and if AE per visits is around 0.05.
-During a clinical trial the occurrence of AE's is not totally stochastic as our simulated data might suggest. The ae per visit rate is actually patient not study specific and the visits are not evenly spaced in time. The bootstrap method is non-parametric so it does not depend on the cumulative mean ae counts being normally distributed which they might not always be for all sites at all visit_med75 evaluation points. It is thus the safer method to use. AE per visit rates of around 0.05 are extremely low and rare in studies with non-healthy participants and should raise suspicion, it also seems very unlikely that more than 50% of all sites should be under-reporting AEs if the study is properly conducted.
+We can show that adjusting the AE under-reporting probability for the expected number of false positives is quite effective.As the false positive rate is almost zero for all tested scenarios. However, this also comes at a cost lowering the true positive rate as well.
+
+When comparing bootstrap method against the poisson.test becnhmark test, we find that they perform mostly similar from a 0.05 - 0.3 ratio of under-reporting sites. Its performance is still acceptable from a 0.3 - 0.5 ratio and then becomes pretty useless.
+
+As expected detection of under-reporting sites is close too impossible when the ae/visit ratio is very low (0.05) with detection rates close to zero for all tested scenarios.

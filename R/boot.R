@@ -109,7 +109,7 @@ eval_sites <- function(df_sim_sites,
 #'   df_visit = df_visit,
 #'   r = 3,
 #'   parallel = FALSE,
-#'   ttest = TRUE,
+#'   poisson_test = TRUE,
 #'   prob_lower = TRUE
 #' )
 #'
@@ -252,14 +252,14 @@ prob_lower_site_ae_vs_study_ae <- function(site_ae, study_ae, r = 1000, parallel
 }
 
 
-#' @title calculate prob_lower and ttest pvalue for study sites
+#' @title calculate prob_lower and poisson.test pvalue for study sites
 #' @description collects the number of AEs of all eligible patients from that
-#'   meet med75 criteria of site. Then uses calculates ttest pvalue and
+#'   meet med75 criteria of site. Then uses calculates poisson.test pvalue and
 #'   probability of having a lower mean value using simulation.
 #' @param df_site dataframe
 #' @param df_visit dataframe
 #' @param r integer, denotes number of simulations, default = 1000
-#' @param ttest logical, calculates ttest pvalue
+#' @param poisson_test logical, calculates poisson.test pvalue
 #' @param prob_lower logical, calculates probability for getting a lower value
 #' @return datafram with columns study_roche, site_number, visit_med75, pval, prob_low
 #' @details " "
@@ -269,16 +269,17 @@ prob_lower_site_ae_vs_study_ae <- function(site_ae, study_ae, r = 1000, parallel
 #' df_visit$study_roche <- "A"
 #' df_site <- site_aggr(df_visit)
 #' df_sim_sites <- sim_sites(df_site, df_visit, r = 100)
-#' @seealso \code{\link[future]{plan}} \code{\link[furrr]{future_map2}}
 #' @rdname sim_sites
 #' @export
-#' @importFrom feather read_feather write_feather
 #' @import dplyr
 #' @import purrr
 #' @import tidyr
-#' @import furrr
-#' @import future
-sim_sites <- function(df_site, df_visit, r = 1000, ttest = T, prob_lower = T) {
+sim_sites <- function(df_site,
+                      df_visit,
+                      r = 1000,
+                      poisson_test = TRUE,
+                      prob_lower = TRUE) {
+
   df_pat_pool <- pat_pool(df_visit, df_site)
 
   df_sim_prep <- df_visit %>%
@@ -308,10 +309,10 @@ sim_sites <- function(df_site, df_visit, r = 1000, ttest = T, prob_lower = T) {
 
   df_sim <- df_sim_prep
 
-  if (ttest) {
+  if (poisson_test) {
     df_sim <- df_sim %>%
-      mutate(pval = map2_dbl(.data$n_ae_site, .data$n_ae_study,
-                             ttest_site_ae_vs_study_ae))
+      mutate(pval = pmap_dbl(list(.data$n_ae_site, .data$n_ae_study, .data$visit_med75),
+                             poiss_test_site_ae_vs_study_ae))
   }
 
   if (prob_lower) {
@@ -407,7 +408,7 @@ get_pat_pool_config <- function(df_visit, df_site, min_n_pat_with_med75 = 1) {
 #' @param r integer, denotes number of simulations, Default: 1000
 #' @param r_prob_lower nteger, denotes number of simulations for prob_lower
 #'   value calculation,, Default: 1000
-#' @param ttest logical, calculates ttest pvalue, Default: T
+#' @param poisson_test logical, calculates poisson.test pvalue, Default: T
 #' @param prob_lower logical, calculates probability for getting a lower value,
 #'   Default: F
 #' @param studies vector with study names, Default: NULL
@@ -443,8 +444,8 @@ get_pat_pool_config <- function(df_visit, df_site, min_n_pat_with_med75 = 1) {
 #' @importFrom rlang :=
 sim_studies <- function(df_visit,
                         df_site,
-                        r = r,
-                        ttest = TRUE,
+                        r = 100,
+                        poisson_test = TRUE,
                         prob_lower = TRUE,
                         r_prob_lower = 1000,
                         parallel = FALSE,
@@ -494,10 +495,12 @@ sim_studies <- function(df_visit,
       ) %>%
       select(- .data$pat_pool)
 
-    if (ttest) {
+    if (poisson_test) {
       df_config <- df_config %>%
-        mutate(pval = map2_dbl(.data$n_ae_site, .data$n_ae_study,
-                               ttest_site_ae_vs_study_ae))
+        mutate(pval = pmap_dbl(list(.data$n_ae_site,
+                               .data$n_ae_study,
+                               .data$visit_med75),
+                               poiss_test_site_ae_vs_study_ae))
     }
 
     if (prob_lower) {
@@ -620,7 +623,7 @@ site_aggr <- function(df_visit,
 
 
 #' @title ttest for vector with site AEs vs vector with study AEs
-#' @description sets pvalue=1 if mean AE site is greater than mean AE study or ttest gives error
+#' @description sets pvalue=1 if mean AE site is greater than mean AE study or poisson.test gives error
 #' @param site_ae vector with AE numbers
 #' @param study_ae vector with AE numbers
 #' @return pval
@@ -638,8 +641,8 @@ ttest_site_ae_vs_study_ae <- function(site_ae, study_ae) {
 
   # if there is only one site
   if (is_null(study_ae)) {
-    prob_lower <- 1
-    return(prob_lower)
+    pval <- 1
+    return(pval)
   }
 
   mean_ae_site <- mean(site_ae, na.rm = T)
@@ -665,6 +668,76 @@ ttest_site_ae_vs_study_ae <- function(site_ae, study_ae) {
 
   return(pval)
 }
+
+#' @title poisson test for vector with site AEs vs vector with study AEs
+#' @description sets pvalue=1 if mean AE site is greater than mean AE study or ttest gives error
+#' @param site_ae vector with AE numbers
+#' @param study_ae vector with AE numbers
+#' @param visit_med75 integer
+#' @return pval
+#' @details " "
+#' @examples
+#' poiss_test_site_ae_vs_study_ae(
+#'    site_ae = c(5, 3, 3, 2, 1, 6),
+#'    study_ae = c(9, 8, 7, 9, 6, 7, 8),
+#'    visit_med75 = 10
+#')
+#'
+#' poiss_test_site_ae_vs_study_ae(
+#'    site_ae = c(11, 9, 8, 6, 3),
+#'    study_ae = c(9, 8, 7, 9, 6, 7, 8),
+#'    visit_med75 = 10
+#')
+#' @seealso
+#'  \code{\link[purrr]{safely}}
+#' @rdname poiss_test_site_ae_vs_study_ae
+#' @export
+#' @importFrom purrr safely
+#' @importFrom stats median runif poisson.test
+
+poiss_test_site_ae_vs_study_ae <- function(site_ae,
+                                             study_ae,
+                                             visit_med75) {
+
+  # if there is only one site
+  if (is_null(study_ae)) {
+    pval <- 1
+    return(pval)
+  }
+
+  mean_ae_site <- mean(site_ae, na.rm = T)
+  mean_ae_study <- mean(study_ae, na.rm = T)
+
+  # we are not interested in cases where site AE is greater study AE
+  if (mean_ae_site > mean_ae_study) {
+    pval <- 1
+    return(pval)
+  }
+
+  n_pat_site <- length(site_ae)
+  n_pat_study <- length(study_ae)
+
+  time_base_site <- n_pat_site * visit_med75
+  time_base_study <- n_pat_study * visit_med75
+
+  n_events_site <- sum(site_ae)
+  n_events_study <- sum(study_ae)
+
+  safely_poisson_test <- purrr::safely(poisson.test)
+
+  poisson_test <- safely_poisson_test(c(n_events_site, n_events_study),
+                                      c(time_base_site, time_base_study))
+
+  pval <- poisson_test$result$p.value
+
+  # this controls for cases when poisson.test fails for some reason
+  if (is_null(pval)) {
+    pval <- 1
+  }
+
+  return(pval)
+}
+
 
 #' @title simulate study test data
 #' @description evenly distributes a number of given patients across a number of

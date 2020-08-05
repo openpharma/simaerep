@@ -95,6 +95,9 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
+      <a href="../articles/check_poisson.html">Checking the Applicability of a Poisson Test</a>
+    </li>
+    <li>
       <a href="../articles/intro.html">Introduction to {simaerep}</a>
     </li>
     <li>
@@ -130,8 +133,8 @@
     <pre class="usage"><span class='fu'>sim_studies</span>(
   <span class='no'>df_visit</span>,
   <span class='no'>df_site</span>,
-  <span class='kw'>r</span> <span class='kw'>=</span> <span class='no'>r</span>,
-  <span class='kw'>ttest</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>r</span> <span class='kw'>=</span> <span class='fl'>1000</span>,
+  <span class='kw'>poisson_test</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='kw'>prob_lower</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='kw'>r_prob_lower</span> <span class='kw'>=</span> <span class='fl'>1000</span>,
   <span class='kw'>parallel</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
@@ -157,8 +160,8 @@
       <td><p>integer, denotes number of simulations, Default: 1000</p></td>
     </tr>
     <tr>
-      <th>ttest</th>
-      <td><p>logical, calculates ttest pvalue, Default: T</p></td>
+      <th>poisson_test</th>
+      <td><p>logical, calculates poisson.test pvalue, Default: T</p></td>
     </tr>
     <tr>
       <th>prob_lower</th>

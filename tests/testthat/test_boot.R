@@ -138,23 +138,23 @@ test_that("test_sim_sites", {
   expect_true(all(between(df_sim_site$pval, 0, 1)))
 
   t_all <- system.time(sim_sites(df_site, df_visit))
-  t_prob_low <- system.time(sim_sites(df_site, df_visit, ttest = F))
-  t_ttest <- system.time(sim_sites(df_site, df_visit, prob_lower = F))
+  t_prob_low <- system.time(sim_sites(df_site, df_visit, poisson_test = F))
+  t_ptest <- system.time(sim_sites(df_site, df_visit, prob_lower = F))
 
-  expect_true(t_prob_low["elapsed"] > t_ttest["elapsed"])
+  expect_true(t_prob_low["elapsed"] > t_ptest["elapsed"])
 
 })
 
 
 test_that("test_sim_studies", {
-  t_ttest <- system.time({
+  t_ptest <- system.time({
     df_sim_study <- sim_studies(
       df_site = df_site,
       df_visit = df_visit,
       r = 3,
       parallel = FALSE,
-      ttest = T,
-      prob_lower = F
+      poisson_test = TRUE,
+      prob_lower = FALSE
     )
   })
 
@@ -167,15 +167,15 @@ test_that("test_sim_studies", {
       df_visit = df_visit,
       r = 3,
       parallel = FALSE,
-      ttest = F,
-      prob_lower = T
+      poisson_test = FALSE,
+      prob_lower = TRUE
     )
   })
 
   expect_true(all(complete.cases(df_sim_study)))
   expect_true(all(between(df_sim_study$prob_low, 0, 1)))
 
-  expect_true(t_ttest["elapsed"] < t_prob_low["elapsed"])
+  expect_true(t_ptest["elapsed"] < t_prob_low["elapsed"])
 
   t_both <- system.time({
     df_sim_study <- sim_studies(
@@ -183,8 +183,8 @@ test_that("test_sim_studies", {
       df_visit = df_visit,
       r = 3,
       parallel = FALSE,
-      ttest = T,
-      prob_lower = T
+      poisson_test = TRUE,
+      prob_lower = TRUE
     )
   })
 
@@ -194,8 +194,8 @@ test_that("test_sim_studies", {
     r = 3,
     keep_ae = T,
     parallel = FALSE,
-    ttest = T,
-    prob_lower = T
+    poisson_test = TRUE,
+    prob_lower = TRUE
   )
 
   expect_true(all(c("n_ae_site", "n_ae_study") %in% names(df_sim_study_keep)))
@@ -206,7 +206,7 @@ test_that("test_sim_studies", {
     r = 3,
     keep_ae = TRUE,
     parallel = FALSE,
-    ttest = TRUE,
+    poisson_test = TRUE,
     prob_lower = TRUE,
     studies = "A"
   )
@@ -264,6 +264,27 @@ test_that("ttest_site_ae_vs_study_ae", {
   expect_true(pval == 1)
 
   pval <- ttest_site_ae_vs_study_ae(site_ae = c(1), study_ae = NULL)
+
+  expect_true(pval == 1)
+})
+
+test_that("poiss_test_site_ae_vs_study_ae", {
+  pval <- poiss_test_site_ae_vs_study_ae(site_ae = c(5, 3, 3, 2, 1, 6),
+                                           study_ae = c(9, 8, 7, 9, 6, 7, 8),
+                                           visit_med75 = 10)
+
+  expect_true(pval < 0.005)
+
+  pval <- poiss_test_site_ae_vs_study_ae(site_ae = c(9, 8, 7, 9, 6, 7, 8),
+                                           study_ae = c(5, 3, 3, 2, 1, 6),
+                                           visit_med75 = 10)
+
+  expect_true(pval == 1)
+
+
+  pval <- poiss_test_site_ae_vs_study_ae(site_ae = c(1),
+                                           study_ae = NULL,
+                                           visit_med75 = 10)
 
   expect_true(pval == 1)
 })
