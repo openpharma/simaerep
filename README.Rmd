@@ -56,7 +56,7 @@ df_visit <- boot_sim_test_data_study(n_pat = 1000, # number of patients in study
                                      ae_per_visit_mean = 0.5 # mean AE per patient visit
                                      )
 
-df_visit$study_roche <- "A"
+df_visit$study_id <- "A"
 
 df_site <- site_aggr(df_visit)
 

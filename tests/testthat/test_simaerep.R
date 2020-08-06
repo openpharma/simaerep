@@ -5,13 +5,13 @@ set.seed(1)
 df_visit1 <- boot_sim_test_data_study(n_pat = 100, n_sites = 5,
    frac_site_with_ur = 0.4, ur_rate = 0.6)
 
-df_visit1$study_roche <- "A"
+df_visit1$study_id <- "A"
 
 set.seed(2)
 df_visit2 <- boot_sim_test_data_study(n_pat = 100, n_sites = 5,
                                       frac_site_with_ur = 0.2, ur_rate = 0.1)
 
-df_visit2$study_roche <- "B"
+df_visit2$study_id <- "B"
 
 df_visit <- bind_rows(df_visit1, df_visit2)
 
@@ -32,7 +32,7 @@ test_that("test if returned dfs are grouped", {
 
 test_that("eval_sites_with_all_NA", {
 
-  df_na <- tibble(study_roche = "C", site_number = c("a", "b", "c")) %>%
+  df_na <- tibble(study_id = "C", site_number = c("a", "b", "c")) %>%
     mutate(visit_med75 = 10,
            pval = NA,
            prob_low = NA)
@@ -45,8 +45,8 @@ test_that("eval_sites_with_all_NA", {
 
   all_eval_cols_na <- df_eval %>%
     ungroup() %>%
-    filter(study_roche == "C") %>%
-    select(- study_roche, - site_number, - visit_med75, - n_site) %>%
+    filter(study_id == "C") %>%
+    select(- study_id, - site_number, - visit_med75, - n_site) %>%
     summarize_all(~ all(is.na(.))) %>%
     as.matrix() %>%
     .[1, ] %>%
@@ -76,9 +76,9 @@ test_that("eval_sites", {
 test_that("test_pat_pool", {
   df_pat_pool <- pat_pool(df_visit, df_site)
 
-  expect_equal(names(df_pat_pool), c("study_roche", "pat_pool"))
+  expect_equal(names(df_pat_pool), c("study_id", "pat_pool"))
 
-  expect_true(is.character(df_pat_pool$study_roche))
+  expect_true(is.character(df_pat_pool$study_id))
   expect_true(is.list(df_pat_pool$pat_pool))
   expect_true(is.data.frame(df_pat_pool$pat_pool[[1]]))
 })
@@ -112,7 +112,7 @@ test_that("plot_studies", {
 
 test_that("plot_visit_med75", {
   suppressWarnings({
-    p <- plot_visit_med75(df_visit, df_site, study_roche_str = "A")
+    p <- plot_visit_med75(df_visit, df_site, study_id_str = "A")
   })
 
   expect_true(all(c("gg", "ggplot") %in% class(p)))
@@ -255,7 +255,7 @@ test_that("site_aggr", {
   df_site <- site_aggr(df_visit)
 
   expect_true(all(c(
-    "study_roche",
+    "study_id",
     "site_number",
     "n_patients",
     "n_pat_with_med75",

@@ -104,12 +104,12 @@ In an ongoing trial all patients will have a different number of consecutive vis
 
 ```{r}
 
-df_visit$study_roche <- "A"
+df_visit$study_id <- "A"
 df_site <- site_aggr(df_visit)
 
 df_site
 
-plot_visit_med75(df_visit, df_site, study_roche_str = "A", n_site = 6)
+plot_visit_med75(df_visit, df_site, study_id_str = "A", n_site = 6)
 ```
 
 Using the visit_med75 will drop a few patients (dashed lines) but will by definietion at least include 50% of all patients favouring patients that have higher number of visits. By looking at the mean ae development (purple line) we can already easily spot the two under-reporting sites. Same goes for looking at the `mean_ae_site_med75` column in `df_site`. Next we will use bootstrap simulations to determine the probability for obtaining each mean ae value or lower at visit_med75 by chance.

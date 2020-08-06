@@ -18,7 +18,7 @@ if (getRversion() >= "2.15.1") {
 #' df_visit <- boot_sim_test_data_study(n_pat = 100, n_sites = 5,
 #'     frac_site_with_ur = 0.4, ur_rate = 0.6)
 #'
-#' df_visit$study_roche <- "A"
+#' df_visit$study_id <- "A"
 #' df_site <- site_aggr(df_visit)
 #'
 #' df_sim_sites <- sim_sites(df_site, df_visit, r = 100)
@@ -42,8 +42,8 @@ eval_sites <- function(df_sim_sites,
     }
 
     df_out <- df_out %>%
-      group_by(.data$study_roche) %>%
-      arrange(.data$study_roche, .data$pval) %>%
+      group_by(.data$study_id) %>%
+      arrange(.data$study_id, .data$pval) %>%
       mutate(
         n_site = n(),
         min_pval = min(.data$pval[.data$pval > 0]),
@@ -57,7 +57,7 @@ eval_sites <- function(df_sim_sites,
                                     0, .data$pval_p_vs_fp_ratio),
         # it is possible to get ratios lower than one if p < expected fp
         # this can happen by chance and is meaningless
-        pval_p_vs_fp_ratio = ifelse(pval_p_vs_fp_ratio < 1, 1, pval_p_vs_fp_ratio),
+        pval_p_vs_fp_ratio = ifelse(.data$pval_p_vs_fp_ratio < 1, 1, .data$pval_p_vs_fp_ratio),
         pval_prob_ur = 1 - 1 / .data$pval_p_vs_fp_ratio
       ) %>%
       select(- .data$min_pval)
@@ -70,8 +70,8 @@ eval_sites <- function(df_sim_sites,
     }
 
     df_out <- df_out %>%
-      group_by(.data$study_roche) %>%
-      arrange(.data$study_roche, .data$prob_low) %>%
+      group_by(.data$study_id) %>%
+      arrange(.data$study_id, .data$prob_low) %>%
       mutate(
         n_site = n(),
         # we need to use ties.method max because there can be more than one site with a
@@ -84,7 +84,7 @@ eval_sites <- function(df_sim_sites,
                                         0, .data$prob_low_p_vs_fp_ratio),
         # it is possible to get ratios lower than one if p < expected fp
         # this can happen by chance and is meaningless
-        prob_low_p_vs_fp_ratio = ifelse(prob_low_p_vs_fp_ratio < 1, 1, prob_low_p_vs_fp_ratio),
+        prob_low_p_vs_fp_ratio = ifelse(.data$prob_low_p_vs_fp_ratio < 1, 1, .data$prob_low_p_vs_fp_ratio),
         prob_low_prob_ur = 1 - 1 / .data$prob_low_p_vs_fp_ratio
       )
   }
@@ -105,7 +105,7 @@ eval_sites <- function(df_sim_sites,
 #' df_visit <- boot_sim_test_data_study(n_pat = 100, n_sites = 5,
 #'     frac_site_with_ur = 0.4, ur_rate = 0.3)
 #'
-#' df_visit$study_roche <- "A"
+#' df_visit$study_id <- "A"
 #' df_site <- site_aggr(df_visit)
 #'
 #' df_sim_sites <- sim_sites(df_site, df_visit, r = 100)
@@ -138,14 +138,14 @@ get_ecd_values <- function(df_sim_studies, df_sim_sites, val_str) {
 
   df_ecd <- df_sim_studies %>%
     rename(val = !!as.symbol(val_str)) %>%
-    select(.data$study_roche, .data$val) %>%
+    select(.data$study_id, .data$val) %>%
     nest(data = c(.data$val)) %>%
     mutate(.ecdf = map(.data$data, ~ possibly_ecdf(.$val))) %>%
     select(- .data$data)
 
   df_out <- df_sim_sites %>%
     rename(val = !!as.symbol(val_str)) %>%
-    left_join(df_ecd, "study_roche") %>%
+    left_join(df_ecd, "study_id") %>%
     mutate(ecd_val = map2_dbl(.data$`.ecdf`, .data$val, apply_ecdf)) %>%
     rename(
       !!as.symbol(val_str) := .data$val,
@@ -170,7 +170,7 @@ get_ecd_values <- function(df_sim_studies, df_sim_sites, val_str) {
 #' df_visit <- boot_sim_test_data_study(n_pat = 100, n_sites = 5,
 #'     frac_site_with_ur = 0.4, ur_rate = 0.6)
 #'
-#' df_visit$study_roche <- "A"
+#' df_visit$study_id <- "A"
 #' df_site <- site_aggr(df_visit)
 #'
 #' df_pat_pool <- pat_pool(df_visit, df_site)
@@ -179,13 +179,13 @@ get_ecd_values <- function(df_sim_studies, df_sim_sites, val_str) {
 #' @export
 pat_pool <- function(df_visit, df_site) {
   df_site <- df_site %>%
-    group_by(.data$study_roche) %>%
+    group_by(.data$study_id) %>%
     mutate(max_visit_med75_study = max(.data$visit_med75))
 
   df_visit %>%
-    left_join(df_site, by = c("study_roche", "site_number")) %>%
+    left_join(df_site, by = c("study_id", "site_number")) %>%
     filter(.data$visit <= .data$max_visit_med75_study) %>%
-    select(.data$study_roche,
+    select(.data$study_id,
            .data$patnum,
            .data$visit,
            .data$n_ae) %>%
@@ -267,12 +267,12 @@ prob_lower_site_ae_vs_study_ae <- function(site_ae, study_ae, r = 1000, parallel
 #' @param r integer, denotes number of simulations, default = 1000
 #' @param poisson_test logical, calculates poisson.test pvalue
 #' @param prob_lower logical, calculates probability for getting a lower value
-#' @return datafram with columns study_roche, site_number, visit_med75, pval, prob_low
+#' @return datafram with columns study_id, site_number, visit_med75, pval, prob_low
 #' @details " "
 #' @examples
 #' df_visit <- boot_sim_test_data_study(n_pat = 100, n_sites = 5,
 #'     frac_site_with_ur = 0.4, ur_rate = 0.2)
-#' df_visit$study_roche <- "A"
+#' df_visit$study_id <- "A"
 #' df_site <- site_aggr(df_visit)
 #' df_sim_sites <- sim_sites(df_site, df_visit, r = 100)
 #' @rdname sim_sites
@@ -290,19 +290,19 @@ sim_sites <- function(df_site,
 
   df_sim_prep <- df_visit %>%
     left_join(select(df_site,
-                     .data$study_roche,
+                     .data$study_id,
                      .data$site_number,
                      .data$visit_med75),
-      by = c("study_roche", "site_number")
+      by = c("study_id", "site_number")
     ) %>%
     filter(.data$visit == .data$visit_med75) %>%
-    group_by(.data$study_roche,
+    group_by(.data$study_id,
              .data$site_number,
              .data$visit_med75) %>%
     summarise(patients = list(unique(.data$patnum)))
 
   df_sim_prep <- df_sim_prep %>%
-    left_join(df_pat_pool, "study_roche") %>%
+    left_join(df_pat_pool, "study_id") %>%
     mutate(
       pat_pool = map2(.data$pat_pool, .data$visit_med75, function(x, y) filter(x, .data$visit == y)),
       n_ae_site = map2(.data$pat_pool, .data$patients, function(x, y) filter(x, .data$patnum %in% y)),
@@ -333,7 +333,7 @@ sim_sites <- function(df_site,
     mutate(mean_ae_site_med75 = map_dbl(n_ae_site, mean),
            mean_ae_study_med75 = map_dbl(n_ae_study, mean)) %>%
     select(- n_ae_site, - n_ae_study) %>%
-    select(.data$study_roche,
+    select(.data$study_id,
            .data$site_number,
            .data$visit_med75,
            .data$mean_ae_site_med75,
@@ -356,12 +356,12 @@ sim_sites <- function(df_site,
 #' df_visit1 <- boot_sim_test_data_study(n_pat = 100, n_sites = 5,
 #'                                       frac_site_with_ur = 0.4, ur_rate = 0.6)
 #'
-#' df_visit1$study_roche <- "A"
+#' df_visit1$study_id <- "A"
 #'
 #' df_visit2 <- boot_sim_test_data_study(n_pat = 1000, n_sites = 3,
 #'                                       frac_site_with_ur = 0.2, ur_rate = 0.1)
 #'
-#' df_visit2$study_roche <- "B"
+#' df_visit2$study_id <- "B"
 #'
 #' df_visit <- bind_rows(df_visit1, df_visit2)
 #'
@@ -376,7 +376,7 @@ get_pat_pool_config <- function(df_visit, df_site, min_n_pat_with_med75 = 1) {
 
   # site_config are the number of sites with their individual visit_med75 and n_pat_with_med75
   df_site_config <- select(df_site,
-                           .data$study_roche,
+                           .data$study_id,
                            .data$site_number,
                            .data$visit_med75,
                            .data$n_pat_with_med75) %>%
@@ -384,7 +384,7 @@ get_pat_pool_config <- function(df_visit, df_site, min_n_pat_with_med75 = 1) {
 
   # pat_pool gives the patient pool for study from which we sample
   df_site_config <- df_site_config %>%
-    left_join(pat_pool(df_visit, df_site), by = "study_roche")
+    left_join(pat_pool(df_visit, df_site), by = "study_id")
 
   # adjusting pat_pool to configuration can be done outside of simulation loop
 
@@ -393,7 +393,7 @@ get_pat_pool_config <- function(df_visit, df_site, min_n_pat_with_med75 = 1) {
       pat_pool = map2(.data$pat_pool, .data$visit_med75, function(x, y) filter(x, visit == y)),
       n_pat_study = map2_dbl(.data$pat_pool, .data$n_pat_with_med75, function(x, y) nrow(x) - y)
     ) %>%
-    select(.data$study_roche,
+    select(.data$study_id,
            .data$site_number,
            .data$visit_med75,
            .data$n_pat_with_med75,
@@ -425,12 +425,12 @@ get_pat_pool_config <- function(df_visit, df_site, min_n_pat_with_med75 = 1) {
 #' df_visit1 <- boot_sim_test_data_study(n_pat = 100, n_sites = 5,
 #'                                       frac_site_with_ur = 0.4, ur_rate = 0.6)
 #'
-#' df_visit1$study_roche <- "A"
+#' df_visit1$study_id <- "A"
 #'
 #' df_visit2 <- boot_sim_test_data_study(n_pat = 1000, n_sites = 3,
 #'                                       frac_site_with_ur = 0.2, ur_rate = 0.1)
 #'
-#' df_visit2$study_roche <- "B"
+#' df_visit2$study_id <- "B"
 #'
 #' df_visit <- bind_rows(df_visit1, df_visit2)
 #'
@@ -468,12 +468,12 @@ sim_studies <- function(df_visit,
 
   # filter studies --------------------------------------------
   if (!is_null(studies)) {
-    if (!all(studies %in% unique(df_visit$study_roche))) {
+    if (!all(studies %in% unique(df_visit$study_id))) {
       stop("not all passed studies can be found in input data")
     }
 
     df_config <- df_config %>%
-      filter(.data$study_roche %in% studies)
+      filter(.data$study_id %in% studies)
 
   }
 
@@ -541,7 +541,7 @@ sim_studies <- function(df_visit,
 #' @description calculates visit_med75, n_pat_with_med75 and mean_ae_site_med75
 #' @param df_visit dataframe
 #' @param col_study_id_str column name for study id will be renamed to default
-#'   in output, Default: study_roche
+#'   in output, Default: study_id
 #' @param col_site_id_str column name for site id will be renamed to default in
 #'   output, Default: site_number
 #' @param col_patient_id_str column name for patient id will be renamed to
@@ -555,13 +555,13 @@ sim_studies <- function(df_visit,
 #' @examples
 #' df_visit <- boot_sim_test_data_study(n_pat = 100, n_sites = 5,
 #'     frac_site_with_ur = 0.4, ur_rate = 0.6)
-#' df_visit$study_roche <- "A"
+#' df_visit$study_id <- "A"
 #' df_site <- site_aggr(df_visit)
 #' df_site
 #' @rdname site_aggr
 #' @export
 site_aggr <- function(df_visit,
-                      col_study_id_str = "study_roche",
+                      col_study_id_str = "study_id",
                       col_site_id_str = "site_number",
                       col_patient_id_str = "patnum",
                       col_n_ae_str = "n_ae",
@@ -569,7 +569,7 @@ site_aggr <- function(df_visit,
 
   # rename columns
   df_visit <- df_visit %>%
-    rename(study_roche = !! as.name(col_study_id_str),
+    rename(study_id = !! as.name(col_study_id_str),
            site_number = !! as.name(col_site_id_str),
            patnum = !! as.name(col_patient_id_str),
            visit = !! as.name(col_visit_str))
@@ -577,18 +577,18 @@ site_aggr <- function(df_visit,
   # Aggregate on site level ------------------------------------------
 
   df_visit <- df_visit %>%
-    group_by(.data$study_roche, .data$site_number, .data$patnum) %>%
+    group_by(.data$study_id, .data$site_number, .data$patnum) %>%
     mutate(max_visit_per_pat = max(.data$visit))
 
   df_pat <- df_visit %>%
-    select(.data$study_roche,
+    select(.data$study_id,
            .data$site_number,
            .data$patnum,
            .data$max_visit_per_pat) %>%
     distinct()
 
   df_site <- df_pat %>%
-    group_by(.data$study_roche, .data$site_number) %>%
+    group_by(.data$study_id, .data$site_number) %>%
     mutate(
       n_patients = n_distinct(.data$patnum)
       # , visit_min = min(max_visit_per_pat)
@@ -607,23 +607,23 @@ site_aggr <- function(df_visit,
   # Calculate mean cumulative AE at med75 per Site ------------------
 
   df_mean_ae_dev <- df_visit %>%
-    left_join(df_site, by = c("study_roche", "site_number")) %>%
+    left_join(df_site, by = c("study_id", "site_number")) %>%
     filter(.data$visit <= .data$visit_med75, .data$max_visit_per_pat >= .data$visit_med75) %>%
-    group_by(.data$study_roche, .data$site_number, .data$visit_med75, .data$visit) %>%
+    group_by(.data$study_id, .data$site_number, .data$visit_med75, .data$visit) %>%
     summarise(mean_ae_site = mean(.data$n_ae)) %>%
     ungroup()
 
   df_mean_ae_med75 <- df_mean_ae_dev %>%
     filter(.data$visit == .data$visit_med75) %>%
     rename(mean_ae_site_med75 = .data$mean_ae_site) %>%
-    select(.data$study_roche,
+    select(.data$study_id,
            .data$site_number,
            .data$mean_ae_site_med75)
 
   # Add mean cumulative AE to site aggreagate ----------------------
 
   df_site <- df_site %>%
-    left_join(df_mean_ae_med75, by = c("study_roche", "site_number"))
+    left_join(df_mean_ae_med75, by = c("study_id", "site_number"))
 
   return(ungroup(df_site))
 }

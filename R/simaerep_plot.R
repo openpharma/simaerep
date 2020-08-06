@@ -389,7 +389,7 @@ plot_sim_examples <- function(substract_ae_per_pat = c(0, 1, 3), ...) {
 #' @param df_visit dataframe
 #' @param df_site dataframe
 #' @param df_eval dataframe
-#' @param df_al dataframe containing study_roche, site_number, alert_level_site,
+#' @param df_al dataframe containing study_id, site_number, alert_level_site,
 #'   alert_level_study (optional), Default: NA
 #' @param study study
 #' @param n_sites integer number of most at risk sites, Default: 16
@@ -409,7 +409,7 @@ plot_sim_examples <- function(substract_ae_per_pat = c(0, 1, 3), ...) {
 #' df_visit <- boot_sim_test_data_study(n_pat = 1000, n_sites = 10,
 #'     frac_site_with_ur = 0.2, ur_rate = 0.15, max_visit_sd = 8)
 #'
-#' df_visit$study_roche <- "A"
+#' df_visit$study_id <- "A"
 #' df_site <- site_aggr(df_visit)
 #'
 #' df_sim_sites <- sim_sites(df_site, df_visit, r = 100)
@@ -443,7 +443,7 @@ plot_study <- function(df_visit,
   } else {
     df_visit <- df_visit %>%
       left_join(select(df_al,
-                       .data$study_roche,
+                       .data$study_id,
                        .data$site_number,
                        .data$alert_level_site,
                        .data$alert_level_study))
@@ -461,18 +461,18 @@ plot_study <- function(df_visit,
   # filter studies -----------------------------------------------------------
 
   df_visit <- df_visit %>%
-    filter(.data$study_roche %in% study)
+    filter(.data$study_id %in% study)
 
   df_site <- df_site %>%
-    filter(.data$study_roche %in% study)
+    filter(.data$study_id %in% study)
 
   df_eval <- df_eval %>%
-    filter(.data$study_roche %in% study)
+    filter(.data$study_id %in% study)
 
   # ordered sites -------------------------------------------------------------
 
   sites_ordered <- df_eval %>%
-    arrange(.data$study_roche, desc(.data$prob_low_prob_ur)) %>%
+    arrange(.data$study_id, desc(.data$prob_low_prob_ur)) %>%
     filter(.data$prob_low_prob_ur > 0.5) %>%
     head(n_sites) %>%
     .$site_number
@@ -480,12 +480,12 @@ plot_study <- function(df_visit,
   # mean AE development ------------------------------------------------------
 
   df_mean_ae_dev_site <- df_visit %>%
-    group_by(.data$study_roche, .data$site_number, .data$patnum) %>%
+    group_by(.data$study_id, .data$site_number, .data$patnum) %>%
     mutate(max_visit_per_pat = max(.data$visit)) %>%
     ungroup() %>%
-    left_join(df_site, by = c("study_roche", "site_number")) %>%
+    left_join(df_site, by = c("study_id", "site_number")) %>%
     filter(.data$visit <= .data$visit_med75, .data$max_visit_per_pat >= .data$visit_med75) %>%
-    group_by(.data$study_roche,
+    group_by(.data$study_id,
              .data$site_number,
              .data$visit_med75,
              .data$n_patients,
@@ -495,20 +495,20 @@ plot_study <- function(df_visit,
     ungroup()
 
   df_mean_ae_dev_study <- df_visit %>%
-    group_by(.data$study_roche,
+    group_by(.data$study_id,
              .data$site_number,
              .data$patnum) %>%
     mutate(max_visit_per_pat = max(.data$visit)) %>%
-    group_by(.data$study_roche) %>%
+    group_by(.data$study_id) %>%
     mutate(
       visit_med75 = ceiling(median(.data$max_visit_per_pat) * 0.75),
       n_patients = n_distinct(.data$patnum)
     ) %>%
     ungroup() %>%
     filter(.data$visit <= .data$visit_med75, .data$max_visit_per_pat >= .data$visit_med75) %>%
-    group_by(.data$study_roche) %>%
+    group_by(.data$study_id) %>%
     mutate(n_pat_with_med75 = n_distinct(.data$patnum)) %>%
-    group_by(.data$study_roche,
+    group_by(.data$study_id,
              .data$visit,
              .data$n_patients,
              .data$n_pat_with_med75) %>%
@@ -516,7 +516,7 @@ plot_study <- function(df_visit,
     ungroup()
 
   df_ae_dev_patient <- df_visit %>%
-    select(.data$study_roche,
+    select(.data$study_id,
            .data$site_number,
            .data$patnum,
            .data$visit,
@@ -543,19 +543,19 @@ plot_study <- function(df_visit,
 
   df_mean_ae_dev_site <- df_mean_ae_dev_site %>%
     select(- .data$visit_med75) %>%
-    left_join(df_eval, by = c("study_roche", "site_number"))
+    left_join(df_eval, by = c("study_id", "site_number"))
 
   # we have to split site ae dev up because alert sites get plotted
   # over if there are many sites
 
   df_mean_ae_dev_site_no_alert <- df_mean_ae_dev_site %>%
-    filter(prob_cut == levels(.data$prob_cut)[1])
+    filter(.data$prob_cut == levels(.data$prob_cut)[1])
 
   df_mean_ae_dev_site_alert <- df_mean_ae_dev_site %>%
-    filter(prob_cut != levels(.data$prob_cut)[1])
+    filter(.data$prob_cut != levels(.data$prob_cut)[1])
 
   df_alert <- df_visit %>%
-    select(.data$study_roche,
+    select(.data$study_id,
            .data$site_number,
            .data$alert_level_site,
            .data$alert_level_study) %>%
@@ -563,21 +563,21 @@ plot_study <- function(df_visit,
 
   df_label <- df_mean_ae_dev_site %>%
     filter(.data$visit == .data$visit_med75, .data$site_number %in% sites_ordered) %>%
-    select(.data$study_roche,
+    select(.data$study_id,
            .data$site_number,
            .data$visit,
            .data$mean_ae) %>%
-    left_join(df_site, by = c("study_roche", "site_number")) %>%
-    select(.data$study_roche,
+    left_join(df_site, by = c("study_id", "site_number")) %>%
+    select(.data$study_id,
            .data$site_number,
            .data$visit,
            .data$mean_ae,
            .data$n_patients,
            .data$n_pat_with_med75) %>%
-    left_join(df_eval, by = c("study_roche", "site_number")) %>%
-    left_join(df_alert, by = c("study_roche", "site_number")) %>%
+    left_join(df_eval, by = c("study_id", "site_number")) %>%
+    left_join(df_alert, by = c("study_id", "site_number")) %>%
     select(
-      .data$study_roche,
+      .data$study_id,
       .data$site_number,
       .data$visit,
       .data$mean_ae,
@@ -626,7 +626,7 @@ plot_study <- function(df_visit,
     data = df_mean_ae_dev_site_alert,
     size = 1
     ) +
-    geom_line(aes_string(group = "study_roche"),
+    geom_line(aes_string(group = "study_id"),
       data = df_mean_ae_dev_study,
       color = "gold3",
       size = 1,
@@ -754,7 +754,7 @@ plot_study <- function(df_visit,
 #'   given study and compares against visit_med75.
 #' @param df_visit dataframe
 #' @param df_site dataframe, as returned by site_aggr()
-#' @param study_roche_str character, specify study in study_roche column
+#' @param study_id_str character, specify study in study_id column
 #' @param n_sites integer, Default: 6
 #' @return ggplot
 #' @details ""
@@ -762,24 +762,24 @@ plot_study <- function(df_visit,
 #' df_visit <- boot_sim_test_data_study(n_pat = 120, n_sites = 6,
 #'     frac_site_with_ur = 0.4, ur_rate = 0.6)
 #'
-#' df_visit$study_roche <- "A"
+#' df_visit$study_id <- "A"
 #' df_site <- site_aggr(df_visit)
 #'
-#' plot_visit_med75(df_visit, df_site, study_roche_str = "A", n_site = 6)
+#' plot_visit_med75(df_visit, df_site, study_id_str = "A", n_site = 6)
 #' @rdname plot_visit_med75
 #' @export
 plot_visit_med75 <- function(df_visit, df_site,
-                             study_roche_str,
+                             study_id_str,
                              n_sites = 6) {
   df_mean_ae_dev <- df_visit %>%
-    group_by(.data$study_roche,
+    group_by(.data$study_id,
              .data$site_number,
              .data$patnum) %>%
     mutate(max_visit_per_pat = max(.data$visit)) %>%
-    left_join(df_site, by = c("study_roche", "site_number")) %>%
+    left_join(df_site, by = c("study_id", "site_number")) %>%
     filter(.data$visit <= .data$visit_med75,
            .data$max_visit_per_pat >= .data$visit_med75) %>%
-    group_by(.data$study_roche,
+    group_by(.data$study_id,
              .data$site_number,
              .data$visit_med75,
              .data$visit) %>%
@@ -789,21 +789,21 @@ plot_visit_med75 <- function(df_visit, df_site,
   df_mean_ae_med75 <- df_mean_ae_dev %>%
     filter(.data$visit == .data$visit_med75) %>%
     rename(mean_ae_site_med75 = .data$mean_ae_site) %>%
-    select(.data$study_roche,
+    select(.data$study_id,
            .data$site_number,
            .data$mean_ae_site_med75)
 
   df_plot <- df_site %>%
     ungroup() %>%
-    left_join(df_mean_ae_med75, by = c("study_roche", "site_number")) %>%
-    filter(.data$study_roche == study_roche_str) %>%
+    left_join(df_mean_ae_med75, by = c("study_id", "site_number")) %>%
+    filter(.data$study_id == study_id_str) %>%
     mutate(rnk_sites = rank(desc(.data$n_patients), ties.method = "first")) %>%
     filter(.data$rnk_sites <= n_sites) %>%
-    left_join(df_visit, by = c("study_roche", "site_number")) %>%
+    left_join(df_visit, by = c("study_id", "site_number")) %>%
     left_join(select(df_mean_ae_dev, - .data$visit_med75),
-      by = c("study_roche", "site_number", "visit")
+      by = c("study_id", "site_number", "visit")
     ) %>%
-    group_by(.data$study_roche, .data$site_number, .data$patnum) %>%
+    group_by(.data$study_id, .data$site_number, .data$patnum) %>%
     mutate(
       max_visit_pat = max(.data$visit),
       has_med75 = ifelse(.data$max_visit_pat >= .data$visit_med75, "yes", "no")
@@ -812,7 +812,7 @@ plot_visit_med75 <- function(df_visit, df_site,
 
   df_label <- df_plot %>%
     select(
-      .data$study_roche,
+      .data$study_id,
       .data$site_number,
       .data$n_patients,
       .data$n_pat_with_med75
@@ -852,7 +852,7 @@ plot_visit_med75 <- function(df_visit, df_site,
       y = 0.75 * ae_max,
       na.rm = TRUE
     ) +
-    facet_wrap(study_roche ~ site_number) +
+    facet_wrap(study_id ~ site_number) +
     labs(
       title = "Evaluation Point visit_med75",
       subtitle = " 0.75 x median( max(visit per patient) ) ",

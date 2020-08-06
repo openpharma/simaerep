@@ -46,7 +46,7 @@ df_visit1 <- boot_sim_test_data_study(
   ae_per_visit_mean = 0.5
 )
 
-df_visit1$study_roche <- "ae_per_visit: 0.5"
+df_visit1$study_id <- "ae_per_visit: 0.5"
 
 df_visit2 <- boot_sim_test_data_study(
   n_pat = 1000,
@@ -58,7 +58,7 @@ df_visit2 <- boot_sim_test_data_study(
   ae_per_visit_mean = 0.2
 )
 
-df_visit2$study_roche <- "ae_per_visit: 0.2"
+df_visit2$study_id <- "ae_per_visit: 0.2"
 
 df_visit3 <- boot_sim_test_data_study(
   n_pat = 1000,
@@ -70,7 +70,7 @@ df_visit3 <- boot_sim_test_data_study(
   ae_per_visit_mean = 0.05
 )
 
-df_visit3$study_roche <- "ae_per_visit: 0.05"
+df_visit3$study_id <- "ae_per_visit: 0.05"
 
 df_visit <- bind_rows(df_visit1, df_visit2, df_visit3)
 
@@ -93,7 +93,7 @@ df_sim_studies <- sim_studies(df_visit, df_site,
 
 ```{r}
 df_ecdf <- df_sim_studies %>%
-  group_by(study_roche) %>%
+  group_by(study_id) %>%
   summarise( .ecdf_pval = list(ecdf(pval)),
              .ecdf_prob_low = list(ecdf(prob_low)))
 
@@ -104,7 +104,7 @@ df_ecdf
 
 ```{r}
 df_comp <- df_sim_sites %>%
-  left_join(df_ecdf, by = "study_roche") %>%
+  left_join(df_ecdf, by = "study_id") %>%
   mutate(pval_ecdf = map2_dbl(pval, .ecdf_pval, function(p,f) f(p)),
          prob_low_ecdf = map2_dbl(prob_low, .ecdf_prob_low, function(p,f) f(p)))
 ```
@@ -117,7 +117,7 @@ df_comp <- df_sim_sites %>%
 df_comp %>%
   ggplot(aes(log(pval, base = 10), log(pval_ecdf, base = 10))) +
     geom_point(alpha = 0.5, size = 2) +
-    facet_wrap(~ study_roche) +
+    facet_wrap(~ study_id) +
     geom_abline(slope = 1, linetype = 2) +
     coord_cartesian( xlim = c(-5,0), ylim = c(-5,0) ) +
     theme(aspect.ratio = 1)
@@ -129,7 +129,7 @@ df_comp %>%
 df_comp %>%
   ggplot(aes(log(prob_low, base = 10), log(prob_low, base = 10))) +
     geom_point(alpha = 0.5, size = 2) +
-    facet_wrap(~ study_roche) +
+    facet_wrap(~ study_id) +
     geom_abline(slope = 1, linetype = 2) +
     coord_cartesian( xlim = c(-5,0), ylim = c(-5,0) ) +
     theme(aspect.ratio = 1)

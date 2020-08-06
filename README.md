@@ -47,18 +47,15 @@ df_visit <- boot_sim_test_data_study(n_pat = 1000, # number of patients in study
                                      ae_per_visit_mean = 0.5 # mean AE per patient visit
                                      )
 
-df_visit$study_roche <- "A"
+df_visit$study_id <- "A"
+
 df_site <- site_aggr(df_visit)
 
-df_sim_sites <- sim_sites(df_site, df_visit, r = 100)
+df_sim_sites <- sim_sites(df_site, df_visit, r = 1000)
 
-df_eval <- eval_sites(df_sim_sites, r_sim_sites = 100)
+df_eval <- eval_sites(df_sim_sites, r_sim_sites = 1000)
 
 plot_study(df_visit, df_site, df_eval, study = "A") 
-#> Warning: Removed 1 rows containing missing values (geom_label).
-#> Warning: Removed 16 rows containing missing values (geom_label).
-
-#> Warning: Removed 16 rows containing missing values (geom_label).
 ```
 
 <img src="man/figures/README-unnamed-chunk-2-1.png" width="100%" />

@@ -88,7 +88,7 @@ df_grid <- df_grid %>%
 
 ```{r}
 df_grid <- df_grid %>%
-  mutate( df_visit = map2(df_visit, row_number(), function(x,y) mutate(x, study_roche = paste("S", y))),
+  mutate( df_visit = map2(df_visit, row_number(), function(x,y) mutate(x, study_id = paste("S", y))),
           df_site = furrr::future_map(df_visit,
                                       site_aggr,
                                       .progress = FALSE
@@ -155,7 +155,7 @@ get_metrics <- function(df_visit, df_eval, method) {
             prob_ur_unadj = !! as.name(prob_ur_unadj) )
   
   df_metric_adjusted <- df_metric_prep %>%
-    select(study_roche, site_number, is_ur, prob_ur_adj) %>%
+    select(study_id, site_number, is_ur, prob_ur_adj) %>%
     mutate( tp = ifelse(is_ur & prob_ur_adj >= 0.95, 1, 0),
             fn = ifelse(is_ur & prob_ur_adj < 0.95, 1, 0),
             tn = ifelse((! is_ur) & prob_ur_adj < 0.95, 1, 0),
@@ -165,13 +165,13 @@ get_metrics <- function(df_visit, df_eval, method) {
             P = ifelse(is_ur, 1, 0),
             N = ifelse(! is_ur, 1, 0)
     ) %>%
-    group_by(study_roche) %>%
+    group_by(study_id) %>%
     select(-site_number, - is_ur, - prob_ur_adj) %>%
     summarize_all(sum) %>%
     mutate(prob_type = "adjusted")
   
   df_metric_unadjusted <- df_metric_prep %>%
-    select(study_roche, site_number, is_ur, prob_ur_unadj) %>%
+    select(study_id, site_number, is_ur, prob_ur_unadj) %>%
     mutate( tp = ifelse(is_ur & prob_ur_unadj <= 0.05, 1, 0),
             fn = ifelse(is_ur & prob_ur_unadj > 0.05, 1, 0),
             tn = ifelse((! is_ur) & prob_ur_unadj > 0.05, 1, 0),
@@ -181,7 +181,7 @@ get_metrics <- function(df_visit, df_eval, method) {
             P = ifelse(is_ur, 1, 0),
             N = ifelse(! is_ur, 1, 0)
     ) %>%
-    group_by(study_roche) %>%
+    group_by(study_id) %>%
     select(-site_number, - is_ur, - prob_ur_unadj) %>%
     summarize_all(sum) %>%
     mutate(prob_type = "unadjusted")
