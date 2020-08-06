@@ -2,8 +2,7 @@
 % Please edit documentation in R/lint.R
 \name{lint_package}
 \alias{lint_package}
-\title{wrapper around lintr::lint_packages which throws error when code
-issues are detected and defines default linting rules for this package.}
+\title{wrapper around lintr::lint_packages}
 \usage{
 lint_package(path = ".", ...)
 }
@@ -17,11 +16,12 @@ lint_package(path = ".", ...)
 " "
 }
 \description{
-lintr::line_length_linter(120), trailing_whitespace_linter =
-NULL, cyclocomp_linter = lintr::cyclocomp_linter(25)
+throws error when code issues are detected and defines default
+linting rules for this package.
 }
 \details{
-" "
+lintr::line_length_linter(120), trailing_whitespace_linter = NULL,
+cyclocomp_linter = lintr::cyclocomp_linter(25)
 }
 \seealso{
 \code{\link[lintr]{lint_package}}

@@ -40,4 +40,5 @@ df_visit <- sim_test_data_study(n_pat = 100, n_sites = 5,
 df_visit$study_id <- "A"
 df_site <- site_aggr(df_visit)
 df_sim_sites <- sim_sites(df_site, df_visit, r = 100)
+df_sim_sites
 }

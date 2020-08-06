@@ -1,5 +1,5 @@
 ---
-title: "Introduction to {simaerep}"
+title: "Introduction"
 output:
   html_document:
     toc: true

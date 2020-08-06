@@ -8,6 +8,13 @@
 
 <title>plot patient visits against visit_med75 — plot_visit_med75 • simaerep</title>
 
+<!-- favicons -->
+<link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png" />
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
@@ -42,6 +49,7 @@
 <meta property="og:title" content="plot patient visits against visit_med75 — plot_visit_med75" />
 <meta property="og:description" content="plots cumulative AEs against visits for patients at sites of
 given study and compares against visit_med75." />
+<meta property="og:image" content="https://openpharma.github.io/simaerep/logo.png" />
 
 
 
@@ -55,6 +63,16 @@ given study and compares against visit_med75." />
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
 
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-123997499-2"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-123997499-2');
+</script>
 
 
   </head>
@@ -73,7 +91,7 @@ given study and compares against visit_med75." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">simaerep</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
       </span>
     </div>
 
@@ -86,6 +104,9 @@ given study and compares against visit_med75." />
   </a>
 </li>
 <li>
+  <a href="../articles/intro.html">Get Started</a>
+</li>
+<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -96,13 +117,13 @@ given study and compares against visit_med75." />
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/check_poisson.html">Checking the Applicability of a Poisson Test</a>
-    </li>
-    <li>
-      <a href="../articles/intro.html">Introduction to {simaerep}</a>
+      <a href="../articles/intro.html">Introduction</a>
     </li>
     <li>
       <a href="../articles/usability_limits.html">Address Usability Limits of the Bootstrap Method</a>
+    </li>
+    <li>
+      <a href="../articles/check_poisson.html">Checking the Applicability of a Poisson Test</a>
     </li>
   </ul>
 </li>
@@ -132,7 +153,7 @@ given study and compares against visit_med75." />
 given study and compares against visit_med75.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>plot_visit_med75</span>(<span class='no'>df_visit</span>, <span class='no'>df_site</span>, <span class='no'>study_roche_str</span>, <span class='kw'>n_sites</span> <span class='kw'>=</span> <span class='fl'>6</span>)</pre>
+    <pre class="usage"><span class='fu'>plot_visit_med75</span>(<span class='no'>df_visit</span>, <span class='no'>df_site</span>, <span class='no'>study_id_str</span>, <span class='kw'>n_sites</span> <span class='kw'>=</span> <span class='fl'>6</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -146,8 +167,8 @@ given study and compares against visit_med75.</p>
       <td><p>dataframe, as returned by site_aggr()</p></td>
     </tr>
     <tr>
-      <th>study_roche_str</th>
-      <td><p>character, specify study in study_roche column</p></td>
+      <th>study_id_str</th>
+      <td><p>character, specify study in study_id column</p></td>
     </tr>
     <tr>
       <th>n_sites</th>
@@ -163,13 +184,13 @@ given study and compares against visit_med75.</p>
     <p>""</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>df_visit</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='boot_sim_test_data_study.html'>boot_sim_test_data_study</a></span>(<span class='kw'>n_pat</span> <span class='kw'>=</span> <span class='fl'>120</span>, <span class='kw'>n_sites</span> <span class='kw'>=</span> <span class='fl'>6</span>,
+    <pre class="examples"><div class='input'><span class='no'>df_visit</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='sim_test_data_study.html'>sim_test_data_study</a></span>(<span class='kw'>n_pat</span> <span class='kw'>=</span> <span class='fl'>120</span>, <span class='kw'>n_sites</span> <span class='kw'>=</span> <span class='fl'>6</span>,
     <span class='kw'>frac_site_with_ur</span> <span class='kw'>=</span> <span class='fl'>0.4</span>, <span class='kw'>ur_rate</span> <span class='kw'>=</span> <span class='fl'>0.6</span>)
 
-<span class='no'>df_visit</span>$<span class='no'>study_roche</span> <span class='kw'>&lt;-</span> <span class='st'>"A"</span>
+<span class='no'>df_visit</span>$<span class='no'>study_id</span> <span class='kw'>&lt;-</span> <span class='st'>"A"</span>
 <span class='no'>df_site</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='site_aggr.html'>site_aggr</a></span>(<span class='no'>df_visit</span>)
 
-<span class='fu'>plot_visit_med75</span>(<span class='no'>df_visit</span>, <span class='no'>df_site</span>, <span class='kw'>study_roche_str</span> <span class='kw'>=</span> <span class='st'>"A"</span>, <span class='kw'>n_site</span> <span class='kw'>=</span> <span class='fl'>6</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Removed 561 row(s) containing missing values (geom_path).</span></div><div class='img'><img src='plot_visit_med75-1.png' alt='' width='700' height='433' /></div></pre>
+<span class='fu'>plot_visit_med75</span>(<span class='no'>df_visit</span>, <span class='no'>df_site</span>, <span class='kw'>study_id_str</span> <span class='kw'>=</span> <span class='st'>"A"</span>, <span class='kw'>n_site</span> <span class='kw'>=</span> <span class='fl'>6</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Removed 585 row(s) containing missing values (geom_path).</span></div><div class='img'><img src='plot_visit_med75-1.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

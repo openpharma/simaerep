@@ -1,0 +1,68 @@
+navbar:
+  structure:
+    left:
+    - home
+    - intro
+    - reference
+    - articles
+    right: github
+  components:
+    home:
+      icon: fas fa-home fa-lg
+      href: index.html
+    intro:
+      text: Get Started
+      href: articles/intro.html
+    reference:
+      text: Reference
+      href: reference/index.html
+template:
+  params:
+    ganalytics: UA-123997499-2
+url: https://openpharma.github.io/simaerep/
+
+articles:
+- title: Articles
+  navbar: ~
+  contents:
+  - intro
+  - usability_limits
+  - check_poisson
+
+reference:
+- title: Main Functions
+  desc: ~
+  contents:
+  - site_aggr
+  - sim_sites
+  - eval_sites
+  - plot_study
+- title: Simulate Data
+  desc: ~
+  contents:
+  - sim_test_data_study
+- title: Test Functions
+  desc: These functions are intented to check Poisson test applicability.
+  contents:
+  - sim_studies
+  - get_ecd_values
+- title: Helper Functions
+  desc: These functions are intended to be called by other functions.
+  contents:
+  - get_pat_pool_config
+  - pat_pool
+  - poiss_test_site_ae_vs_study_ae
+  - prob_lower_site_ae_vs_study_ae
+  - sim_test_data_patient
+- title: Additional Plot Functions
+  desc: These functions were intended for creating plots for the documentation.
+  contents:
+  - plot_visit_med75
+  - plot_sim_examples
+  - plot_sim_example
+  - plot_dots
+- title: Lint Function
+  desc: customized linting
+  contents:
+  - lint_package
+

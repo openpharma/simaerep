@@ -308,6 +308,7 @@ prob_lower_site_ae_vs_study_ae <- function(site_ae, study_ae, r = 1000, parallel
 #' df_visit$study_id <- "A"
 #' df_site <- site_aggr(df_visit)
 #' df_sim_sites <- sim_sites(df_site, df_visit, r = 100)
+#' df_sim_sites
 #' @rdname sim_sites
 #' @export
 #' @import dplyr
@@ -805,7 +806,7 @@ sim_test_data_study <- function(n_pat = 1000,
 }
 
 #' @title simulate patient ae reporting test data
-#' @description " "
+#' @description helper function for [sim_test_data_study()][sim_test_data_study()]
 #' @param .f_sample_ae_per_visit function used to sample the aes for each visit,
 #'   Default: function(x) rpois(x, 0.5)
 #' @param .f_sample_max_visit function used to sample the maximum number of aes,

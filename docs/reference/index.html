@@ -8,6 +8,13 @@
 
 <title>Function reference • simaerep</title>
 
+<!-- favicons -->
+<link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png" />
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
@@ -40,6 +47,7 @@
 
 
 <meta property="og:title" content="Function reference" />
+<meta property="og:image" content="https://openpharma.github.io/simaerep/logo.png" />
 
 
 
@@ -53,6 +61,16 @@
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
 
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-123997499-2"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-123997499-2');
+</script>
 
 
   </head>
@@ -71,7 +89,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">simaerep</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
       </span>
     </div>
 
@@ -84,6 +102,9 @@
   </a>
 </li>
 <li>
+  <a href="../articles/intro.html">Get Started</a>
+</li>
+<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -94,13 +115,13 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/check_poisson.html">Checking the Applicability of a Poisson Test</a>
-    </li>
-    <li>
-      <a href="../articles/intro.html">Introduction to {simaerep}</a>
+      <a href="../articles/intro.html">Introduction</a>
     </li>
     <li>
       <a href="../articles/usability_limits.html">Address Usability Limits of the Bootstrap Method</a>
+    </li>
+    <li>
+      <a href="../articles/check_poisson.html">Checking the Applicability of a Poisson Test</a>
     </li>
   </ul>
 </li>
@@ -134,7 +155,7 @@
     <tbody>
       <tr>
         <th colspan="2">
-          <h2 id="section-all-functions" class="hasAnchor"><a href="#section-all-functions" class="anchor"></a>All functions</h2>
+          <h2 id="section-main-functions" class="hasAnchor"><a href="#section-main-functions" class="anchor"></a>Main Functions</h2>
           <p class="section-desc"></p>
         </th>
       </tr>
@@ -146,15 +167,15 @@
       <tr>
         
         <td>
-          <p><code><a href="boot_sim_test_data_patient.html">boot_sim_test_data_patient()</a></code> </p>
+          <p><code><a href="site_aggr.html">site_aggr()</a></code> </p>
         </td>
-        <td><p>simulate patient ae reporting test data</p></td>
+        <td><p>aggreagate from visit to site level</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="boot_sim_test_data_study.html">boot_sim_test_data_study()</a></code> </p>
+          <p><code><a href="sim_sites.html">sim_sites()</a></code> </p>
         </td>
-        <td><p>simulate study test data</p></td>
+        <td><p>calculate prob_lower and poisson.test pvalue for study sites</p></td>
       </tr><tr>
         
         <td>
@@ -164,52 +185,78 @@
       </tr><tr>
         
         <td>
+          <p><code><a href="plot_study.html">plot_study()</a></code> </p>
+        </td>
+        <td><p>plot ae development of study and sites, highlighting at risk sites</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-simulate-data" class="hasAnchor"><a href="#section-simulate-data" class="anchor"></a>Simulate Data</h2>
+          <p class="section-desc"></p>
+        </th>
+      </tr>
+      
+      
+    </tbody><tbody>
+      
+      
+      <tr>
+        
+        <td>
+          <p><code><a href="sim_test_data_study.html">sim_test_data_study()</a></code> </p>
+        </td>
+        <td><p>simulate study test data</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-test-functions" class="hasAnchor"><a href="#section-test-functions" class="anchor"></a>Test Functions</h2>
+          <p class="section-desc"><p>These functions are intented to check Poisson test applicability.</p></p>
+        </th>
+      </tr>
+      
+      
+    </tbody><tbody>
+      
+      
+      <tr>
+        
+        <td>
+          <p><code><a href="sim_studies.html">sim_studies()</a></code> </p>
+        </td>
+        <td><p>simulate studies</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="get_ecd_values.html">get_ecd_values()</a></code> </p>
+        </td>
+        <td><p>get emprical cumulative distribution values of pval or prob_lower</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-helper-functions" class="hasAnchor"><a href="#section-helper-functions" class="anchor"></a>Helper Functions</h2>
+          <p class="section-desc"><p>These functions are intended to be called by other functions.</p></p>
+        </th>
+      </tr>
+      
+      
+    </tbody><tbody>
+      
+      
+      <tr>
+        
+        <td>
           <p><code><a href="get_pat_pool_config.html">get_pat_pool_config()</a></code> </p>
         </td>
         <td><p>configure study patient pool by site parameters</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="lint_package.html">lint_package()</a></code> </p>
-        </td>
-        <td><p>wrapper around lintr::lint_packages which throws error when code
-issues are detected and defines default linting rules for this package.</p></td>
-      </tr><tr>
-        
-        <td>
           <p><code><a href="pat_pool.html">pat_pool()</a></code> </p>
         </td>
         <td><p>create patient pool for sampling for simulations</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="plot_dots.html">plot_dots()</a></code> </p>
-        </td>
-        <td><p>plots AE per site as dots</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="plot_sim_example.html">plot_sim_example()</a></code> </p>
-        </td>
-        <td><p>plot simulation example</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="plot_sim_examples.html">plot_sim_examples()</a></code> </p>
-        </td>
-        <td><p>plot multiple simulation examples</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="plot_study.html">plot_study()</a></code> </p>
-        </td>
-        <td><p>plot ae development of study and sites, highlighting at risk sites</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="plot_visit_med75.html">plot_visit_med75()</a></code> </p>
-        </td>
-        <td><p>plot patient visits against visit_med75</p></td>
       </tr><tr>
         
         <td>
@@ -221,32 +268,69 @@ issues are detected and defines default linting rules for this package.</p></td>
         <td>
           <p><code><a href="prob_lower_site_ae_vs_study_ae.html">prob_lower_site_ae_vs_study_ae()</a></code> </p>
         </td>
-        <td><p>calculate probability for drawing a site sample with lower mean aes
-from total study pool for vector with site AEs vs vector with study AEs</p></td>
+        <td><p>calculate bootstrapped probability for obtaining a lower mean AE</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="sim_sites.html">sim_sites()</a></code> </p>
+          <p><code><a href="sim_test_data_patient.html">sim_test_data_patient()</a></code> </p>
         </td>
-        <td><p>calculate prob_lower and poisson.test pvalue for study sites</p></td>
+        <td><p>simulate patient ae reporting test data</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-additional-plot-functions" class="hasAnchor"><a href="#section-additional-plot-functions" class="anchor"></a>Additional Plot Functions</h2>
+          <p class="section-desc"><p>These functions were intended for creating plots for the documentation.</p></p>
+        </th>
+      </tr>
+      
+      
+    </tbody><tbody>
+      
+      
+      <tr>
+        
+        <td>
+          <p><code><a href="plot_visit_med75.html">plot_visit_med75()</a></code> </p>
+        </td>
+        <td><p>plot patient visits against visit_med75</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="sim_studies.html">sim_studies()</a></code> </p>
+          <p><code><a href="plot_sim_examples.html">plot_sim_examples()</a></code> </p>
         </td>
-        <td><p>simulate studies</p></td>
+        <td><p>plot multiple simulation examples</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="site_aggr.html">site_aggr()</a></code> </p>
+          <p><code><a href="plot_sim_example.html">plot_sim_example()</a></code> </p>
         </td>
-        <td><p>aggreagate from visit to site level</p></td>
+        <td><p>plot simulation example</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="ttest_site_ae_vs_study_ae.html">ttest_site_ae_vs_study_ae()</a></code> </p>
+          <p><code><a href="plot_dots.html">plot_dots()</a></code> </p>
         </td>
-        <td><p>ttest for vector with site AEs vs vector with study AEs</p></td>
+        <td><p>plots AE per site as dots</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-lint-function" class="hasAnchor"><a href="#section-lint-function" class="anchor"></a>Lint Function</h2>
+          <p class="section-desc"><p>customized linting</p></p>
+        </th>
+      </tr>
+      
+      
+    </tbody><tbody>
+      
+      
+      <tr>
+        
+        <td>
+          <p><code><a href="lint_package.html">lint_package()</a></code> </p>
+        </td>
+        <td><p>wrapper around lintr::lint_packages</p></td>
       </tr>
     </tbody>
     </table>

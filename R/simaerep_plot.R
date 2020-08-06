@@ -386,9 +386,9 @@ plot_sim_examples <- function(substract_ae_per_pat = c(0, 1, 3), ...) {
 
 #' @title plot ae development of study and sites, highlighting at risk sites
 #' @description " "
-#' @param df_visit dataframe
-#' @param df_site dataframe
-#' @param df_eval dataframe
+#' @param df_visit dataframe, created by [sim_sites()][sim_sites()]
+#' @param df_site dataframe created by [site_aggr()][site_aggr()]
+#' @param df_eval dataframe created by [eval_sites()][eval_sites()]
 #' @param df_al dataframe containing study_id, site_number, alert_level_site,
 #'   alert_level_study (optional), Default: NA
 #' @param study study
@@ -417,7 +417,6 @@ plot_sim_examples <- function(substract_ae_per_pat = c(0, 1, 3), ...) {
 #' df_eval <- eval_sites(df_sim_sites, r_sim_sites = 100)
 #'
 #' plot_study(df_visit, df_site, df_eval, study = "A")
-#' @seealso \code{\link[cowplot]{plot_grid}}
 #' @rdname plot_study
 #' @export
 #' @importFrom cowplot plot_grid ggdraw draw_label

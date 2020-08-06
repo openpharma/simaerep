@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# simaerep
+# simaerep <a href='https://openpharma.github.io/simaerep'><img src='man/figures/logo.png' align="right" height="139" /></a>
 
 <!-- badges: start -->
 
@@ -29,8 +29,11 @@ devtools::install_github("openpharma/simaerep")
 
 # Vignettes/ Articles
 
-  - [Introduction]()
-  - [Usability Limits]()
+  - [Introduction](https://openpharma.github.io/simaerep/articles/intro.html)
+  - [Usability
+    Limits](https://openpharma.github.io/simaerep/articles/usability_limits.html)
+  - [Check Poisson Test
+    Applicability](https://openpharma.github.io/simaerep/articles/check_poisson.html)
 
 # Application
 

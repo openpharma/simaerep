@@ -15,11 +15,11 @@ plot_study(
 )
 }
 \arguments{
-\item{df_visit}{dataframe}
+\item{df_visit}{dataframe, created by \code{\link[=sim_sites]{sim_sites()}}}
 
-\item{df_site}{dataframe}
+\item{df_site}{dataframe created by \code{\link[=site_aggr]{site_aggr()}}}
 
-\item{df_eval}{dataframe}
+\item{df_eval}{dataframe created by \code{\link[=eval_sites]{eval_sites()}}}
 
 \item{study}{study}
 
@@ -60,7 +60,4 @@ df_sim_sites <- sim_sites(df_site, df_visit, r = 100)
 df_eval <- eval_sites(df_sim_sites, r_sim_sites = 100)
 
 plot_study(df_visit, df_site, df_eval, study = "A")
-}
-\seealso{
-\code{\link[cowplot]{plot_grid}}
 }

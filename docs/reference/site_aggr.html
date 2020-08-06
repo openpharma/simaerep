@@ -8,6 +8,13 @@
 
 <title>aggreagate from visit to site level — site_aggr • simaerep</title>
 
+<!-- favicons -->
+<link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png" />
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
@@ -41,6 +48,7 @@
 
 <meta property="og:title" content="aggreagate from visit to site level — site_aggr" />
 <meta property="og:description" content="calculates visit_med75, n_pat_with_med75 and mean_ae_site_med75" />
+<meta property="og:image" content="https://openpharma.github.io/simaerep/logo.png" />
 
 
 
@@ -54,6 +62,16 @@
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
 
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-123997499-2"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-123997499-2');
+</script>
 
 
   </head>
@@ -72,7 +90,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">simaerep</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
       </span>
     </div>
 
@@ -85,6 +103,9 @@
   </a>
 </li>
 <li>
+  <a href="../articles/intro.html">Get Started</a>
+</li>
+<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -95,13 +116,13 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/check_poisson.html">Checking the Applicability of a Poisson Test</a>
-    </li>
-    <li>
-      <a href="../articles/intro.html">Introduction to {simaerep}</a>
+      <a href="../articles/intro.html">Introduction</a>
     </li>
     <li>
       <a href="../articles/usability_limits.html">Address Usability Limits of the Bootstrap Method</a>
+    </li>
+    <li>
+      <a href="../articles/check_poisson.html">Checking the Applicability of a Poisson Test</a>
     </li>
   </ul>
 </li>
@@ -132,7 +153,7 @@
 
     <pre class="usage"><span class='fu'>site_aggr</span>(
   <span class='no'>df_visit</span>,
-  <span class='kw'>col_study_id_str</span> <span class='kw'>=</span> <span class='st'>"study_roche"</span>,
+  <span class='kw'>col_study_id_str</span> <span class='kw'>=</span> <span class='st'>"study_id"</span>,
   <span class='kw'>col_site_id_str</span> <span class='kw'>=</span> <span class='st'>"site_number"</span>,
   <span class='kw'>col_patient_id_str</span> <span class='kw'>=</span> <span class='st'>"patnum"</span>,
   <span class='kw'>col_n_ae_str</span> <span class='kw'>=</span> <span class='st'>"n_ae"</span>,
@@ -149,7 +170,7 @@
     <tr>
       <th>col_study_id_str</th>
       <td><p>column name for study id will be renamed to default
-in output, Default: study_roche</p></td>
+in output, Default: study_id</p></td>
     </tr>
     <tr>
       <th>col_site_id_str</th>
@@ -175,26 +196,30 @@ to default in output, Default: visit</p></td>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>dataframe</p>
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+    <p>dataframe with the following columns:</p><dl'>
+<dt><strong>study_id</strong></dt><dd><p>study identification</p></dd>
+<dt><strong>site_number</strong></dt><dd><p>site identification</p></dd>
+<dt><strong>n_patients</strong></dt><dd><p>number of patients, site level</p></dd>
+<dt><strong>visit_med75</strong></dt><dd><p>median(max(visit)) * 0.75</p></dd>
+<dt><strong>n_pat_with_med75</strong></dt><dd><p>number of patients that meet visit_med75 criterion, site level</p></dd>
+<dt><strong>mean_ae_site_med75</strong></dt><dd><p>mean AE at visit_med75, site level</p></dd>
 
-    <p>' '</p>
+</dl>
+
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>df_visit</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='boot_sim_test_data_study.html'>boot_sim_test_data_study</a></span>(<span class='kw'>n_pat</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>n_sites</span> <span class='kw'>=</span> <span class='fl'>5</span>,
+    <pre class="examples"><div class='input'><span class='no'>df_visit</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='sim_test_data_study.html'>sim_test_data_study</a></span>(<span class='kw'>n_pat</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>n_sites</span> <span class='kw'>=</span> <span class='fl'>5</span>,
     <span class='kw'>frac_site_with_ur</span> <span class='kw'>=</span> <span class='fl'>0.4</span>, <span class='kw'>ur_rate</span> <span class='kw'>=</span> <span class='fl'>0.6</span>)
-<span class='no'>df_visit</span>$<span class='no'>study_roche</span> <span class='kw'>&lt;-</span> <span class='st'>"A"</span>
+<span class='no'>df_visit</span>$<span class='no'>study_id</span> <span class='kw'>&lt;-</span> <span class='st'>"A"</span>
 <span class='no'>df_site</span> <span class='kw'>&lt;-</span> <span class='fu'>site_aggr</span>(<span class='no'>df_visit</span>)
 <span class='no'>df_site</span></div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 5 x 6</span><span>
-#&gt; </span><span style='color: #949494;'># Groups:   study_roche, site_number [5]</span><span>
-#&gt;   study_roche site_number n_patients visit_med75 n_pat_with_med75
-#&gt;   </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>       </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>            </span><span style='color: #949494;font-style: italic;'>&lt;int&gt;</span><span>       </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>            </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>
-#&gt; </span><span style='color: #BCBCBC;'>1</span><span> A           S0001               20          17               16
-#&gt; </span><span style='color: #BCBCBC;'>2</span><span> A           S0002               20          15               18
-#&gt; </span><span style='color: #BCBCBC;'>3</span><span> A           S0003               20          15               19
-#&gt; </span><span style='color: #BCBCBC;'>4</span><span> A           S0004               20          14               17
-#&gt; </span><span style='color: #BCBCBC;'>5</span><span> A           S0005               20          14               19
-#&gt; </span><span style='color: #949494;'># … with 1 more variable: mean_ae_site_med75 </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span></div></span></pre>
+#&gt;   study_id site_number n_patients visit_med75 n_pat_with_med75 mean_ae_site_med…
+#&gt;   </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>    </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>            </span><span style='color: #949494;font-style: italic;'>&lt;int&gt;</span><span>       </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>            </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>             </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>
+#&gt; </span><span style='color: #BCBCBC;'>1</span><span> A        S0001               20          15               18              3.44
+#&gt; </span><span style='color: #BCBCBC;'>2</span><span> A        S0002               20          15               18              3.67
+#&gt; </span><span style='color: #BCBCBC;'>3</span><span> A        S0003               20          15               18              7.89
+#&gt; </span><span style='color: #BCBCBC;'>4</span><span> A        S0004               20          15               18              7.89
+#&gt; </span><span style='color: #BCBCBC;'>5</span><span> A        S0005               20          15               19              8.26</div></span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

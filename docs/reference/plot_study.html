@@ -8,6 +8,13 @@
 
 <title>plot ae development of study and sites, highlighting at risk sites — plot_study • simaerep</title>
 
+<!-- favicons -->
+<link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png" />
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
@@ -41,6 +48,7 @@
 
 <meta property="og:title" content="plot ae development of study and sites, highlighting at risk sites — plot_study" />
 <meta property="og:description" content="&quot; &quot;" />
+<meta property="og:image" content="https://openpharma.github.io/simaerep/logo.png" />
 
 
 
@@ -54,6 +62,16 @@
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
 
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-123997499-2"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-123997499-2');
+</script>
 
 
   </head>
@@ -72,7 +90,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">simaerep</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
       </span>
     </div>
 
@@ -85,6 +103,9 @@
   </a>
 </li>
 <li>
+  <a href="../articles/intro.html">Get Started</a>
+</li>
+<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -95,13 +116,13 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/check_poisson.html">Checking the Applicability of a Poisson Test</a>
-    </li>
-    <li>
-      <a href="../articles/intro.html">Introduction to {simaerep}</a>
+      <a href="../articles/intro.html">Introduction</a>
     </li>
     <li>
       <a href="../articles/usability_limits.html">Address Usability Limits of the Bootstrap Method</a>
+    </li>
+    <li>
+      <a href="../articles/check_poisson.html">Checking the Applicability of a Poisson Test</a>
     </li>
   </ul>
 </li>
@@ -130,22 +151,30 @@
     <p>" "</p>
     </div>
 
-    <pre class="usage"><span class='fu'>plot_study</span>(<span class='no'>df_visit</span>, <span class='no'>df_site</span>, <span class='no'>df_eval</span>, <span class='no'>study</span>, <span class='kw'>df_al</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>n_sites</span> <span class='kw'>=</span> <span class='fl'>16</span>)</pre>
+    <pre class="usage"><span class='fu'>plot_study</span>(
+  <span class='no'>df_visit</span>,
+  <span class='no'>df_site</span>,
+  <span class='no'>df_eval</span>,
+  <span class='no'>study</span>,
+  <span class='kw'>df_al</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>n_sites</span> <span class='kw'>=</span> <span class='fl'>16</span>,
+  <span class='kw'>pval</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>df_visit</th>
-      <td><p>dataframe</p></td>
+      <td><p>dataframe, created by <code><a href='sim_sites.html'>sim_sites()</a></code></p></td>
     </tr>
     <tr>
       <th>df_site</th>
-      <td><p>dataframe</p></td>
+      <td><p>dataframe created by <code><a href='site_aggr.html'>site_aggr()</a></code></p></td>
     </tr>
     <tr>
       <th>df_eval</th>
-      <td><p>dataframe</p></td>
+      <td><p>dataframe created by <code><a href='eval_sites.html'>eval_sites()</a></code></p></td>
     </tr>
     <tr>
       <th>study</th>
@@ -153,12 +182,16 @@
     </tr>
     <tr>
       <th>df_al</th>
-      <td><p>dataframe containing study_roche, site_number, alert_level_site,
+      <td><p>dataframe containing study_id, site_number, alert_level_site,
 alert_level_study (optional), Default: NA</p></td>
     </tr>
     <tr>
       <th>n_sites</th>
       <td><p>integer number of most at risk sites, Default: 16</p></td>
+    </tr>
+    <tr>
+      <th>pval</th>
+      <td><p>logical show p-value, Default:FALSE</p></td>
     </tr>
     </table>
 
@@ -167,23 +200,29 @@ alert_level_study (optional), Default: NA</p></td>
     <p>ggplot</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>" "</p>
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
-    <div class='dont-index'><p><code><a href='https://rdrr.io/pkg/cowplot/man/plot_grid.html'>plot_grid</a></code></p></div>
+    <p>Left panel shows mean AE reporting per site (lightblue and darkblue
+lines) against mean AE reporting of the entire study (golden line). Single
+sites are plotted in descending order by AE under-reporting probability on
+the right panel in which grey lines denote cumulative AE count of single
+patients. Grey dots in the left panel plot indicate sites that were picked
+for single plotting. AE under-reporting probability of dark blue lines
+crossed threshold of 95%. Numbers in the upper left corner indicate the
+ratio of patients that have been used for the analysis against the total
+number of patients. Patients that have not been on the study long enough to
+reach the evaluation point (visit_med75) will be ignored.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>df_visit</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='boot_sim_test_data_study.html'>boot_sim_test_data_study</a></span>(<span class='kw'>n_pat</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>n_sites</span> <span class='kw'>=</span> <span class='fl'>5</span>,
-    <span class='kw'>frac_site_with_ur</span> <span class='kw'>=</span> <span class='fl'>0.4</span>, <span class='kw'>ur_rate</span> <span class='kw'>=</span> <span class='fl'>0.6</span>)
+    <pre class="examples"><div class='input'><span class='no'>df_visit</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='sim_test_data_study.html'>sim_test_data_study</a></span>(<span class='kw'>n_pat</span> <span class='kw'>=</span> <span class='fl'>1000</span>, <span class='kw'>n_sites</span> <span class='kw'>=</span> <span class='fl'>10</span>,
+    <span class='kw'>frac_site_with_ur</span> <span class='kw'>=</span> <span class='fl'>0.2</span>, <span class='kw'>ur_rate</span> <span class='kw'>=</span> <span class='fl'>0.15</span>, <span class='kw'>max_visit_sd</span> <span class='kw'>=</span> <span class='fl'>8</span>)
 
-<span class='no'>df_visit</span>$<span class='no'>study_roche</span> <span class='kw'>&lt;-</span> <span class='st'>"A"</span>
+<span class='no'>df_visit</span>$<span class='no'>study_id</span> <span class='kw'>&lt;-</span> <span class='st'>"A"</span>
 <span class='no'>df_site</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='site_aggr.html'>site_aggr</a></span>(<span class='no'>df_visit</span>)
 
 <span class='no'>df_sim_sites</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='sim_sites.html'>sim_sites</a></span>(<span class='no'>df_site</span>, <span class='no'>df_visit</span>, <span class='kw'>r</span> <span class='kw'>=</span> <span class='fl'>100</span>)
 
 <span class='no'>df_eval</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='eval_sites.html'>eval_sites</a></span>(<span class='no'>df_sim_sites</span>, <span class='kw'>r_sim_sites</span> <span class='kw'>=</span> <span class='fl'>100</span>)
 
-<span class='fu'>plot_study</span>(<span class='no'>df_visit</span>, <span class='no'>df_site</span>, <span class='no'>df_eval</span>, <span class='kw'>study</span> <span class='kw'>=</span> <span class='st'>"A"</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Removed 1 rows containing missing values (geom_label).</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Removed 2 rows containing missing values (geom_label).</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Removed 2 rows containing missing values (geom_label).</span></div><div class='img'><img src='plot_study-1.png' alt='' width='700' height='433' /></div></pre>
+<span class='fu'>plot_study</span>(<span class='no'>df_visit</span>, <span class='no'>df_site</span>, <span class='no'>df_eval</span>, <span class='kw'>study</span> <span class='kw'>=</span> <span class='st'>"A"</span>)</div><div class='img'><img src='plot_study-1.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

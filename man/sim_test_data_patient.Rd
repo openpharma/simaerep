@@ -20,7 +20,7 @@ Default: function(x) rpois(x, 0.5)}
 vector containing cumulative aes
 }
 \description{
-" "
+helper function for \code{\link[=sim_test_data_study]{sim_test_data_study()}}
 }
 \details{
 ""

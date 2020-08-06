@@ -6,9 +6,15 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>calculate probability for drawing a site sample with lower mean aes
-from total study pool for vector with site AEs vs vector with study AEs — prob_lower_site_ae_vs_study_ae • simaerep</title>
+<title>calculate bootstrapped probability for obtaining a lower mean AE — prob_lower_site_ae_vs_study_ae • simaerep</title>
 
+<!-- favicons -->
+<link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png" />
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
@@ -40,9 +46,9 @@ from total study pool for vector with site AEs vs vector with study AEs — prob
 
 
 
-<meta property="og:title" content="calculate probability for drawing a site sample with lower mean aes
-from total study pool for vector with site AEs vs vector with study AEs — prob_lower_site_ae_vs_study_ae" />
-<meta property="og:description" content="sets pvalue=1 if mean AE site is greater than mean AE study" />
+<meta property="og:title" content="calculate bootstrapped probability for obtaining a lower mean AE — prob_lower_site_ae_vs_study_ae" />
+<meta property="og:description" content="helper function used by sim_sites()" />
+<meta property="og:image" content="https://openpharma.github.io/simaerep/logo.png" />
 
 
 
@@ -56,6 +62,16 @@ from total study pool for vector with site AEs vs vector with study AEs — prob
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
 
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-123997499-2"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-123997499-2');
+</script>
 
 
   </head>
@@ -74,7 +90,7 @@ from total study pool for vector with site AEs vs vector with study AEs — prob
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">simaerep</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
       </span>
     </div>
 
@@ -87,6 +103,9 @@ from total study pool for vector with site AEs vs vector with study AEs — prob
   </a>
 </li>
 <li>
+  <a href="../articles/intro.html">Get Started</a>
+</li>
+<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -97,13 +116,13 @@ from total study pool for vector with site AEs vs vector with study AEs — prob
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/check_poisson.html">Checking the Applicability of a Poisson Test</a>
-    </li>
-    <li>
-      <a href="../articles/intro.html">Introduction to {simaerep}</a>
+      <a href="../articles/intro.html">Introduction</a>
     </li>
     <li>
       <a href="../articles/usability_limits.html">Address Usability Limits of the Bootstrap Method</a>
+    </li>
+    <li>
+      <a href="../articles/check_poisson.html">Checking the Applicability of a Poisson Test</a>
     </li>
   </ul>
 </li>
@@ -123,14 +142,13 @@ from total study pool for vector with site AEs vs vector with study AEs — prob
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>calculate probability for drawing a site sample with lower mean aes
-from total study pool for vector with site AEs vs vector with study AEs</h1>
+    <h1>calculate bootstrapped probability for obtaining a lower mean AE</h1>
     
     <div class="hidden name"><code>prob_lower_site_ae_vs_study_ae.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>sets pvalue=1 if mean AE site is greater than mean AE study</p>
+    <p>helper function used by <code><a href='sim_sites.html'>sim_sites()</a></code></p>
     </div>
 
     <pre class="usage"><span class='fu'>prob_lower_site_ae_vs_study_ae</span>(<span class='no'>site_ae</span>, <span class='no'>study_ae</span>, <span class='kw'>r</span> <span class='kw'>=</span> <span class='fl'>1000</span>, <span class='kw'>parallel</span> <span class='kw'>=</span> <span class='no'>F</span>)</pre>
@@ -161,7 +179,7 @@ from total study pool for vector with site AEs vs vector with study AEs</h1>
     <p>pval</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>" "</p>
+    <p>sets pvalue=1 if mean AE site is greater than mean AE study</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p><code><a href='https://purrr.tidyverse.org/reference/safely.html'>safely</a></code></p></div>
