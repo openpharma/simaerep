@@ -72,7 +72,7 @@ df_grid <- df_grid %>%
   mutate( df_visit = furrr::future_pmap(list(am = ae_per_visit_mean,
                                              fr = frac_site_with_ur,
                                              ur = ur_rate),
-                                        function(am, fr, ur) boot_sim_test_data_study(n_pat = 1000, n_sites = 100,
+                                        function(am, fr, ur) sim_test_data_study(n_pat = 1000, n_sites = 100,
                                                                                       max_visit_mean = 20, max_visit_sd = 4,
                                                                                       ae_per_visit_mean = am,
                                                                                       frac_site_with_ur = fr,

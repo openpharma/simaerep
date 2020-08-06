@@ -66,7 +66,7 @@ set.seed(1)
 
 replicate(
    3,
-   boot_sim_test_data_patient(
+   sim_test_data_patient(
     .f_sample_max_visit = function() rnorm(1, mean = 20, sd = 4),
     .f_sample_ae_per_visit = function(max_visit) rpois(max_visit, 0.5)
   )
@@ -79,7 +79,7 @@ replicate(
 In order to simulate patient data for an entire study we assume make the simplification that all sites have the same number of patients. Further we specify a fraction of sites that is under-reporting AEs
 
 ```{r}
-df_visit <- boot_sim_test_data_study(
+df_visit <- sim_test_data_study(
   n_pat = 120,
   n_sites = 6,
   frac_site_with_ur = 0.4,

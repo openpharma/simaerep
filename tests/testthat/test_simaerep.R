@@ -2,13 +2,13 @@
 
 # create test data -----------------------------------------------------------
 set.seed(1)
-df_visit1 <- boot_sim_test_data_study(n_pat = 100, n_sites = 5,
+df_visit1 <- sim_test_data_study(n_pat = 100, n_sites = 5,
    frac_site_with_ur = 0.4, ur_rate = 0.6)
 
 df_visit1$study_id <- "A"
 
 set.seed(2)
-df_visit2 <- boot_sim_test_data_study(n_pat = 100, n_sites = 5,
+df_visit2 <- sim_test_data_study(n_pat = 100, n_sites = 5,
                                       frac_site_with_ur = 0.2, ur_rate = 0.1)
 
 df_visit2$study_id <- "B"
@@ -264,23 +264,6 @@ test_that("site_aggr", {
   ) %in% names(df_site)))
 })
 
-test_that("ttest_site_ae_vs_study_ae", {
-  pval <- ttest_site_ae_vs_study_ae(site_ae = c(5, 3, 3, 2, 1, 6), study_ae = c(9, 8, 7, 9, 6, 7, 8))
-
-  expect_true(pval < 0.005)
-
-  pval <- ttest_site_ae_vs_study_ae(site_ae = c(9, 8, 7, 9, 6, 7, 8), study_ae = c(5, 3, 3, 2, 1, 6))
-
-  expect_true(pval == 1)
-
-  pval <- ttest_site_ae_vs_study_ae(site_ae = c(1), study_ae = c(9, 8, 7, 9, 6, 7, 8))
-
-  expect_true(pval == 1)
-
-  pval <- ttest_site_ae_vs_study_ae(site_ae = c(1), study_ae = NULL)
-
-  expect_true(pval == 1)
-})
 
 test_that("poiss_test_site_ae_vs_study_ae", {
   pval <- poiss_test_site_ae_vs_study_ae(site_ae = c(5, 3, 3, 2, 1, 6),

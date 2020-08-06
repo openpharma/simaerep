@@ -406,7 +406,7 @@ plot_sim_examples <- function(substract_ae_per_pat = c(0, 1, 3), ...) {
 #'   number of patients. Patients that have not been on the study long enough to
 #'   reach the evaluation point (visit_med75) will be ignored.
 #' @examples
-#' df_visit <- boot_sim_test_data_study(n_pat = 1000, n_sites = 10,
+#' df_visit <- sim_test_data_study(n_pat = 1000, n_sites = 10,
 #'     frac_site_with_ur = 0.2, ur_rate = 0.15, max_visit_sd = 8)
 #'
 #' df_visit$study_id <- "A"
@@ -718,7 +718,7 @@ plot_study <- function(df_visit,
 
   if (pval) {
     p_site <- p_site +
-      geom_label(aes(label = paste("p:", round(pval_prob_ur, 3))),
+      geom_label(aes(label = paste(round(pval_prob_ur, 3) * 100, "%")),
                  data = df_label,
                  x = 0.8 * max_visit,
                  y = 0.7 * max_ae,
@@ -759,7 +759,7 @@ plot_study <- function(df_visit,
 #' @return ggplot
 #' @details ""
 #' @examples
-#' df_visit <- boot_sim_test_data_study(n_pat = 120, n_sites = 6,
+#' df_visit <- sim_test_data_study(n_pat = 120, n_sites = 6,
 #'     frac_site_with_ur = 0.4, ur_rate = 0.6)
 #'
 #' df_visit$study_id <- "A"

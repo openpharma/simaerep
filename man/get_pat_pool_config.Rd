@@ -25,12 +25,12 @@ pool to match the configuration of the sites
 DETAILS
 }
 \examples{
-df_visit1 <- boot_sim_test_data_study(n_pat = 100, n_sites = 5,
+df_visit1 <- sim_test_data_study(n_pat = 100, n_sites = 5,
                                       frac_site_with_ur = 0.4, ur_rate = 0.6)
 
 df_visit1$study_id <- "A"
 
-df_visit2 <- boot_sim_test_data_study(n_pat = 1000, n_sites = 3,
+df_visit2 <- sim_test_data_study(n_pat = 1000, n_sites = 3,
                                       frac_site_with_ur = 0.2, ur_rate = 0.1)
 
 df_visit2$study_id <- "B"

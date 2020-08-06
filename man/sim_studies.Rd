@@ -49,19 +49,26 @@ site to simulate, Default: 1}
 dataframe
 }
 \description{
-simulate pvalues and prob_lower values for testing
+test function, test applicability of poisson test, by
+calculating a the bootstrapped probability of obtaining a specific p-value
+or lower, use in combination with \code{\link[=get_ecd_values]{get_ecd_values()}}.
 }
 \details{
+Here we simulate study replicates maintaining the same number of
+sites, patients and vist_med75 by bootstrap resampling, then probabilities
+for obtaining lower or same mean_ae count and p-values using poisson.test
+are caluclated.
+
 adds column with simulated probabilities for exqual or lower
 mean_ae at visit_med75
 }
 \examples{
-df_visit1 <- boot_sim_test_data_study(n_pat = 100, n_sites = 5,
+df_visit1 <- sim_test_data_study(n_pat = 100, n_sites = 5,
                                       frac_site_with_ur = 0.4, ur_rate = 0.6)
 
 df_visit1$study_id <- "A"
 
-df_visit2 <- boot_sim_test_data_study(n_pat = 1000, n_sites = 3,
+df_visit2 <- sim_test_data_study(n_pat = 1000, n_sites = 3,
                                       frac_site_with_ur = 0.2, ur_rate = 0.1)
 
 df_visit2$study_id <- "B"

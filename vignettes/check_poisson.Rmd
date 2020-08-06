@@ -36,7 +36,7 @@ Using this pool we can check whether the p-values calculated by poisson.test rep
 
 ```{r}
 
-df_visit1 <- boot_sim_test_data_study(
+df_visit1 <- sim_test_data_study(
   n_pat = 1000,
   n_sites = 100,
   frac_site_with_ur = 0.2,
@@ -48,7 +48,7 @@ df_visit1 <- boot_sim_test_data_study(
 
 df_visit1$study_id <- "ae_per_visit: 0.5"
 
-df_visit2 <- boot_sim_test_data_study(
+df_visit2 <- sim_test_data_study(
   n_pat = 1000,
   n_sites = 100,
   frac_site_with_ur = 0.2,
@@ -60,7 +60,7 @@ df_visit2 <- boot_sim_test_data_study(
 
 df_visit2$study_id <- "ae_per_visit: 0.2"
 
-df_visit3 <- boot_sim_test_data_study(
+df_visit3 <- sim_test_data_study(
   n_pat = 1000,
   n_sites = 100,
   frac_site_with_ur = 0.2,

@@ -32,16 +32,21 @@ in output, Default: n_ae}
 to default in output, Default: visit}
 }
 \value{
-dataframe
+dataframe with the following columns:
+\describe{
+\item{\strong{study_id}}{study identification}
+\item{\strong{site_number}}{site identification}
+\item{\strong{n_patients}}{number of patients, site level}
+\item{\strong{visit_med75}}{median(max(visit)) * 0.75}
+\item{\strong{n_pat_with_med75}}{number of patients that meet visit_med75 criterion, site level}
+\item{\strong{mean_ae_site_med75}}{mean AE at visit_med75, site level}
+}
 }
 \description{
 calculates visit_med75, n_pat_with_med75 and mean_ae_site_med75
 }
-\details{
-' '
-}
 \examples{
-df_visit <- boot_sim_test_data_study(n_pat = 100, n_sites = 5,
+df_visit <- sim_test_data_study(n_pat = 100, n_sites = 5,
     frac_site_with_ur = 0.4, ur_rate = 0.6)
 df_visit$study_id <- "A"
 df_site <- site_aggr(df_visit)

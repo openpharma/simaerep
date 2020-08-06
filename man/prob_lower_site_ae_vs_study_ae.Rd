@@ -2,8 +2,7 @@
 % Please edit documentation in R/simaerep.R
 \name{prob_lower_site_ae_vs_study_ae}
 \alias{prob_lower_site_ae_vs_study_ae}
-\title{calculate probability for drawing a site sample with lower mean aes
-from total study pool for vector with site AEs vs vector with study AEs}
+\title{calculate bootstrapped probability for obtaining a lower mean AE}
 \usage{
 prob_lower_site_ae_vs_study_ae(site_ae, study_ae, r = 1000, parallel = F)
 }
@@ -20,10 +19,10 @@ prob_lower_site_ae_vs_study_ae(site_ae, study_ae, r = 1000, parallel = F)
 pval
 }
 \description{
-sets pvalue=1 if mean AE site is greater than mean AE study
+helper function used by \code{\link[=sim_sites]{sim_sites()}}
 }
 \details{
-" "
+sets pvalue=1 if mean AE site is greater than mean AE study
 }
 \examples{
 prob_lower_site_ae_vs_study_ae(
