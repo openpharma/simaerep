@@ -15,15 +15,20 @@ df_visit2$study_roche <- "B"
 
 df_visit <- bind_rows(df_visit1, df_visit2)
 
-df_site <- site_aggr(ungroup(df_visit))
+df_site <- site_aggr(df_visit)
 
-df_sim_sites <- sim_sites(ungroup(df_site), ungroup(df_visit), r = 100)
+df_sim_sites <- sim_sites(df_site, df_visit, r = 100)
 
-df_eval <- eval_sites(ungroup(df_sim_sites), r_sim_sites = 100)
+df_eval <- eval_sites(df_sim_sites, r_sim_sites = 100)
 
 
 # tests -----------------------------------------------------------------------
 
+test_that("test if returned dfs are grouped", {
+  expect_false(is_grouped_df(df_site))
+  expect_false(is_grouped_df(df_sim_sites))
+  expect_false(is_grouped_df(df_eval))
+})
 
 test_that("eval_sites_with_all_NA", {
 
@@ -59,6 +64,10 @@ test_that("eval_sites", {
   expect_true(cor(df_eval$prob_low, df_eval$prob_low_p_vs_fp_ratio) < 0)
   expect_true(cor(df_eval$pval, df_eval$pval_p_vs_fp_ratio) < 0)
 
+  # p_vs_fp_ratio must not be lower than 1
+
+  expect_true(! any(df_eval$prob_low_p_vs_fp_ratio < 1))
+  expect_true(! any(df_eval$pval_p_vs_fp_ratio < 1))
 })
 
 
@@ -78,19 +87,24 @@ test_that("test_pat_pool", {
 
 
 test_that("plot_sim_demo", {
-  plot_sim_examples(size_dots = 4, size_raster_label = 10)
-  plot_sim_examples(substract_ae_per_pat = c(0, 2), size_dots = 5, size_raster_label = 10)
+  p <- plot_sim_examples(size_dots = 4, size_raster_label = 10)
+  p
+  expect_true(all(c("gg", "ggplot") %in% class(p)))
+
+  p <- plot_sim_examples(substract_ae_per_pat = c(0, 2), size_dots = 5, size_raster_label = 10)
+  p
+  expect_true(all(c("gg", "ggplot") %in% class(p)))
 })
 
 
 
 
 test_that("plot_studies", {
-  suppressWarnings({
-    p <- plot_study(df_visit, df_site, df_eval, study = "BH29812")
-    p <- plot_study(df_visit, df_site, df_eval, study = "BH39147")
-    p <- plot_study(df_visit, df_site, df_eval, study = "BN29552")
-  })
+
+    p <- plot_study(df_visit, df_site, df_eval, study = "A")
+    p
+    p <- plot_study(df_visit, df_site, df_eval, study = "B")
+    p
 
   expect_true(all(c("gg", "ggplot") %in% class(p)))
 })

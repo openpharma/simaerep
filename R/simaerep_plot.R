@@ -2,9 +2,9 @@
 # https://stackoverflow.com/questions/9439256/how-can-i-handle-r-cmd-check-no-visible-binding-for-global-variable-notes-when # nolint
 # TODO: possible to avoid by pre-processing outside ggplot() call and using aes_str() instead of aes()
 if (getRversion() >= "2.15.1") {
-  utils::globalVariables(c(".", "color_ratio_cut", "label", "max_x", "max_y", "mean_ae", "min_x",
+  utils::globalVariables(c(".", "color_prob_cut", "label", "max_x", "max_y", "mean_ae", "min_x",
                             "min_y", "n_ae", "n_ae_site", "n_ae_study", "n_patients", "patnum",
-                            "prob_low_p_vs_fp_ratio", "pval_ecd_p_vs_fp_ratio", "ratio_cut", "site",
+                            "prob_low_prob_ur", "pval_prob_ur", "ratio_cut", "site",
                             "title_add", "visit", "x", "y"))
 }
 
@@ -393,11 +393,21 @@ plot_sim_examples <- function(substract_ae_per_pat = c(0, 1, 3), ...) {
 #'   alert_level_study (optional), Default: NA
 #' @param study study
 #' @param n_sites integer number of most at risk sites, Default: 16
+#' @param pval logical show p-value, Default:FALSE
 #' @return ggplot
-#' @details " "
+#' @details Left panel shows mean AE reporting per site (lightblue and darkblue
+#'   lines) against mean AE reporting of the entire study (golden line). Single
+#'   sites are plotted in descending order by AE under-reporting probability on
+#'   the right panel in which grey lines denote cumulative AE count of single
+#'   patients. Grey dots in the left panel plot indicate sites that were picked
+#'   for single plotting. AE under-reporting probability of dark blue lines
+#'   crossed threshold of 95%. Numbers in the upper left corner indicate the
+#'   ratio of patients that have been used for the analysis against the total
+#'   number of patients. Patients that have not been on the study long enough to
+#'   reach the evaluation point (visit_med75) will be ignored.
 #' @examples
-#' df_visit <- boot_sim_test_data_study(n_pat = 100, n_sites = 5,
-#'     frac_site_with_ur = 0.4, ur_rate = 0.6)
+#' df_visit <- boot_sim_test_data_study(n_pat = 1000, n_sites = 10,
+#'     frac_site_with_ur = 0.2, ur_rate = 0.15, max_visit_sd = 8)
 #'
 #' df_visit$study_roche <- "A"
 #' df_site <- site_aggr(df_visit)
@@ -415,7 +425,13 @@ plot_sim_examples <- function(substract_ae_per_pat = c(0, 1, 3), ...) {
 #' @importFrom RColorBrewer brewer.pal
 #' @importFrom utils head
 #' @import ggplot2
-plot_study <- function(df_visit, df_site, df_eval, study, df_al = NULL, n_sites = 16) {
+plot_study <- function(df_visit,
+                       df_site,
+                       df_eval,
+                       study,
+                       df_al = NULL,
+                       n_sites = 16,
+                       pval = FALSE) {
   # TODO: parametrize scores, fix legend
 
   # alert level -------------------------------------------------------------
@@ -435,9 +451,9 @@ plot_study <- function(df_visit, df_site, df_eval, study, df_al = NULL, n_sites 
 
   # fill in pvalues when missing --------------------------------------------
 
-  if (! "pval_ecd_p_vs_fp_ratio" %in% colnames(df_eval)) {
+  if (! "pval_prob_ur" %in% colnames(df_eval)) {
     df_eval <- df_eval %>%
-      mutate(pval_ecd_p_vs_fp_ratio = NA)
+      mutate(pval_prob_ur = NA)
   }
 
 
@@ -456,8 +472,8 @@ plot_study <- function(df_visit, df_site, df_eval, study, df_al = NULL, n_sites 
   # ordered sites -------------------------------------------------------------
 
   sites_ordered <- df_eval %>%
-    arrange(.data$study_roche, desc(.data$prob_low_p_vs_fp_ratio)) %>%
-    filter(.data$prob_low_p_vs_fp_ratio > 1) %>%
+    arrange(.data$study_roche, desc(.data$prob_low_prob_ur)) %>%
+    filter(.data$prob_low_prob_ur > 0.5) %>%
     head(n_sites) %>%
     .$site_number
 
@@ -512,8 +528,8 @@ plot_study <- function(df_visit, df_site, df_eval, study, df_al = NULL, n_sites 
   # define score cut-offs + labels----------------------------------------------
 
   palette <- RColorBrewer::brewer.pal(9, "Blues")[c(3, 5, 7, 9)]
-  breaks <- c(0, 5, 20, 100, ifelse(max(df_eval$prob_low_p_vs_fp_ratio, na.rm = TRUE) > 100,
-                                    max(df_eval$prob_low_p_vs_fp_ratio, na.rm = TRUE) + 1,
+  breaks <- c(0, 0.5, 0.75, 0.95, ifelse(max(df_eval$prob_low_prob_ur, na.rm = TRUE) > 0.95,
+                                    max(df_eval$prob_low_prob_ur, na.rm = TRUE) + 0.1,
                                     NA)
               )
 
@@ -521,8 +537,8 @@ plot_study <- function(df_visit, df_site, df_eval, study, df_al = NULL, n_sites 
 
   df_eval <- df_eval %>%
     mutate(
-      ratio_cut = cut(.data$prob_low_p_vs_fp_ratio, breaks = breaks),
-      color_ratio_cut = palette[as.numeric(.data$ratio_cut)]
+      prob_cut = cut(.data$prob_low_prob_ur, breaks = breaks, include.lowest = TRUE),
+      color_prob_cut = palette[as.numeric(.data$prob_cut)]
     )
 
   df_mean_ae_dev_site <- df_mean_ae_dev_site %>%
@@ -533,10 +549,10 @@ plot_study <- function(df_visit, df_site, df_eval, study, df_al = NULL, n_sites 
   # over if there are many sites
 
   df_mean_ae_dev_site_no_alert <- df_mean_ae_dev_site %>%
-    filter(ratio_cut == levels(.data$ratio_cut)[1])
+    filter(prob_cut == levels(.data$prob_cut)[1])
 
   df_mean_ae_dev_site_alert <- df_mean_ae_dev_site %>%
-    filter(ratio_cut != levels(.data$ratio_cut)[1])
+    filter(prob_cut != levels(.data$prob_cut)[1])
 
   df_alert <- df_visit %>%
     select(.data$study_roche,
@@ -567,10 +583,10 @@ plot_study <- function(df_visit, df_site, df_eval, study, df_al = NULL, n_sites 
       .data$mean_ae,
       .data$n_patients,
       .data$n_pat_with_med75,
-      .data$prob_low_p_vs_fp_ratio,
-      .data$ratio_cut,
-      .data$color_ratio_cut,
-      .data$pval_ecd_p_vs_fp_ratio,
+      .data$prob_low_prob_ur,
+      .data$prob_cut,
+      .data$color_prob_cut,
+      .data$pval_prob_ur,
       .data$alert_level_site
     ) %>%
     mutate(
@@ -598,16 +614,14 @@ plot_study <- function(df_visit, df_site, df_eval, study, df_al = NULL, n_sites 
   )
 
   p_study <- df_mean_ae_dev_site_no_alert %>%
-    ggplot(aes_string("visit", "mean_ae")) +
+    ggplot(aes_string("visit", "mean_ae"), na.rm = TRUE) +
     geom_line(aes_string(
       group = "site_number",
-      color = "color_ratio_cut"
-      # , text = prob_low_p_vs_fp_ratio
+      color = "color_prob_cut"
     )) +
     geom_line(aes_string(
       group = "site_number",
-      color = "color_ratio_cut"
-      # , text = prob_low_p_vs_fp_ratio
+      color = "color_prob_cut"
     ),
     data = df_mean_ae_dev_site_alert,
     size = 1
@@ -623,17 +637,19 @@ plot_study <- function(df_visit, df_site, df_eval, study, df_al = NULL, n_sites 
       color = "grey"
     ) +
     annotate("text",
-      x = 0.2 * max_visit_study, y = 0.9 * max_ae_study,
-      label = paste0(n_pat_with_med75, "/", n_pat)
+      x = 0.2 * max_visit_study,
+      y = 0.9 * max_ae_study,
+      label = paste0(n_pat_with_med75, "/", n_pat),
+      na.rm = TRUE
     ) +
     annotate("label",
-      x = 0.5 * max_visit_study, y = 0.9 * max_ae_study,
+      x = 0.5 * max_visit_study,
+      y = 0.9 * max_ae_study,
       label = alert_level_study,
-      color = color_alert_level_study
+      color = color_alert_level_study,
+      na.rm = TRUE
     ) +
-    labs(color = "P/FP") +
-    # scale_color_manual( values = rev( RColorBrewer::brewer.pal(9, 'Blues')[c(3,5,7,9)] ) ) +
-    # scale_color_brewer( palette = 'Blues', direction = - 1 ) +
+    labs(color = "Probability Under-Reporting") +
     scale_color_identity() +
     theme_minimal() +
     theme(legend.position = "bottom")
@@ -658,54 +674,58 @@ plot_study <- function(df_visit, df_site, df_eval, study, df_al = NULL, n_sites 
   )
 
   p_site <- df_ae_dev_patient %>%
-    ggplot(aes_string("visit", "n_ae")) +
-    geom_line(aes(y = mean_ae),
-      data = df_mean_ae_dev_study,
-      color = "gold3"
-    ) +
+    ggplot(aes_string("visit", "n_ae"), na.rm = TRUE) +
     geom_line(aes_string(group = "patnum"),
-      color = "grey"
+      color = "grey",
+      alpha = 0.5
     ) +
     geom_line(aes_string(
       y = "mean_ae",
-      color = "color_ratio_cut"
+      color = "color_prob_cut",
+      alpha = 0.5
     ),
     data = df_mean_ae_dev_site,
     size = 1
     ) +
+    geom_line(aes(y = mean_ae),
+              data = df_mean_ae_dev_study,
+              color = "gold3",
+              size = 1,
+              alpha = 0.5) +
     geom_text(aes(label = paste0(n_pat_with_med75, "/", n_patients)),
-      data = df_label,
-      x = 0.2 * max_visit, y = 0.9 * max_ae
-    ) +
-    geom_label(aes(
-      label = round(prob_low_p_vs_fp_ratio, 1),
-      color = color_ratio_cut
-    ),
-    data = df_label,
-    x = 0.8 * max_visit,
-    y = 0.9 * max_ae
-    ) +
-    geom_label(aes(label = round(pval_ecd_p_vs_fp_ratio, 1)),
-      data = df_label,
-      x = 0.8 * max_visit,
-      y = 0.7 * max_ae,
-      color = "grey"
-    ) +
-    geom_label(aes_string(
-      label = "alert_level_site",
-      color = "color_alert_level"
-    ),
-    data = df_label,
-    x = 0.5 * max_visit,
-    y = 0.9 * max_ae,
-    alpha = 0.5
-    ) +
+              data = df_label,
+              x = 0.2 * max_visit,
+              y = 0.9 * max_ae,
+              na.rm = TRUE) +
+    geom_label(aes(label = paste(round(prob_low_prob_ur, 3) * 100, "%"),
+                   color = color_prob_cut),
+              data = df_label,
+              x = 0.8 * max_visit,
+              y = 0.9 * max_ae,
+              na.rm = TRUE) +
+    geom_label(aes_string(label = "alert_level_site",
+                          color = "color_alert_level"),
+              data = df_label,
+              x = 0.5 * max_visit,
+              y = 0.9 * max_ae,
+              alpha = 0.5,
+              na.rm = TRUE
+              ) +
     facet_wrap(~site_number) +
-    # scale_color_manual( values = RColorBrewer::brewer.pal(9, 'Blues')[c(3,5,7,9)] ) +
-    # scale_color_brewer( palette = 'Blues', direction = 1 ) +
     scale_color_identity() +
     theme_minimal() +
     theme(legend.position = "none")
+
+  if (pval) {
+    p_site <- p_site +
+      geom_label(aes(label = paste("p:", round(pval_prob_ur, 3))),
+                 data = df_label,
+                 x = 0.8 * max_visit,
+                 y = 0.7 * max_ae,
+                 color = "grey",
+                 na.rm = TRUE
+      )
+  }
 
   # title -----------------------------------------------------
 
@@ -829,7 +849,8 @@ plot_visit_med75 <- function(df_visit, df_site,
     geom_text(aes_string(label = "label"),
       df_label,
       x = 0.15 * visit_max,
-      y = 0.75 * ae_max
+      y = 0.75 * ae_max,
+      na.rm = TRUE
     ) +
     facet_wrap(study_roche ~ site_number) +
     labs(

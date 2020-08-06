@@ -120,7 +120,7 @@ Using the visit_med75 will drop a few patients (dashed lines) but will by defini
 
 We could use a classical parametric test and calculate the probability with which we can reject the NULL hypothesis for the AE counts that we observe at the visit_med75.
 
-As we sample from a poisson distribution an exact test about the ratio of the two rate parameters of the two samples with the AE count data would be appropriate.
+As we sample the AEs from a poisson distribution the R implementation of the poisson.test would be appropriate.
 
 But there are four major problems that we often encounter when we try to describe real life count data with the poisson distribution which is only described by a single parameter:
 

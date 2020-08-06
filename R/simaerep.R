@@ -55,6 +55,9 @@ eval_sites <- function(df_sim_sites,
         pval_p_vs_fp_ratio = .data$pval_n_detected / .data$pval_fp,
         pval_p_vs_fp_ratio = ifelse(is.na(.data$pval_p_vs_fp_ratio) & ! is.na(.data$pval),
                                     0, .data$pval_p_vs_fp_ratio),
+        # it is possible to get ratios lower than one if p < expected fp
+        # this can happen by chance and is meaningless
+        pval_p_vs_fp_ratio = ifelse(pval_p_vs_fp_ratio < 1, 1, pval_p_vs_fp_ratio),
         pval_prob_ur = 1 - 1 / .data$pval_p_vs_fp_ratio
       ) %>%
       select(- .data$min_pval)
@@ -79,11 +82,14 @@ eval_sites <- function(df_sim_sites,
         prob_low_p_vs_fp_ratio = .data$prob_low_n_detected / .data$prob_low_fp,
         prob_low_p_vs_fp_ratio = ifelse(is.na(.data$prob_low_p_vs_fp_ratio) & ! is.na(.data$prob_low),
                                         0, .data$prob_low_p_vs_fp_ratio),
+        # it is possible to get ratios lower than one if p < expected fp
+        # this can happen by chance and is meaningless
+        prob_low_p_vs_fp_ratio = ifelse(prob_low_p_vs_fp_ratio < 1, 1, prob_low_p_vs_fp_ratio),
         prob_low_prob_ur = 1 - 1 / .data$prob_low_p_vs_fp_ratio
       )
   }
 
-  return(df_out)
+  return(ungroup(df_out))
 }
 
 #' @title get emprical cumulative distribution values, used by eval_sites()
@@ -147,7 +153,7 @@ get_ecd_values <- function(df_sim_studies, df_sim_sites, val_str) {
     ) %>%
     select(- .data$`.ecdf`)
 
-  return(df_out)
+  return(ungroup(df_out))
 }
 
 
@@ -333,6 +339,7 @@ sim_sites <- function(df_site,
            .data$mean_ae_site_med75,
            .data$mean_ae_study_med75,
            everything()) %>%
+    ungroup() %>%
     return()
 }
 
@@ -393,7 +400,7 @@ get_pat_pool_config <- function(df_visit, df_site, min_n_pat_with_med75 = 1) {
            .data$n_pat_study,
            .data$pat_pool)
 
-  return(df_site_config)
+  return(ungroup(df_site_config))
 }
 
 #' @title simulate studies
@@ -518,14 +525,14 @@ sim_studies <- function(df_visit,
         mutate_at(vars(n_ae_site, n_ae_study), ~ map_chr(., paste, collapse = ","))
     }
 
-    return(df_config)
+    return(ungroup(df_config))
   }
 
   df_sim <- tibble(r = seq.int(1, r, 1)) %>%
     mutate(n_ae_set = .f_map(.data$r, sim)) %>%
     unnest(.data$n_ae_set)
 
-  return(df_sim)
+  return(ungroup(df_sim))
 }
 
 
@@ -618,7 +625,7 @@ site_aggr <- function(df_visit,
   df_site <- df_site %>%
     left_join(df_mean_ae_med75, by = c("study_roche", "site_number"))
 
-  return(df_site)
+  return(ungroup(df_site))
 }
 
 
