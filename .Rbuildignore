@@ -7,3 +7,4 @@
 ^vignettes$
 
 ^README\.Rmd$
+^\.github$
