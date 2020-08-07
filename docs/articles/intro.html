@@ -177,33 +177,159 @@
   <span class="kw">ae_per_visit_mean</span> <span class="kw">=</span> <span class="fl">0.5</span>
 )
 
-<span class="no">df_visit</span></pre></body></html></div>
-<pre><code>## # A tibble: 2,336 x 8
-##    patnum site_number is_ur max_visit_mean max_visit_sd ae_per_visit_me… visit
-##    &lt;chr&gt;  &lt;chr&gt;       &lt;lgl&gt;          &lt;dbl&gt;        &lt;dbl&gt;            &lt;dbl&gt; &lt;int&gt;
-##  1 P0000… S0001       TRUE              20            4              0.2     1
-##  2 P0000… S0001       TRUE              20            4              0.2     2
-##  3 P0000… S0001       TRUE              20            4              0.2     3
-##  4 P0000… S0001       TRUE              20            4              0.2     4
-##  5 P0000… S0001       TRUE              20            4              0.2     5
-##  6 P0000… S0001       TRUE              20            4              0.2     6
-##  7 P0000… S0001       TRUE              20            4              0.2     7
-##  8 P0000… S0001       TRUE              20            4              0.2     8
-##  9 P0000… S0001       TRUE              20            4              0.2     9
-## 10 P0000… S0001       TRUE              20            4              0.2    10
-## # … with 2,326 more rows, and 1 more variable: n_ae &lt;int&gt;</code></pre>
-<div class="sourceCode" id="cb6"><html><body><pre class="r"><span class="no">df_visit</span> <span class="kw">%&gt;%</span>
+<span class="no">df_visit</span> <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="fl">10</span>) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span>()</pre></body></html></div>
+<table class="table">
+<thead><tr class="header">
+<th align="left">patnum</th>
+<th align="left">site_number</th>
+<th align="left">is_ur</th>
+<th align="right">max_visit_mean</th>
+<th align="right">max_visit_sd</th>
+<th align="right">ae_per_visit_mean</th>
+<th align="right">visit</th>
+<th align="right">n_ae</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">P000001</td>
+<td align="left">S0001</td>
+<td align="left">TRUE</td>
+<td align="right">20</td>
+<td align="right">4</td>
+<td align="right">0.2</td>
+<td align="right">1</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">P000001</td>
+<td align="left">S0001</td>
+<td align="left">TRUE</td>
+<td align="right">20</td>
+<td align="right">4</td>
+<td align="right">0.2</td>
+<td align="right">2</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">P000001</td>
+<td align="left">S0001</td>
+<td align="left">TRUE</td>
+<td align="right">20</td>
+<td align="right">4</td>
+<td align="right">0.2</td>
+<td align="right">3</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">P000001</td>
+<td align="left">S0001</td>
+<td align="left">TRUE</td>
+<td align="right">20</td>
+<td align="right">4</td>
+<td align="right">0.2</td>
+<td align="right">4</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">P000001</td>
+<td align="left">S0001</td>
+<td align="left">TRUE</td>
+<td align="right">20</td>
+<td align="right">4</td>
+<td align="right">0.2</td>
+<td align="right">5</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">P000001</td>
+<td align="left">S0001</td>
+<td align="left">TRUE</td>
+<td align="right">20</td>
+<td align="right">4</td>
+<td align="right">0.2</td>
+<td align="right">6</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">P000001</td>
+<td align="left">S0001</td>
+<td align="left">TRUE</td>
+<td align="right">20</td>
+<td align="right">4</td>
+<td align="right">0.2</td>
+<td align="right">7</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">P000001</td>
+<td align="left">S0001</td>
+<td align="left">TRUE</td>
+<td align="right">20</td>
+<td align="right">4</td>
+<td align="right">0.2</td>
+<td align="right">8</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
+<td align="left">P000001</td>
+<td align="left">S0001</td>
+<td align="left">TRUE</td>
+<td align="right">20</td>
+<td align="right">4</td>
+<td align="right">0.2</td>
+<td align="right">9</td>
+<td align="right">4</td>
+</tr>
+<tr class="even">
+<td align="left">P000001</td>
+<td align="left">S0001</td>
+<td align="left">TRUE</td>
+<td align="right">20</td>
+<td align="right">4</td>
+<td align="right">0.2</td>
+<td align="right">10</td>
+<td align="right">4</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="no">df_visit</span> <span class="kw">%&gt;%</span>
   <span class="fu">select</span>(<span class="no">site_number</span>, <span class="no">is_ur</span>) <span class="kw">%&gt;%</span>
-  <span class="fu">distinct</span>()</pre></body></html></div>
-<pre><code>## # A tibble: 6 x 2
-##   site_number is_ur
-##   &lt;chr&gt;       &lt;lgl&gt;
-## 1 S0001       TRUE 
-## 2 S0002       TRUE 
-## 3 S0003       FALSE
-## 4 S0004       FALSE
-## 5 S0005       FALSE
-## 6 S0006       FALSE</code></pre>
+  <span class="fu">distinct</span>() <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span>()</pre></body></html></div>
+<table class="table">
+<thead><tr class="header">
+<th align="left">site_number</th>
+<th align="left">is_ur</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">S0001</td>
+<td align="left">TRUE</td>
+</tr>
+<tr class="even">
+<td align="left">S0002</td>
+<td align="left">TRUE</td>
+</tr>
+<tr class="odd">
+<td align="left">S0003</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="even">
+<td align="left">S0004</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="left">S0005</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="even">
+<td align="left">S0006</td>
+<td align="left">FALSE</td>
+</tr>
+</tbody>
+</table>
 <p>In our sample data 2 sites (S0001 and S0002) are under-reporting AEs</p>
 </div>
 </div>
@@ -211,21 +337,72 @@
 <h2 class="hasAnchor">
 <a href="#specifying-the-evaluation-point-visit_med75" class="anchor"></a>Specifying the Evaluation Point visit_med75</h2>
 <p>In an ongoing trial all patients will have a different number of consecutive visits. To find a cut-off visit to normalize the data we specify a single evaluation point for a given site based on the number of visits of the patient population. We take the median of the maximum visit of all the patients and multiply by 0.75 (visit_med75). For this we use <code>site_aggr</code> to aggregate the simulated visit level data to site level.</p>
-<div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="no">df_visit</span>$<span class="no">study_id</span> <span class="kw">&lt;-</span> <span class="st">"A"</span>
+<div class="sourceCode" id="cb6"><html><body><pre class="r"><span class="no">df_visit</span>$<span class="no">study_id</span> <span class="kw">&lt;-</span> <span class="st">"A"</span>
 <span class="no">df_site</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/site_aggr.html">site_aggr</a></span>(<span class="no">df_visit</span>)
 
-<span class="no">df_site</span></pre></body></html></div>
-<pre><code>## # A tibble: 6 x 6
-##   study_id site_number n_patients visit_med75 n_pat_with_med75 mean_ae_site_med…
-##   &lt;chr&gt;    &lt;chr&gt;            &lt;int&gt;       &lt;dbl&gt;            &lt;dbl&gt;             &lt;dbl&gt;
-## 1 A        S0001               20          15               17              3   
-## 2 A        S0002               20          14               17              3.35
-## 3 A        S0003               20          16               16              8.12
-## 4 A        S0004               20          14               17              7   
-## 5 A        S0005               20          15               18              6.89
-## 6 A        S0006               20          15               20              7.85</code></pre>
-<div class="sourceCode" id="cb10"><html><body><pre class="r"><span class="fu"><a href="../reference/plot_visit_med75.html">plot_visit_med75</a></span>(<span class="no">df_visit</span>, <span class="no">df_site</span>, <span class="kw">study_id_str</span> <span class="kw">=</span> <span class="st">"A"</span>, <span class="kw">n_site</span> <span class="kw">=</span> <span class="fl">6</span>)</pre></body></html></div>
-<pre><code>## Warning: Removed 591 row(s) containing missing values (geom_path).</code></pre>
+<span class="no">df_site</span> <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span>()</pre></body></html></div>
+<table class="table">
+<thead><tr class="header">
+<th align="left">study_id</th>
+<th align="left">site_number</th>
+<th align="right">n_patients</th>
+<th align="right">visit_med75</th>
+<th align="right">n_pat_with_med75</th>
+<th align="right">mean_ae_site_med75</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">A</td>
+<td align="left">S0001</td>
+<td align="right">20</td>
+<td align="right">15</td>
+<td align="right">17</td>
+<td align="right">3.000000</td>
+</tr>
+<tr class="even">
+<td align="left">A</td>
+<td align="left">S0002</td>
+<td align="right">20</td>
+<td align="right">14</td>
+<td align="right">17</td>
+<td align="right">3.352941</td>
+</tr>
+<tr class="odd">
+<td align="left">A</td>
+<td align="left">S0003</td>
+<td align="right">20</td>
+<td align="right">16</td>
+<td align="right">16</td>
+<td align="right">8.125000</td>
+</tr>
+<tr class="even">
+<td align="left">A</td>
+<td align="left">S0004</td>
+<td align="right">20</td>
+<td align="right">14</td>
+<td align="right">17</td>
+<td align="right">7.000000</td>
+</tr>
+<tr class="odd">
+<td align="left">A</td>
+<td align="left">S0005</td>
+<td align="right">20</td>
+<td align="right">15</td>
+<td align="right">18</td>
+<td align="right">6.888889</td>
+</tr>
+<tr class="even">
+<td align="left">A</td>
+<td align="left">S0006</td>
+<td align="right">20</td>
+<td align="right">15</td>
+<td align="right">20</td>
+<td align="right">7.850000</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="fu"><a href="../reference/plot_visit_med75.html">plot_visit_med75</a></span>(<span class="no">df_visit</span>, <span class="no">df_site</span>, <span class="kw">study_id_str</span> <span class="kw">=</span> <span class="st">"A"</span>, <span class="kw">n_site</span> <span class="kw">=</span> <span class="fl">6</span>)</pre></body></html></div>
 <p><img src="intro_files/figure-html/unnamed-chunk-4-1.png" width="700"></p>
 <p>Using the visit_med75 will drop a few patients (dashed lines) but will by definietion at least include 50% of all patients favouring patients that have higher number of visits. By looking at the mean ae development (purple line) we can already easily spot the two under-reporting sites. Same goes for looking at the <code>mean_ae_site_med75</code> column in <code>df_site</code>. Next we will use bootstrap simulations to determine the probability for obtaining each mean ae value or lower at visit_med75 by chance.</p>
 </div>
@@ -252,8 +429,11 @@
 <h3 class="hasAnchor">
 <a href="#disadvantages-over-classic-statistical-tests" class="anchor"></a>Disadvantages Over Classic Statistical Tests</h3>
 <ul>
-<li>The number of repeats determines the smallest probability greater than zero, for example a for r=1000 the smalles value greater than zero is 0.001</li>
-<li>Computationally more expensive</li>
+<li>
+<strong>Upper Limit for Uncompliant Sites</strong>. We simulate an underlying compliant patient population using the data we are given. If the fraction of uncompliant examples becomes too high, detection rates will decrease. We find that detection rates start decreasing wiht 30-50% of under-reporting sites and are not usable anymore if a mojority &gt; 50% of all sites are under-reporting <a href="https://openpharma.github.io/simaerep/articles/usability_limits.html">see article on usability limits</a>.</li>
+<li>
+<strong>Lower Probability Limit</strong> The number of repeats determines the smallest probability greater than zero, for example a for r=1000 the smalles value greater than zero is 0.001</li>
+<li><strong>Computationally Expensive</strong></li>
 </ul>
 </div>
 <div id="methodology" class="section level3">
@@ -263,25 +443,84 @@
 <p>For illustration purposes we start to simulate 10 hypothetical patient groups for site C by drawing (with replacement) from all patients in the study marking those for which we have obtained an equal or lower mean AE value than initially observed (middle).</p>
 <p>Instead of 10 times we simulate 1000 times and count how many times we have observed an equal or lower mean AE value than initially observed and convert it to a percentage (right).</p>
 <p>To illustrate the effect of under-reporting we repeat the same process after having removed 2 AEs per patient from site C. We see how the probability for obtaining an equal or lower mean AE value than initially observed decreases (bottom).</p>
-<div class="sourceCode" id="cb12"><html><body><pre class="r"><span class="fu"><a href="../reference/plot_sim_examples.html">plot_sim_examples</a></span>(<span class="kw">size_dot</span> <span class="kw">=</span> <span class="fl">3</span>, <span class="kw">size_raster_label</span> <span class="kw">=</span> <span class="fl">10</span>)</pre></body></html></div>
-<p><img src="intro_files/figure-html/unnamed-chunk-5-1.png" width="960"></p>
+<div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="fu"><a href="../reference/plot_sim_examples.html">plot_sim_examples</a></span>(<span class="kw">size_dot</span> <span class="kw">=</span> <span class="fl">4</span>, <span class="kw">size_raster_label</span> <span class="kw">=</span> <span class="fl">10</span>)</pre></body></html></div>
+<p><img src="intro_files/figure-html/unnamed-chunk-5-1.png" width="1056"></p>
 </div>
 <div id="application" class="section level3">
 <h3 class="hasAnchor">
 <a href="#application" class="anchor"></a>Application</h3>
 <p>We can run the above described simulation and as a becnhmark also perform a poisson test.</p>
-<div class="sourceCode" id="cb13"><html><body><pre class="r"><span class="no">df_sim_sites</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/sim_sites.html">sim_sites</a></span>(<span class="no">df_site</span>, <span class="no">df_visit</span>, <span class="kw">r</span> <span class="kw">=</span> <span class="fl">1000</span>, <span class="kw">poisson_test</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
-<span class="no">df_sim_sites</span></pre></body></html></div>
-<pre><code>## # A tibble: 6 x 7
-##   study_id site_number visit_med75 mean_ae_site_me… mean_ae_study_m…    pval
-##   &lt;chr&gt;    &lt;chr&gt;             &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;   &lt;dbl&gt;
-## 1 A        S0001                15             3                6.71 1.00e-9
-## 2 A        S0002                14             3.35             6.02 7.46e-6
-## 3 A        S0003                16             8.12             6.27 1.00e+0
-## 4 A        S0004                14             7                5.35 1.00e+0
-## 5 A        S0005                15             6.89             5.94 1.00e+0
-## 6 A        S0006                15             7.85             5.69 1.00e+0
-## # … with 1 more variable: prob_low &lt;dbl&gt;</code></pre>
+<div class="sourceCode" id="cb9"><html><body><pre class="r"><span class="no">df_sim_sites</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/sim_sites.html">sim_sites</a></span>(<span class="no">df_site</span>, <span class="no">df_visit</span>, <span class="kw">r</span> <span class="kw">=</span> <span class="fl">1000</span>, <span class="kw">poisson_test</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
+
+<span class="no">df_sim_sites</span> <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span>()</pre></body></html></div>
+<table class="table">
+<thead><tr class="header">
+<th align="left">study_id</th>
+<th align="left">site_number</th>
+<th align="right">visit_med75</th>
+<th align="right">mean_ae_site_med75</th>
+<th align="right">mean_ae_study_med75</th>
+<th align="right">pval</th>
+<th align="right">prob_low</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">A</td>
+<td align="left">S0001</td>
+<td align="right">15</td>
+<td align="right">3.000000</td>
+<td align="right">6.712644</td>
+<td align="right">0.0e+00</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">A</td>
+<td align="left">S0002</td>
+<td align="right">14</td>
+<td align="right">3.352941</td>
+<td align="right">6.021739</td>
+<td align="right">7.5e-06</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">A</td>
+<td align="left">S0003</td>
+<td align="right">16</td>
+<td align="right">8.125000</td>
+<td align="right">6.270588</td>
+<td align="right">1.0e+00</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">A</td>
+<td align="left">S0004</td>
+<td align="right">14</td>
+<td align="right">7.000000</td>
+<td align="right">5.347826</td>
+<td align="right">1.0e+00</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">A</td>
+<td align="left">S0005</td>
+<td align="right">15</td>
+<td align="right">6.888889</td>
+<td align="right">5.941860</td>
+<td align="right">1.0e+00</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">A</td>
+<td align="left">S0006</td>
+<td align="right">15</td>
+<td align="right">7.850000</td>
+<td align="right">5.690476</td>
+<td align="right">1.0e+00</td>
+<td align="right">1</td>
+</tr>
+</tbody>
+</table>
 <p>We find that the probability of getting a mean ae at visit_med75 for sites S0001 and S0002 is 0 or near zero.</p>
 </div>
 </div>
@@ -295,31 +534,151 @@
 <li>Calcutate the P/FP ratio</li>
 <li>Express underreporting probability as 1 - FP/P</li>
 </ul>
-<div class="sourceCode" id="cb15"><html><body><pre class="r"><span class="no">df_eval</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/eval_sites.html">eval_sites</a></span>(<span class="no">df_sim_sites</span>,
-                      <span class="kw">r_sim_sites</span> <span class="kw">=</span> <span class="fl">1000</span> <span class="co">#needs to be passed to in order to consider smallest value &gt; 0</span>
-                      )
-<span class="no">df_eval</span></pre></body></html></div>
-<pre><code>## # A tibble: 6 x 16
-##   study_id site_number visit_med75 mean_ae_site_me… mean_ae_study_m…    pval
-##   &lt;chr&gt;    &lt;chr&gt;             &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;   &lt;dbl&gt;
-## 1 A        S0001                15             3                6.71 1.00e-9
-## 2 A        S0002                14             3.35             6.02 7.46e-6
-## 3 A        S0003                16             8.12             6.27 1.00e+0
-## 4 A        S0004                14             7                5.35 1.00e+0
-## 5 A        S0005                15             6.89             5.94 1.00e+0
-## 6 A        S0006                15             7.85             5.69 1.00e+0
-## # … with 10 more variables: prob_low &lt;dbl&gt;, n_site &lt;int&gt;,
-## #   pval_n_detected &lt;int&gt;, pval_fp &lt;dbl&gt;, pval_p_vs_fp_ratio &lt;dbl&gt;,
-## #   pval_prob_ur &lt;dbl&gt;, prob_low_n_detected &lt;int&gt;, prob_low_fp &lt;dbl&gt;,
-## #   prob_low_p_vs_fp_ratio &lt;dbl&gt;, prob_low_prob_ur &lt;dbl&gt;</code></pre>
+<div class="sourceCode" id="cb10"><html><body><pre class="r"><span class="no">df_eval</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/eval_sites.html">eval_sites</a></span>(
+  <span class="no">df_sim_sites</span>,
+  <span class="kw">r_sim_sites</span> <span class="kw">=</span> <span class="fl">1000</span> <span class="co">#needs to be passed to in order to consider smallest value &gt; 0 for fp calculation</span>
+)
+
+<span class="no">df_eval</span> <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span>()</pre></body></html></div>
+<table class="table">
+<thead><tr class="header">
+<th align="left">study_id</th>
+<th align="left">site_number</th>
+<th align="right">visit_med75</th>
+<th align="right">mean_ae_site_med75</th>
+<th align="right">mean_ae_study_med75</th>
+<th align="right">pval</th>
+<th align="right">prob_low</th>
+<th align="right">n_site</th>
+<th align="right">pval_n_detected</th>
+<th align="right">pval_fp</th>
+<th align="right">pval_p_vs_fp_ratio</th>
+<th align="right">pval_prob_ur</th>
+<th align="right">prob_low_n_detected</th>
+<th align="right">prob_low_fp</th>
+<th align="right">prob_low_p_vs_fp_ratio</th>
+<th align="right">prob_low_prob_ur</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">A</td>
+<td align="left">S0001</td>
+<td align="right">15</td>
+<td align="right">3.000000</td>
+<td align="right">6.712644</td>
+<td align="right">0.0e+00</td>
+<td align="right">0</td>
+<td align="right">6</td>
+<td align="right">1</td>
+<td align="right">0.00e+00</td>
+<td align="right">166749229.27</td>
+<td align="right">1.0000000</td>
+<td align="right">2</td>
+<td align="right">1e-04</td>
+<td align="right">20000</td>
+<td align="right">0.99995</td>
+</tr>
+<tr class="even">
+<td align="left">A</td>
+<td align="left">S0002</td>
+<td align="right">14</td>
+<td align="right">3.352941</td>
+<td align="right">6.021739</td>
+<td align="right">7.5e-06</td>
+<td align="right">0</td>
+<td align="right">6</td>
+<td align="right">2</td>
+<td align="right">4.48e-05</td>
+<td align="right">44679.16</td>
+<td align="right">0.9999776</td>
+<td align="right">2</td>
+<td align="right">1e-04</td>
+<td align="right">20000</td>
+<td align="right">0.99995</td>
+</tr>
+<tr class="odd">
+<td align="left">A</td>
+<td align="left">S0003</td>
+<td align="right">16</td>
+<td align="right">8.125000</td>
+<td align="right">6.270588</td>
+<td align="right">1.0e+00</td>
+<td align="right">1</td>
+<td align="right">6</td>
+<td align="right">6</td>
+<td align="right">6.00e+00</td>
+<td align="right">1.00</td>
+<td align="right">0.0000000</td>
+<td align="right">6</td>
+<td align="right">6e+00</td>
+<td align="right">1</td>
+<td align="right">0.00000</td>
+</tr>
+<tr class="even">
+<td align="left">A</td>
+<td align="left">S0004</td>
+<td align="right">14</td>
+<td align="right">7.000000</td>
+<td align="right">5.347826</td>
+<td align="right">1.0e+00</td>
+<td align="right">1</td>
+<td align="right">6</td>
+<td align="right">6</td>
+<td align="right">6.00e+00</td>
+<td align="right">1.00</td>
+<td align="right">0.0000000</td>
+<td align="right">6</td>
+<td align="right">6e+00</td>
+<td align="right">1</td>
+<td align="right">0.00000</td>
+</tr>
+<tr class="odd">
+<td align="left">A</td>
+<td align="left">S0005</td>
+<td align="right">15</td>
+<td align="right">6.888889</td>
+<td align="right">5.941860</td>
+<td align="right">1.0e+00</td>
+<td align="right">1</td>
+<td align="right">6</td>
+<td align="right">6</td>
+<td align="right">6.00e+00</td>
+<td align="right">1.00</td>
+<td align="right">0.0000000</td>
+<td align="right">6</td>
+<td align="right">6e+00</td>
+<td align="right">1</td>
+<td align="right">0.00000</td>
+</tr>
+<tr class="even">
+<td align="left">A</td>
+<td align="left">S0006</td>
+<td align="right">15</td>
+<td align="right">7.850000</td>
+<td align="right">5.690476</td>
+<td align="right">1.0e+00</td>
+<td align="right">1</td>
+<td align="right">6</td>
+<td align="right">6</td>
+<td align="right">6.00e+00</td>
+<td align="right">1.00</td>
+<td align="right">0.0000000</td>
+<td align="right">6</td>
+<td align="right">6e+00</td>
+<td align="right">1</td>
+<td align="right">0.00000</td>
+</tr>
+</tbody>
+</table>
 <p>the colummn <code>prob_low_p_vs_fp_ratio</code> contains the P/FP ratio. A ratio of 20 represents ~ 95 % probability of under-reporting (20/21) which we consider a sensible threshold.</p>
 </div>
 <div id="plot-results" class="section level2">
 <h2 class="hasAnchor">
 <a href="#plot-results" class="anchor"></a>Plot Results</h2>
 <p><code>plot_study</code> will plot mean ae development of all sites and visit level data for each flagged site using a P/FP threshold of 20</p>
-<div class="sourceCode" id="cb17"><html><body><pre class="r"><span class="fu"><a href="../reference/plot_study.html">plot_study</a></span>(<span class="no">df_visit</span>, <span class="no">df_site</span>, <span class="no">df_eval</span>, <span class="kw">study</span> <span class="kw">=</span> <span class="st">"A"</span>)</pre></body></html></div>
-<p><img src="intro_files/figure-html/unnamed-chunk-8-1.png" width="700"></p>
+<div class="sourceCode" id="cb11"><html><body><pre class="r"><span class="fu"><a href="../reference/plot_study.html">plot_study</a></span>(<span class="no">df_visit</span>, <span class="no">df_site</span>, <span class="no">df_eval</span>, <span class="kw">study</span> <span class="kw">=</span> <span class="st">"A"</span>)</pre></body></html></div>
+<p><img src="intro_files/figure-html/unnamed-chunk-8-1.png" width="960"></p>
 </div>
 </div>
   </div>

@@ -13,7 +13,7 @@ editor_options:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, cache = TRUE)
+knitr::opts_chunk$set(echo = TRUE, cache = FALSE)
 ```
 
 # Load
@@ -29,10 +29,12 @@ suppressPackageStartupMessages( library(simaerep) )
 
 Perhaps there might be scenarios in which one prefers to use a parametric test vs the non-parametric bootstrap-based resampling method to calculate AE under-reporting. `simaerep` provides a function that does bootstrap resampling of the entire study preserving the actual site parameters such as number of patients and visit_med75.
 
-Using this pool we can check whether the p-values calculated by poisson.test represent accurate probabilities.
+Using this pool we can check whether the p-values calculated by `poisson.test()` represent accurate probabilities.
 
 
-## Simulate Test Data
+## Test Data and Standard Processing
+
+We simulate three studies with varying ae per visit rate and then use all functions we already [introduced](https://openpharma.github.io/simaerep/articles/intro.html).
 
 ```{r}
 
@@ -77,9 +79,17 @@ df_visit <- bind_rows(df_visit1, df_visit2, df_visit3)
 df_site <- site_aggr(df_visit)
 
 df_sim_sites <- sim_sites(df_site, df_visit)
+
+df_visit
+
+df_site
+
+df_sim_sites
 ```
 
 ## Simulate Studies
+
+[sim_studies()](https://openpharma.github.io/simaerep/reference/sim_studies.html) reproduces each study a thousand times using bootstrap ressampling maintaining the number of patients and the visit_med75 of each site.
 
 ```{r}
 df_sim_studies <- sim_studies(df_visit, df_site,
@@ -87,35 +97,21 @@ df_sim_studies <- sim_studies(df_visit, df_site,
                               poisson_test = TRUE,
                               prob_lower = TRUE,
                               .progress = FALSE)
+
+df_sim_studies
 ```
 
-## Train ecdf on simulated Studies
+## Check p-value Probabilities
+
+[get_ecd_values()](https://openpharma.github.io/simaerep/reference/get_ecd_values.html) uses the p-value distribution in the dataframe returned from sim_studies() to train a empirical cumulative distribution function for each study which is then used to calculate the probability of a specific p-value or lower from the poisson.test p-value returned from sim_sites()
 
 ```{r}
-df_ecdf <- df_sim_studies %>%
-  group_by(study_id) %>%
-  summarise( .ecdf_pval = list(ecdf(pval)),
-             .ecdf_prob_low = list(ecdf(prob_low)))
+df_check_pval <- get_ecd_values(df_sim_studies, df_sim_sites, val_str = "pval")
 
-df_ecdf
-```
+df_check_pval
 
-## Convert Probabilities from Site Simulation into Probabilities from Study Simulation
-
-```{r}
-df_comp <- df_sim_sites %>%
-  left_join(df_ecdf, by = "study_id") %>%
-  mutate(pval_ecdf = map2_dbl(pval, .ecdf_pval, function(p,f) f(p)),
-         prob_low_ecdf = map2_dbl(prob_low, .ecdf_prob_low, function(p,f) f(p)))
-```
-
-## Plot
-
-### Poisson Test
-
-```{r}
-df_comp %>%
-  ggplot(aes(log(pval, base = 10), log(pval_ecdf, base = 10))) +
+df_check_pval %>%
+  ggplot(aes(log(pval, base = 10), log(pval_ecd, base = 10))) +
     geom_point(alpha = 0.5, size = 2) +
     facet_wrap(~ study_id) +
     geom_abline(slope = 1, linetype = 2) +
@@ -123,11 +119,18 @@ df_comp %>%
     theme(aspect.ratio = 1)
 ```
 
-### Bootstrap
+We can see that the p-values from poisson.test (x-axis) more or less match the probability with which they are represented in the resampled studies (y-axis), but there is some skewness to their relationship.
+
+## Perform Same Check on Bootstrapped Probabilities 
+
 
 ```{r}
-df_comp %>%
-  ggplot(aes(log(prob_low, base = 10), log(prob_low, base = 10))) +
+df_check_pval <- get_ecd_values(df_sim_studies, df_sim_sites, val_str = "prob_low")
+
+df_check_pval
+
+df_check_pval %>%
+  ggplot(aes(log(prob_low, base = 10), log(prob_low_ecd, base = 10))) +
     geom_point(alpha = 0.5, size = 2) +
     facet_wrap(~ study_id) +
     geom_abline(slope = 1, linetype = 2) +
@@ -135,7 +138,9 @@ df_comp %>%
     theme(aspect.ratio = 1)
 ```
 
+
+Here we see that the probabilities from the site simulations (x-axis) perfectly match probability with which they are represented in the resampled studies (y-axis).
 
 ## Conclusion
 
-We see that the bootstrap method gives us more accurate probabilities than the p-values derived from poisson.test even though the AE generation in the sample data follows a strict poisson process. For real clinical trial data with different types of studies for which it is not clear whether AE generation is truly based on a pure poisson process we reommend to use the bootstrap method. If poisson.test shall be used we recommend checking the applicability as we just demonstrated.
+We see that the bootstrap method gives us more accurate probabilities than the p-values derived from poisson.test even though the AE generation in the sample data follows a strict poisson process. For real clinical trial data with different types of studies for which it is not clear whether AE generation is truly based on a pure poisson process we reommend to use the bootstrap method. If poisson.test shall be used we recommend checking the applicability as we just demonstrated on clinical data set.

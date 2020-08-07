@@ -43,12 +43,13 @@ suppressPackageStartupMessages(library("simaerep"))
 
 set.seed(1)
 
-df_visit <- sim_test_data_study(n_pat = 1000, # number of patients in study
-                                     n_sites = 100, # number of sites in study
-                                     frac_site_with_ur = 0.05, # fraction of sites under-reporting
-                                     ur_rate = 0.4, # rate of under-reporting
-                                     ae_per_visit_mean = 0.5 # mean AE per patient visit
-                                     )
+df_visit <- sim_test_data_study(
+  n_pat = 1000, # number of patients in study
+  n_sites = 100, # number of sites in study
+  frac_site_with_ur = 0.05, # fraction of sites under-reporting
+  ur_rate = 0.4, # rate of under-reporting
+  ae_per_visit_mean = 0.5 # mean AE per patient visit
+)
 
 df_visit$study_id <- "A"
 

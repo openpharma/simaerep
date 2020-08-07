@@ -13,7 +13,7 @@ editor_options:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, cache = TRUE)
+knitr::opts_chunk$set(echo = TRUE, cache = FALSE)
 ```
 
 # Load
@@ -27,13 +27,11 @@ suppressPackageStartupMessages( library(simaerep) )
 
 # Introduction
 
-There limits to the use of the bootstrapping method to detect rare events. 
-- the higher the fraction of AE under-reporting sites the less likely it should become to flag under-reporting sites
-- negative deviations from overall small integer values (3 or less) will also be hard to detect
-
-Here we are going to test the bootstrapped-based under-reporting detection method against the poisson.test-based benchmark in different AE under-reporting scenarios.
+As we already mentioned in the [introduction](file:///git_repos/simaerep/docs/articles/intro.html#disadvantages-over-classic-statistical-tests) bbotstrap resampling comes at a price. We need a good proportion of sites that are compliant and are not under-reporting AEs. Otherwise the patient pool we draw from will be tainted. Also, in general for count data, negative deviations from overall small integer values (3 or less) are hard to detect. Here we will assess the usability limits of the bootstrap resampling method by applying it to different simulated scenarios.
 
 # Parameter Grid
+  
+We start by defining a parameter grid.
   
 **Fixed Parameters:**  
 - n_pat: 1000  
@@ -60,46 +58,59 @@ df_grid
 
 # Apply
 
+We use the [`furrr`](https://github.com/DavisVaughan/furrr) and the [`future`](https://github.com/HenrikBengtsson/future) package for multiprocessing. We proceed in applying all functions we already [introduced](https://openpharma.github.io/simaerep/articles/intro.html).
+
 ```{r}
 suppressWarnings(future::plan(multiprocess))
 ```
 
 ## Simulate Test Data
 
+We iteratively apply [sim_test_data_study()](https://openpharma.github.io/simaerep/reference/sim_test_data_study.html) on the different parameter combination of the grid
+
 ```{r}
 
 df_grid <- df_grid %>%
-  mutate( df_visit = furrr::future_pmap(list(am = ae_per_visit_mean,
-                                             fr = frac_site_with_ur,
-                                             ur = ur_rate),
-                                        function(am, fr, ur) sim_test_data_study(n_pat = 1000, n_sites = 100,
-                                                                                      max_visit_mean = 20, max_visit_sd = 4,
-                                                                                      ae_per_visit_mean = am,
-                                                                                      frac_site_with_ur = fr,
-                                                                                      ur_rate = ur),
-                                        .progress = FALSE
-                                        )
+  mutate( 
+    df_visit = furrr::future_pmap(
+      list(am = ae_per_visit_mean,
+           fr = frac_site_with_ur,
+           ur = ur_rate),
+      function(am, fr, ur) sim_test_data_study(n_pat = 1000,
+                                               n_sites = 100,
+                                               max_visit_mean = 20,
+                                               max_visit_sd = 4,
+                                               ae_per_visit_mean = am,
+                                               frac_site_with_ur = fr,
+                                               ur_rate = ur),
+      .progress = FALSE
+    )
   )
+
+df_grid
 ```
 
 ## Aggregate Test Data
 
-- calculate visit_med75 and mean ae count at visit_med75
+We apply [site_aggr()](https://openpharma.github.io/simaerep/reference/site_aggr.html) on the different simulated data sets.
 
 ```{r}
 df_grid <- df_grid %>%
-  mutate( df_visit = map2(df_visit, row_number(), function(x,y) mutate(x, study_id = paste("S", y))),
-          df_site = furrr::future_map(df_visit,
-                                      site_aggr,
-                                      .progress = FALSE
-                                      )
+  mutate( 
+    df_visit = map2(df_visit, row_number(),
+                    function(x,y) mutate(x, study_id = paste("S", y))),
+    df_site = furrr::future_map(df_visit,
+                                site_aggr,
+                                .progress = FALSE
+                                )
   )
 
+df_grid
 ```
 
 ## Simulate Sites
 
-Simulate how likely a given mean ae count or lower is for each site is by randomly sampling with replacement of new patients from the study patient pool.
+We apply [sim_sites()](https://openpharma.github.io/simaerep/reference/sim_sites.html) to to calculate the AE under-reporting probability.
 
 ```{r}
 df_grid <- df_grid %>%
@@ -112,11 +123,12 @@ df_grid <- df_grid %>%
                                             )
   )
 
+df_grid
 ```
 
 ## Evaluate Sites
 
-We balance the simulated under reporting probabilites with the expected FP rates and calculate the P vs FP ratio and the resulting adjusted AE under-reporting probability.
+We apply [eval_sites()](https://openpharma.github.io/simaerep/reference/eval_sites.html) to balance the bootstrapped probabilities by the expected number of false positives.
 
 ```{r}
 
@@ -127,12 +139,19 @@ df_grid <- df_grid %>%
                                       .progress = FALSE
                                       )
   )
+
+df_grid
 ```
 
 
 ## Get Metrics
 
-We choose a 95% threshold for detecting AE under-reporting sites and will calculate standard classification metrics.
+Apart from calculating true and false positives rate for the final under-reporting probability we also calculate the same metrics for a couple of benchmark probabilities.
+
+- p-values returned from `poisson.test()`
+- and the probabilities and p-values before adjusting for the expected false positives
+
+In all cases we use a 95% probability threshold.
 
 ```{r}
 get_metrics <- function(df_visit, df_eval, method) {
@@ -199,6 +218,8 @@ df_grid <- df_grid %>%
                                                 method = "bootstrap"),
          df_metric = map2(df_metric_pval, df_metric_prob_low, bind_rows)
          )
+
+df_grid
 ```
 
 # Plot
@@ -207,10 +228,16 @@ df_grid <- df_grid %>%
 df_plot <- df_grid %>%
   select(ae_per_visit_mean, frac_site_with_ur, ur_rate, df_metric) %>%
   unnest(df_metric)
+
+df_plot
 ```
 
 
 # True positive rate - P - TP/P
+
+When comparing bootstrap method against the poisson.test becnhmark test, we find that they perform mostly similar from a 0.05 - 0.3 ratio of under-reporting sites. Its performance is still acceptable from a 0.3 - 0.5 ratio and then becomes pretty useless.
+
+As expected detection of under-reporting sites is close too impossible when the ae/visit ratio is very low (0.05) with detection rates close to zero for all tested scenarios.
 
 ```{r fig.asp=1, fig.width=10}
 
@@ -237,6 +264,8 @@ p
 
 # False positive rate FP/N
 
+We can show that adjusting the AE under-reporting probability for the expected number of false positives is quite effective.As the false positive rate is almost zero for all tested scenarios. However, this also comes at a cost lowering the true positive rate as well.
+
 ```{r fig.asp=1, fig.width=10}
 p <- df_plot %>%
   mutate( fpr = fp/N) %>%
@@ -261,8 +290,8 @@ p
 
 # Conclusion
 
-We can show that adjusting the AE under-reporting probability for the expected number of false positives is quite effective.As the false positive rate is almost zero for all tested scenarios. However, this also comes at a cost lowering the true positive rate as well.
+As already outlined in the [introduction](https://openpharma.github.io/simaerep/articles/intro.html#advantage-over-classic-statistical-tests) the true AE generating process is unlikely to be a standard poisson process. Therefore using a non-parametric test remains our recommended option unless that there is a reason to believe that 50% or more of all sites are under-reporting AEs. We also show that it is important to adjust for the expected false positive rate when calculating the final probabilities.
 
-When comparing bootstrap method against the poisson.test becnhmark test, we find that they perform mostly similar from a 0.05 - 0.3 ratio of under-reporting sites. Its performance is still acceptable from a 0.3 - 0.5 ratio and then becomes pretty useless.
+In general we can say that we do not recommend any method for detecting AE under-reporting that involves comparing AE counts if the ae per visit rate is 0.05 or lower.
 
-As expected detection of under-reporting sites is close too impossible when the ae/visit ratio is very low (0.05) with detection rates close to zero for all tested scenarios.
+

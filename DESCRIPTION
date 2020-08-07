@@ -11,6 +11,7 @@ Description: Monitoring of Adverse Event (AE) reporting in clinical trials is im
   use bootstrap-based simulation to assign an AE under-reporting probability to each site in a clinical trial.
   The method is inspired by the 'infer' R package and Alen Downey's blog article: "There is only one test!"
   (http://allendowney.blogspot.com/2011/05/there-is-only-one-test.html).
+URL: https://openpharma.github.io/simaerep/, https://github.com/openpharma/simaerep
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true

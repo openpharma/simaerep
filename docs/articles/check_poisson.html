@@ -117,10 +117,11 @@
 <h1 class="hasAnchor">
 <a href="#introduction" class="anchor"></a>Introduction</h1>
 <p>Perhaps there might be scenarios in which one prefers to use a parametric test vs the non-parametric bootstrap-based resampling method to calculate AE under-reporting. <code>simaerep</code> provides a function that does bootstrap resampling of the entire study preserving the actual site parameters such as number of patients and visit_med75.</p>
-<p>Using this pool we can check whether the p-values calculated by poisson.test represent accurate probabilities.</p>
-<div id="simulate-test-data" class="section level2">
+<p>Using this pool we can check whether the p-values calculated by <code><a href="https://rdrr.io/r/stats/poisson.test.html">poisson.test()</a></code> represent accurate probabilities.</p>
+<div id="test-data-and-standard-processing" class="section level2">
 <h2 class="hasAnchor">
-<a href="#simulate-test-data" class="anchor"></a>Simulate Test Data</h2>
+<a href="#test-data-and-standard-processing" class="anchor"></a>Test Data and Standard Processing</h2>
+<p>We simulate three studies with varying ae per visit rate and then use all functions we already <a href="https://openpharma.github.io/simaerep/articles/intro.html">introduced</a>.</p>
 <div class="sourceCode" id="cb2"><html><body><pre class="r"><span class="no">df_visit1</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/sim_test_data_study.html">sim_test_data_study</a></span>(
   <span class="kw">n_pat</span> <span class="kw">=</span> <span class="fl">1000</span>,
   <span class="kw">n_sites</span> <span class="kw">=</span> <span class="fl">100</span>,
@@ -161,73 +162,146 @@
 
 <span class="no">df_site</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/site_aggr.html">site_aggr</a></span>(<span class="no">df_visit</span>)
 
-<span class="no">df_sim_sites</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/sim_sites.html">sim_sites</a></span>(<span class="no">df_site</span>, <span class="no">df_visit</span>)</pre></body></html></div>
+<span class="no">df_sim_sites</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/sim_sites.html">sim_sites</a></span>(<span class="no">df_site</span>, <span class="no">df_visit</span>)
+
+<span class="no">df_visit</span></pre></body></html></div>
+<pre><code>## # A tibble: 58,610 x 9
+##    patnum site_number is_ur max_visit_mean max_visit_sd ae_per_visit_me… visit
+##    &lt;chr&gt;  &lt;chr&gt;       &lt;lgl&gt;          &lt;dbl&gt;        &lt;dbl&gt;            &lt;dbl&gt; &lt;int&gt;
+##  1 P0000… S0001       TRUE              20            4             0.25     1
+##  2 P0000… S0001       TRUE              20            4             0.25     2
+##  3 P0000… S0001       TRUE              20            4             0.25     3
+##  4 P0000… S0001       TRUE              20            4             0.25     4
+##  5 P0000… S0001       TRUE              20            4             0.25     5
+##  6 P0000… S0001       TRUE              20            4             0.25     6
+##  7 P0000… S0001       TRUE              20            4             0.25     7
+##  8 P0000… S0001       TRUE              20            4             0.25     8
+##  9 P0000… S0001       TRUE              20            4             0.25     9
+## 10 P0000… S0001       TRUE              20            4             0.25    10
+## # … with 58,600 more rows, and 2 more variables: n_ae &lt;int&gt;, study_id &lt;chr&gt;</code></pre>
+<div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="no">df_site</span></pre></body></html></div>
+<pre><code>## # A tibble: 300 x 6
+##    study_id site_number n_patients visit_med75 n_pat_with_med75 mean_ae_site_me…
+##    &lt;chr&gt;    &lt;chr&gt;            &lt;int&gt;       &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;
+##  1 ae_per_… S0001               10          16                8             3.5 
+##  2 ae_per_… S0002               10          14                9             2.78
+##  3 ae_per_… S0003               10          15                9             4.22
+##  4 ae_per_… S0004               10          14                9             3.11
+##  5 ae_per_… S0005               10          15                9             4   
+##  6 ae_per_… S0006               10          16               10             4.7 
+##  7 ae_per_… S0007               10          16                9             5   
+##  8 ae_per_… S0008               10          15               10             3.7 
+##  9 ae_per_… S0009               10          16                9             3.78
+## 10 ae_per_… S0010               10          14                9             2.56
+## # … with 290 more rows</code></pre>
+<div class="sourceCode" id="cb6"><html><body><pre class="r"><span class="no">df_sim_sites</span></pre></body></html></div>
+<pre><code>## # A tibble: 300 x 7
+##    study_id site_number visit_med75 mean_ae_site_me… mean_ae_study_m…    pval
+##    &lt;chr&gt;    &lt;chr&gt;             &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;   &lt;dbl&gt;
+##  1 ae_per_… S0001                16            0.556            0.755 0.697  
+##  2 ae_per_… S0002                17            0.625            0.791 0.840  
+##  3 ae_per_… S0003                16            0.125            0.759 0.0367 
+##  4 ae_per_… S0004                15            0                0.721 0.00547
+##  5 ae_per_… S0005                15            0.375            0.717 0.394  
+##  6 ae_per_… S0006                14            0.778            0.662 1      
+##  7 ae_per_… S0007                15            0.444            0.717 0.429  
+##  8 ae_per_… S0008                14            0.125            0.668 0.0745 
+##  9 ae_per_… S0009                15            0.286            0.717 0.256  
+## 10 ae_per_… S0010                16            1                0.751 1      
+## # … with 290 more rows, and 1 more variable: prob_low &lt;dbl&gt;</code></pre>
 </div>
 <div id="simulate-studies" class="section level2">
 <h2 class="hasAnchor">
 <a href="#simulate-studies" class="anchor"></a>Simulate Studies</h2>
-<div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="no">df_sim_studies</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/sim_studies.html">sim_studies</a></span>(<span class="no">df_visit</span>, <span class="no">df_site</span>,
+<p><a href="https://openpharma.github.io/simaerep/reference/sim_studies.html">sim_studies()</a> reproduces each study a thousand times using bootstrap ressampling maintaining the number of patients and the visit_med75 of each site.</p>
+<div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="no">df_sim_studies</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/sim_studies.html">sim_studies</a></span>(<span class="no">df_visit</span>, <span class="no">df_site</span>,
                               <span class="kw">parallel</span> <span class="kw">=</span> <span class="fl">TRUE</span>,
                               <span class="kw">poisson_test</span> <span class="kw">=</span> <span class="fl">TRUE</span>,
                               <span class="kw">prob_lower</span> <span class="kw">=</span> <span class="fl">TRUE</span>,
-                              <span class="kw">.progress</span> <span class="kw">=</span> <span class="fl">FALSE</span>)</pre></body></html></div>
-</div>
-<div id="train-ecdf-on-simulated-studies" class="section level2">
-<h2 class="hasAnchor">
-<a href="#train-ecdf-on-simulated-studies" class="anchor"></a>Train ecdf on simulated Studies</h2>
-<div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="no">df_ecdf</span> <span class="kw">&lt;-</span> <span class="no">df_sim_studies</span> <span class="kw">%&gt;%</span>
-  <span class="fu">group_by</span>(<span class="no">study_id</span>) <span class="kw">%&gt;%</span>
-  <span class="fu">summarise</span>( <span class="kw">.ecdf_pval</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="fu"><a href="https://rdrr.io/r/stats/ecdf.html">ecdf</a></span>(<span class="no">pval</span>)),
-             <span class="kw">.ecdf_prob_low</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="fu"><a href="https://rdrr.io/r/stats/ecdf.html">ecdf</a></span>(<span class="no">prob_low</span>)))
+                              <span class="kw">.progress</span> <span class="kw">=</span> <span class="fl">FALSE</span>)
 
-<span class="no">df_ecdf</span></pre></body></html></div>
-<pre><code>## # A tibble: 3 x 3
-##   study_id           .ecdf_pval .ecdf_prob_low
-##   &lt;chr&gt;              &lt;list&gt;     &lt;list&gt;        
-## 1 ae_per_visit: 0.05 &lt;ecdf&gt;     &lt;ecdf&gt;        
-## 2 ae_per_visit: 0.2  &lt;ecdf&gt;     &lt;ecdf&gt;        
-## 3 ae_per_visit: 0.5  &lt;ecdf&gt;     &lt;ecdf&gt;</code></pre>
+<span class="no">df_sim_studies</span></pre></body></html></div>
+<pre><code>## # A tibble: 30,000 x 8
+##        r study_id site_number visit_med75 n_pat_with_med75 n_pat_study  pval
+##    &lt;dbl&gt; &lt;chr&gt;    &lt;chr&gt;             &lt;dbl&gt;            &lt;dbl&gt;       &lt;dbl&gt; &lt;dbl&gt;
+##  1     1 ae_per_… S0001                16                8         830 0.464
+##  2     1 ae_per_… S0002                14                9         925 1    
+##  3     1 ae_per_… S0003                15                9         887 0.195
+##  4     1 ae_per_… S0004                14                9         925 1    
+##  5     1 ae_per_… S0005                15                9         887 0.746
+##  6     1 ae_per_… S0006                16               10         828 0.370
+##  7     1 ae_per_… S0007                16                9         829 0.414
+##  8     1 ae_per_… S0008                15               10         886 0.627
+##  9     1 ae_per_… S0009                16                9         829 1    
+## 10     1 ae_per_… S0010                14                9         925 1    
+## # … with 29,990 more rows, and 1 more variable: prob_low &lt;dbl&gt;</code></pre>
 </div>
-<div id="convert-probabilities-from-site-simulation-into-probabilities-from-study-simulation" class="section level2">
+<div id="check-p-value-probabilities" class="section level2">
 <h2 class="hasAnchor">
-<a href="#convert-probabilities-from-site-simulation-into-probabilities-from-study-simulation" class="anchor"></a>Convert Probabilities from Site Simulation into Probabilities from Study Simulation</h2>
-<div class="sourceCode" id="cb6"><html><body><pre class="r"><span class="no">df_comp</span> <span class="kw">&lt;-</span> <span class="no">df_sim_sites</span> <span class="kw">%&gt;%</span>
-  <span class="fu">left_join</span>(<span class="no">df_ecdf</span>, <span class="kw">by</span> <span class="kw">=</span> <span class="st">"study_id"</span>) <span class="kw">%&gt;%</span>
-  <span class="fu">mutate</span>(<span class="kw">pval_ecdf</span> <span class="kw">=</span> <span class="fu">map2_dbl</span>(<span class="no">pval</span>, <span class="no">.ecdf_pval</span>, <span class="kw">function</span>(<span class="no">p</span>,<span class="no">f</span>) <span class="fu">f</span>(<span class="no">p</span>)),
-         <span class="kw">prob_low_ecdf</span> <span class="kw">=</span> <span class="fu">map2_dbl</span>(<span class="no">prob_low</span>, <span class="no">.ecdf_prob_low</span>, <span class="kw">function</span>(<span class="no">p</span>,<span class="no">f</span>) <span class="fu">f</span>(<span class="no">p</span>)))</pre></body></html></div>
-</div>
-<div id="plot" class="section level2">
-<h2 class="hasAnchor">
-<a href="#plot" class="anchor"></a>Plot</h2>
-<div id="poisson-test" class="section level3">
-<h3 class="hasAnchor">
-<a href="#poisson-test" class="anchor"></a>Poisson Test</h3>
-<div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="no">df_comp</span> <span class="kw">%&gt;%</span>
-  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span>(<span class="no">pval</span>, <span class="kw">base</span> <span class="kw">=</span> <span class="fl">10</span>), <span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span>(<span class="no">pval_ecdf</span>, <span class="kw">base</span> <span class="kw">=</span> <span class="fl">10</span>))) +
+<a href="#check-p-value-probabilities" class="anchor"></a>Check p-value Probabilities</h2>
+<p><a href="https://openpharma.github.io/simaerep/reference/get_ecd_values.html">get_ecd_values()</a> uses the p-value distribution in the dataframe returned from sim_studies() to train a empirical cumulative distribution function for each study which is then used to calculate the probability of a specific p-value or lower from the poisson.test p-value returned from sim_sites()</p>
+<div class="sourceCode" id="cb10"><html><body><pre class="r"><span class="no">df_check_pval</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/get_ecd_values.html">get_ecd_values</a></span>(<span class="no">df_sim_studies</span>, <span class="no">df_sim_sites</span>, <span class="kw">val_str</span> <span class="kw">=</span> <span class="st">"pval"</span>)
+
+<span class="no">df_check_pval</span></pre></body></html></div>
+<pre><code>## # A tibble: 300 x 8
+##    study_id site_number visit_med75 mean_ae_site_me… mean_ae_study_m…    pval
+##    &lt;chr&gt;    &lt;chr&gt;             &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;   &lt;dbl&gt;
+##  1 ae_per_… S0001                16            0.556            0.755 0.697  
+##  2 ae_per_… S0002                17            0.625            0.791 0.840  
+##  3 ae_per_… S0003                16            0.125            0.759 0.0367 
+##  4 ae_per_… S0004                15            0                0.721 0.00547
+##  5 ae_per_… S0005                15            0.375            0.717 0.394  
+##  6 ae_per_… S0006                14            0.778            0.662 1      
+##  7 ae_per_… S0007                15            0.444            0.717 0.429  
+##  8 ae_per_… S0008                14            0.125            0.668 0.0745 
+##  9 ae_per_… S0009                15            0.286            0.717 0.256  
+## 10 ae_per_… S0010                16            1                0.751 1      
+## # … with 290 more rows, and 2 more variables: prob_low &lt;dbl&gt;, pval_ecd &lt;dbl&gt;</code></pre>
+<div class="sourceCode" id="cb12"><html><body><pre class="r"><span class="no">df_check_pval</span> <span class="kw">%&gt;%</span>
+  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span>(<span class="no">pval</span>, <span class="kw">base</span> <span class="kw">=</span> <span class="fl">10</span>), <span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span>(<span class="no">pval_ecd</span>, <span class="kw">base</span> <span class="kw">=</span> <span class="fl">10</span>))) +
     <span class="fu">geom_point</span>(<span class="kw">alpha</span> <span class="kw">=</span> <span class="fl">0.5</span>, <span class="kw">size</span> <span class="kw">=</span> <span class="fl">2</span>) +
     <span class="fu">facet_wrap</span>(~ <span class="no">study_id</span>) +
     <span class="fu">geom_abline</span>(<span class="kw">slope</span> <span class="kw">=</span> <span class="fl">1</span>, <span class="kw">linetype</span> <span class="kw">=</span> <span class="fl">2</span>) +
     <span class="fu">coord_cartesian</span>( <span class="kw">xlim</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(-<span class="fl">5</span>,<span class="fl">0</span>), <span class="kw">ylim</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(-<span class="fl">5</span>,<span class="fl">0</span>) ) +
     <span class="fu">theme</span>(<span class="kw">aspect.ratio</span> <span class="kw">=</span> <span class="fl">1</span>)</pre></body></html></div>
-<p><img src="check_poisson_files/figure-html/unnamed-chunk-6-1.png" width="700"></p>
+<p><img src="check_poisson_files/figure-html/unnamed-chunk-4-1.png" width="700"></p>
+<p>We can see that the p-values from poisson.test (x-axis) more or less match the probability with which they are represented in the resampled studies (y-axis), but there is some skewness to their relationship.</p>
 </div>
-<div id="bootstrap" class="section level3">
-<h3 class="hasAnchor">
-<a href="#bootstrap" class="anchor"></a>Bootstrap</h3>
-<div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="no">df_comp</span> <span class="kw">%&gt;%</span>
-  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span>(<span class="no">prob_low</span>, <span class="kw">base</span> <span class="kw">=</span> <span class="fl">10</span>), <span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span>(<span class="no">prob_low</span>, <span class="kw">base</span> <span class="kw">=</span> <span class="fl">10</span>))) +
+<div id="perform-same-check-on-bootstrapped-probabilities" class="section level2">
+<h2 class="hasAnchor">
+<a href="#perform-same-check-on-bootstrapped-probabilities" class="anchor"></a>Perform Same Check on Bootstrapped Probabilities</h2>
+<div class="sourceCode" id="cb13"><html><body><pre class="r"><span class="no">df_check_pval</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/get_ecd_values.html">get_ecd_values</a></span>(<span class="no">df_sim_studies</span>, <span class="no">df_sim_sites</span>, <span class="kw">val_str</span> <span class="kw">=</span> <span class="st">"prob_low"</span>)
+
+<span class="no">df_check_pval</span></pre></body></html></div>
+<pre><code>## # A tibble: 300 x 8
+##    study_id site_number visit_med75 mean_ae_site_me… mean_ae_study_m…    pval
+##    &lt;chr&gt;    &lt;chr&gt;             &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;   &lt;dbl&gt;
+##  1 ae_per_… S0001                16            0.556            0.755 0.697  
+##  2 ae_per_… S0002                17            0.625            0.791 0.840  
+##  3 ae_per_… S0003                16            0.125            0.759 0.0367 
+##  4 ae_per_… S0004                15            0                0.721 0.00547
+##  5 ae_per_… S0005                15            0.375            0.717 0.394  
+##  6 ae_per_… S0006                14            0.778            0.662 1      
+##  7 ae_per_… S0007                15            0.444            0.717 0.429  
+##  8 ae_per_… S0008                14            0.125            0.668 0.0745 
+##  9 ae_per_… S0009                15            0.286            0.717 0.256  
+## 10 ae_per_… S0010                16            1                0.751 1      
+## # … with 290 more rows, and 2 more variables: prob_low &lt;dbl&gt;,
+## #   prob_low_ecd &lt;dbl&gt;</code></pre>
+<div class="sourceCode" id="cb15"><html><body><pre class="r"><span class="no">df_check_pval</span> <span class="kw">%&gt;%</span>
+  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span>(<span class="no">prob_low</span>, <span class="kw">base</span> <span class="kw">=</span> <span class="fl">10</span>), <span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span>(<span class="no">prob_low_ecd</span>, <span class="kw">base</span> <span class="kw">=</span> <span class="fl">10</span>))) +
     <span class="fu">geom_point</span>(<span class="kw">alpha</span> <span class="kw">=</span> <span class="fl">0.5</span>, <span class="kw">size</span> <span class="kw">=</span> <span class="fl">2</span>) +
     <span class="fu">facet_wrap</span>(~ <span class="no">study_id</span>) +
     <span class="fu">geom_abline</span>(<span class="kw">slope</span> <span class="kw">=</span> <span class="fl">1</span>, <span class="kw">linetype</span> <span class="kw">=</span> <span class="fl">2</span>) +
     <span class="fu">coord_cartesian</span>( <span class="kw">xlim</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(-<span class="fl">5</span>,<span class="fl">0</span>), <span class="kw">ylim</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(-<span class="fl">5</span>,<span class="fl">0</span>) ) +
     <span class="fu">theme</span>(<span class="kw">aspect.ratio</span> <span class="kw">=</span> <span class="fl">1</span>)</pre></body></html></div>
-<p><img src="check_poisson_files/figure-html/unnamed-chunk-7-1.png" width="700"></p>
-</div>
+<p><img src="check_poisson_files/figure-html/unnamed-chunk-5-1.png" width="700"></p>
+<p>Here we see that the probabilities from the site simulations (x-axis) perfectly match probability with which they are represented in the resampled studies (y-axis).</p>
 </div>
 <div id="conclusion" class="section level2">
 <h2 class="hasAnchor">
 <a href="#conclusion" class="anchor"></a>Conclusion</h2>
-<p>We see that the bootstrap method gives us more accurate probabilities than the p-values derived from poisson.test even though the AE generation in the sample data follows a strict poisson process. For real clinical trial data with different types of studies for which it is not clear whether AE generation is truly based on a pure poisson process we reommend to use the bootstrap method. If poisson.test shall be used we recommend checking the applicability as we just demonstrated.</p>
+<p>We see that the bootstrap method gives us more accurate probabilities than the p-values derived from poisson.test even though the AE generation in the sample data follows a strict poisson process. For real clinical trial data with different types of studies for which it is not clear whether AE generation is truly based on a pure poisson process we reommend to use the bootstrap method. If poisson.test shall be used we recommend checking the applicability as we just demonstrated on clinical data set.</p>
 </div>
 </div>
   </div>

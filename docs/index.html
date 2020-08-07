@@ -84,7 +84,14 @@
   </ul>
 </li>
       </ul>
-<ul class="nav navbar-nav navbar-right"></ul>
+<ul class="nav navbar-nav navbar-right">
+<li>
+  <a href="https://github.com/openpharma/simaerep/">
+    <span class="fab fa fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
+      </ul>
 </div>
 <!--/.nav-collapse -->
   </div>
@@ -130,12 +137,13 @@
 
 <span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span>(<span class="fl">1</span>)
 
-<span class="no">df_visit</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/sim_test_data_study.html">sim_test_data_study</a></span>(<span class="kw">n_pat</span> <span class="kw">=</span> <span class="fl">1000</span>, <span class="co"># number of patients in study</span>
-                                     <span class="kw">n_sites</span> <span class="kw">=</span> <span class="fl">100</span>, <span class="co"># number of sites in study</span>
-                                     <span class="kw">frac_site_with_ur</span> <span class="kw">=</span> <span class="fl">0.05</span>, <span class="co"># fraction of sites under-reporting</span>
-                                     <span class="kw">ur_rate</span> <span class="kw">=</span> <span class="fl">0.4</span>, <span class="co"># rate of under-reporting</span>
-                                     <span class="kw">ae_per_visit_mean</span> <span class="kw">=</span> <span class="fl">0.5</span> <span class="co"># mean AE per patient visit</span>
-                                     )
+<span class="no">df_visit</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/sim_test_data_study.html">sim_test_data_study</a></span>(
+  <span class="kw">n_pat</span> <span class="kw">=</span> <span class="fl">1000</span>, <span class="co"># number of patients in study</span>
+  <span class="kw">n_sites</span> <span class="kw">=</span> <span class="fl">100</span>, <span class="co"># number of sites in study</span>
+  <span class="kw">frac_site_with_ur</span> <span class="kw">=</span> <span class="fl">0.05</span>, <span class="co"># fraction of sites under-reporting</span>
+  <span class="kw">ur_rate</span> <span class="kw">=</span> <span class="fl">0.4</span>, <span class="co"># rate of under-reporting</span>
+  <span class="kw">ae_per_visit_mean</span> <span class="kw">=</span> <span class="fl">0.5</span> <span class="co"># mean AE per patient visit</span>
+)
 
 <span class="no">df_visit</span>$<span class="no">study_id</span> <span class="kw">&lt;-</span> <span class="st">"A"</span>
 
@@ -153,7 +161,14 @@
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
-    <div class="license">
+    <div class="links">
+<h2>Links</h2>
+<ul class="list-unstyled">
+<li>Browse source code at <br><a href="https://github.com/openpharma/simaerep/">https://​github.com/​openpharma/​simaerep/​</a>
+</li>
+</ul>
+</div>
+<div class="license">
 <h2>License</h2>
 <ul class="list-unstyled">
 <li><a href="LICENSE.html">Full license</a></li>

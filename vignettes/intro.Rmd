@@ -89,11 +89,14 @@ df_visit <- sim_test_data_study(
   ae_per_visit_mean = 0.5
 )
 
-df_visit
+df_visit %>%
+  head(10) %>%
+  kable()
 
 df_visit %>%
   select(site_number, is_ur) %>%
-  distinct()
+  distinct() %>%
+  kable()
 ```
 
 In our sample data 2 sites (S0001 and S0002) are under-reporting AEs
@@ -102,12 +105,13 @@ In our sample data 2 sites (S0001 and S0002) are under-reporting AEs
 
 In an ongoing trial all patients will have a different number of consecutive visits. To find a cut-off visit to normalize the data we specify a single evaluation point for a given site based on the number of visits of the patient population. We take the median of the maximum visit of all the patients and multiply by 0.75 (visit_med75). For this we use `site_aggr` to aggregate the simulated visit level data to site level.
 
-```{r}
+```{r warning= FALSE}
 
 df_visit$study_id <- "A"
 df_site <- site_aggr(df_visit)
 
-df_site
+df_site %>%
+  kable()
 
 plot_visit_med75(df_visit, df_site, study_id_str = "A", n_site = 6)
 ```
@@ -138,8 +142,9 @@ With the non-parametric approach that we propose we do not need to worry about t
 
 ### Disadvantages Over Classic Statistical Tests
 
-- The number of repeats determines the smallest probability greater than zero, for example a for r=1000 the smalles value greater than zero is 0.001
-- Computationally more expensive
+- **Upper Limit for Uncompliant Sites**. We simulate an underlying compliant patient population using the data we are given. If the fraction of uncompliant examples becomes too high, detection rates will decrease. We find that detection rates start decreasing wiht 30-50% of under-reporting sites and are not usable anymore if a mojority > 50% of all sites are under-reporting [see article on usability limits](https://openpharma.github.io/simaerep/articles/usability_limits.html).
+- **Lower Probability Limit** The number of repeats determines the smallest probability greater than zero, for example a for r=1000 the smalles value greater than zero is 0.001
+- **Computationally Expensive**
 
 
 ### Methodology
@@ -153,8 +158,8 @@ Instead of 10 times we simulate 1000 times and count how many times we have obse
 
 To illustrate the effect of under-reporting we repeat the same process after having removed 2 AEs per patient from site C. We see how the probability for obtaining an equal or lower mean AE value than initially observed decreases (bottom).
 
-```{r fig.width=10, fig.height=7}
-plot_sim_examples(size_dot = 3, size_raster_label = 10)
+```{r fig.width=11, fig.height=9}
+plot_sim_examples(size_dot = 4, size_raster_label = 10)
 ```
 
 ### Application
@@ -163,7 +168,9 @@ We can run the above described simulation and as a becnhmark also perform a pois
 
 ```{r}
 df_sim_sites <- sim_sites(df_site, df_visit, r = 1000, poisson_test = TRUE)
-df_sim_sites
+
+df_sim_sites %>%
+  kable()
 ```
 
 We find that the probability of getting a mean ae at visit_med75 for sites S0001 and S0002 is 0 or near zero.
@@ -178,10 +185,13 @@ Our simulated test data set consists of just 6 sites. However, it is not uncommo
 - Express underreporting probability as 1 - FP/P
 
 ```{r}
-df_eval <- eval_sites(df_sim_sites,
-                      r_sim_sites = 1000 #needs to be passed to in order to consider smallest value > 0
-                      )
-df_eval
+df_eval <- eval_sites(
+  df_sim_sites,
+  r_sim_sites = 1000 #needs to be passed to in order to consider smallest value > 0 for fp calculation
+)
+
+df_eval %>%
+  kable()
 ```
 
 the colummn `prob_low_p_vs_fp_ratio` contains the P/FP ratio. A ratio of 20 represents ~ 95 % probability of under-reporting (20/21) which we consider a sensible threshold.
@@ -190,7 +200,7 @@ the colummn `prob_low_p_vs_fp_ratio` contains the P/FP ratio. A ratio of 20 repr
 
 `plot_study` will plot mean ae development of all sites and visit level data for each flagged site using a P/FP threshold of 20
 
-```{r}
+```{r fig.width = 10}
 plot_study(df_visit, df_site, df_eval, study = "A")
 ```
 

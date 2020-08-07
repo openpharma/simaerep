@@ -651,7 +651,8 @@ plot_study <- function(df_visit,
     labs(color = "Probability Under-Reporting") +
     scale_color_identity() +
     theme_minimal() +
-    theme(legend.position = "bottom")
+    theme(legend.position = "bottom") +
+    labs(y = "Mean Cumulative AE Count per Site")
 
   if (length(sites_ordered) == 0) {
     print("no sites with P/FP ratio > 1")
@@ -713,7 +714,8 @@ plot_study <- function(df_visit,
     facet_wrap(~site_number) +
     scale_color_identity() +
     theme_minimal() +
-    theme(legend.position = "none")
+    theme(legend.position = "none") +
+    labs(y = "Cumulative AE Count per Patient")
 
   if (pval) {
     p_site <- p_site +

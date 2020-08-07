@@ -116,12 +116,12 @@
 <div id="introduction" class="section level1">
 <h1 class="hasAnchor">
 <a href="#introduction" class="anchor"></a>Introduction</h1>
-<p>There limits to the use of the bootstrapping method to detect rare events. - the higher the fraction of AE under-reporting sites the less likely it should become to flag under-reporting sites - negative deviations from overall small integer values (3 or less) will also be hard to detect</p>
-<p>Here we are going to test the bootstrapped-based under-reporting detection method against the poisson.test-based benchmark in different AE under-reporting scenarios.</p>
+<p>As we already mentioned in the <a href="file:///git_repos/simaerep/docs/articles/intro.html#disadvantages-over-classic-statistical-tests">introduction</a> bbotstrap resampling comes at a price. We need a good proportion of sites that are compliant and are not under-reporting AEs. Otherwise the patient pool we draw from will be tainted. Also, in general for count data, negative deviations from overall small integer values (3 or less) are hard to detect. Here we will assess the usability limits of the bootstrap resampling method by applying it to different simulated scenarios.</p>
 </div>
 <div id="parameter-grid" class="section level1">
 <h1 class="hasAnchor">
 <a href="#parameter-grid" class="anchor"></a>Parameter Grid</h1>
+<p>We start by defining a parameter grid.</p>
 <p><strong>Fixed Parameters:</strong><br>
 - n_pat: 1000<br>
 - n_sites: 100<br>
@@ -158,42 +158,80 @@
 <div id="apply" class="section level1">
 <h1 class="hasAnchor">
 <a href="#apply" class="anchor"></a>Apply</h1>
+<p>We use the <a href="https://github.com/DavisVaughan/furrr"><code>furrr</code></a> and the <a href="https://github.com/HenrikBengtsson/future"><code>future</code></a> package for multiprocessing. We proceed in applying all functions we already <a href="https://openpharma.github.io/simaerep/articles/intro.html">introduced</a>.</p>
 <div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/warning.html">suppressWarnings</a></span>(<span class="kw pkg">future</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/future/man/plan.html">plan</a></span>(<span class="no">multiprocess</span>))</pre></body></html></div>
 <div id="simulate-test-data" class="section level2">
 <h2 class="hasAnchor">
 <a href="#simulate-test-data" class="anchor"></a>Simulate Test Data</h2>
+<p>We iteratively apply <a href="https://openpharma.github.io/simaerep/reference/sim_test_data_study.html">sim_test_data_study()</a> on the different parameter combination of the grid</p>
 <div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="no">df_grid</span> <span class="kw">&lt;-</span> <span class="no">df_grid</span> <span class="kw">%&gt;%</span>
-  <span class="fu">mutate</span>( <span class="kw">df_visit</span> <span class="kw">=</span> <span class="kw pkg">furrr</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/furrr/man/future_map2.html">future_pmap</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="kw">am</span> <span class="kw">=</span> <span class="no">ae_per_visit_mean</span>,
-                                             <span class="kw">fr</span> <span class="kw">=</span> <span class="no">frac_site_with_ur</span>,
-                                             <span class="kw">ur</span> <span class="kw">=</span> <span class="no">ur_rate</span>),
-                                        <span class="kw">function</span>(<span class="no">am</span>, <span class="no">fr</span>, <span class="no">ur</span>) <span class="fu"><a href="../reference/sim_test_data_study.html">sim_test_data_study</a></span>(<span class="kw">n_pat</span> <span class="kw">=</span> <span class="fl">1000</span>, <span class="kw">n_sites</span> <span class="kw">=</span> <span class="fl">100</span>,
-                                                                                      <span class="kw">max_visit_mean</span> <span class="kw">=</span> <span class="fl">20</span>, <span class="kw">max_visit_sd</span> <span class="kw">=</span> <span class="fl">4</span>,
-                                                                                      <span class="kw">ae_per_visit_mean</span> <span class="kw">=</span> <span class="no">am</span>,
-                                                                                      <span class="kw">frac_site_with_ur</span> <span class="kw">=</span> <span class="no">fr</span>,
-                                                                                      <span class="kw">ur_rate</span> <span class="kw">=</span> <span class="no">ur</span>),
-                                        <span class="kw">.progress</span> <span class="kw">=</span> <span class="fl">FALSE</span>
-                                        )
-  )</pre></body></html></div>
+  <span class="fu">mutate</span>(
+    <span class="kw">df_visit</span> <span class="kw">=</span> <span class="kw pkg">furrr</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/furrr/man/future_map2.html">future_pmap</a></span>(
+      <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="kw">am</span> <span class="kw">=</span> <span class="no">ae_per_visit_mean</span>,
+           <span class="kw">fr</span> <span class="kw">=</span> <span class="no">frac_site_with_ur</span>,
+           <span class="kw">ur</span> <span class="kw">=</span> <span class="no">ur_rate</span>),
+      <span class="kw">function</span>(<span class="no">am</span>, <span class="no">fr</span>, <span class="no">ur</span>) <span class="fu"><a href="../reference/sim_test_data_study.html">sim_test_data_study</a></span>(<span class="kw">n_pat</span> <span class="kw">=</span> <span class="fl">1000</span>,
+                                               <span class="kw">n_sites</span> <span class="kw">=</span> <span class="fl">100</span>,
+                                               <span class="kw">max_visit_mean</span> <span class="kw">=</span> <span class="fl">20</span>,
+                                               <span class="kw">max_visit_sd</span> <span class="kw">=</span> <span class="fl">4</span>,
+                                               <span class="kw">ae_per_visit_mean</span> <span class="kw">=</span> <span class="no">am</span>,
+                                               <span class="kw">frac_site_with_ur</span> <span class="kw">=</span> <span class="no">fr</span>,
+                                               <span class="kw">ur_rate</span> <span class="kw">=</span> <span class="no">ur</span>),
+      <span class="kw">.progress</span> <span class="kw">=</span> <span class="fl">FALSE</span>
+    )
+  )
+
+<span class="no">df_grid</span></pre></body></html></div>
+<pre><code>## # A tibble: 1,000 x 4
+##    ae_per_visit_mean frac_site_with_ur ur_rate df_visit             
+##                &lt;dbl&gt;             &lt;dbl&gt;   &lt;dbl&gt; &lt;list&gt;               
+##  1              0.05              0.05   0.05  &lt;tibble [19,402 × 8]&gt;
+##  2              0.05              0.05   0.156 &lt;tibble [19,488 × 8]&gt;
+##  3              0.05              0.05   0.261 &lt;tibble [19,303 × 8]&gt;
+##  4              0.05              0.05   0.367 &lt;tibble [19,674 × 8]&gt;
+##  5              0.05              0.05   0.472 &lt;tibble [19,621 × 8]&gt;
+##  6              0.05              0.05   0.578 &lt;tibble [19,365 × 8]&gt;
+##  7              0.05              0.05   0.683 &lt;tibble [19,636 × 8]&gt;
+##  8              0.05              0.05   0.789 &lt;tibble [19,491 × 8]&gt;
+##  9              0.05              0.05   0.894 &lt;tibble [19,496 × 8]&gt;
+## 10              0.05              0.05   1     &lt;tibble [19,417 × 8]&gt;
+## # … with 990 more rows</code></pre>
 </div>
 <div id="aggregate-test-data" class="section level2">
 <h2 class="hasAnchor">
 <a href="#aggregate-test-data" class="anchor"></a>Aggregate Test Data</h2>
-<ul>
-<li>calculate visit_med75 and mean ae count at visit_med75</li>
-</ul>
-<div class="sourceCode" id="cb6"><html><body><pre class="r"><span class="no">df_grid</span> <span class="kw">&lt;-</span> <span class="no">df_grid</span> <span class="kw">%&gt;%</span>
-  <span class="fu">mutate</span>( <span class="kw">df_visit</span> <span class="kw">=</span> <span class="fu">map2</span>(<span class="no">df_visit</span>, <span class="fu">row_number</span>(), <span class="kw">function</span>(<span class="no">x</span>,<span class="no">y</span>) <span class="fu">mutate</span>(<span class="no">x</span>, <span class="kw">study_id</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="st">"S"</span>, <span class="no">y</span>))),
-          <span class="kw">df_site</span> <span class="kw">=</span> <span class="kw pkg">furrr</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/furrr/man/future_map.html">future_map</a></span>(<span class="no">df_visit</span>,
-                                      <span class="no">site_aggr</span>,
-                                      <span class="kw">.progress</span> <span class="kw">=</span> <span class="fl">FALSE</span>
-                                      )
-  )</pre></body></html></div>
+<p>We apply <a href="https://openpharma.github.io/simaerep/reference/site_aggr.html">site_aggr()</a> on the different simulated data sets.</p>
+<div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="no">df_grid</span> <span class="kw">&lt;-</span> <span class="no">df_grid</span> <span class="kw">%&gt;%</span>
+  <span class="fu">mutate</span>(
+    <span class="kw">df_visit</span> <span class="kw">=</span> <span class="fu">map2</span>(<span class="no">df_visit</span>, <span class="fu">row_number</span>(),
+                    <span class="kw">function</span>(<span class="no">x</span>,<span class="no">y</span>) <span class="fu">mutate</span>(<span class="no">x</span>, <span class="kw">study_id</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="st">"S"</span>, <span class="no">y</span>))),
+    <span class="kw">df_site</span> <span class="kw">=</span> <span class="kw pkg">furrr</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/furrr/man/future_map.html">future_map</a></span>(<span class="no">df_visit</span>,
+                                <span class="no">site_aggr</span>,
+                                <span class="kw">.progress</span> <span class="kw">=</span> <span class="fl">FALSE</span>
+                                )
+  )
+
+<span class="no">df_grid</span></pre></body></html></div>
+<pre><code>## # A tibble: 1,000 x 5
+##    ae_per_visit_mean frac_site_with_ur ur_rate df_visit          df_site        
+##                &lt;dbl&gt;             &lt;dbl&gt;   &lt;dbl&gt; &lt;list&gt;            &lt;list&gt;         
+##  1              0.05              0.05   0.05  &lt;tibble [19,402 … &lt;tibble [100 ×…
+##  2              0.05              0.05   0.156 &lt;tibble [19,488 … &lt;tibble [100 ×…
+##  3              0.05              0.05   0.261 &lt;tibble [19,303 … &lt;tibble [100 ×…
+##  4              0.05              0.05   0.367 &lt;tibble [19,674 … &lt;tibble [100 ×…
+##  5              0.05              0.05   0.472 &lt;tibble [19,621 … &lt;tibble [100 ×…
+##  6              0.05              0.05   0.578 &lt;tibble [19,365 … &lt;tibble [100 ×…
+##  7              0.05              0.05   0.683 &lt;tibble [19,636 … &lt;tibble [100 ×…
+##  8              0.05              0.05   0.789 &lt;tibble [19,491 … &lt;tibble [100 ×…
+##  9              0.05              0.05   0.894 &lt;tibble [19,496 … &lt;tibble [100 ×…
+## 10              0.05              0.05   1     &lt;tibble [19,417 … &lt;tibble [100 ×…
+## # … with 990 more rows</code></pre>
 </div>
 <div id="simulate-sites" class="section level2">
 <h2 class="hasAnchor">
 <a href="#simulate-sites" class="anchor"></a>Simulate Sites</h2>
-<p>Simulate how likely a given mean ae count or lower is for each site is by randomly sampling with replacement of new patients from the study patient pool.</p>
-<div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="no">df_grid</span> <span class="kw">&lt;-</span> <span class="no">df_grid</span> <span class="kw">%&gt;%</span>
+<p>We apply <a href="https://openpharma.github.io/simaerep/reference/sim_sites.html">sim_sites()</a> to to calculate the AE under-reporting probability.</p>
+<div class="sourceCode" id="cb9"><html><body><pre class="r"><span class="no">df_grid</span> <span class="kw">&lt;-</span> <span class="no">df_grid</span> <span class="kw">%&gt;%</span>
   <span class="fu">mutate</span>( <span class="kw">df_sim_sites</span> <span class="kw">=</span> <span class="kw pkg">furrr</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/furrr/man/future_map2.html">future_map2</a></span>(<span class="no">df_site</span>, <span class="no">df_visit</span>,
                                             <span class="no">sim_sites</span>,
                                             <span class="kw">r</span> <span class="kw">=</span> <span class="fl">1000</span>,
@@ -201,25 +239,63 @@
                                             <span class="kw">prob_lower</span> <span class="kw">=</span> <span class="fl">TRUE</span>,
                                             <span class="kw">.progress</span> <span class="kw">=</span> <span class="fl">FALSE</span>
                                             )
-  )</pre></body></html></div>
+  )
+
+<span class="no">df_grid</span></pre></body></html></div>
+<pre><code>## # A tibble: 1,000 x 6
+##    ae_per_visit_mean frac_site_with_… ur_rate df_visit   df_site   df_sim_sites 
+##                &lt;dbl&gt;            &lt;dbl&gt;   &lt;dbl&gt; &lt;list&gt;     &lt;list&gt;    &lt;list&gt;       
+##  1              0.05             0.05   0.05  &lt;tibble [… &lt;tibble … &lt;tibble [100…
+##  2              0.05             0.05   0.156 &lt;tibble [… &lt;tibble … &lt;tibble [100…
+##  3              0.05             0.05   0.261 &lt;tibble [… &lt;tibble … &lt;tibble [100…
+##  4              0.05             0.05   0.367 &lt;tibble [… &lt;tibble … &lt;tibble [100…
+##  5              0.05             0.05   0.472 &lt;tibble [… &lt;tibble … &lt;tibble [100…
+##  6              0.05             0.05   0.578 &lt;tibble [… &lt;tibble … &lt;tibble [100…
+##  7              0.05             0.05   0.683 &lt;tibble [… &lt;tibble … &lt;tibble [100…
+##  8              0.05             0.05   0.789 &lt;tibble [… &lt;tibble … &lt;tibble [100…
+##  9              0.05             0.05   0.894 &lt;tibble [… &lt;tibble … &lt;tibble [100…
+## 10              0.05             0.05   1     &lt;tibble [… &lt;tibble … &lt;tibble [100…
+## # … with 990 more rows</code></pre>
 </div>
 <div id="evaluate-sites" class="section level2">
 <h2 class="hasAnchor">
 <a href="#evaluate-sites" class="anchor"></a>Evaluate Sites</h2>
-<p>We balance the simulated under reporting probabilites with the expected FP rates and calculate the P vs FP ratio and the resulting adjusted AE under-reporting probability.</p>
-<div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="no">df_grid</span> <span class="kw">&lt;-</span> <span class="no">df_grid</span> <span class="kw">%&gt;%</span>
+<p>We apply <a href="https://openpharma.github.io/simaerep/reference/eval_sites.html">eval_sites()</a> to balance the bootstrapped probabilities by the expected number of false positives.</p>
+<div class="sourceCode" id="cb11"><html><body><pre class="r"><span class="no">df_grid</span> <span class="kw">&lt;-</span> <span class="no">df_grid</span> <span class="kw">%&gt;%</span>
   <span class="fu">mutate</span>( <span class="kw">df_eval</span> <span class="kw">=</span> <span class="kw pkg">furrr</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/furrr/man/future_map.html">future_map</a></span>(<span class="no">df_sim_sites</span>,
                                       <span class="no">eval_sites</span>,
                                       <span class="kw">r_sim_sites</span> <span class="kw">=</span> <span class="fl">1000</span>,
                                       <span class="kw">.progress</span> <span class="kw">=</span> <span class="fl">FALSE</span>
                                       )
-  )</pre></body></html></div>
+  )
+
+<span class="no">df_grid</span></pre></body></html></div>
+<pre><code>## # A tibble: 1,000 x 7
+##    ae_per_visit_me… frac_site_with_… ur_rate df_visit df_site df_sim_sites
+##               &lt;dbl&gt;            &lt;dbl&gt;   &lt;dbl&gt; &lt;list&gt;   &lt;list&gt;  &lt;list&gt;      
+##  1             0.05             0.05   0.05  &lt;tibble… &lt;tibbl… &lt;tibble [10…
+##  2             0.05             0.05   0.156 &lt;tibble… &lt;tibbl… &lt;tibble [10…
+##  3             0.05             0.05   0.261 &lt;tibble… &lt;tibbl… &lt;tibble [10…
+##  4             0.05             0.05   0.367 &lt;tibble… &lt;tibbl… &lt;tibble [10…
+##  5             0.05             0.05   0.472 &lt;tibble… &lt;tibbl… &lt;tibble [10…
+##  6             0.05             0.05   0.578 &lt;tibble… &lt;tibbl… &lt;tibble [10…
+##  7             0.05             0.05   0.683 &lt;tibble… &lt;tibbl… &lt;tibble [10…
+##  8             0.05             0.05   0.789 &lt;tibble… &lt;tibbl… &lt;tibble [10…
+##  9             0.05             0.05   0.894 &lt;tibble… &lt;tibbl… &lt;tibble [10…
+## 10             0.05             0.05   1     &lt;tibble… &lt;tibbl… &lt;tibble [10…
+## # … with 990 more rows, and 1 more variable: df_eval &lt;list&gt;</code></pre>
 </div>
 <div id="get-metrics" class="section level2">
 <h2 class="hasAnchor">
 <a href="#get-metrics" class="anchor"></a>Get Metrics</h2>
-<p>We choose a 95% threshold for detecting AE under-reporting sites and will calculate standard classification metrics.</p>
-<div class="sourceCode" id="cb9"><html><body><pre class="r"><span class="no">get_metrics</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">df_visit</span>, <span class="no">df_eval</span>, <span class="no">method</span>) {
+<p>Apart from calculating true and false positives rate for the final under-reporting probability we also calculate the same metrics for a couple of benchmark probabilities.</p>
+<ul>
+<li>p-values returned from <code><a href="https://rdrr.io/r/stats/poisson.test.html">poisson.test()</a></code>
+</li>
+<li>and the probabilities and p-values before adjusting for the expected false positives</li>
+</ul>
+<p>In all cases we use a 95% probability threshold.</p>
+<div class="sourceCode" id="cb13"><html><body><pre class="r"><span class="no">get_metrics</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">df_visit</span>, <span class="no">df_eval</span>, <span class="no">method</span>) {
 
   <span class="kw">if</span> (<span class="no">method</span> <span class="kw">==</span> <span class="st">"ptest"</span>) {
     <span class="no">prob_ur_adj</span> <span class="kw">=</span> <span class="st">"pval_prob_ur"</span>
@@ -282,20 +358,56 @@
                                                 <span class="no">get_metrics</span>,
                                                 <span class="kw">method</span> <span class="kw">=</span> <span class="st">"bootstrap"</span>),
          <span class="kw">df_metric</span> <span class="kw">=</span> <span class="fu">map2</span>(<span class="no">df_metric_pval</span>, <span class="no">df_metric_prob_low</span>, <span class="no">bind_rows</span>)
-         )</pre></body></html></div>
+         )
+
+<span class="no">df_grid</span></pre></body></html></div>
+<pre><code>## # A tibble: 1,000 x 10
+##    ae_per_visit_me… frac_site_with_… ur_rate df_visit df_site df_sim_sites
+##               &lt;dbl&gt;            &lt;dbl&gt;   &lt;dbl&gt; &lt;list&gt;   &lt;list&gt;  &lt;list&gt;      
+##  1             0.05             0.05   0.05  &lt;tibble… &lt;tibbl… &lt;tibble [10…
+##  2             0.05             0.05   0.156 &lt;tibble… &lt;tibbl… &lt;tibble [10…
+##  3             0.05             0.05   0.261 &lt;tibble… &lt;tibbl… &lt;tibble [10…
+##  4             0.05             0.05   0.367 &lt;tibble… &lt;tibbl… &lt;tibble [10…
+##  5             0.05             0.05   0.472 &lt;tibble… &lt;tibbl… &lt;tibble [10…
+##  6             0.05             0.05   0.578 &lt;tibble… &lt;tibbl… &lt;tibble [10…
+##  7             0.05             0.05   0.683 &lt;tibble… &lt;tibbl… &lt;tibble [10…
+##  8             0.05             0.05   0.789 &lt;tibble… &lt;tibbl… &lt;tibble [10…
+##  9             0.05             0.05   0.894 &lt;tibble… &lt;tibbl… &lt;tibble [10…
+## 10             0.05             0.05   1     &lt;tibble… &lt;tibbl… &lt;tibble [10…
+## # … with 990 more rows, and 4 more variables: df_eval &lt;list&gt;,
+## #   df_metric_pval &lt;list&gt;, df_metric_prob_low &lt;list&gt;, df_metric &lt;list&gt;</code></pre>
 </div>
 </div>
 <div id="plot" class="section level1">
 <h1 class="hasAnchor">
 <a href="#plot" class="anchor"></a>Plot</h1>
-<div class="sourceCode" id="cb10"><html><body><pre class="r"><span class="no">df_plot</span> <span class="kw">&lt;-</span> <span class="no">df_grid</span> <span class="kw">%&gt;%</span>
+<div class="sourceCode" id="cb15"><html><body><pre class="r"><span class="no">df_plot</span> <span class="kw">&lt;-</span> <span class="no">df_grid</span> <span class="kw">%&gt;%</span>
   <span class="fu">select</span>(<span class="no">ae_per_visit_mean</span>, <span class="no">frac_site_with_ur</span>, <span class="no">ur_rate</span>, <span class="no">df_metric</span>) <span class="kw">%&gt;%</span>
-  <span class="fu">unnest</span>(<span class="no">df_metric</span>)</pre></body></html></div>
+  <span class="fu">unnest</span>(<span class="no">df_metric</span>)
+
+<span class="no">df_plot</span></pre></body></html></div>
+<pre><code>## # A tibble: 4,000 x 14
+##    ae_per_visit_me… frac_site_with_… ur_rate study_id    tp    fn    tn    fp
+##               &lt;dbl&gt;            &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+##  1             0.05             0.05   0.05  S 1          0     5    95     0
+##  2             0.05             0.05   0.05  S 1          1     4    94     1
+##  3             0.05             0.05   0.05  S 1          0     5    95     0
+##  4             0.05             0.05   0.05  S 1          1     4    91     4
+##  5             0.05             0.05   0.156 S 2          0     5    95     0
+##  6             0.05             0.05   0.156 S 2          0     5    95     0
+##  7             0.05             0.05   0.156 S 2          0     5    95     0
+##  8             0.05             0.05   0.156 S 2          0     5    93     2
+##  9             0.05             0.05   0.261 S 3          0     5    95     0
+## 10             0.05             0.05   0.261 S 3          0     5    93     2
+## # … with 3,990 more rows, and 6 more variables: p &lt;dbl&gt;, n &lt;dbl&gt;, P &lt;dbl&gt;,
+## #   N &lt;dbl&gt;, prob_type &lt;chr&gt;, method &lt;chr&gt;</code></pre>
 </div>
 <div id="true-positive-rate---p---tpp" class="section level1">
 <h1 class="hasAnchor">
 <a href="#true-positive-rate---p---tpp" class="anchor"></a>True positive rate - P - TP/P</h1>
-<div class="sourceCode" id="cb11"><html><body><pre class="r"><span class="no">p</span> <span class="kw">&lt;-</span> <span class="no">df_plot</span> <span class="kw">%&gt;%</span>
+<p>When comparing bootstrap method against the poisson.test becnhmark test, we find that they perform mostly similar from a 0.05 - 0.3 ratio of under-reporting sites. Its performance is still acceptable from a 0.3 - 0.5 ratio and then becomes pretty useless.</p>
+<p>As expected detection of under-reporting sites is close too impossible when the ae/visit ratio is very low (0.05) with detection rates close to zero for all tested scenarios.</p>
+<div class="sourceCode" id="cb17"><html><body><pre class="r"><span class="no">p</span> <span class="kw">&lt;-</span> <span class="no">df_plot</span> <span class="kw">%&gt;%</span>
   <span class="fu">mutate</span>( <span class="kw">tp_P_ratio</span> <span class="kw">=</span> <span class="no">tp</span>/<span class="no">P</span>) <span class="kw">%&gt;%</span>
   <span class="fu">select</span>(<span class="no">ae_per_visit_mean</span>, <span class="no">frac_site_with_ur</span>, <span class="no">ur_rate</span>, <span class="no">tp_P_ratio</span>, <span class="no">method</span>, <span class="no">prob_type</span>) <span class="kw">%&gt;%</span>
   <span class="fu">mutate_if</span>(<span class="no">is.numeric</span>, <span class="no">round</span>, <span class="fl">3</span>) <span class="kw">%&gt;%</span>
@@ -319,7 +431,8 @@
 <div id="false-positive-rate-fpn" class="section level1">
 <h1 class="hasAnchor">
 <a href="#false-positive-rate-fpn" class="anchor"></a>False positive rate FP/N</h1>
-<div class="sourceCode" id="cb12"><html><body><pre class="r"><span class="no">p</span> <span class="kw">&lt;-</span> <span class="no">df_plot</span> <span class="kw">%&gt;%</span>
+<p>We can show that adjusting the AE under-reporting probability for the expected number of false positives is quite effective.As the false positive rate is almost zero for all tested scenarios. However, this also comes at a cost lowering the true positive rate as well.</p>
+<div class="sourceCode" id="cb18"><html><body><pre class="r"><span class="no">p</span> <span class="kw">&lt;-</span> <span class="no">df_plot</span> <span class="kw">%&gt;%</span>
   <span class="fu">mutate</span>( <span class="kw">fpr</span> <span class="kw">=</span> <span class="no">fp</span>/<span class="no">N</span>) <span class="kw">%&gt;%</span>
   <span class="fu">select</span>(<span class="no">ae_per_visit_mean</span>, <span class="no">frac_site_with_ur</span>, <span class="no">ur_rate</span>, <span class="no">fpr</span>, <span class="no">method</span>, <span class="no">prob_type</span>) <span class="kw">%&gt;%</span>
   <span class="fu">mutate_if</span>(<span class="no">is.numeric</span>, <span class="no">round</span>, <span class="fl">3</span>) <span class="kw">%&gt;%</span>
@@ -343,9 +456,8 @@
 <div id="conclusion" class="section level1">
 <h1 class="hasAnchor">
 <a href="#conclusion" class="anchor"></a>Conclusion</h1>
-<p>We can show that adjusting the AE under-reporting probability for the expected number of false positives is quite effective.As the false positive rate is almost zero for all tested scenarios. However, this also comes at a cost lowering the true positive rate as well.</p>
-<p>When comparing bootstrap method against the poisson.test becnhmark test, we find that they perform mostly similar from a 0.05 - 0.3 ratio of under-reporting sites. Its performance is still acceptable from a 0.3 - 0.5 ratio and then becomes pretty useless.</p>
-<p>As expected detection of under-reporting sites is close too impossible when the ae/visit ratio is very low (0.05) with detection rates close to zero for all tested scenarios.</p>
+<p>As already outlined in the <a href="https://openpharma.github.io/simaerep/articles/intro.html#advantage-over-classic-statistical-tests">introduction</a> the true AE generating process is unlikely to be a standard poisson process. Therefore using a non-parametric test remains our recommended option unless that there is a reason to believe that 50% or more of all sites are under-reporting AEs. We also show that it is important to adjust for the expected false positive rate when calculating the final probabilities.</p>
+<p>In general we can say that we do not recommend any method for detecting AE under-reporting that involves comparing AE counts if the ae per visit rate is 0.05 or lower.</p>
 </div>
   </div>
 
