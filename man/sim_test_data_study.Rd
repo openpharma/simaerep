@@ -21,8 +21,8 @@ sim_test_data_study(
 
 \item{frac_site_with_ur}{fraction of AE under-reporting sites, Default: 0}
 
-\item{ur_rate}{AE underreporting rate, will lower mean ae per visit used to
-simulate patients at sites flagged as AE-underreporting., Default: 0}
+\item{ur_rate}{AE under-reporting rate, will lower mean ae per visit used to
+simulate patients at sites flagged as AE-under-reporting., Default: 0}
 
 \item{max_visit_mean}{mean of the maximum number of visits of each patient,
 Default: 20}
@@ -39,7 +39,7 @@ max_visit_sd, ae_per_visit_mean, visit, n_ae
 \description{
 evenly distributes a number of given patients across a number of
 given sites. Then simulates ae development of each patient reducing the
-number of reported AEs for patients distributed to AE-underreporting sites.
+number of reported AEs for patients distributed to AE-under-reporting sites.
 }
 \details{
 maximum visit number will be sampled from normal distribution with

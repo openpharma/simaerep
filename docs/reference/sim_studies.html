@@ -130,7 +130,12 @@ or lower, use in combination with get_ecd_values()." />
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        
+        <li>
+  <a href="https://github.com/openpharma/simaerep/">
+    <span class="fab fa fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
       </ul>
       
     </div><!--/.nav-collapse -->
@@ -145,7 +150,7 @@ or lower, use in combination with get_ecd_values()." />
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>simulate studies</h1>
-    
+    <small class="dont-index">Source: <a href='https://github.com/openpharma/simaerep/blob/master/R/simaerep.R'><code>R/simaerep.R</code></a></small>
     <div class="hidden name"><code>sim_studies.Rd</code></div>
     </div>
 
@@ -195,7 +200,7 @@ Default: F</p></td>
     </tr>
     <tr>
       <th>r_prob_lower</th>
-      <td><p>nteger, denotes number of simulations for prob_lower
+      <td><p>integer, denotes number of simulations for prob_lower
 value calculation,, Default: 1000</p></td>
     </tr>
     <tr>
@@ -230,8 +235,8 @@ site to simulate, Default: 1</p></td>
     <p>Here we simulate study replicates maintaining the same number of
 sites, patients and vist_med75 by bootstrap resampling, then probabilities
 for obtaining lower or same mean_ae count and p-values using poisson.test
-are caluclated.</p>
-<p>adds column with simulated probabilities for exqual or lower
+are calculated.</p>
+<p>adds column with simulated probabilities for equal or lower
 mean_ae at visit_med75</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>

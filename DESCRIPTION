@@ -9,7 +9,7 @@ Authors@R:
            comment = c(ORCID = "0000-0003-4585-7799"))
 Description: Monitoring of Adverse Event (AE) reporting in clinical trials is important for patient safety. We
   use bootstrap-based simulation to assign an AE under-reporting probability to each site in a clinical trial.
-  The method is inspired by the 'infer' R package and Alen Downey's blog article: "There is only one test!"
+  The method is inspired by the 'infer' R package and Allen Downey's blog article: "There is only one test!"
   (http://allendowney.blogspot.com/2011/05/there-is-only-one-test.html).
 URL: https://openpharma.github.io/simaerep/, https://github.com/openpharma/simaerep
 License: MIT + file LICENSE
@@ -36,7 +36,8 @@ Suggests:
     devtools,
     pkgdown,
     knitr,
-    tibble
+    tibble,
+    spelling
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.0
-
+Language: en-US

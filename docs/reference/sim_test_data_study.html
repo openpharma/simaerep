@@ -49,7 +49,7 @@
 <meta property="og:title" content="simulate study test data — sim_test_data_study" />
 <meta property="og:description" content="evenly distributes a number of given patients across a number of
 given sites. Then simulates ae development of each patient reducing the
-number of reported AEs for patients distributed to AE-underreporting sites." />
+number of reported AEs for patients distributed to AE-under-reporting sites." />
 <meta property="og:image" content="https://openpharma.github.io/simaerep/logo.png" />
 
 
@@ -130,7 +130,12 @@ number of reported AEs for patients distributed to AE-underreporting sites." />
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        
+        <li>
+  <a href="https://github.com/openpharma/simaerep/">
+    <span class="fab fa fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
       </ul>
       
     </div><!--/.nav-collapse -->
@@ -145,14 +150,14 @@ number of reported AEs for patients distributed to AE-underreporting sites." />
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>simulate study test data</h1>
-    
+    <small class="dont-index">Source: <a href='https://github.com/openpharma/simaerep/blob/master/R/simaerep.R'><code>R/simaerep.R</code></a></small>
     <div class="hidden name"><code>sim_test_data_study.Rd</code></div>
     </div>
 
     <div class="ref-description">
     <p>evenly distributes a number of given patients across a number of
 given sites. Then simulates ae development of each patient reducing the
-number of reported AEs for patients distributed to AE-underreporting sites.</p>
+number of reported AEs for patients distributed to AE-under-reporting sites.</p>
     </div>
 
     <pre class="usage"><span class='fu'>sim_test_data_study</span>(
@@ -182,8 +187,8 @@ number of reported AEs for patients distributed to AE-underreporting sites.</p>
     </tr>
     <tr>
       <th>ur_rate</th>
-      <td><p>AE underreporting rate, will lower mean ae per visit used to
-simulate patients at sites flagged as AE-underreporting., Default: 0</p></td>
+      <td><p>AE under-reporting rate, will lower mean ae per visit used to
+simulate patients at sites flagged as AE-under-reporting., Default: 0</p></td>
     </tr>
     <tr>
       <th>max_visit_mean</th>

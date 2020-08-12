@@ -15,8 +15,8 @@ detecting under-reporting sites.
 Monitoring of Adverse Event (AE) reporting in clinical trials is
 important for patient safety. We use bootstrap-based simulation to
 assign an AE under-reporting probability to each site in a clinical
-trial. The method is inspired by the ‘infer’ R package and Alen Downey’s
-blog article: [“There is only one
+trial. The method is inspired by the ‘infer’ R package and Allen
+Downey’s blog article: [“There is only one
 test\!”](http://allendowney.blogspot.com/2011/05/there-is-only-one-test.html).
 
 ## Installation

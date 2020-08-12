@@ -27,7 +27,7 @@ suppressPackageStartupMessages( library(simaerep) )
 
 # Introduction
 
-As we already mentioned in the [introduction](file:///git_repos/simaerep/docs/articles/intro.html#disadvantages-over-classic-statistical-tests) bbotstrap resampling comes at a price. We need a good proportion of sites that are compliant and are not under-reporting AEs. Otherwise the patient pool we draw from will be tainted. Also, in general for count data, negative deviations from overall small integer values (3 or less) are hard to detect. Here we will assess the usability limits of the bootstrap resampling method by applying it to different simulated scenarios.
+As we already mentioned in the [introduction](file:///git_repos/simaerep/docs/articles/intro.html#disadvantages-over-classic-statistical-tests) bootstrap resampling comes at a price. We need a good proportion of sites that are compliant and are not under-reporting AEs. Otherwise the patient pool we draw from will be tainted. Also, in general for count data, negative deviations from overall small integer values (3 or less) are hard to detect. Here we will assess the usability limits of the bootstrap resampling method by applying it to different simulated scenarios.
 
 # Parameter Grid
   
@@ -235,7 +235,7 @@ df_plot
 
 # True positive rate - P - TP/P
 
-When comparing bootstrap method against the poisson.test becnhmark test, we find that they perform mostly similar from a 0.05 - 0.3 ratio of under-reporting sites. Its performance is still acceptable from a 0.3 - 0.5 ratio and then becomes pretty useless.
+When comparing bootstrap method against the poisson.test benchmark test, we find that they perform mostly similar from a 0.05 - 0.3 ratio of under-reporting sites. Its performance is still acceptable from a 0.3 - 0.5 ratio and then becomes pretty useless.
 
 As expected detection of under-reporting sites is close too impossible when the ae/visit ratio is very low (0.05) with detection rates close to zero for all tested scenarios.
 

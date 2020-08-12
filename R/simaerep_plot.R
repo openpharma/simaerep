@@ -137,7 +137,7 @@ plot_dots <- function(df,
 #' @title plot simulation example
 #' @description uses `plot_dots()` and adds 2 simulation panels, uses made-up site config with
 #' three sites A,B,C simulating site C
-#' @param substract_ae_per_pat integer, substract aes from patients at site C, Default: 0
+#' @param substract_ae_per_pat integer, subtract aes from patients at site C, Default: 0
 #' @param size_dots integer, Default: 10
 #' @param size_raster_label integer, Default: 12
 #' @param color_site_a character, hex color value, Default: '#BDBDBD'
