@@ -2,7 +2,6 @@ on:
   push:
     branches:
       - master
-      - coverage
   pull_request:
     branches:
       - master
