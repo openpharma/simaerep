@@ -20,7 +20,7 @@ lint_package <- function(path = ".", ...) {
                                           trailing_whitespace_linter = NULL,
                                           cyclocomp_linter = lintr::cyclocomp_linter(25)
                                         ),
-                                      exclusions = list("inst/logo/logo.R"),
+                                      exclusions = list("inst/logo/logo.R", "tests/spelling.R"),
                                       ...)
 
   if (length(lint_results) > 0) {

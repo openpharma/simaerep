@@ -18,7 +18,7 @@ plot_sim_example(
 )
 }
 \arguments{
-\item{substract_ae_per_pat}{integer, substract aes from patients at site C, Default: 0}
+\item{substract_ae_per_pat}{integer, subtract aes from patients at site C, Default: 0}
 
 \item{size_dots}{integer, Default: 10}
 

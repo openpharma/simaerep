@@ -81,7 +81,14 @@
   </ul>
 </li>
       </ul>
-<ul class="nav navbar-nav navbar-right"></ul>
+<ul class="nav navbar-nav navbar-right">
+<li>
+  <a href="https://github.com/openpharma/simaerep/">
+    <span class="fab fa fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
+      </ul>
 </div>
 <!--/.nav-collapse -->
   </div>
@@ -97,7 +104,7 @@
       <h1 data-toc-skip>Address Usability Limits of the Bootstrap Method</h1>
             
       
-      
+      <small class="dont-index">Source: <a href="https://github.com/openpharma/simaerep/blob/master/vignettes/usability_limits.Rmd"><code>vignettes/usability_limits.Rmd</code></a></small>
       <div class="hidden name"><code>usability_limits.Rmd</code></div>
 
     </div>
@@ -116,7 +123,7 @@
 <div id="introduction" class="section level1">
 <h1 class="hasAnchor">
 <a href="#introduction" class="anchor"></a>Introduction</h1>
-<p>As we already mentioned in the <a href="file:///git_repos/simaerep/docs/articles/intro.html#disadvantages-over-classic-statistical-tests">introduction</a> bbotstrap resampling comes at a price. We need a good proportion of sites that are compliant and are not under-reporting AEs. Otherwise the patient pool we draw from will be tainted. Also, in general for count data, negative deviations from overall small integer values (3 or less) are hard to detect. Here we will assess the usability limits of the bootstrap resampling method by applying it to different simulated scenarios.</p>
+<p>As we already mentioned in the <a href="file:///git_repos/simaerep/docs/articles/intro.html#disadvantages-over-classic-statistical-tests">introduction</a> bootstrap resampling comes at a price. We need a good proportion of sites that are compliant and are not under-reporting AEs. Otherwise the patient pool we draw from will be tainted. Also, in general for count data, negative deviations from overall small integer values (3 or less) are hard to detect. Here we will assess the usability limits of the bootstrap resampling method by applying it to different simulated scenarios.</p>
 </div>
 <div id="parameter-grid" class="section level1">
 <h1 class="hasAnchor">
@@ -185,16 +192,16 @@
 <pre><code>## # A tibble: 1,000 x 4
 ##    ae_per_visit_mean frac_site_with_ur ur_rate df_visit             
 ##                &lt;dbl&gt;             &lt;dbl&gt;   &lt;dbl&gt; &lt;list&gt;               
-##  1              0.05              0.05   0.05  &lt;tibble [19,402 × 8]&gt;
-##  2              0.05              0.05   0.156 &lt;tibble [19,488 × 8]&gt;
-##  3              0.05              0.05   0.261 &lt;tibble [19,303 × 8]&gt;
-##  4              0.05              0.05   0.367 &lt;tibble [19,674 × 8]&gt;
-##  5              0.05              0.05   0.472 &lt;tibble [19,621 × 8]&gt;
-##  6              0.05              0.05   0.578 &lt;tibble [19,365 × 8]&gt;
-##  7              0.05              0.05   0.683 &lt;tibble [19,636 × 8]&gt;
-##  8              0.05              0.05   0.789 &lt;tibble [19,491 × 8]&gt;
-##  9              0.05              0.05   0.894 &lt;tibble [19,496 × 8]&gt;
-## 10              0.05              0.05   1     &lt;tibble [19,417 × 8]&gt;
+##  1              0.05              0.05   0.05  &lt;tibble [19,685 × 8]&gt;
+##  2              0.05              0.05   0.156 &lt;tibble [19,383 × 8]&gt;
+##  3              0.05              0.05   0.261 &lt;tibble [19,624 × 8]&gt;
+##  4              0.05              0.05   0.367 &lt;tibble [19,558 × 8]&gt;
+##  5              0.05              0.05   0.472 &lt;tibble [19,562 × 8]&gt;
+##  6              0.05              0.05   0.578 &lt;tibble [19,658 × 8]&gt;
+##  7              0.05              0.05   0.683 &lt;tibble [19,512 × 8]&gt;
+##  8              0.05              0.05   0.789 &lt;tibble [19,552 × 8]&gt;
+##  9              0.05              0.05   0.894 &lt;tibble [19,605 × 8]&gt;
+## 10              0.05              0.05   1     &lt;tibble [19,620 × 8]&gt;
 ## # … with 990 more rows</code></pre>
 </div>
 <div id="aggregate-test-data" class="section level2">
@@ -215,16 +222,16 @@
 <pre><code>## # A tibble: 1,000 x 5
 ##    ae_per_visit_mean frac_site_with_ur ur_rate df_visit          df_site        
 ##                &lt;dbl&gt;             &lt;dbl&gt;   &lt;dbl&gt; &lt;list&gt;            &lt;list&gt;         
-##  1              0.05              0.05   0.05  &lt;tibble [19,402 … &lt;tibble [100 ×…
-##  2              0.05              0.05   0.156 &lt;tibble [19,488 … &lt;tibble [100 ×…
-##  3              0.05              0.05   0.261 &lt;tibble [19,303 … &lt;tibble [100 ×…
-##  4              0.05              0.05   0.367 &lt;tibble [19,674 … &lt;tibble [100 ×…
-##  5              0.05              0.05   0.472 &lt;tibble [19,621 … &lt;tibble [100 ×…
-##  6              0.05              0.05   0.578 &lt;tibble [19,365 … &lt;tibble [100 ×…
-##  7              0.05              0.05   0.683 &lt;tibble [19,636 … &lt;tibble [100 ×…
-##  8              0.05              0.05   0.789 &lt;tibble [19,491 … &lt;tibble [100 ×…
-##  9              0.05              0.05   0.894 &lt;tibble [19,496 … &lt;tibble [100 ×…
-## 10              0.05              0.05   1     &lt;tibble [19,417 … &lt;tibble [100 ×…
+##  1              0.05              0.05   0.05  &lt;tibble [19,685 … &lt;tibble [100 ×…
+##  2              0.05              0.05   0.156 &lt;tibble [19,383 … &lt;tibble [100 ×…
+##  3              0.05              0.05   0.261 &lt;tibble [19,624 … &lt;tibble [100 ×…
+##  4              0.05              0.05   0.367 &lt;tibble [19,558 … &lt;tibble [100 ×…
+##  5              0.05              0.05   0.472 &lt;tibble [19,562 … &lt;tibble [100 ×…
+##  6              0.05              0.05   0.578 &lt;tibble [19,658 … &lt;tibble [100 ×…
+##  7              0.05              0.05   0.683 &lt;tibble [19,512 … &lt;tibble [100 ×…
+##  8              0.05              0.05   0.789 &lt;tibble [19,552 … &lt;tibble [100 ×…
+##  9              0.05              0.05   0.894 &lt;tibble [19,605 … &lt;tibble [100 ×…
+## 10              0.05              0.05   1     &lt;tibble [19,620 … &lt;tibble [100 ×…
 ## # … with 990 more rows</code></pre>
 </div>
 <div id="simulate-sites" class="section level2">
@@ -392,20 +399,20 @@
 ##  1             0.05             0.05   0.05  S 1          0     5    95     0
 ##  2             0.05             0.05   0.05  S 1          1     4    94     1
 ##  3             0.05             0.05   0.05  S 1          0     5    95     0
-##  4             0.05             0.05   0.05  S 1          1     4    91     4
+##  4             0.05             0.05   0.05  S 1          1     4    94     1
 ##  5             0.05             0.05   0.156 S 2          0     5    95     0
-##  6             0.05             0.05   0.156 S 2          0     5    95     0
+##  6             0.05             0.05   0.156 S 2          0     5    92     3
 ##  7             0.05             0.05   0.156 S 2          0     5    95     0
-##  8             0.05             0.05   0.156 S 2          0     5    93     2
+##  8             0.05             0.05   0.156 S 2          0     5    92     3
 ##  9             0.05             0.05   0.261 S 3          0     5    95     0
-## 10             0.05             0.05   0.261 S 3          0     5    93     2
+## 10             0.05             0.05   0.261 S 3          0     5    91     4
 ## # … with 3,990 more rows, and 6 more variables: p &lt;dbl&gt;, n &lt;dbl&gt;, P &lt;dbl&gt;,
 ## #   N &lt;dbl&gt;, prob_type &lt;chr&gt;, method &lt;chr&gt;</code></pre>
 </div>
 <div id="true-positive-rate---p---tpp" class="section level1">
 <h1 class="hasAnchor">
 <a href="#true-positive-rate---p---tpp" class="anchor"></a>True positive rate - P - TP/P</h1>
-<p>When comparing bootstrap method against the poisson.test becnhmark test, we find that they perform mostly similar from a 0.05 - 0.3 ratio of under-reporting sites. Its performance is still acceptable from a 0.3 - 0.5 ratio and then becomes pretty useless.</p>
+<p>When comparing bootstrap method against the poisson.test benchmark test, we find that they perform mostly similar from a 0.05 - 0.3 ratio of under-reporting sites. Its performance is still acceptable from a 0.3 - 0.5 ratio and then becomes pretty useless.</p>
 <p>As expected detection of under-reporting sites is close too impossible when the ae/visit ratio is very low (0.05) with detection rates close to zero for all tested scenarios.</p>
 <div class="sourceCode" id="cb17"><html><body><pre class="r"><span class="no">p</span> <span class="kw">&lt;-</span> <span class="no">df_plot</span> <span class="kw">%&gt;%</span>
   <span class="fu">mutate</span>( <span class="kw">tp_P_ratio</span> <span class="kw">=</span> <span class="no">tp</span>/<span class="no">P</span>) <span class="kw">%&gt;%</span>

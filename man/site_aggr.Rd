@@ -2,7 +2,7 @@
 % Please edit documentation in R/simaerep.R
 \name{site_aggr}
 \alias{site_aggr}
-\title{aggreagate from visit to site level}
+\title{aggregate from visit to site level}
 \usage{
 site_aggr(
   df_visit,

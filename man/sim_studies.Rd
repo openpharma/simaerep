@@ -30,7 +30,7 @@ sim_studies(
 \item{prob_lower}{logical, calculates probability for getting a lower value,
 Default: F}
 
-\item{r_prob_lower}{nteger, denotes number of simulations for prob_lower
+\item{r_prob_lower}{integer, denotes number of simulations for prob_lower
 value calculation,, Default: 1000}
 
 \item{parallel}{logical, toggles parallel processing on and of, Default: F}
@@ -55,11 +55,11 @@ or lower, use in combination with \code{\link[=get_ecd_values]{get_ecd_values()}
 }
 \details{
 Here we simulate study replicates maintaining the same number of
-sites, patients and vist_med75 by bootstrap resampling, then probabilities
+sites, patients and visit_med75 by bootstrap resampling, then probabilities
 for obtaining lower or same mean_ae count and p-values using poisson.test
-are caluclated.
+are calculated.
 
-adds column with simulated probabilities for exqual or lower
+adds column with simulated probabilities for equal or lower
 mean_ae at visit_med75
 }
 \examples{
