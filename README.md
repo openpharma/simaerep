@@ -7,6 +7,7 @@
 
 [![R build
 status](https://github.com/openpharma/simaerep/workflows/R-CMD-check/badge.svg)](https://github.com/openpharma/simaerep/actions)
+[![codecov](https://codecov.io/gh/openpharma/simaerep/branch/master/graph/badge.svg)](https://codecov.io/gh/openpharma/simaerep)
 <!-- badges: end -->
 
 Simulate adverse event reporting in clinical trials with the goal of
