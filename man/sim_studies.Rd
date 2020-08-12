@@ -55,7 +55,7 @@ or lower, use in combination with \code{\link[=get_ecd_values]{get_ecd_values()}
 }
 \details{
 Here we simulate study replicates maintaining the same number of
-sites, patients and vist_med75 by bootstrap resampling, then probabilities
+sites, patients and visit_med75 by bootstrap resampling, then probabilities
 for obtaining lower or same mean_ae count and p-values using poisson.test
 are calculated.
 
