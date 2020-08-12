@@ -38,6 +38,7 @@ Suggests:
     knitr,
     tibble,
     spelling
+
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.0
 Language: en-US
