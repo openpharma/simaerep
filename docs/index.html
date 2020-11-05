@@ -104,9 +104,9 @@
       </header><div class="row">
   <div class="contents col-md-9">
 
-<div id="simaerep" class="section level1">
+<div id="simaerep-" class="section level1">
 <div class="page-header"><h1 class="hasAnchor">
-<a href="#simaerep" class="anchor"></a>simaerep <a href="https://openpharma.github.io/simaerep"><img src="reference/figures/logo.png" align="right" height="139"></a>
+<a href="#simaerep-" class="anchor"></a>simaerep <a href="https://openpharma.github.io/simaerep"><img src="reference/figures/logo.png" align="right" height="139"></a>
 </h1></div>
 <!-- badges: start -->
 
@@ -116,8 +116,14 @@
 <h2 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h2>
 <p>You can install the development version from <a href="https://github.com/">GitHub</a> with:</p>
-<div class="sourceCode" id="cb1"><pre class="r"><span class="co"># install.packages("devtools")</span>
-<span class="kw pkg">devtools</span><span class="kw ns">::</span><span class="fu"><a href="https://devtools.r-lib.org//reference/remote-reexports.html">install_github</a></span>(<span class="st">"openpharma/simaerep"</span>)</pre></div>
+<div class="sourceCode" id="cb1"><pre class="downlit">
+<span class="co"># install.packages("devtools")</span>
+<span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org//reference/remote-reexports.html">install_github</a></span><span class="op">(</span><span class="st">"openpharma/simaerep"</span><span class="op">)</span></pre></div>
+</div>
+<div id="publication" class="section level2">
+<h2 class="hasAnchor">
+<a href="#publication" class="anchor"></a>Publication</h2>
+<p>Koneswarakantha, B., Barmaz, Y., Ménard, T. et al. Follow-up on the Use of Advanced Analytics for Clinical Quality Assurance: Bootstrap Resampling to Enhance Detection of Adverse Event Under-Reporting. Drug Saf (2020). <a href="https://doi.org/10.1007/s40264-020-01011-5" class="uri">https://doi.org/10.1007/s40264-020-01011-5</a></p>
 </div>
 </div>
 <div id="vignettes-articles" class="section level1">
@@ -132,28 +138,29 @@
 <div id="application" class="section level1">
 <h1 class="hasAnchor">
 <a href="#application" class="anchor"></a>Application</h1>
-<div class="sourceCode" id="cb2"><pre class="r">
-<span class="fu"><a href="https://rdrr.io/r/base/message.html">suppressPackageStartupMessages</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"simaerep"</span>))
+<div class="sourceCode" id="cb2"><pre class="downlit">
 
-<span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span>(<span class="fl">1</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/message.html">suppressPackageStartupMessages</a></span><span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st"><a href="https://openpharma.github.io/simaerep/">"simaerep"</a></span><span class="op">)</span><span class="op">)</span>
 
-<span class="no">df_visit</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/sim_test_data_study.html">sim_test_data_study</a></span>(
-  <span class="kw">n_pat</span> <span class="kw">=</span> <span class="fl">1000</span>, <span class="co"># number of patients in study</span>
-  <span class="kw">n_sites</span> <span class="kw">=</span> <span class="fl">100</span>, <span class="co"># number of sites in study</span>
-  <span class="kw">frac_site_with_ur</span> <span class="kw">=</span> <span class="fl">0.05</span>, <span class="co"># fraction of sites under-reporting</span>
-  <span class="kw">ur_rate</span> <span class="kw">=</span> <span class="fl">0.4</span>, <span class="co"># rate of under-reporting</span>
-  <span class="kw">ae_per_visit_mean</span> <span class="kw">=</span> <span class="fl">0.5</span> <span class="co"># mean AE per patient visit</span>
-)
+<span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>
 
-<span class="no">df_visit</span>$<span class="no">study_id</span> <span class="kw">&lt;-</span> <span class="st">"A"</span>
+<span class="va">df_visit</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/sim_test_data_study.html">sim_test_data_study</a></span><span class="op">(</span>
+  n_pat <span class="op">=</span> <span class="fl">1000</span>, <span class="co"># number of patients in study</span>
+  n_sites <span class="op">=</span> <span class="fl">100</span>, <span class="co"># number of sites in study</span>
+  frac_site_with_ur <span class="op">=</span> <span class="fl">0.05</span>, <span class="co"># fraction of sites under-reporting</span>
+  ur_rate <span class="op">=</span> <span class="fl">0.4</span>, <span class="co"># rate of under-reporting</span>
+  ae_per_visit_mean <span class="op">=</span> <span class="fl">0.5</span> <span class="co"># mean AE per patient visit</span>
+<span class="op">)</span>
 
-<span class="no">df_site</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/site_aggr.html">site_aggr</a></span>(<span class="no">df_visit</span>)
+<span class="va">df_visit</span><span class="op">$</span><span class="va">study_id</span> <span class="op">&lt;-</span> <span class="st">"A"</span>
 
-<span class="no">df_sim_sites</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/sim_sites.html">sim_sites</a></span>(<span class="no">df_site</span>, <span class="no">df_visit</span>, <span class="kw">r</span> <span class="kw">=</span> <span class="fl">1000</span>)
+<span class="va">df_site</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/site_aggr.html">site_aggr</a></span><span class="op">(</span><span class="va">df_visit</span><span class="op">)</span>
 
-<span class="no">df_eval</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/eval_sites.html">eval_sites</a></span>(<span class="no">df_sim_sites</span>, <span class="kw">r_sim_sites</span> <span class="kw">=</span> <span class="fl">1000</span>)
+<span class="va">df_sim_sites</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/sim_sites.html">sim_sites</a></span><span class="op">(</span><span class="va">df_site</span>, <span class="va">df_visit</span>, r <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span>
 
-<span class="fu"><a href="reference/plot_study.html">plot_study</a></span>(<span class="no">df_visit</span>, <span class="no">df_site</span>, <span class="no">df_eval</span>, <span class="kw">study</span> <span class="kw">=</span> <span class="st">"A"</span>)</pre></div>
+<span class="va">df_eval</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/eval_sites.html">eval_sites</a></span><span class="op">(</span><span class="va">df_sim_sites</span>, r_sim_sites <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span>
+
+<span class="fu"><a href="reference/plot_study.html">plot_study</a></span><span class="op">(</span><span class="va">df_visit</span>, <span class="va">df_site</span>, <span class="va">df_eval</span>, study <span class="op">=</span> <span class="st">"A"</span><span class="op">)</span> </pre></div>
 <p><img src="reference/figures/README-unnamed-chunk-2-1.png" width="100%"></p>
 <p><em>Left panel shows mean AE reporting per site (lightblue and darkblue lines) against mean AE reporting of the entire study (golden line). Single sites are plotted in descending order by AE under-reporting probability on the right panel in which grey lines denote cumulative AE count of single patients. Grey dots in the left panel plot indicate sites that were picked for single plotting. AE under-reporting probability of dark blue lines crossed threshold of 95%. Numbers in the upper left corner indicate the ratio of patients that have been used for the analysis against the total number of patients. Patients that have not been on the study long enough to reach the evaluation point (visit_med75, see introduction) will be ignored.</em></p>
 </div>
@@ -186,6 +193,7 @@
 <h2>Dev status</h2>
 <ul class="list-unstyled">
 <li><a href="https://github.com/openpharma/simaerep/actions"><img src="https://github.com/openpharma/simaerep/workflows/R-CMD-check/badge.svg" alt="R build status"></a></li>
+<li><a href="https://codecov.io/gh/openpharma/simaerep"><img src="https://codecov.io/gh/openpharma/simaerep/branch/master/graph/badge.svg" alt="codecov"></a></li>
 </ul>
 </div>
 </div>
@@ -197,7 +205,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

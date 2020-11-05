@@ -30,6 +30,13 @@ You can install the development version from
 devtools::install_github("openpharma/simaerep")
 ```
 
+## Publication
+
+Koneswarakantha, B., Barmaz, Y., Ménard, T. et al. Follow-up on the Use
+of Advanced Analytics for Clinical Quality Assurance: Bootstrap
+Resampling to Enhance Detection of Adverse Event Under-Reporting. Drug
+Saf (2020). <https://doi.org/10.1007/s40264-020-01011-5>
+
 # Vignettes/ Articles
 
   - [Introduction](https://openpharma.github.io/simaerep/articles/intro.html)
