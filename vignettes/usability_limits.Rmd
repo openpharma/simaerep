@@ -1,5 +1,5 @@
 ---
-title: "Address Usability Limits of the Bootstrap Method"
+title: "Address Usability Limits of Bootstrap Method"
 output:
   html_document:
     toc: true

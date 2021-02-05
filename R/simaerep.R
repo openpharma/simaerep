@@ -579,17 +579,7 @@ sim_studies <- function(df_visit,
 
 #' @title aggregate from visit to site level
 #' @description calculates visit_med75, n_pat_with_med75 and mean_ae_site_med75
-#' @param df_visit dataframe
-#' @param col_study_id_str column name for study id will be renamed to default
-#'   in output, Default: study_id
-#' @param col_site_id_str column name for site id will be renamed to default in
-#'   output, Default: site_number
-#' @param col_patient_id_str column name for patient id will be renamed to
-#'   default in output, Default: patnum
-#' @param col_n_ae_str column name for number of ae will be renamed to default
-#'   in output, Default: n_ae
-#' @param col_visit_str column name for consecutive visit number will be renamed
-#'   to default in output, Default: visit
+#' @param df_visit dataframe with columns: study_id, site_number, patnum, visit, n_ae
 #' @return dataframe with the following columns:
 #' \describe{
 #'   \item{**study_id**}{study identification}
@@ -607,19 +597,11 @@ sim_studies <- function(df_visit,
 #' df_site
 #' @rdname site_aggr
 #' @export
-site_aggr <- function(df_visit,
-                      col_study_id_str = "study_id",
-                      col_site_id_str = "site_number",
-                      col_patient_id_str = "patnum",
-                      col_n_ae_str = "n_ae",
-                      col_visit_str = "visit") {
+site_aggr <- function(df_visit) {
 
-  # rename columns ---------------------------------------------------
-  df_visit <- df_visit %>%
-    rename(study_id = !! as.name(col_study_id_str),
-           site_number = !! as.name(col_site_id_str),
-           patnum = !! as.name(col_patient_id_str),
-           visit = !! as.name(col_visit_str))
+  stopifnot(
+    all(c("study_id", "site_number", "patnum", "n_ae", "visit") %in% names(df_visit))
+  )
 
   # Aggregate on site level ------------------------------------------
 

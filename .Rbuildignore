@@ -5,6 +5,6 @@
 ^pkgdown$
 ^LICENSE\.md$
 ^vignettes$
-
 ^README\.Rmd$
 ^\.github$
+^.\.sas7bdat$

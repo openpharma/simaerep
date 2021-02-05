@@ -47,7 +47,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">simaerep</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.1</span>
       </span>
     </div>
 
@@ -76,10 +76,13 @@
       <a href="articles/intro.html">Introduction</a>
     </li>
     <li>
-      <a href="articles/usability_limits.html">Address Usability Limits of the Bootstrap Method</a>
+      <a href="articles/usability_limits.html">Address Usability Limits of Bootstrap Method</a>
     </li>
     <li>
-      <a href="articles/check_poisson.html">Checking the Applicability of a Poisson Test</a>
+      <a href="articles/check_poisson.html">Check Poisson Test Applicability</a>
+    </li>
+    <li>
+      <a href="articles/sas_files.html">SAS Files as a Data Source</a>
     </li>
   </ul>
 </li>
@@ -116,9 +119,9 @@
 <h2 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h2>
 <p>You can install the development version from <a href="https://github.com/">GitHub</a> with:</p>
-<div class="sourceCode" id="cb1"><pre class="downlit">
-<span class="co"># install.packages("devtools")</span>
-<span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org//reference/remote-reexports.html">install_github</a></span><span class="op">(</span><span class="st">"openpharma/simaerep"</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># install.packages("devtools")</span>
+<span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org//reference/remote-reexports.html">install_github</a></span><span class="op">(</span><span class="st">"openpharma/simaerep"</span><span class="op">)</span></code></pre></div>
 </div>
 <div id="publication" class="section level2">
 <h2 class="hasAnchor">
@@ -133,14 +136,14 @@
 <li><a href="https://openpharma.github.io/simaerep/articles/intro.html">Introduction</a></li>
 <li><a href="https://openpharma.github.io/simaerep/articles/usability_limits.html">Usability Limits</a></li>
 <li><a href="https://openpharma.github.io/simaerep/articles/check_poisson.html">Check Poisson Test Applicability</a></li>
+<li><a href="https://openpharma.github.io/simaerep/articles/sas_files.html">SAS Files</a></li>
 </ul>
 </div>
 <div id="application" class="section level1">
 <h1 class="hasAnchor">
 <a href="#application" class="anchor"></a>Application</h1>
-<div class="sourceCode" id="cb2"><pre class="downlit">
-
-<span class="fu"><a href="https://rdrr.io/r/base/message.html">suppressPackageStartupMessages</a></span><span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st"><a href="https://openpharma.github.io/simaerep/">"simaerep"</a></span><span class="op">)</span><span class="op">)</span>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/message.html">suppressPackageStartupMessages</a></span><span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st"><a href="https://openpharma.github.io/simaerep/">"simaerep"</a></span><span class="op">)</span><span class="op">)</span>
 
 <span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>
 
@@ -160,7 +163,7 @@
 
 <span class="va">df_eval</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/eval_sites.html">eval_sites</a></span><span class="op">(</span><span class="va">df_sim_sites</span>, r_sim_sites <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span>
 
-<span class="fu"><a href="reference/plot_study.html">plot_study</a></span><span class="op">(</span><span class="va">df_visit</span>, <span class="va">df_site</span>, <span class="va">df_eval</span>, study <span class="op">=</span> <span class="st">"A"</span><span class="op">)</span> </pre></div>
+<span class="fu"><a href="reference/plot_study.html">plot_study</a></span><span class="op">(</span><span class="va">df_visit</span>, <span class="va">df_site</span>, <span class="va">df_eval</span>, study <span class="op">=</span> <span class="st">"A"</span><span class="op">)</span> </code></pre></div>
 <p><img src="reference/figures/README-unnamed-chunk-2-1.png" width="100%"></p>
 <p><em>Left panel shows mean AE reporting per site (lightblue and darkblue lines) against mean AE reporting of the entire study (golden line). Single sites are plotted in descending order by AE under-reporting probability on the right panel in which grey lines denote cumulative AE count of single patients. Grey dots in the left panel plot indicate sites that were picked for single plotting. AE under-reporting probability of dark blue lines crossed threshold of 95%. Numbers in the upper left corner indicate the ratio of patients that have been used for the analysis against the total number of patients. Patients that have not been on the study long enough to reach the evaluation point (visit_med75, see introduction) will be ignored.</em></p>
 </div>

@@ -455,7 +455,16 @@ plot_study <- function(df_visit,
       mutate(pval_prob_ur = NA)
   }
 
+  # make sure ids are character columns
 
+  df_visit <- df_visit %>%
+    mutate_at(vars(.data$study_id, .data$patnum, .data$site_number), as.character)
+
+  df_eval <- df_eval %>%
+    mutate_at(vars(.data$study_id, .data$site_number), as.character)
+
+  df_site <- df_site %>%
+    mutate_at(vars(.data$study_id, .data$site_number), as.character)
 
   # filter studies -----------------------------------------------------------
 
@@ -470,11 +479,22 @@ plot_study <- function(df_visit,
 
   # ordered sites -------------------------------------------------------------
 
-  sites_ordered <- df_eval %>%
-    arrange(.data$study_id, desc(.data$prob_low_prob_ur)) %>%
+  n_site_ur_gr_0p5 <- df_eval %>%
     filter(.data$prob_low_prob_ur > 0.5) %>%
-    head(n_sites) %>%
-    .$site_number
+    nrow()
+
+  if (n_site_ur_gr_0p5 > 0) {
+    sites_ordered <- df_eval %>%
+      arrange(.data$study_id, desc(.data$prob_low_prob_ur)) %>%
+      filter(.data$prob_low_prob_ur > 0.5) %>%
+      head(n_sites) %>%
+      .$site_number
+  } else {
+    sites_ordered <- df_eval %>%
+      arrange(.data$study_id, desc(.data$prob_low_prob_ur)) %>%
+      head(6) %>%
+      .$site_number
+  }
 
   # mean AE development ------------------------------------------------------
 
@@ -522,6 +542,7 @@ plot_study <- function(df_visit,
            .data$n_ae) %>%
     mutate(max_visit_per_pat = max(.data$visit)) %>%
     filter(.data$site_number %in% sites_ordered) %>%
+    ungroup() %>%
     mutate(site_number = fct_relevel(.data$site_number, sites_ordered))
 
   # define score cut-offs + labels----------------------------------------------

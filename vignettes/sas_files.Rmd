@@ -1,0 +1,160 @@
+---
+title: "SAS Files as a Data Source"
+output:
+  html_document:
+    toc: true
+    toc_depth: 3
+    toc_float: true
+    number_sections: true
+    code_folding: show
+    collapse: false
+editor_options:
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, cache = FALSE, message = FALSE, warning = FALSE)
+```
+
+# Load
+```{r}
+suppressPackageStartupMessages(library(tidyverse))
+suppressPackageStartupMessages(library(knitr))
+suppressPackageStartupMessages(library(simaerep))
+suppressPackageStartupMessages(library(haven))
+suppressPackageStartupMessages(library(sqldf))
+
+```
+
+# SAS files
+
+Typically clinical data is stored in several SAS files in a standardized format. We need the files in which the visits and the AEs are recorded. For this demo we have selected an anonymized data set which only contains patients enrolled into the control arm. In those data sets the AE onset dates and the visit dates have been replaced with the number of days that have passed since a specific cut-off date. However, the cleaning and joining logic is the same as for date columns.
+
+```{r}
+df_ae <- haven::read_sas('adae.sas7bdat') %>%
+  select(STUDYID, SUBJID, SITEID, AESTDY) %>%
+  group_by(SUBJID) %>%
+  arrange(SUBJID, AESTDY) %>%
+  mutate(AENO = row_number())
+
+df_ae
+
+df_vs <- haven::read_sas('advs.sas7bdat') %>%
+  select(STUDYID, SUBJID, SITEID, ADY) %>%
+  distinct() %>%
+  arrange(SUBJID, ADY) %>%
+  group_by(SUBJID) %>%
+  mutate(VISNO = row_number()) %>%
+  mutate(ADY_PREV = lag(ADY),
+         ADY_PREV = ifelse(is.na(ADY_PREV), - Inf, ADY_PREV),
+         MAX_VISNO = max(VISNO))
+
+df_vs
+```
+
+We need to join the visit and the AE dataset on the corresponding study day columns ADY and AESTDY. We are going to collect all AEs of a patient and assign them to the next visit. If there is no next visit we assign it to the last visit. If the study day (or date) for the AE is missing we will also assign that AE to the last visit. The easiest way to do this is to use SQL. We can use the `sqldf` package to perform that join for `R` dataframes. For other `R` methods for conditional joins see this [blog post](https://www.mango-solutions.com/in-between-a-rock-and-a-conditional-join/).
+
+```{r}
+df_aevs <- sqldf::sqldf("
+  SELECT 
+    df_vs.SUBJID,
+    df_vs.STUDYID,
+    df_vs.SITEID,
+    df_vs.VISNO,  
+    df_vs.ADY_PREV,
+    df_vs.ADY,
+    df_ae.AESTDY,
+    df_ae.AENO
+  FROM df_vs
+  LEFT JOIN df_ae
+    ON df_ae.SUBJID = df_vs.SUBJID
+    AND df_ae.STUDYID = df_vs.STUDYID
+    AND df_ae.SITEID = df_vs.SITEID
+    AND (
+      -- match AEs to next visit
+      (df_ae.AESTDY <= df_vs.ADY AND df_ae.AESTDY > df_vs.ADY_PREV)
+      OR
+      -- match AEs that occured after last visit to last visit
+      (df_vs.VISNO = df_vs.MAX_VISNO AND df_ae.AESTDY > df_vs.ADY)
+      OR
+      -- match AEs with AESTDY NULL to last visit
+      (df_vs.VISNO = df_vs.MAX_VISNO AND df_ae.AESTDY IS NULL)
+    )
+  ")
+
+df_aevs <- as_tibble(df_aevs)
+
+df_aevs
+```
+
+Next we need to aggregate to the visit level.
+
+```{r}
+
+df_aevs_aggr <- df_aevs %>%
+  group_by(STUDYID, SUBJID, SITEID, VISNO) %>%
+  summarize(AENO = max(AENO)) %>%
+  group_by(SUBJID) %>%
+  arrange(SUBJID, VISNO) %>%
+  fill(AENO, .direction = "down") %>%
+  mutate(AENO = ifelse(is.na(AENO), 0, AENO))
+
+df_aevs_aggr
+
+```
+
+As a control we check whether the numbers of visits and AEs of our processed data still matches the number of AEs in our original data.
+
+```{r}
+
+stopifnot(nrow(df_aevs_aggr) == nrow(df_vs))
+
+n_aes <- df_aevs_aggr %>%
+  group_by(SUBJID) %>%
+  summarize(n_aes = max(AENO)) %>%
+  pull(n_aes) %>%
+  sum()
+  
+stopifnot(n_aes == nrow(df_ae))
+
+```
+
+# {simaerep}
+
+After renaming some of the columns we can pass the aggregated data from the SAS files to `simaerep`
+
+```{r}
+df_visit <- df_aevs_aggr %>%
+  rename(
+    study_id = "STUDYID",
+    site_number = "SITEID",
+    patnum = "SUBJID",
+    n_ae = "AENO",
+    visit = "VISNO"
+  ) 
+
+df_visit
+
+df_site <- df_visit %>%
+  simaerep::site_aggr()
+
+df_site
+```
+
+```{r}
+df_sim_sites <- simaerep::sim_sites(df_site, df_visit, r = 1000, poisson_test = FALSE)
+
+df_sim_sites
+```
+
+```{r}
+df_eval <- simaerep::eval_sites(df_sim_sites, r_sim_sites = 1000)
+
+df_eval
+```
+
+```{r fig.width = 10}
+simaerep::plot_study(df_visit, df_site, df_eval, study = unique(df_visit$study_id))
+```
+
+*Left panel shows mean AE reporting per site (lightblue and darkblue lines) against mean AE reporting of the entire study (golden line). Single sites are plotted in descending order by AE under-reporting probability on the right panel in which grey lines denote cumulative AE count of single patients. Grey dots in the left panel plot indicate sites that were picked for single plotting. AE under-reporting probability of dark blue lines crossed threshold of 95%. Numbers in the upper left corner indicate the ratio of patients that have been used for the analysis against the total number of patients. Patients that have not been on the study long enough to reach the evaluation point (visit_med75, see introduction) will be ignored.*

@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Address Usability Limits of the Bootstrap Method • simaerep</title>
+<title>Address Usability Limits of Bootstrap Method • simaerep</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
 <link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png">
@@ -17,7 +17,7 @@
 <script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
-<script src="../pkgdown.js"></script><meta property="og:title" content="Address Usability Limits of the Bootstrap Method">
+<script src="../pkgdown.js"></script><meta property="og:title" content="Address Usability Limits of Bootstrap Method">
 <meta property="og:description" content="simaerep">
 <meta property="og:image" content="https://openpharma.github.io/simaerep/logo.png">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
@@ -44,7 +44,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">simaerep</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.1</span>
       </span>
     </div>
 
@@ -73,10 +73,13 @@
       <a href="../articles/intro.html">Introduction</a>
     </li>
     <li>
-      <a href="../articles/usability_limits.html">Address Usability Limits of the Bootstrap Method</a>
+      <a href="../articles/usability_limits.html">Address Usability Limits of Bootstrap Method</a>
     </li>
     <li>
-      <a href="../articles/check_poisson.html">Checking the Applicability of a Poisson Test</a>
+      <a href="../articles/check_poisson.html">Check Poisson Test Applicability</a>
+    </li>
+    <li>
+      <a href="../articles/sas_files.html">SAS Files as a Data Source</a>
     </li>
   </ul>
 </li>
@@ -98,10 +101,11 @@
 
       
 
-      </header><div class="row">
+      </header><script src="usability_limits_files/header-attrs-2.5/header-attrs.js"></script><link href="usability_limits_files/anchor-sections-1.0/anchor-sections.css" rel="stylesheet">
+<script src="usability_limits_files/anchor-sections-1.0/anchor-sections.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1 data-toc-skip>Address Usability Limits of the Bootstrap Method</h1>
+      <h1 data-toc-skip>Address Usability Limits of Bootstrap Method</h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/openpharma/simaerep/blob/master/vignettes/usability_limits.Rmd"><code>vignettes/usability_limits.Rmd</code></a></small>
@@ -114,11 +118,12 @@
 <div id="load" class="section level1">
 <h1 class="hasAnchor">
 <a href="#load" class="anchor"></a>Load</h1>
-<div class="sourceCode" id="cb1"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/message.html">suppressPackageStartupMessages</a></span>( <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">tidyverse</span>) )
-<span class="fu"><a href="https://rdrr.io/r/base/message.html">suppressPackageStartupMessages</a></span>( <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">knitr</span>) )
-<span class="fu"><a href="https://rdrr.io/r/base/message.html">suppressPackageStartupMessages</a></span>( <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">furrr</span>) )
-<span class="fu"><a href="https://rdrr.io/r/base/message.html">suppressPackageStartupMessages</a></span>( <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">future</span>) )
-<span class="fu"><a href="https://rdrr.io/r/base/message.html">suppressPackageStartupMessages</a></span>( <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">simaerep</span>) )</pre></body></html></div>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/message.html">suppressPackageStartupMessages</a></span><span class="op">(</span> <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://tidyverse.tidyverse.org">tidyverse</a></span><span class="op">)</span> <span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/message.html">suppressPackageStartupMessages</a></span><span class="op">(</span> <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://yihui.org/knitr/">knitr</a></span><span class="op">)</span> <span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/message.html">suppressPackageStartupMessages</a></span><span class="op">(</span> <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/DavisVaughan/furrr">furrr</a></span><span class="op">)</span> <span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/message.html">suppressPackageStartupMessages</a></span><span class="op">(</span> <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/HenrikBengtsson/future">future</a></span><span class="op">)</span> <span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/message.html">suppressPackageStartupMessages</a></span><span class="op">(</span> <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://openpharma.github.io/simaerep/">simaerep</a></span><span class="op">)</span> <span class="op">)</span></code></pre></div>
 </div>
 <div id="introduction" class="section level1">
 <h1 class="hasAnchor">
@@ -138,15 +143,16 @@
 - ae_visit: 0.05 - 2<br>
 - frac_sites_wit_ur: 0.05 - 0.75<br>
 - ur_rate: 0.05 - 1</p>
-<div class="sourceCode" id="cb2"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span>(<span class="fl">1</span>)
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>
 
-<span class="no">df_grid</span> <span class="kw">&lt;-</span> <span class="fu">tibble</span>( <span class="kw">ae_per_visit_mean</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span>(<span class="fl">0.05</span>, <span class="fl">2</span>, <span class="kw">length.out</span> <span class="kw">=</span> <span class="fl">10</span>)) <span class="kw">%&gt;%</span>
-  <span class="fu">mutate</span>(<span class="kw">frac_site_with_ur</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span>(<span class="fl">0.05</span>, <span class="fl">0.75</span>, <span class="kw">length.out</span> <span class="kw">=</span> <span class="fl">10</span>))) <span class="kw">%&gt;%</span>
-  <span class="fu">unnest</span>(<span class="no">frac_site_with_ur</span>) <span class="kw">%&gt;%</span>
-  <span class="fu">mutate</span>(<span class="kw">ur_rate</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span>(<span class="fl">0.05</span>, <span class="fl">1</span>, <span class="kw">length.out</span> <span class="kw">=</span> <span class="fl">10</span>)) ) <span class="kw">%&gt;%</span>
-  <span class="fu">unnest</span>(<span class="no">ur_rate</span>)
+<span class="va">df_grid</span> <span class="op">&lt;-</span> <span class="fu">tibble</span><span class="op">(</span> ae_per_visit_mean <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">0.05</span>, <span class="fl">2</span>, length.out <span class="op">=</span> <span class="fl">10</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">mutate</span><span class="op">(</span>frac_site_with_ur <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">0.05</span>, <span class="fl">0.75</span>, length.out <span class="op">=</span> <span class="fl">10</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">unnest</span><span class="op">(</span><span class="va">frac_site_with_ur</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">mutate</span><span class="op">(</span>ur_rate <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">0.05</span>, <span class="fl">1</span>, length.out <span class="op">=</span> <span class="fl">10</span><span class="op">)</span><span class="op">)</span> <span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">unnest</span><span class="op">(</span><span class="va">ur_rate</span><span class="op">)</span> 
 
-<span class="no">df_grid</span></pre></body></html></div>
+<span class="va">df_grid</span></code></pre></div>
 <pre><code>## # A tibble: 1,000 x 3
 ##    ae_per_visit_mean frac_site_with_ur ur_rate
 ##                &lt;dbl&gt;             &lt;dbl&gt;   &lt;dbl&gt;
@@ -166,89 +172,253 @@
 <h1 class="hasAnchor">
 <a href="#apply" class="anchor"></a>Apply</h1>
 <p>We use the <a href="https://github.com/DavisVaughan/furrr"><code>furrr</code></a> and the <a href="https://github.com/HenrikBengtsson/future"><code>future</code></a> package for multiprocessing. We proceed in applying all functions we already <a href="https://openpharma.github.io/simaerep/articles/intro.html">introduced</a>.</p>
-<div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/warning.html">suppressWarnings</a></span>(<span class="kw pkg">future</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/future/man/plan.html">plan</a></span>(<span class="no">multiprocess</span>))</pre></body></html></div>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/warning.html">suppressWarnings</a></span><span class="op">(</span><span class="fu">future</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/future/man/plan.html">plan</a></span><span class="op">(</span><span class="va">multiprocess</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <div id="simulate-test-data" class="section level2">
 <h2 class="hasAnchor">
 <a href="#simulate-test-data" class="anchor"></a>Simulate Test Data</h2>
 <p>We iteratively apply <a href="https://openpharma.github.io/simaerep/reference/sim_test_data_study.html">sim_test_data_study()</a> on the different parameter combination of the grid</p>
-<div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="no">df_grid</span> <span class="kw">&lt;-</span> <span class="no">df_grid</span> <span class="kw">%&gt;%</span>
-  <span class="fu">mutate</span>(
-    <span class="kw">df_visit</span> <span class="kw">=</span> <span class="kw pkg">furrr</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/furrr/man/future_map2.html">future_pmap</a></span>(
-      <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="kw">am</span> <span class="kw">=</span> <span class="no">ae_per_visit_mean</span>,
-           <span class="kw">fr</span> <span class="kw">=</span> <span class="no">frac_site_with_ur</span>,
-           <span class="kw">ur</span> <span class="kw">=</span> <span class="no">ur_rate</span>),
-      <span class="kw">function</span>(<span class="no">am</span>, <span class="no">fr</span>, <span class="no">ur</span>) <span class="fu"><a href="../reference/sim_test_data_study.html">sim_test_data_study</a></span>(<span class="kw">n_pat</span> <span class="kw">=</span> <span class="fl">1000</span>,
-                                               <span class="kw">n_sites</span> <span class="kw">=</span> <span class="fl">100</span>,
-                                               <span class="kw">max_visit_mean</span> <span class="kw">=</span> <span class="fl">20</span>,
-                                               <span class="kw">max_visit_sd</span> <span class="kw">=</span> <span class="fl">4</span>,
-                                               <span class="kw">ae_per_visit_mean</span> <span class="kw">=</span> <span class="no">am</span>,
-                                               <span class="kw">frac_site_with_ur</span> <span class="kw">=</span> <span class="no">fr</span>,
-                                               <span class="kw">ur_rate</span> <span class="kw">=</span> <span class="no">ur</span>),
-      <span class="kw">.progress</span> <span class="kw">=</span> <span class="fl">FALSE</span>
-    )
-  )
-
-<span class="no">df_grid</span></pre></body></html></div>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">df_grid</span> <span class="op">&lt;-</span> <span class="va">df_grid</span> <span class="op">%&gt;%</span>
+  <span class="fu">mutate</span><span class="op">(</span> 
+    df_visit <span class="op">=</span> <span class="fu">furrr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/furrr/man/future_map2.html">future_pmap</a></span><span class="op">(</span>
+      <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>am <span class="op">=</span> <span class="va">ae_per_visit_mean</span>,
+           fr <span class="op">=</span> <span class="va">frac_site_with_ur</span>,
+           ur <span class="op">=</span> <span class="va">ur_rate</span><span class="op">)</span>,
+      <span class="kw">function</span><span class="op">(</span><span class="va">am</span>, <span class="va">fr</span>, <span class="va">ur</span><span class="op">)</span> <span class="fu"><a href="../reference/sim_test_data_study.html">sim_test_data_study</a></span><span class="op">(</span>n_pat <span class="op">=</span> <span class="fl">1000</span>,
+                                               n_sites <span class="op">=</span> <span class="fl">100</span>,
+                                               max_visit_mean <span class="op">=</span> <span class="fl">20</span>,
+                                               max_visit_sd <span class="op">=</span> <span class="fl">4</span>,
+                                               ae_per_visit_mean <span class="op">=</span> <span class="va">am</span>,
+                                               frac_site_with_ur <span class="op">=</span> <span class="va">fr</span>,
+                                               ur_rate <span class="op">=</span> <span class="va">ur</span><span class="op">)</span>,
+      .progress <span class="op">=</span> <span class="cn">FALSE</span>
+    <span class="op">)</span>
+  <span class="op">)</span></code></pre></div>
+<pre><code>## Warning: Problem with `mutate()` input `df_visit`.
+## ℹ UNRELIABLE VALUE: Future ('&lt;none&gt;') unexpectedly generated random numbers without specifying argument '[future.]seed'. There is a risk that those random numbers are not statistically sound and the overall results might be invalid. To fix this, specify argument '[future.]seed', e.g. 'seed=TRUE'. This ensures that proper, parallel-safe random numbers are produced via the L'Ecuyer-CMRG method. To disable this check, use [future].seed=NULL, or set option 'future.rng.onMisuse' to "ignore".
+## ℹ Input `df_visit` is `furrr::future_pmap(...)`.</code></pre>
+<pre><code>## Warning: UNRELIABLE VALUE: Future ('&lt;none&gt;') unexpectedly generated random
+## numbers without specifying argument '[future.]seed'. There is a risk that those
+## random numbers are not statistically sound and the overall results might be
+## invalid. To fix this, specify argument '[future.]seed', e.g. 'seed=TRUE'. This
+## ensures that proper, parallel-safe random numbers are produced via the L'Ecuyer-
+## CMRG method. To disable this check, use [future].seed=NULL, or set option
+## 'future.rng.onMisuse' to "ignore".</code></pre>
+<pre><code>## Warning: Problem with `mutate()` input `df_visit`.
+## ℹ UNRELIABLE VALUE: Future ('&lt;none&gt;') unexpectedly generated random numbers without specifying argument '[future.]seed'. There is a risk that those random numbers are not statistically sound and the overall results might be invalid. To fix this, specify argument '[future.]seed', e.g. 'seed=TRUE'. This ensures that proper, parallel-safe random numbers are produced via the L'Ecuyer-CMRG method. To disable this check, use [future].seed=NULL, or set option 'future.rng.onMisuse' to "ignore".
+## ℹ Input `df_visit` is `furrr::future_pmap(...)`.</code></pre>
+<pre><code>## Warning: UNRELIABLE VALUE: Future ('&lt;none&gt;') unexpectedly generated random
+## numbers without specifying argument '[future.]seed'. There is a risk that those
+## random numbers are not statistically sound and the overall results might be
+## invalid. To fix this, specify argument '[future.]seed', e.g. 'seed=TRUE'. This
+## ensures that proper, parallel-safe random numbers are produced via the L'Ecuyer-
+## CMRG method. To disable this check, use [future].seed=NULL, or set option
+## 'future.rng.onMisuse' to "ignore".</code></pre>
+<pre><code>## Warning: Problem with `mutate()` input `df_visit`.
+## ℹ UNRELIABLE VALUE: Future ('&lt;none&gt;') unexpectedly generated random numbers without specifying argument '[future.]seed'. There is a risk that those random numbers are not statistically sound and the overall results might be invalid. To fix this, specify argument '[future.]seed', e.g. 'seed=TRUE'. This ensures that proper, parallel-safe random numbers are produced via the L'Ecuyer-CMRG method. To disable this check, use [future].seed=NULL, or set option 'future.rng.onMisuse' to "ignore".
+## ℹ Input `df_visit` is `furrr::future_pmap(...)`.</code></pre>
+<pre><code>## Warning: UNRELIABLE VALUE: Future ('&lt;none&gt;') unexpectedly generated random
+## numbers without specifying argument '[future.]seed'. There is a risk that those
+## random numbers are not statistically sound and the overall results might be
+## invalid. To fix this, specify argument '[future.]seed', e.g. 'seed=TRUE'. This
+## ensures that proper, parallel-safe random numbers are produced via the L'Ecuyer-
+## CMRG method. To disable this check, use [future].seed=NULL, or set option
+## 'future.rng.onMisuse' to "ignore".</code></pre>
+<pre><code>## Warning: Problem with `mutate()` input `df_visit`.
+## ℹ UNRELIABLE VALUE: Future ('&lt;none&gt;') unexpectedly generated random numbers without specifying argument '[future.]seed'. There is a risk that those random numbers are not statistically sound and the overall results might be invalid. To fix this, specify argument '[future.]seed', e.g. 'seed=TRUE'. This ensures that proper, parallel-safe random numbers are produced via the L'Ecuyer-CMRG method. To disable this check, use [future].seed=NULL, or set option 'future.rng.onMisuse' to "ignore".
+## ℹ Input `df_visit` is `furrr::future_pmap(...)`.</code></pre>
+<pre><code>## Warning: UNRELIABLE VALUE: Future ('&lt;none&gt;') unexpectedly generated random
+## numbers without specifying argument '[future.]seed'. There is a risk that those
+## random numbers are not statistically sound and the overall results might be
+## invalid. To fix this, specify argument '[future.]seed', e.g. 'seed=TRUE'. This
+## ensures that proper, parallel-safe random numbers are produced via the L'Ecuyer-
+## CMRG method. To disable this check, use [future].seed=NULL, or set option
+## 'future.rng.onMisuse' to "ignore".</code></pre>
+<pre><code>## Warning: Problem with `mutate()` input `df_visit`.
+## ℹ UNRELIABLE VALUE: Future ('&lt;none&gt;') unexpectedly generated random numbers without specifying argument '[future.]seed'. There is a risk that those random numbers are not statistically sound and the overall results might be invalid. To fix this, specify argument '[future.]seed', e.g. 'seed=TRUE'. This ensures that proper, parallel-safe random numbers are produced via the L'Ecuyer-CMRG method. To disable this check, use [future].seed=NULL, or set option 'future.rng.onMisuse' to "ignore".
+## ℹ Input `df_visit` is `furrr::future_pmap(...)`.</code></pre>
+<pre><code>## Warning: UNRELIABLE VALUE: Future ('&lt;none&gt;') unexpectedly generated random
+## numbers without specifying argument '[future.]seed'. There is a risk that those
+## random numbers are not statistically sound and the overall results might be
+## invalid. To fix this, specify argument '[future.]seed', e.g. 'seed=TRUE'. This
+## ensures that proper, parallel-safe random numbers are produced via the L'Ecuyer-
+## CMRG method. To disable this check, use [future].seed=NULL, or set option
+## 'future.rng.onMisuse' to "ignore".</code></pre>
+<pre><code>## Warning: Problem with `mutate()` input `df_visit`.
+## ℹ UNRELIABLE VALUE: Future ('&lt;none&gt;') unexpectedly generated random numbers without specifying argument '[future.]seed'. There is a risk that those random numbers are not statistically sound and the overall results might be invalid. To fix this, specify argument '[future.]seed', e.g. 'seed=TRUE'. This ensures that proper, parallel-safe random numbers are produced via the L'Ecuyer-CMRG method. To disable this check, use [future].seed=NULL, or set option 'future.rng.onMisuse' to "ignore".
+## ℹ Input `df_visit` is `furrr::future_pmap(...)`.</code></pre>
+<pre><code>## Warning: UNRELIABLE VALUE: Future ('&lt;none&gt;') unexpectedly generated random
+## numbers without specifying argument '[future.]seed'. There is a risk that those
+## random numbers are not statistically sound and the overall results might be
+## invalid. To fix this, specify argument '[future.]seed', e.g. 'seed=TRUE'. This
+## ensures that proper, parallel-safe random numbers are produced via the L'Ecuyer-
+## CMRG method. To disable this check, use [future].seed=NULL, or set option
+## 'future.rng.onMisuse' to "ignore".</code></pre>
+<pre><code>## Warning: Problem with `mutate()` input `df_visit`.
+## ℹ UNRELIABLE VALUE: Future ('&lt;none&gt;') unexpectedly generated random numbers without specifying argument '[future.]seed'. There is a risk that those random numbers are not statistically sound and the overall results might be invalid. To fix this, specify argument '[future.]seed', e.g. 'seed=TRUE'. This ensures that proper, parallel-safe random numbers are produced via the L'Ecuyer-CMRG method. To disable this check, use [future].seed=NULL, or set option 'future.rng.onMisuse' to "ignore".
+## ℹ Input `df_visit` is `furrr::future_pmap(...)`.</code></pre>
+<pre><code>## Warning: UNRELIABLE VALUE: Future ('&lt;none&gt;') unexpectedly generated random
+## numbers without specifying argument '[future.]seed'. There is a risk that those
+## random numbers are not statistically sound and the overall results might be
+## invalid. To fix this, specify argument '[future.]seed', e.g. 'seed=TRUE'. This
+## ensures that proper, parallel-safe random numbers are produced via the L'Ecuyer-
+## CMRG method. To disable this check, use [future].seed=NULL, or set option
+## 'future.rng.onMisuse' to "ignore".</code></pre>
+<pre><code>## Warning: Problem with `mutate()` input `df_visit`.
+## ℹ UNRELIABLE VALUE: Future ('&lt;none&gt;') unexpectedly generated random numbers without specifying argument '[future.]seed'. There is a risk that those random numbers are not statistically sound and the overall results might be invalid. To fix this, specify argument '[future.]seed', e.g. 'seed=TRUE'. This ensures that proper, parallel-safe random numbers are produced via the L'Ecuyer-CMRG method. To disable this check, use [future].seed=NULL, or set option 'future.rng.onMisuse' to "ignore".
+## ℹ Input `df_visit` is `furrr::future_pmap(...)`.</code></pre>
+<pre><code>## Warning: UNRELIABLE VALUE: Future ('&lt;none&gt;') unexpectedly generated random
+## numbers without specifying argument '[future.]seed'. There is a risk that those
+## random numbers are not statistically sound and the overall results might be
+## invalid. To fix this, specify argument '[future.]seed', e.g. 'seed=TRUE'. This
+## ensures that proper, parallel-safe random numbers are produced via the L'Ecuyer-
+## CMRG method. To disable this check, use [future].seed=NULL, or set option
+## 'future.rng.onMisuse' to "ignore".</code></pre>
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">df_grid</span></code></pre></div>
 <pre><code>## # A tibble: 1,000 x 4
 ##    ae_per_visit_mean frac_site_with_ur ur_rate df_visit             
 ##                &lt;dbl&gt;             &lt;dbl&gt;   &lt;dbl&gt; &lt;list&gt;               
-##  1              0.05              0.05   0.05  &lt;tibble [19,685 × 8]&gt;
-##  2              0.05              0.05   0.156 &lt;tibble [19,383 × 8]&gt;
-##  3              0.05              0.05   0.261 &lt;tibble [19,624 × 8]&gt;
-##  4              0.05              0.05   0.367 &lt;tibble [19,558 × 8]&gt;
-##  5              0.05              0.05   0.472 &lt;tibble [19,562 × 8]&gt;
-##  6              0.05              0.05   0.578 &lt;tibble [19,658 × 8]&gt;
-##  7              0.05              0.05   0.683 &lt;tibble [19,512 × 8]&gt;
-##  8              0.05              0.05   0.789 &lt;tibble [19,552 × 8]&gt;
-##  9              0.05              0.05   0.894 &lt;tibble [19,605 × 8]&gt;
-## 10              0.05              0.05   1     &lt;tibble [19,620 × 8]&gt;
+##  1              0.05              0.05   0.05  &lt;tibble [19,381 × 8]&gt;
+##  2              0.05              0.05   0.156 &lt;tibble [19,582 × 8]&gt;
+##  3              0.05              0.05   0.261 &lt;tibble [19,454 × 8]&gt;
+##  4              0.05              0.05   0.367 &lt;tibble [19,426 × 8]&gt;
+##  5              0.05              0.05   0.472 &lt;tibble [19,433 × 8]&gt;
+##  6              0.05              0.05   0.578 &lt;tibble [19,568 × 8]&gt;
+##  7              0.05              0.05   0.683 &lt;tibble [19,567 × 8]&gt;
+##  8              0.05              0.05   0.789 &lt;tibble [19,199 × 8]&gt;
+##  9              0.05              0.05   0.894 &lt;tibble [19,464 × 8]&gt;
+## 10              0.05              0.05   1     &lt;tibble [19,751 × 8]&gt;
 ## # … with 990 more rows</code></pre>
 </div>
 <div id="aggregate-test-data" class="section level2">
 <h2 class="hasAnchor">
 <a href="#aggregate-test-data" class="anchor"></a>Aggregate Test Data</h2>
 <p>We apply <a href="https://openpharma.github.io/simaerep/reference/site_aggr.html">site_aggr()</a> on the different simulated data sets.</p>
-<div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="no">df_grid</span> <span class="kw">&lt;-</span> <span class="no">df_grid</span> <span class="kw">%&gt;%</span>
-  <span class="fu">mutate</span>(
-    <span class="kw">df_visit</span> <span class="kw">=</span> <span class="fu">map2</span>(<span class="no">df_visit</span>, <span class="fu">row_number</span>(),
-                    <span class="kw">function</span>(<span class="no">x</span>,<span class="no">y</span>) <span class="fu">mutate</span>(<span class="no">x</span>, <span class="kw">study_id</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="st">"S"</span>, <span class="no">y</span>))),
-    <span class="kw">df_site</span> <span class="kw">=</span> <span class="kw pkg">furrr</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/furrr/man/future_map.html">future_map</a></span>(<span class="no">df_visit</span>,
-                                <span class="no">site_aggr</span>,
-                                <span class="kw">.progress</span> <span class="kw">=</span> <span class="fl">FALSE</span>
-                                )
-  )
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">df_grid</span> <span class="op">&lt;-</span> <span class="va">df_grid</span> <span class="op">%&gt;%</span>
+  <span class="fu">mutate</span><span class="op">(</span> 
+    df_visit <span class="op">=</span> <span class="fu">map2</span><span class="op">(</span><span class="va">df_visit</span>, <span class="fu">row_number</span><span class="op">(</span><span class="op">)</span>,
+                    <span class="kw">function</span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span><span class="op">)</span> <span class="fu">mutate</span><span class="op">(</span><span class="va">x</span>, study_id <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="st">"S"</span>, <span class="va">y</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>,
+    df_site <span class="op">=</span> <span class="fu">furrr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/furrr/man/future_map.html">future_map</a></span><span class="op">(</span><span class="va">df_visit</span>,
+                                <span class="va">site_aggr</span>,
+                                .progress <span class="op">=</span> <span class="cn">FALSE</span>
+                                <span class="op">)</span>
+  <span class="op">)</span>
 
-<span class="no">df_grid</span></pre></body></html></div>
+<span class="va">df_grid</span></code></pre></div>
 <pre><code>## # A tibble: 1,000 x 5
 ##    ae_per_visit_mean frac_site_with_ur ur_rate df_visit          df_site        
 ##                &lt;dbl&gt;             &lt;dbl&gt;   &lt;dbl&gt; &lt;list&gt;            &lt;list&gt;         
-##  1              0.05              0.05   0.05  &lt;tibble [19,685 … &lt;tibble [100 ×…
-##  2              0.05              0.05   0.156 &lt;tibble [19,383 … &lt;tibble [100 ×…
-##  3              0.05              0.05   0.261 &lt;tibble [19,624 … &lt;tibble [100 ×…
-##  4              0.05              0.05   0.367 &lt;tibble [19,558 … &lt;tibble [100 ×…
-##  5              0.05              0.05   0.472 &lt;tibble [19,562 … &lt;tibble [100 ×…
-##  6              0.05              0.05   0.578 &lt;tibble [19,658 … &lt;tibble [100 ×…
-##  7              0.05              0.05   0.683 &lt;tibble [19,512 … &lt;tibble [100 ×…
-##  8              0.05              0.05   0.789 &lt;tibble [19,552 … &lt;tibble [100 ×…
-##  9              0.05              0.05   0.894 &lt;tibble [19,605 … &lt;tibble [100 ×…
-## 10              0.05              0.05   1     &lt;tibble [19,620 … &lt;tibble [100 ×…
+##  1              0.05              0.05   0.05  &lt;tibble [19,381 … &lt;tibble [100 ×…
+##  2              0.05              0.05   0.156 &lt;tibble [19,582 … &lt;tibble [100 ×…
+##  3              0.05              0.05   0.261 &lt;tibble [19,454 … &lt;tibble [100 ×…
+##  4              0.05              0.05   0.367 &lt;tibble [19,426 … &lt;tibble [100 ×…
+##  5              0.05              0.05   0.472 &lt;tibble [19,433 … &lt;tibble [100 ×…
+##  6              0.05              0.05   0.578 &lt;tibble [19,568 … &lt;tibble [100 ×…
+##  7              0.05              0.05   0.683 &lt;tibble [19,567 … &lt;tibble [100 ×…
+##  8              0.05              0.05   0.789 &lt;tibble [19,199 … &lt;tibble [100 ×…
+##  9              0.05              0.05   0.894 &lt;tibble [19,464 … &lt;tibble [100 ×…
+## 10              0.05              0.05   1     &lt;tibble [19,751 … &lt;tibble [100 ×…
 ## # … with 990 more rows</code></pre>
 </div>
 <div id="simulate-sites" class="section level2">
 <h2 class="hasAnchor">
 <a href="#simulate-sites" class="anchor"></a>Simulate Sites</h2>
 <p>We apply <a href="https://openpharma.github.io/simaerep/reference/sim_sites.html">sim_sites()</a> to to calculate the AE under-reporting probability.</p>
-<div class="sourceCode" id="cb9"><html><body><pre class="r"><span class="no">df_grid</span> <span class="kw">&lt;-</span> <span class="no">df_grid</span> <span class="kw">%&gt;%</span>
-  <span class="fu">mutate</span>( <span class="kw">df_sim_sites</span> <span class="kw">=</span> <span class="kw pkg">furrr</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/furrr/man/future_map2.html">future_map2</a></span>(<span class="no">df_site</span>, <span class="no">df_visit</span>,
-                                            <span class="no">sim_sites</span>,
-                                            <span class="kw">r</span> <span class="kw">=</span> <span class="fl">1000</span>,
-                                            <span class="kw">poisson_test</span> <span class="kw">=</span> <span class="fl">TRUE</span>,
-                                            <span class="kw">prob_lower</span> <span class="kw">=</span> <span class="fl">TRUE</span>,
-                                            <span class="kw">.progress</span> <span class="kw">=</span> <span class="fl">FALSE</span>
-                                            )
-  )
-
-<span class="no">df_grid</span></pre></body></html></div>
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">df_grid</span> <span class="op">&lt;-</span> <span class="va">df_grid</span> <span class="op">%&gt;%</span>
+  <span class="fu">mutate</span><span class="op">(</span> df_sim_sites <span class="op">=</span> <span class="fu">furrr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/furrr/man/future_map2.html">future_map2</a></span><span class="op">(</span><span class="va">df_site</span>, <span class="va">df_visit</span>,
+                                            <span class="va">sim_sites</span>,
+                                            r <span class="op">=</span> <span class="fl">1000</span>,
+                                            poisson_test <span class="op">=</span> <span class="cn">TRUE</span>,
+                                            prob_lower <span class="op">=</span> <span class="cn">TRUE</span>,
+                                            .progress <span class="op">=</span> <span class="cn">FALSE</span>
+                                            <span class="op">)</span>
+  <span class="op">)</span></code></pre></div>
+<pre><code>## Warning: Problem with `mutate()` input `df_sim_sites`.
+## ℹ UNRELIABLE VALUE: Future ('&lt;none&gt;') unexpectedly generated random numbers without specifying argument '[future.]seed'. There is a risk that those random numbers are not statistically sound and the overall results might be invalid. To fix this, specify argument '[future.]seed', e.g. 'seed=TRUE'. This ensures that proper, parallel-safe random numbers are produced via the L'Ecuyer-CMRG method. To disable this check, use [future].seed=NULL, or set option 'future.rng.onMisuse' to "ignore".
+## ℹ Input `df_sim_sites` is `furrr::future_map2(...)`.</code></pre>
+<pre><code>## Warning: UNRELIABLE VALUE: Future ('&lt;none&gt;') unexpectedly generated random
+## numbers without specifying argument '[future.]seed'. There is a risk that those
+## random numbers are not statistically sound and the overall results might be
+## invalid. To fix this, specify argument '[future.]seed', e.g. 'seed=TRUE'. This
+## ensures that proper, parallel-safe random numbers are produced via the L'Ecuyer-
+## CMRG method. To disable this check, use [future].seed=NULL, or set option
+## 'future.rng.onMisuse' to "ignore".</code></pre>
+<pre><code>## Warning: Problem with `mutate()` input `df_sim_sites`.
+## ℹ UNRELIABLE VALUE: Future ('&lt;none&gt;') unexpectedly generated random numbers without specifying argument '[future.]seed'. There is a risk that those random numbers are not statistically sound and the overall results might be invalid. To fix this, specify argument '[future.]seed', e.g. 'seed=TRUE'. This ensures that proper, parallel-safe random numbers are produced via the L'Ecuyer-CMRG method. To disable this check, use [future].seed=NULL, or set option 'future.rng.onMisuse' to "ignore".
+## ℹ Input `df_sim_sites` is `furrr::future_map2(...)`.</code></pre>
+<pre><code>## Warning: UNRELIABLE VALUE: Future ('&lt;none&gt;') unexpectedly generated random
+## numbers without specifying argument '[future.]seed'. There is a risk that those
+## random numbers are not statistically sound and the overall results might be
+## invalid. To fix this, specify argument '[future.]seed', e.g. 'seed=TRUE'. This
+## ensures that proper, parallel-safe random numbers are produced via the L'Ecuyer-
+## CMRG method. To disable this check, use [future].seed=NULL, or set option
+## 'future.rng.onMisuse' to "ignore".</code></pre>
+<pre><code>## Warning: Problem with `mutate()` input `df_sim_sites`.
+## ℹ UNRELIABLE VALUE: Future ('&lt;none&gt;') unexpectedly generated random numbers without specifying argument '[future.]seed'. There is a risk that those random numbers are not statistically sound and the overall results might be invalid. To fix this, specify argument '[future.]seed', e.g. 'seed=TRUE'. This ensures that proper, parallel-safe random numbers are produced via the L'Ecuyer-CMRG method. To disable this check, use [future].seed=NULL, or set option 'future.rng.onMisuse' to "ignore".
+## ℹ Input `df_sim_sites` is `furrr::future_map2(...)`.</code></pre>
+<pre><code>## Warning: UNRELIABLE VALUE: Future ('&lt;none&gt;') unexpectedly generated random
+## numbers without specifying argument '[future.]seed'. There is a risk that those
+## random numbers are not statistically sound and the overall results might be
+## invalid. To fix this, specify argument '[future.]seed', e.g. 'seed=TRUE'. This
+## ensures that proper, parallel-safe random numbers are produced via the L'Ecuyer-
+## CMRG method. To disable this check, use [future].seed=NULL, or set option
+## 'future.rng.onMisuse' to "ignore".</code></pre>
+<pre><code>## Warning: Problem with `mutate()` input `df_sim_sites`.
+## ℹ UNRELIABLE VALUE: Future ('&lt;none&gt;') unexpectedly generated random numbers without specifying argument '[future.]seed'. There is a risk that those random numbers are not statistically sound and the overall results might be invalid. To fix this, specify argument '[future.]seed', e.g. 'seed=TRUE'. This ensures that proper, parallel-safe random numbers are produced via the L'Ecuyer-CMRG method. To disable this check, use [future].seed=NULL, or set option 'future.rng.onMisuse' to "ignore".
+## ℹ Input `df_sim_sites` is `furrr::future_map2(...)`.</code></pre>
+<pre><code>## Warning: UNRELIABLE VALUE: Future ('&lt;none&gt;') unexpectedly generated random
+## numbers without specifying argument '[future.]seed'. There is a risk that those
+## random numbers are not statistically sound and the overall results might be
+## invalid. To fix this, specify argument '[future.]seed', e.g. 'seed=TRUE'. This
+## ensures that proper, parallel-safe random numbers are produced via the L'Ecuyer-
+## CMRG method. To disable this check, use [future].seed=NULL, or set option
+## 'future.rng.onMisuse' to "ignore".</code></pre>
+<pre><code>## Warning: Problem with `mutate()` input `df_sim_sites`.
+## ℹ UNRELIABLE VALUE: Future ('&lt;none&gt;') unexpectedly generated random numbers without specifying argument '[future.]seed'. There is a risk that those random numbers are not statistically sound and the overall results might be invalid. To fix this, specify argument '[future.]seed', e.g. 'seed=TRUE'. This ensures that proper, parallel-safe random numbers are produced via the L'Ecuyer-CMRG method. To disable this check, use [future].seed=NULL, or set option 'future.rng.onMisuse' to "ignore".
+## ℹ Input `df_sim_sites` is `furrr::future_map2(...)`.</code></pre>
+<pre><code>## Warning: UNRELIABLE VALUE: Future ('&lt;none&gt;') unexpectedly generated random
+## numbers without specifying argument '[future.]seed'. There is a risk that those
+## random numbers are not statistically sound and the overall results might be
+## invalid. To fix this, specify argument '[future.]seed', e.g. 'seed=TRUE'. This
+## ensures that proper, parallel-safe random numbers are produced via the L'Ecuyer-
+## CMRG method. To disable this check, use [future].seed=NULL, or set option
+## 'future.rng.onMisuse' to "ignore".</code></pre>
+<pre><code>## Warning: Problem with `mutate()` input `df_sim_sites`.
+## ℹ UNRELIABLE VALUE: Future ('&lt;none&gt;') unexpectedly generated random numbers without specifying argument '[future.]seed'. There is a risk that those random numbers are not statistically sound and the overall results might be invalid. To fix this, specify argument '[future.]seed', e.g. 'seed=TRUE'. This ensures that proper, parallel-safe random numbers are produced via the L'Ecuyer-CMRG method. To disable this check, use [future].seed=NULL, or set option 'future.rng.onMisuse' to "ignore".
+## ℹ Input `df_sim_sites` is `furrr::future_map2(...)`.</code></pre>
+<pre><code>## Warning: UNRELIABLE VALUE: Future ('&lt;none&gt;') unexpectedly generated random
+## numbers without specifying argument '[future.]seed'. There is a risk that those
+## random numbers are not statistically sound and the overall results might be
+## invalid. To fix this, specify argument '[future.]seed', e.g. 'seed=TRUE'. This
+## ensures that proper, parallel-safe random numbers are produced via the L'Ecuyer-
+## CMRG method. To disable this check, use [future].seed=NULL, or set option
+## 'future.rng.onMisuse' to "ignore".</code></pre>
+<pre><code>## Warning: Problem with `mutate()` input `df_sim_sites`.
+## ℹ UNRELIABLE VALUE: Future ('&lt;none&gt;') unexpectedly generated random numbers without specifying argument '[future.]seed'. There is a risk that those random numbers are not statistically sound and the overall results might be invalid. To fix this, specify argument '[future.]seed', e.g. 'seed=TRUE'. This ensures that proper, parallel-safe random numbers are produced via the L'Ecuyer-CMRG method. To disable this check, use [future].seed=NULL, or set option 'future.rng.onMisuse' to "ignore".
+## ℹ Input `df_sim_sites` is `furrr::future_map2(...)`.</code></pre>
+<pre><code>## Warning: UNRELIABLE VALUE: Future ('&lt;none&gt;') unexpectedly generated random
+## numbers without specifying argument '[future.]seed'. There is a risk that those
+## random numbers are not statistically sound and the overall results might be
+## invalid. To fix this, specify argument '[future.]seed', e.g. 'seed=TRUE'. This
+## ensures that proper, parallel-safe random numbers are produced via the L'Ecuyer-
+## CMRG method. To disable this check, use [future].seed=NULL, or set option
+## 'future.rng.onMisuse' to "ignore".</code></pre>
+<pre><code>## Warning: Problem with `mutate()` input `df_sim_sites`.
+## ℹ UNRELIABLE VALUE: Future ('&lt;none&gt;') unexpectedly generated random numbers without specifying argument '[future.]seed'. There is a risk that those random numbers are not statistically sound and the overall results might be invalid. To fix this, specify argument '[future.]seed', e.g. 'seed=TRUE'. This ensures that proper, parallel-safe random numbers are produced via the L'Ecuyer-CMRG method. To disable this check, use [future].seed=NULL, or set option 'future.rng.onMisuse' to "ignore".
+## ℹ Input `df_sim_sites` is `furrr::future_map2(...)`.</code></pre>
+<pre><code>## Warning: UNRELIABLE VALUE: Future ('&lt;none&gt;') unexpectedly generated random
+## numbers without specifying argument '[future.]seed'. There is a risk that those
+## random numbers are not statistically sound and the overall results might be
+## invalid. To fix this, specify argument '[future.]seed', e.g. 'seed=TRUE'. This
+## ensures that proper, parallel-safe random numbers are produced via the L'Ecuyer-
+## CMRG method. To disable this check, use [future].seed=NULL, or set option
+## 'future.rng.onMisuse' to "ignore".</code></pre>
+<div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">df_grid</span></code></pre></div>
 <pre><code>## # A tibble: 1,000 x 6
 ##    ae_per_visit_mean frac_site_with_… ur_rate df_visit   df_site   df_sim_sites 
 ##                &lt;dbl&gt;            &lt;dbl&gt;   &lt;dbl&gt; &lt;list&gt;     &lt;list&gt;    &lt;list&gt;       
@@ -268,15 +438,16 @@
 <h2 class="hasAnchor">
 <a href="#evaluate-sites" class="anchor"></a>Evaluate Sites</h2>
 <p>We apply <a href="https://openpharma.github.io/simaerep/reference/eval_sites.html">eval_sites()</a> to balance the bootstrapped probabilities by the expected number of false positives.</p>
-<div class="sourceCode" id="cb11"><html><body><pre class="r"><span class="no">df_grid</span> <span class="kw">&lt;-</span> <span class="no">df_grid</span> <span class="kw">%&gt;%</span>
-  <span class="fu">mutate</span>( <span class="kw">df_eval</span> <span class="kw">=</span> <span class="kw pkg">furrr</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/furrr/man/future_map.html">future_map</a></span>(<span class="no">df_sim_sites</span>,
-                                      <span class="no">eval_sites</span>,
-                                      <span class="kw">r_sim_sites</span> <span class="kw">=</span> <span class="fl">1000</span>,
-                                      <span class="kw">.progress</span> <span class="kw">=</span> <span class="fl">FALSE</span>
-                                      )
-  )
+<div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">df_grid</span> <span class="op">&lt;-</span> <span class="va">df_grid</span> <span class="op">%&gt;%</span>
+  <span class="fu">mutate</span><span class="op">(</span> df_eval <span class="op">=</span> <span class="fu">furrr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/furrr/man/future_map.html">future_map</a></span><span class="op">(</span><span class="va">df_sim_sites</span>,
+                                      <span class="va">eval_sites</span>,
+                                      r_sim_sites <span class="op">=</span> <span class="fl">1000</span>,
+                                      .progress <span class="op">=</span> <span class="cn">FALSE</span>
+                                      <span class="op">)</span>
+  <span class="op">)</span>
 
-<span class="no">df_grid</span></pre></body></html></div>
+<span class="va">df_grid</span></code></pre></div>
 <pre><code>## # A tibble: 1,000 x 7
 ##    ae_per_visit_me… frac_site_with_… ur_rate df_visit df_site df_sim_sites
 ##               &lt;dbl&gt;            &lt;dbl&gt;   &lt;dbl&gt; &lt;list&gt;   &lt;list&gt;  &lt;list&gt;      
@@ -302,72 +473,73 @@
 <li>and the probabilities and p-values before adjusting for the expected false positives</li>
 </ul>
 <p>In all cases we use a 95% probability threshold.</p>
-<div class="sourceCode" id="cb13"><html><body><pre class="r"><span class="no">get_metrics</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">df_visit</span>, <span class="no">df_eval</span>, <span class="no">method</span>) {
+<div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">get_metrics</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">df_visit</span>, <span class="va">df_eval</span>, <span class="va">method</span><span class="op">)</span> <span class="op">{</span>
+  
+  <span class="kw">if</span> <span class="op">(</span><span class="va">method</span> <span class="op">==</span> <span class="st">"ptest"</span><span class="op">)</span> <span class="op">{</span>
+    <span class="va">prob_ur_adj</span> <span class="op">=</span> <span class="st">"pval_prob_ur"</span>
+    <span class="va">prob_ur_unadj</span> <span class="op">=</span> <span class="st">"pval"</span>
+  <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span>
+    <span class="va">prob_ur_adj</span> <span class="op">=</span> <span class="st">"prob_low_prob_ur"</span>
+    <span class="va">prob_ur_unadj</span> <span class="op">=</span> <span class="st">"prob_low"</span>
+  <span class="op">}</span>
+  
+  <span class="va">df_ur</span> <span class="op">&lt;-</span> <span class="va">df_visit</span> <span class="op">%&gt;%</span>
+    <span class="fu">select</span><span class="op">(</span><span class="va">site_number</span>, <span class="va">is_ur</span><span class="op">)</span> <span class="op">%&gt;%</span>
+    <span class="fu">distinct</span><span class="op">(</span><span class="op">)</span>
 
-  <span class="kw">if</span> (<span class="no">method</span> <span class="kw">==</span> <span class="st">"ptest"</span>) {
-    <span class="no">prob_ur_adj</span> <span class="kw">=</span> <span class="st">"pval_prob_ur"</span>
-    <span class="no">prob_ur_unadj</span> <span class="kw">=</span> <span class="st">"pval"</span>
-  } <span class="kw">else</span> {
-    <span class="no">prob_ur_adj</span> <span class="kw">=</span> <span class="st">"prob_low_prob_ur"</span>
-    <span class="no">prob_ur_unadj</span> <span class="kw">=</span> <span class="st">"prob_low"</span>
-  }
+  <span class="va">df_metric_prep</span> <span class="op">&lt;-</span> <span class="va">df_eval</span> <span class="op">%&gt;%</span>
+    <span class="fu">left_join</span><span class="op">(</span><span class="va">df_ur</span>, <span class="st">"site_number"</span><span class="op">)</span> <span class="op">%&gt;%</span>
+    <span class="fu">rename</span><span class="op">(</span> prob_ur_adj <span class="op">=</span> <span class="op">!</span><span class="op">!</span> <span class="fu"><a href="https://rdrr.io/r/base/name.html">as.name</a></span><span class="op">(</span><span class="va">prob_ur_adj</span><span class="op">)</span>,
+            prob_ur_unadj <span class="op">=</span> <span class="op">!</span><span class="op">!</span> <span class="fu"><a href="https://rdrr.io/r/base/name.html">as.name</a></span><span class="op">(</span><span class="va">prob_ur_unadj</span><span class="op">)</span> <span class="op">)</span>
+  
+  <span class="va">df_metric_adjusted</span> <span class="op">&lt;-</span> <span class="va">df_metric_prep</span> <span class="op">%&gt;%</span>
+    <span class="fu">select</span><span class="op">(</span><span class="va">study_id</span>, <span class="va">site_number</span>, <span class="va">is_ur</span>, <span class="va">prob_ur_adj</span><span class="op">)</span> <span class="op">%&gt;%</span>
+    <span class="fu">mutate</span><span class="op">(</span> tp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">is_ur</span> <span class="op">&amp;</span> <span class="va">prob_ur_adj</span> <span class="op">&gt;=</span> <span class="fl">0.95</span>, <span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span>,
+            fn <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">is_ur</span> <span class="op">&amp;</span> <span class="va">prob_ur_adj</span> <span class="op">&lt;</span> <span class="fl">0.95</span>, <span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span>,
+            tn <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="op">(</span><span class="op">!</span> <span class="va">is_ur</span><span class="op">)</span> <span class="op">&amp;</span> <span class="va">prob_ur_adj</span> <span class="op">&lt;</span> <span class="fl">0.95</span>, <span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span>,
+            fp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="op">(</span><span class="op">!</span> <span class="va">is_ur</span><span class="op">)</span> <span class="op">&amp;</span> <span class="va">prob_ur_adj</span> <span class="op">&gt;=</span> <span class="fl">0.95</span>, <span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span>,
+            p <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">prob_ur_adj</span> <span class="op">&gt;=</span> <span class="fl">0.95</span>, <span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span>,
+            n <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">prob_ur_adj</span> <span class="op">&lt;</span> <span class="fl">0.95</span>, <span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span>,
+            P <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">is_ur</span>, <span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span>,
+            N <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="op">!</span> <span class="va">is_ur</span>, <span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span>
+    <span class="op">)</span> <span class="op">%&gt;%</span>
+    <span class="fu">group_by</span><span class="op">(</span><span class="va">study_id</span><span class="op">)</span> <span class="op">%&gt;%</span>
+    <span class="fu">select</span><span class="op">(</span><span class="op">-</span><span class="va">site_number</span>, <span class="op">-</span> <span class="va">is_ur</span>, <span class="op">-</span> <span class="va">prob_ur_adj</span><span class="op">)</span> <span class="op">%&gt;%</span>
+    <span class="fu">summarize_all</span><span class="op">(</span><span class="va">sum</span><span class="op">)</span> <span class="op">%&gt;%</span>
+    <span class="fu">mutate</span><span class="op">(</span>prob_type <span class="op">=</span> <span class="st">"adjusted"</span><span class="op">)</span>
+  
+  <span class="va">df_metric_unadjusted</span> <span class="op">&lt;-</span> <span class="va">df_metric_prep</span> <span class="op">%&gt;%</span>
+    <span class="fu">select</span><span class="op">(</span><span class="va">study_id</span>, <span class="va">site_number</span>, <span class="va">is_ur</span>, <span class="va">prob_ur_unadj</span><span class="op">)</span> <span class="op">%&gt;%</span>
+    <span class="fu">mutate</span><span class="op">(</span> tp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">is_ur</span> <span class="op">&amp;</span> <span class="va">prob_ur_unadj</span> <span class="op">&lt;=</span> <span class="fl">0.05</span>, <span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span>,
+            fn <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">is_ur</span> <span class="op">&amp;</span> <span class="va">prob_ur_unadj</span> <span class="op">&gt;</span> <span class="fl">0.05</span>, <span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span>,
+            tn <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="op">(</span><span class="op">!</span> <span class="va">is_ur</span><span class="op">)</span> <span class="op">&amp;</span> <span class="va">prob_ur_unadj</span> <span class="op">&gt;</span> <span class="fl">0.05</span>, <span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span>,
+            fp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="op">(</span><span class="op">!</span> <span class="va">is_ur</span><span class="op">)</span> <span class="op">&amp;</span> <span class="va">prob_ur_unadj</span> <span class="op">&lt;=</span> <span class="fl">0.05</span>, <span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span>,
+            p <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">prob_ur_unadj</span> <span class="op">&lt;=</span> <span class="fl">0.05</span>, <span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span>,
+            n <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">prob_ur_unadj</span> <span class="op">&gt;</span> <span class="fl">0.05</span>, <span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span>,
+            P <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">is_ur</span>, <span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span>,
+            N <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="op">!</span> <span class="va">is_ur</span>, <span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span>
+    <span class="op">)</span> <span class="op">%&gt;%</span>
+    <span class="fu">group_by</span><span class="op">(</span><span class="va">study_id</span><span class="op">)</span> <span class="op">%&gt;%</span>
+    <span class="fu">select</span><span class="op">(</span><span class="op">-</span><span class="va">site_number</span>, <span class="op">-</span> <span class="va">is_ur</span>, <span class="op">-</span> <span class="va">prob_ur_unadj</span><span class="op">)</span> <span class="op">%&gt;%</span>
+    <span class="fu">summarize_all</span><span class="op">(</span><span class="va">sum</span><span class="op">)</span> <span class="op">%&gt;%</span>
+    <span class="fu">mutate</span><span class="op">(</span>prob_type <span class="op">=</span> <span class="st">"unadjusted"</span><span class="op">)</span>
+  
+  <span class="va">df_metric</span> <span class="op">&lt;-</span> <span class="fu">bind_rows</span><span class="op">(</span><span class="va">df_metric_adjusted</span>, <span class="va">df_metric_unadjusted</span><span class="op">)</span> <span class="op">%&gt;%</span>
+    <span class="fu">mutate</span><span class="op">(</span>method <span class="op">=</span> <span class="va">method</span><span class="op">)</span>
+<span class="op">}</span>
 
-  <span class="no">df_ur</span> <span class="kw">&lt;-</span> <span class="no">df_visit</span> <span class="kw">%&gt;%</span>
-    <span class="fu">select</span>(<span class="no">site_number</span>, <span class="no">is_ur</span>) <span class="kw">%&gt;%</span>
-    <span class="fu">distinct</span>()
+<span class="va">df_grid</span> <span class="op">&lt;-</span> <span class="va">df_grid</span> <span class="op">%&gt;%</span>
+  <span class="fu">mutate</span><span class="op">(</span>df_metric_pval <span class="op">=</span> <span class="fu">furrr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/furrr/man/future_map2.html">future_map2</a></span><span class="op">(</span><span class="va">df_visit</span>, <span class="va">df_eval</span>,
+                                              <span class="va">get_metrics</span>,
+                                              method <span class="op">=</span> <span class="st">"ptest"</span><span class="op">)</span>,
+         df_metric_prob_low <span class="op">=</span> <span class="fu">furrr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/furrr/man/future_map2.html">future_map2</a></span><span class="op">(</span><span class="va">df_visit</span>, <span class="va">df_eval</span>,
+                                                <span class="va">get_metrics</span>,
+                                                method <span class="op">=</span> <span class="st">"bootstrap"</span><span class="op">)</span>,
+         df_metric <span class="op">=</span> <span class="fu">map2</span><span class="op">(</span><span class="va">df_metric_pval</span>, <span class="va">df_metric_prob_low</span>, <span class="va">bind_rows</span><span class="op">)</span>
+         <span class="op">)</span>
 
-  <span class="no">df_metric_prep</span> <span class="kw">&lt;-</span> <span class="no">df_eval</span> <span class="kw">%&gt;%</span>
-    <span class="fu">left_join</span>(<span class="no">df_ur</span>, <span class="st">"site_number"</span>) <span class="kw">%&gt;%</span>
-    <span class="fu">rename</span>( <span class="kw">prob_ur_adj</span> <span class="kw">=</span> !! <span class="fu"><a href="https://rdrr.io/r/base/name.html">as.name</a></span>(<span class="no">prob_ur_adj</span>),
-            <span class="kw">prob_ur_unadj</span> <span class="kw">=</span> !! <span class="fu"><a href="https://rdrr.io/r/base/name.html">as.name</a></span>(<span class="no">prob_ur_unadj</span>) )
-
-  <span class="no">df_metric_adjusted</span> <span class="kw">&lt;-</span> <span class="no">df_metric_prep</span> <span class="kw">%&gt;%</span>
-    <span class="fu">select</span>(<span class="no">study_id</span>, <span class="no">site_number</span>, <span class="no">is_ur</span>, <span class="no">prob_ur_adj</span>) <span class="kw">%&gt;%</span>
-    <span class="fu">mutate</span>( <span class="kw">tp</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="no">is_ur</span> <span class="kw">&amp;</span> <span class="no">prob_ur_adj</span> <span class="kw">&gt;=</span> <span class="fl">0.95</span>, <span class="fl">1</span>, <span class="fl">0</span>),
-            <span class="kw">fn</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="no">is_ur</span> <span class="kw">&amp;</span> <span class="no">prob_ur_adj</span> <span class="kw">&lt;</span> <span class="fl">0.95</span>, <span class="fl">1</span>, <span class="fl">0</span>),
-            <span class="kw">tn</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>((! <span class="no">is_ur</span>) <span class="kw">&amp;</span> <span class="no">prob_ur_adj</span> <span class="kw">&lt;</span> <span class="fl">0.95</span>, <span class="fl">1</span>, <span class="fl">0</span>),
-            <span class="kw">fp</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>((! <span class="no">is_ur</span>) <span class="kw">&amp;</span> <span class="no">prob_ur_adj</span> <span class="kw">&gt;=</span> <span class="fl">0.95</span>, <span class="fl">1</span>, <span class="fl">0</span>),
-            <span class="kw">p</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="no">prob_ur_adj</span> <span class="kw">&gt;=</span> <span class="fl">0.95</span>, <span class="fl">1</span>, <span class="fl">0</span>),
-            <span class="kw">n</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="no">prob_ur_adj</span> <span class="kw">&lt;</span> <span class="fl">0.95</span>, <span class="fl">1</span>, <span class="fl">0</span>),
-            <span class="kw">P</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="no">is_ur</span>, <span class="fl">1</span>, <span class="fl">0</span>),
-            <span class="kw">N</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(! <span class="no">is_ur</span>, <span class="fl">1</span>, <span class="fl">0</span>)
-    ) <span class="kw">%&gt;%</span>
-    <span class="fu">group_by</span>(<span class="no">study_id</span>) <span class="kw">%&gt;%</span>
-    <span class="fu">select</span>(-<span class="no">site_number</span>, - <span class="no">is_ur</span>, - <span class="no">prob_ur_adj</span>) <span class="kw">%&gt;%</span>
-    <span class="fu">summarize_all</span>(<span class="no">sum</span>) <span class="kw">%&gt;%</span>
-    <span class="fu">mutate</span>(<span class="kw">prob_type</span> <span class="kw">=</span> <span class="st">"adjusted"</span>)
-
-  <span class="no">df_metric_unadjusted</span> <span class="kw">&lt;-</span> <span class="no">df_metric_prep</span> <span class="kw">%&gt;%</span>
-    <span class="fu">select</span>(<span class="no">study_id</span>, <span class="no">site_number</span>, <span class="no">is_ur</span>, <span class="no">prob_ur_unadj</span>) <span class="kw">%&gt;%</span>
-    <span class="fu">mutate</span>( <span class="kw">tp</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="no">is_ur</span> <span class="kw">&amp;</span> <span class="no">prob_ur_unadj</span> <span class="kw">&lt;=</span> <span class="fl">0.05</span>, <span class="fl">1</span>, <span class="fl">0</span>),
-            <span class="kw">fn</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="no">is_ur</span> <span class="kw">&amp;</span> <span class="no">prob_ur_unadj</span> <span class="kw">&gt;</span> <span class="fl">0.05</span>, <span class="fl">1</span>, <span class="fl">0</span>),
-            <span class="kw">tn</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>((! <span class="no">is_ur</span>) <span class="kw">&amp;</span> <span class="no">prob_ur_unadj</span> <span class="kw">&gt;</span> <span class="fl">0.05</span>, <span class="fl">1</span>, <span class="fl">0</span>),
-            <span class="kw">fp</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>((! <span class="no">is_ur</span>) <span class="kw">&amp;</span> <span class="no">prob_ur_unadj</span> <span class="kw">&lt;=</span> <span class="fl">0.05</span>, <span class="fl">1</span>, <span class="fl">0</span>),
-            <span class="kw">p</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="no">prob_ur_unadj</span> <span class="kw">&lt;=</span> <span class="fl">0.05</span>, <span class="fl">1</span>, <span class="fl">0</span>),
-            <span class="kw">n</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="no">prob_ur_unadj</span> <span class="kw">&gt;</span> <span class="fl">0.05</span>, <span class="fl">1</span>, <span class="fl">0</span>),
-            <span class="kw">P</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="no">is_ur</span>, <span class="fl">1</span>, <span class="fl">0</span>),
-            <span class="kw">N</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(! <span class="no">is_ur</span>, <span class="fl">1</span>, <span class="fl">0</span>)
-    ) <span class="kw">%&gt;%</span>
-    <span class="fu">group_by</span>(<span class="no">study_id</span>) <span class="kw">%&gt;%</span>
-    <span class="fu">select</span>(-<span class="no">site_number</span>, - <span class="no">is_ur</span>, - <span class="no">prob_ur_unadj</span>) <span class="kw">%&gt;%</span>
-    <span class="fu">summarize_all</span>(<span class="no">sum</span>) <span class="kw">%&gt;%</span>
-    <span class="fu">mutate</span>(<span class="kw">prob_type</span> <span class="kw">=</span> <span class="st">"unadjusted"</span>)
-
-  <span class="no">df_metric</span> <span class="kw">&lt;-</span> <span class="fu">bind_rows</span>(<span class="no">df_metric_adjusted</span>, <span class="no">df_metric_unadjusted</span>) <span class="kw">%&gt;%</span>
-    <span class="fu">mutate</span>(<span class="kw">method</span> <span class="kw">=</span> <span class="no">method</span>)
-}
-
-<span class="no">df_grid</span> <span class="kw">&lt;-</span> <span class="no">df_grid</span> <span class="kw">%&gt;%</span>
-  <span class="fu">mutate</span>(<span class="kw">df_metric_pval</span> <span class="kw">=</span> <span class="kw pkg">furrr</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/furrr/man/future_map2.html">future_map2</a></span>(<span class="no">df_visit</span>, <span class="no">df_eval</span>,
-                                              <span class="no">get_metrics</span>,
-                                              <span class="kw">method</span> <span class="kw">=</span> <span class="st">"ptest"</span>),
-         <span class="kw">df_metric_prob_low</span> <span class="kw">=</span> <span class="kw pkg">furrr</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/furrr/man/future_map2.html">future_map2</a></span>(<span class="no">df_visit</span>, <span class="no">df_eval</span>,
-                                                <span class="no">get_metrics</span>,
-                                                <span class="kw">method</span> <span class="kw">=</span> <span class="st">"bootstrap"</span>),
-         <span class="kw">df_metric</span> <span class="kw">=</span> <span class="fu">map2</span>(<span class="no">df_metric_pval</span>, <span class="no">df_metric_prob_low</span>, <span class="no">bind_rows</span>)
-         )
-
-<span class="no">df_grid</span></pre></body></html></div>
+<span class="va">df_grid</span></code></pre></div>
 <pre><code>## # A tibble: 1,000 x 10
 ##    ae_per_visit_me… frac_site_with_… ur_rate df_visit df_site df_sim_sites
 ##               &lt;dbl&gt;            &lt;dbl&gt;   &lt;dbl&gt; &lt;list&gt;   &lt;list&gt;  &lt;list&gt;      
@@ -388,24 +560,25 @@
 <div id="plot" class="section level1">
 <h1 class="hasAnchor">
 <a href="#plot" class="anchor"></a>Plot</h1>
-<div class="sourceCode" id="cb15"><html><body><pre class="r"><span class="no">df_plot</span> <span class="kw">&lt;-</span> <span class="no">df_grid</span> <span class="kw">%&gt;%</span>
-  <span class="fu">select</span>(<span class="no">ae_per_visit_mean</span>, <span class="no">frac_site_with_ur</span>, <span class="no">ur_rate</span>, <span class="no">df_metric</span>) <span class="kw">%&gt;%</span>
-  <span class="fu">unnest</span>(<span class="no">df_metric</span>)
+<div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">df_plot</span> <span class="op">&lt;-</span> <span class="va">df_grid</span> <span class="op">%&gt;%</span>
+  <span class="fu">select</span><span class="op">(</span><span class="va">ae_per_visit_mean</span>, <span class="va">frac_site_with_ur</span>, <span class="va">ur_rate</span>, <span class="va">df_metric</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">unnest</span><span class="op">(</span><span class="va">df_metric</span><span class="op">)</span>
 
-<span class="no">df_plot</span></pre></body></html></div>
+<span class="va">df_plot</span></code></pre></div>
 <pre><code>## # A tibble: 4,000 x 14
 ##    ae_per_visit_me… frac_site_with_… ur_rate study_id    tp    fn    tn    fp
 ##               &lt;dbl&gt;            &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
 ##  1             0.05             0.05   0.05  S 1          0     5    95     0
-##  2             0.05             0.05   0.05  S 1          1     4    94     1
+##  2             0.05             0.05   0.05  S 1          0     5    94     1
 ##  3             0.05             0.05   0.05  S 1          0     5    95     0
-##  4             0.05             0.05   0.05  S 1          1     4    94     1
+##  4             0.05             0.05   0.05  S 1          0     5    93     2
 ##  5             0.05             0.05   0.156 S 2          0     5    95     0
-##  6             0.05             0.05   0.156 S 2          0     5    92     3
+##  6             0.05             0.05   0.156 S 2          0     5    95     0
 ##  7             0.05             0.05   0.156 S 2          0     5    95     0
-##  8             0.05             0.05   0.156 S 2          0     5    92     3
+##  8             0.05             0.05   0.156 S 2          0     5    94     1
 ##  9             0.05             0.05   0.261 S 3          0     5    95     0
-## 10             0.05             0.05   0.261 S 3          0     5    91     4
+## 10             0.05             0.05   0.261 S 3          0     5    93     2
 ## # … with 3,990 more rows, and 6 more variables: p &lt;dbl&gt;, n &lt;dbl&gt;, P &lt;dbl&gt;,
 ## #   N &lt;dbl&gt;, prob_type &lt;chr&gt;, method &lt;chr&gt;</code></pre>
 </div>
@@ -414,50 +587,52 @@
 <a href="#true-positive-rate---p---tpp" class="anchor"></a>True positive rate - P - TP/P</h1>
 <p>When comparing bootstrap method against the poisson.test benchmark test, we find that they perform mostly similar from a 0.05 - 0.3 ratio of under-reporting sites. Its performance is still acceptable from a 0.3 - 0.5 ratio and then becomes pretty useless.</p>
 <p>As expected detection of under-reporting sites is close too impossible when the ae/visit ratio is very low (0.05) with detection rates close to zero for all tested scenarios.</p>
-<div class="sourceCode" id="cb17"><html><body><pre class="r"><span class="no">p</span> <span class="kw">&lt;-</span> <span class="no">df_plot</span> <span class="kw">%&gt;%</span>
-  <span class="fu">mutate</span>( <span class="kw">tp_P_ratio</span> <span class="kw">=</span> <span class="no">tp</span>/<span class="no">P</span>) <span class="kw">%&gt;%</span>
-  <span class="fu">select</span>(<span class="no">ae_per_visit_mean</span>, <span class="no">frac_site_with_ur</span>, <span class="no">ur_rate</span>, <span class="no">tp_P_ratio</span>, <span class="no">method</span>, <span class="no">prob_type</span>) <span class="kw">%&gt;%</span>
-  <span class="fu">mutate_if</span>(<span class="no">is.numeric</span>, <span class="no">round</span>, <span class="fl">3</span>) <span class="kw">%&gt;%</span>
-  <span class="fu">mutate</span>(<span class="kw">metric</span> <span class="kw">=</span> <span class="fu">case_when</span>(<span class="no">method</span> <span class="kw">==</span> <span class="st">"ptest"</span> <span class="kw">&amp;</span> <span class="no">prob_type</span> <span class="kw">==</span> <span class="st">"unadjusted"</span> ~ <span class="st">"ptest unadjusted"</span>,
-                           <span class="no">method</span> <span class="kw">==</span> <span class="st">"ptest"</span> <span class="kw">&amp;</span> <span class="no">prob_type</span> <span class="kw">==</span> <span class="st">"adjusted"</span> ~ <span class="st">"ptest adjusted"</span>,
-                           <span class="no">method</span> <span class="kw">==</span> <span class="st">"bootstrap"</span> <span class="kw">&amp;</span> <span class="no">prob_type</span> <span class="kw">==</span> <span class="st">"unadjusted"</span> ~ <span class="st">"bootstrap unadjusted"</span>,
-                           <span class="no">method</span> <span class="kw">==</span> <span class="st">"bootstrap"</span> <span class="kw">&amp;</span> <span class="no">prob_type</span> <span class="kw">==</span> <span class="st">"adjusted"</span> ~ <span class="st">"bootstrap adjusted"</span>),
-         <span class="kw">metric</span> <span class="kw">=</span> <span class="fu">fct_relevel</span>(<span class="no">metric</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"ptest unadjusted"</span>, <span class="st">"ptest adjusted"</span>,
-                                        <span class="st">"bootstrap unadjusted"</span>, <span class="st">"bootstrap adjusted"</span>))) <span class="kw">%&gt;%</span>
-  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="no">ae_per_visit_mean</span>, <span class="no">tp_P_ratio</span>, <span class="kw">color</span> <span class="kw">=</span> <span class="no">metric</span>)) +
-    <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="kw">linetype</span> <span class="kw">=</span> <span class="no">prob_type</span>), <span class="kw">size</span> <span class="kw">=</span> <span class="fl">0.5</span>, <span class="kw">alpha</span> <span class="kw">=</span> <span class="fl">0.5</span>) +
-    <span class="fu">facet_grid</span>( <span class="no">frac_site_with_ur</span> ~ <span class="no">ur_rate</span>) +
-    <span class="fu">scale_color_manual</span>(<span class="kw">values</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"dodgerblue3"</span>, <span class="st">"skyblue1"</span>, <span class="st">"sienna4"</span>, <span class="st">"peru"</span>)) +
-    <span class="fu">theme</span>(<span class="kw">panel.grid</span> <span class="kw">=</span> <span class="fu">element_blank</span>(), <span class="kw">legend.position</span> <span class="kw">=</span> <span class="st">"right"</span>) +
-    <span class="fu">labs</span>(<span class="kw">title</span> <span class="kw">=</span> <span class="st">"AE Under Reporting Rate ~ Rate of AE Under-Reporting Sites"</span>,
-         <span class="kw">y</span> <span class="kw">=</span> <span class="st">"True positive rate - tp/P"</span>,
-         <span class="kw">x</span> <span class="kw">=</span> <span class="st">"AEs per Visit"</span>)
-<span class="no">p</span></pre></body></html></div>
+<div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">p</span> <span class="op">&lt;-</span> <span class="va">df_plot</span> <span class="op">%&gt;%</span>
+  <span class="fu">mutate</span><span class="op">(</span> tp_P_ratio <span class="op">=</span> <span class="va">tp</span><span class="op">/</span><span class="va">P</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">select</span><span class="op">(</span><span class="va">ae_per_visit_mean</span>, <span class="va">frac_site_with_ur</span>, <span class="va">ur_rate</span>, <span class="va">tp_P_ratio</span>, <span class="va">method</span>, <span class="va">prob_type</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">mutate_if</span><span class="op">(</span><span class="va">is.numeric</span>, <span class="va">round</span>, <span class="fl">3</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">mutate</span><span class="op">(</span>metric <span class="op">=</span> <span class="fu">case_when</span><span class="op">(</span><span class="va">method</span> <span class="op">==</span> <span class="st">"ptest"</span> <span class="op">&amp;</span> <span class="va">prob_type</span> <span class="op">==</span> <span class="st">"unadjusted"</span> <span class="op">~</span> <span class="st">"ptest unadjusted"</span>,
+                           <span class="va">method</span> <span class="op">==</span> <span class="st">"ptest"</span> <span class="op">&amp;</span> <span class="va">prob_type</span> <span class="op">==</span> <span class="st">"adjusted"</span> <span class="op">~</span> <span class="st">"ptest adjusted"</span>,
+                           <span class="va">method</span> <span class="op">==</span> <span class="st">"bootstrap"</span> <span class="op">&amp;</span> <span class="va">prob_type</span> <span class="op">==</span> <span class="st">"unadjusted"</span> <span class="op">~</span> <span class="st">"bootstrap unadjusted"</span>,
+                           <span class="va">method</span> <span class="op">==</span> <span class="st">"bootstrap"</span> <span class="op">&amp;</span> <span class="va">prob_type</span> <span class="op">==</span> <span class="st">"adjusted"</span> <span class="op">~</span> <span class="st">"bootstrap adjusted"</span><span class="op">)</span>,
+         metric <span class="op">=</span> <span class="fu">fct_relevel</span><span class="op">(</span><span class="va">metric</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"ptest unadjusted"</span>, <span class="st">"ptest adjusted"</span>,
+                                        <span class="st">"bootstrap unadjusted"</span>, <span class="st">"bootstrap adjusted"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span><span class="va">ae_per_visit_mean</span>, <span class="va">tp_P_ratio</span>, color <span class="op">=</span> <span class="va">metric</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">geom_line</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>linetype <span class="op">=</span> <span class="va">prob_type</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">0.5</span>, alpha <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">facet_grid</span><span class="op">(</span> <span class="va">frac_site_with_ur</span> <span class="op">~</span> <span class="va">ur_rate</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">scale_color_manual</span><span class="op">(</span>values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"dodgerblue3"</span>, <span class="st">"skyblue1"</span>, <span class="st">"sienna4"</span>, <span class="st">"peru"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">theme</span><span class="op">(</span>panel.grid <span class="op">=</span> <span class="fu">element_blank</span><span class="op">(</span><span class="op">)</span>, legend.position <span class="op">=</span> <span class="st">"right"</span><span class="op">)</span> <span class="op">+</span> 
+    <span class="fu">labs</span><span class="op">(</span>title <span class="op">=</span> <span class="st">"AE Under Reporting Rate ~ Rate of AE Under-Reporting Sites"</span>,
+         y <span class="op">=</span> <span class="st">"True positive rate - tp/P"</span>,
+         x <span class="op">=</span> <span class="st">"AEs per Visit"</span><span class="op">)</span>
+<span class="va">p</span></code></pre></div>
 <p><img src="usability_limits_files/figure-html/unnamed-chunk-10-1.png" width="960"></p>
 </div>
 <div id="false-positive-rate-fpn" class="section level1">
 <h1 class="hasAnchor">
 <a href="#false-positive-rate-fpn" class="anchor"></a>False positive rate FP/N</h1>
 <p>We can show that adjusting the AE under-reporting probability for the expected number of false positives is quite effective.As the false positive rate is almost zero for all tested scenarios. However, this also comes at a cost lowering the true positive rate as well.</p>
-<div class="sourceCode" id="cb18"><html><body><pre class="r"><span class="no">p</span> <span class="kw">&lt;-</span> <span class="no">df_plot</span> <span class="kw">%&gt;%</span>
-  <span class="fu">mutate</span>( <span class="kw">fpr</span> <span class="kw">=</span> <span class="no">fp</span>/<span class="no">N</span>) <span class="kw">%&gt;%</span>
-  <span class="fu">select</span>(<span class="no">ae_per_visit_mean</span>, <span class="no">frac_site_with_ur</span>, <span class="no">ur_rate</span>, <span class="no">fpr</span>, <span class="no">method</span>, <span class="no">prob_type</span>) <span class="kw">%&gt;%</span>
-  <span class="fu">mutate_if</span>(<span class="no">is.numeric</span>, <span class="no">round</span>, <span class="fl">3</span>) <span class="kw">%&gt;%</span>
-  <span class="fu">mutate</span>(<span class="kw">metric</span> <span class="kw">=</span> <span class="fu">case_when</span>(<span class="no">method</span> <span class="kw">==</span> <span class="st">"ptest"</span> <span class="kw">&amp;</span> <span class="no">prob_type</span> <span class="kw">==</span> <span class="st">"unadjusted"</span> ~ <span class="st">"ptest unadjusted"</span>,
-                           <span class="no">method</span> <span class="kw">==</span> <span class="st">"ptest"</span> <span class="kw">&amp;</span> <span class="no">prob_type</span> <span class="kw">==</span> <span class="st">"adjusted"</span> ~ <span class="st">"ptest adjusted"</span>,
-                           <span class="no">method</span> <span class="kw">==</span> <span class="st">"bootstrap"</span> <span class="kw">&amp;</span> <span class="no">prob_type</span> <span class="kw">==</span> <span class="st">"unadjusted"</span> ~ <span class="st">"bootstrap unadjusted"</span>,
-                           <span class="no">method</span> <span class="kw">==</span> <span class="st">"bootstrap"</span> <span class="kw">&amp;</span> <span class="no">prob_type</span> <span class="kw">==</span> <span class="st">"adjusted"</span> ~ <span class="st">"bootstrap adjusted"</span>),
-         <span class="kw">metric</span> <span class="kw">=</span> <span class="fu">fct_relevel</span>(<span class="no">metric</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"ptest unadjusted"</span>, <span class="st">"ptest adjusted"</span>,
-                                        <span class="st">"bootstrap unadjusted"</span>, <span class="st">"bootstrap adjusted"</span>))) <span class="kw">%&gt;%</span>
-  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="no">ae_per_visit_mean</span>, <span class="no">fpr</span>, <span class="kw">color</span> <span class="kw">=</span> <span class="no">metric</span>, <span class="kw">linetype</span> <span class="kw">=</span> <span class="no">prob_type</span>)) +
-    <span class="fu">geom_line</span>(<span class="kw">size</span> <span class="kw">=</span> <span class="fl">0.5</span>, <span class="kw">alpha</span> <span class="kw">=</span> <span class="fl">0.5</span>) +
-    <span class="fu">facet_grid</span>( <span class="no">frac_site_with_ur</span> ~ <span class="no">ur_rate</span>) +
-    <span class="fu">scale_color_manual</span>(<span class="kw">values</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"dodgerblue3"</span>, <span class="st">"skyblue1"</span>, <span class="st">"sienna4"</span>, <span class="st">"peru"</span>)) +
-    <span class="fu">theme</span>(<span class="kw">panel.grid</span> <span class="kw">=</span> <span class="fu">element_blank</span>(), <span class="kw">legend.position</span> <span class="kw">=</span> <span class="st">"right"</span>) +
-    <span class="fu">labs</span>(<span class="kw">title</span> <span class="kw">=</span> <span class="st">"AE Under Reporting Rate by Rate of AE Under-Reporting Sites"</span>,
-         <span class="kw">y</span> <span class="kw">=</span> <span class="st">"False positive rate - fp/N"</span>,
-         <span class="kw">x</span> <span class="kw">=</span> <span class="st">"AEs per Visit"</span>)
-<span class="no">p</span></pre></body></html></div>
+<div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">p</span> <span class="op">&lt;-</span> <span class="va">df_plot</span> <span class="op">%&gt;%</span>
+  <span class="fu">mutate</span><span class="op">(</span> fpr <span class="op">=</span> <span class="va">fp</span><span class="op">/</span><span class="va">N</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">select</span><span class="op">(</span><span class="va">ae_per_visit_mean</span>, <span class="va">frac_site_with_ur</span>, <span class="va">ur_rate</span>, <span class="va">fpr</span>, <span class="va">method</span>, <span class="va">prob_type</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">mutate_if</span><span class="op">(</span><span class="va">is.numeric</span>, <span class="va">round</span>, <span class="fl">3</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">mutate</span><span class="op">(</span>metric <span class="op">=</span> <span class="fu">case_when</span><span class="op">(</span><span class="va">method</span> <span class="op">==</span> <span class="st">"ptest"</span> <span class="op">&amp;</span> <span class="va">prob_type</span> <span class="op">==</span> <span class="st">"unadjusted"</span> <span class="op">~</span> <span class="st">"ptest unadjusted"</span>,
+                           <span class="va">method</span> <span class="op">==</span> <span class="st">"ptest"</span> <span class="op">&amp;</span> <span class="va">prob_type</span> <span class="op">==</span> <span class="st">"adjusted"</span> <span class="op">~</span> <span class="st">"ptest adjusted"</span>,
+                           <span class="va">method</span> <span class="op">==</span> <span class="st">"bootstrap"</span> <span class="op">&amp;</span> <span class="va">prob_type</span> <span class="op">==</span> <span class="st">"unadjusted"</span> <span class="op">~</span> <span class="st">"bootstrap unadjusted"</span>,
+                           <span class="va">method</span> <span class="op">==</span> <span class="st">"bootstrap"</span> <span class="op">&amp;</span> <span class="va">prob_type</span> <span class="op">==</span> <span class="st">"adjusted"</span> <span class="op">~</span> <span class="st">"bootstrap adjusted"</span><span class="op">)</span>,
+         metric <span class="op">=</span> <span class="fu">fct_relevel</span><span class="op">(</span><span class="va">metric</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"ptest unadjusted"</span>, <span class="st">"ptest adjusted"</span>,
+                                        <span class="st">"bootstrap unadjusted"</span>, <span class="st">"bootstrap adjusted"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span><span class="va">ae_per_visit_mean</span>, <span class="va">fpr</span>, color <span class="op">=</span> <span class="va">metric</span>, linetype <span class="op">=</span> <span class="va">prob_type</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">geom_line</span><span class="op">(</span>size <span class="op">=</span> <span class="fl">0.5</span>, alpha <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">facet_grid</span><span class="op">(</span> <span class="va">frac_site_with_ur</span> <span class="op">~</span> <span class="va">ur_rate</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">scale_color_manual</span><span class="op">(</span>values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"dodgerblue3"</span>, <span class="st">"skyblue1"</span>, <span class="st">"sienna4"</span>, <span class="st">"peru"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">theme</span><span class="op">(</span>panel.grid <span class="op">=</span> <span class="fu">element_blank</span><span class="op">(</span><span class="op">)</span>, legend.position <span class="op">=</span> <span class="st">"right"</span><span class="op">)</span> <span class="op">+</span> 
+    <span class="fu">labs</span><span class="op">(</span>title <span class="op">=</span> <span class="st">"AE Under Reporting Rate by Rate of AE Under-Reporting Sites"</span>,
+         y <span class="op">=</span> <span class="st">"False positive rate - fp/N"</span>,
+         x <span class="op">=</span> <span class="st">"AEs per Visit"</span><span class="op">)</span>
+<span class="va">p</span></code></pre></div>
 <p><img src="usability_limits_files/figure-html/unnamed-chunk-11-1.png" width="960"></p>
 </div>
 <div id="conclusion" class="section level1">
@@ -483,7 +658,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

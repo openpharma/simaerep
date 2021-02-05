@@ -7,3 +7,5 @@
 /*_cache/
 /cache/
 */*_cache/
+
+*.sas7bdat

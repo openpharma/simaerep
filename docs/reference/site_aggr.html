@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>aggreagate from visit to site level — site_aggr • simaerep</title>
+<title>aggregate from visit to site level — site_aggr • simaerep</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,7 +46,7 @@
 
 
 
-<meta property="og:title" content="aggreagate from visit to site level — site_aggr" />
+<meta property="og:title" content="aggregate from visit to site level — site_aggr" />
 <meta property="og:description" content="calculates visit_med75, n_pat_with_med75 and mean_ae_site_med75" />
 <meta property="og:image" content="https://openpharma.github.io/simaerep/logo.png" />
 
@@ -90,7 +90,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">simaerep</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.1</span>
       </span>
     </div>
 
@@ -119,10 +119,13 @@
       <a href="../articles/intro.html">Introduction</a>
     </li>
     <li>
-      <a href="../articles/usability_limits.html">Address Usability Limits of the Bootstrap Method</a>
+      <a href="../articles/usability_limits.html">Address Usability Limits of Bootstrap Method</a>
     </li>
     <li>
-      <a href="../articles/check_poisson.html">Checking the Applicability of a Poisson Test</a>
+      <a href="../articles/check_poisson.html">Check Poisson Test Applicability</a>
+    </li>
+    <li>
+      <a href="../articles/sas_files.html">SAS Files as a Data Source</a>
     </li>
   </ul>
 </li>
@@ -147,7 +150,7 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>aggreagate from visit to site level</h1>
+    <h1>aggregate from visit to site level</h1>
     <small class="dont-index">Source: <a href='https://github.com/openpharma/simaerep/blob/master/R/simaerep.R'><code>R/simaerep.R</code></a></small>
     <div class="hidden name"><code>site_aggr.Rd</code></div>
     </div>
@@ -156,52 +159,20 @@
     <p>calculates visit_med75, n_pat_with_med75 and mean_ae_site_med75</p>
     </div>
 
-    <pre class="usage"><span class='fu'>site_aggr</span>(
-  <span class='no'>df_visit</span>,
-  <span class='kw'>col_study_id_str</span> <span class='kw'>=</span> <span class='st'>"study_id"</span>,
-  <span class='kw'>col_site_id_str</span> <span class='kw'>=</span> <span class='st'>"site_number"</span>,
-  <span class='kw'>col_patient_id_str</span> <span class='kw'>=</span> <span class='st'>"patnum"</span>,
-  <span class='kw'>col_n_ae_str</span> <span class='kw'>=</span> <span class='st'>"n_ae"</span>,
-  <span class='kw'>col_visit_str</span> <span class='kw'>=</span> <span class='st'>"visit"</span>
-)</pre>
+    <pre class="usage"><span class='fu'>site_aggr</span><span class='op'>(</span><span class='va'>df_visit</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>df_visit</th>
-      <td><p>dataframe</p></td>
-    </tr>
-    <tr>
-      <th>col_study_id_str</th>
-      <td><p>column name for study id will be renamed to default
-in output, Default: study_id</p></td>
-    </tr>
-    <tr>
-      <th>col_site_id_str</th>
-      <td><p>column name for site id will be renamed to default in
-output, Default: site_number</p></td>
-    </tr>
-    <tr>
-      <th>col_patient_id_str</th>
-      <td><p>column name for patient id will be renamed to
-default in output, Default: patnum</p></td>
-    </tr>
-    <tr>
-      <th>col_n_ae_str</th>
-      <td><p>column name for number of ae will be renamed to default
-in output, Default: n_ae</p></td>
-    </tr>
-    <tr>
-      <th>col_visit_str</th>
-      <td><p>column name for consecutive visit number will be renamed
-to default in output, Default: visit</p></td>
+      <td><p>dataframe with columns: study_id, site_number, patnum, visit, n_ae</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>dataframe with the following columns:</p><dl'>
+    <p>dataframe with the following columns:</p><dl>
 <dt><strong>study_id</strong></dt><dd><p>study identification</p></dd>
 <dt><strong>site_number</strong></dt><dd><p>site identification</p></dd>
 <dt><strong>n_patients</strong></dt><dd><p>number of patients, site level</p></dd>
@@ -213,18 +184,19 @@ to default in output, Default: visit</p></td>
 
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>df_visit</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='sim_test_data_study.html'>sim_test_data_study</a></span>(<span class='kw'>n_pat</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>n_sites</span> <span class='kw'>=</span> <span class='fl'>5</span>,
-    <span class='kw'>frac_site_with_ur</span> <span class='kw'>=</span> <span class='fl'>0.4</span>, <span class='kw'>ur_rate</span> <span class='kw'>=</span> <span class='fl'>0.6</span>)
-<span class='no'>df_visit</span>$<span class='no'>study_id</span> <span class='kw'>&lt;-</span> <span class='st'>"A"</span>
-<span class='no'>df_site</span> <span class='kw'>&lt;-</span> <span class='fu'>site_aggr</span>(<span class='no'>df_visit</span>)
-<span class='no'>df_site</span></div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 5 x 6</span><span>
+    <pre class="examples"><div class='input'><span class='va'>df_visit</span> <span class='op'>&lt;-</span> <span class='fu'><a href='sim_test_data_study.html'>sim_test_data_study</a></span><span class='op'>(</span>n_pat <span class='op'>=</span> <span class='fl'>100</span>, n_sites <span class='op'>=</span> <span class='fl'>5</span>,
+    frac_site_with_ur <span class='op'>=</span> <span class='fl'>0.4</span>, ur_rate <span class='op'>=</span> <span class='fl'>0.6</span><span class='op'>)</span>
+<span class='va'>df_visit</span><span class='op'>$</span><span class='va'>study_id</span> <span class='op'>&lt;-</span> <span class='st'>"A"</span>
+<span class='va'>df_site</span> <span class='op'>&lt;-</span> <span class='fu'>site_aggr</span><span class='op'>(</span><span class='va'>df_visit</span><span class='op'>)</span>
+<span class='va'>df_site</span>
+</div><div class='output co'>#&gt; <span style='color: #555555;'># A tibble: 5 x 6</span><span>
 #&gt;   study_id site_number n_patients visit_med75 n_pat_with_med75 mean_ae_site_med…
-#&gt;   </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>    </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>            </span><span style='color: #949494;font-style: italic;'>&lt;int&gt;</span><span>       </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>            </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>             </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>
-#&gt; </span><span style='color: #BCBCBC;'>1</span><span> A        S0001               20          15               18              3.44
-#&gt; </span><span style='color: #BCBCBC;'>2</span><span> A        S0002               20          15               18              3.67
-#&gt; </span><span style='color: #BCBCBC;'>3</span><span> A        S0003               20          15               18              7.89
-#&gt; </span><span style='color: #BCBCBC;'>4</span><span> A        S0004               20          15               18              7.89
-#&gt; </span><span style='color: #BCBCBC;'>5</span><span> A        S0005               20          15               19              8.26</div></span></pre>
+#&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>            </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span>       </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>            </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>             </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
+#&gt; </span><span style='color: #555555;'>1</span><span> A        S0001               20          15               18              3.44
+#&gt; </span><span style='color: #555555;'>2</span><span> A        S0002               20          15               18              3.67
+#&gt; </span><span style='color: #555555;'>3</span><span> A        S0003               20          15               18              7.89
+#&gt; </span><span style='color: #555555;'>4</span><span> A        S0004               20          15               18              7.89
+#&gt; </span><span style='color: #555555;'>5</span><span> A        S0005               20          15               19              8.26</div></span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -240,7 +212,7 @@ to default in output, Default: visit</p></td>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>
