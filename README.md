@@ -7,6 +7,7 @@
 
 [![R build
 status](https://github.com/openpharma/simaerep/workflows/R-CMD-check/badge.svg)](https://github.com/openpharma/simaerep/actions)
+[![codecov](https://codecov.io/gh/openpharma/simaerep/branch/master/graph/badge.svg)](https://codecov.io/gh/openpharma/simaerep)
 <!-- badges: end -->
 
 Simulate adverse event reporting in clinical trials with the goal of
@@ -28,6 +29,13 @@ You can install the development version from
 # install.packages("devtools")
 devtools::install_github("openpharma/simaerep")
 ```
+
+## Publication
+
+Koneswarakantha, B., Barmaz, Y., Ménard, T. et al. Follow-up on the Use
+of Advanced Analytics for Clinical Quality Assurance: Bootstrap
+Resampling to Enhance Detection of Adverse Event Under-Reporting. Drug
+Saf (2020). <https://doi.org/10.1007/s40264-020-01011-5>
 
 # Vignettes/ Articles
 

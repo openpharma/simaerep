@@ -18,8 +18,8 @@ jobs:
       - uses: r-lib/actions/setup-r@master
       - name: Install dependencies
         run: |
-          install.packages(c("remotes", "rcmdcheck"))
-          remotes::install_deps(dependencies = TRUE)
+          install.packages(c("remotes", "rcmdcheck", "downlit"))
+          remotes::install_deps(dependencies = TRUE, upgrade = "never")
           devtools::install()
         shell: Rscript {0}
       - name: Check

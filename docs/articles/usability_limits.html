@@ -78,6 +78,9 @@
     <li>
       <a href="../articles/check_poisson.html">Check Poisson Test Applicability</a>
     </li>
+    <li>
+      <a href="../articles/sas_files.html">SAS Files as a Data Source</a>
+    </li>
   </ul>
 </li>
       </ul>
@@ -277,16 +280,16 @@
 <pre><code>## # A tibble: 1,000 x 4
 ##    ae_per_visit_mean frac_site_with_ur ur_rate df_visit             
 ##                &lt;dbl&gt;             &lt;dbl&gt;   &lt;dbl&gt; &lt;list&gt;               
-##  1              0.05              0.05   0.05  &lt;tibble [19,539 × 8]&gt;
-##  2              0.05              0.05   0.156 &lt;tibble [19,666 × 8]&gt;
-##  3              0.05              0.05   0.261 &lt;tibble [19,472 × 8]&gt;
-##  4              0.05              0.05   0.367 &lt;tibble [19,580 × 8]&gt;
-##  5              0.05              0.05   0.472 &lt;tibble [19,628 × 8]&gt;
-##  6              0.05              0.05   0.578 &lt;tibble [19,621 × 8]&gt;
-##  7              0.05              0.05   0.683 &lt;tibble [19,479 × 8]&gt;
-##  8              0.05              0.05   0.789 &lt;tibble [19,607 × 8]&gt;
-##  9              0.05              0.05   0.894 &lt;tibble [19,479 × 8]&gt;
-## 10              0.05              0.05   1     &lt;tibble [19,581 × 8]&gt;
+##  1              0.05              0.05   0.05  &lt;tibble [19,381 × 8]&gt;
+##  2              0.05              0.05   0.156 &lt;tibble [19,582 × 8]&gt;
+##  3              0.05              0.05   0.261 &lt;tibble [19,454 × 8]&gt;
+##  4              0.05              0.05   0.367 &lt;tibble [19,426 × 8]&gt;
+##  5              0.05              0.05   0.472 &lt;tibble [19,433 × 8]&gt;
+##  6              0.05              0.05   0.578 &lt;tibble [19,568 × 8]&gt;
+##  7              0.05              0.05   0.683 &lt;tibble [19,567 × 8]&gt;
+##  8              0.05              0.05   0.789 &lt;tibble [19,199 × 8]&gt;
+##  9              0.05              0.05   0.894 &lt;tibble [19,464 × 8]&gt;
+## 10              0.05              0.05   1     &lt;tibble [19,751 × 8]&gt;
 ## # … with 990 more rows</code></pre>
 </div>
 <div id="aggregate-test-data" class="section level2">
@@ -308,16 +311,16 @@
 <pre><code>## # A tibble: 1,000 x 5
 ##    ae_per_visit_mean frac_site_with_ur ur_rate df_visit          df_site        
 ##                &lt;dbl&gt;             &lt;dbl&gt;   &lt;dbl&gt; &lt;list&gt;            &lt;list&gt;         
-##  1              0.05              0.05   0.05  &lt;tibble [19,539 … &lt;tibble [100 ×…
-##  2              0.05              0.05   0.156 &lt;tibble [19,666 … &lt;tibble [100 ×…
-##  3              0.05              0.05   0.261 &lt;tibble [19,472 … &lt;tibble [100 ×…
-##  4              0.05              0.05   0.367 &lt;tibble [19,580 … &lt;tibble [100 ×…
-##  5              0.05              0.05   0.472 &lt;tibble [19,628 … &lt;tibble [100 ×…
-##  6              0.05              0.05   0.578 &lt;tibble [19,621 … &lt;tibble [100 ×…
-##  7              0.05              0.05   0.683 &lt;tibble [19,479 … &lt;tibble [100 ×…
-##  8              0.05              0.05   0.789 &lt;tibble [19,607 … &lt;tibble [100 ×…
-##  9              0.05              0.05   0.894 &lt;tibble [19,479 … &lt;tibble [100 ×…
-## 10              0.05              0.05   1     &lt;tibble [19,581 … &lt;tibble [100 ×…
+##  1              0.05              0.05   0.05  &lt;tibble [19,381 … &lt;tibble [100 ×…
+##  2              0.05              0.05   0.156 &lt;tibble [19,582 … &lt;tibble [100 ×…
+##  3              0.05              0.05   0.261 &lt;tibble [19,454 … &lt;tibble [100 ×…
+##  4              0.05              0.05   0.367 &lt;tibble [19,426 … &lt;tibble [100 ×…
+##  5              0.05              0.05   0.472 &lt;tibble [19,433 … &lt;tibble [100 ×…
+##  6              0.05              0.05   0.578 &lt;tibble [19,568 … &lt;tibble [100 ×…
+##  7              0.05              0.05   0.683 &lt;tibble [19,567 … &lt;tibble [100 ×…
+##  8              0.05              0.05   0.789 &lt;tibble [19,199 … &lt;tibble [100 ×…
+##  9              0.05              0.05   0.894 &lt;tibble [19,464 … &lt;tibble [100 ×…
+## 10              0.05              0.05   1     &lt;tibble [19,751 … &lt;tibble [100 ×…
 ## # … with 990 more rows</code></pre>
 </div>
 <div id="simulate-sites" class="section level2">
@@ -567,15 +570,15 @@
 ##    ae_per_visit_me… frac_site_with_… ur_rate study_id    tp    fn    tn    fp
 ##               &lt;dbl&gt;            &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
 ##  1             0.05             0.05   0.05  S 1          0     5    95     0
-##  2             0.05             0.05   0.05  S 1          0     5    93     2
+##  2             0.05             0.05   0.05  S 1          0     5    94     1
 ##  3             0.05             0.05   0.05  S 1          0     5    95     0
-##  4             0.05             0.05   0.05  S 1          0     5    92     3
+##  4             0.05             0.05   0.05  S 1          0     5    93     2
 ##  5             0.05             0.05   0.156 S 2          0     5    95     0
-##  6             0.05             0.05   0.156 S 2          0     5    93     2
+##  6             0.05             0.05   0.156 S 2          0     5    95     0
 ##  7             0.05             0.05   0.156 S 2          0     5    95     0
-##  8             0.05             0.05   0.156 S 2          0     5    91     4
+##  8             0.05             0.05   0.156 S 2          0     5    94     1
 ##  9             0.05             0.05   0.261 S 3          0     5    95     0
-## 10             0.05             0.05   0.261 S 3          0     5    95     0
+## 10             0.05             0.05   0.261 S 3          0     5    93     2
 ## # … with 3,990 more rows, and 6 more variables: p &lt;dbl&gt;, n &lt;dbl&gt;, P &lt;dbl&gt;,
 ## #   N &lt;dbl&gt;, prob_type &lt;chr&gt;, method &lt;chr&gt;</code></pre>
 </div>
