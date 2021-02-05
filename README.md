@@ -17,7 +17,7 @@ important for patient safety. We use bootstrap-based simulation to
 assign an AE under-reporting probability to each site in a clinical
 trial. The method is inspired by the ‘infer’ R package and Allen
 Downey’s blog article: [“There is only one
-test\!”](http://allendowney.blogspot.com/2011/05/there-is-only-one-test.html).
+test!”](http://allendowney.blogspot.com/2011/05/there-is-only-one-test.html).
 
 ## Installation
 
@@ -31,16 +31,17 @@ devtools::install_github("openpharma/simaerep")
 
 # Vignettes/ Articles
 
-  - [Introduction](https://openpharma.github.io/simaerep/articles/intro.html)
-  - [Usability
+-   [Introduction](https://openpharma.github.io/simaerep/articles/intro.html)
+-   [Usability
     Limits](https://openpharma.github.io/simaerep/articles/usability_limits.html)
-  - [Check Poisson Test
+-   [Check Poisson Test
     Applicability](https://openpharma.github.io/simaerep/articles/check_poisson.html)
+-   [SAS
+    Files](https://openpharma.github.io/simaerep/articles/sas_files.html)
 
 # Application
 
 ``` r
-
 suppressPackageStartupMessages(library("simaerep"))
 
 set.seed(1)

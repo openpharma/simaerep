@@ -92,7 +92,7 @@ number of reported AEs for patients distributed to AE-under-reporting sites." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">simaerep</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.1</span>
       </span>
     </div>
 
@@ -121,10 +121,10 @@ number of reported AEs for patients distributed to AE-under-reporting sites." />
       <a href="../articles/intro.html">Introduction</a>
     </li>
     <li>
-      <a href="../articles/usability_limits.html">Address Usability Limits of the Bootstrap Method</a>
+      <a href="../articles/usability_limits.html">Address Usability Limits of Bootstrap Method</a>
     </li>
     <li>
-      <a href="../articles/check_poisson.html">Checking the Applicability of a Poisson Test</a>
+      <a href="../articles/check_poisson.html">Check Poisson Test Applicability</a>
     </li>
   </ul>
 </li>
@@ -160,15 +160,15 @@ given sites. Then simulates ae development of each patient reducing the
 number of reported AEs for patients distributed to AE-under-reporting sites.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>sim_test_data_study</span>(
-  <span class='kw'>n_pat</span> <span class='kw'>=</span> <span class='fl'>1000</span>,
-  <span class='kw'>n_sites</span> <span class='kw'>=</span> <span class='fl'>20</span>,
-  <span class='kw'>frac_site_with_ur</span> <span class='kw'>=</span> <span class='fl'>0</span>,
-  <span class='kw'>ur_rate</span> <span class='kw'>=</span> <span class='fl'>0</span>,
-  <span class='kw'>max_visit_mean</span> <span class='kw'>=</span> <span class='fl'>20</span>,
-  <span class='kw'>max_visit_sd</span> <span class='kw'>=</span> <span class='fl'>4</span>,
-  <span class='kw'>ae_per_visit_mean</span> <span class='kw'>=</span> <span class='fl'>0.5</span>
-)</pre>
+    <pre class="usage"><span class='fu'>sim_test_data_study</span><span class='op'>(</span>
+  n_pat <span class='op'>=</span> <span class='fl'>1000</span>,
+  n_sites <span class='op'>=</span> <span class='fl'>20</span>,
+  frac_site_with_ur <span class='op'>=</span> <span class='fl'>0</span>,
+  ur_rate <span class='op'>=</span> <span class='fl'>0</span>,
+  max_visit_mean <span class='op'>=</span> <span class='fl'>20</span>,
+  max_visit_sd <span class='op'>=</span> <span class='fl'>4</span>,
+  ae_per_visit_mean <span class='op'>=</span> <span class='fl'>0.5</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -218,44 +218,46 @@ per visit will be sampled from a poisson distribution described by
 ae_per_visit_mean.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span>(<span class='fl'>1</span>)
-<span class='no'>df_visit</span> <span class='kw'>&lt;-</span> <span class='fu'>sim_test_data_study</span>(<span class='kw'>n_pat</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>n_sites</span> <span class='kw'>=</span> <span class='fl'>5</span>)
-<span class='no'>df_visit</span>[<span class='fu'><a href='https://rdrr.io/r/base/which.html'>which</a></span>(<span class='no'>df_visit</span>$<span class='no'>patnum</span> <span class='kw'>==</span> <span class='st'>"P000001"</span>),]</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 17 x 8</span><span>
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>)</span>
+<span class='va'>df_visit</span> <span class='op'>&lt;-</span> <span class='fu'>sim_test_data_study</span><span class='op'>(</span>n_pat <span class='op'>=</span> <span class='fl'>100</span>, n_sites <span class='op'>=</span> <span class='fl'>5</span><span class='op'>)</span>
+<span class='va'>df_visit</span><span class='op'>[</span><span class='fu'><a href='https://rdrr.io/r/base/which.html'>which</a></span><span class='op'>(</span><span class='va'>df_visit</span><span class='op'>$</span><span class='va'>patnum</span> <span class='op'>==</span> <span class='st'>"P000001"</span><span class='op'>)</span>,<span class='op'>]</span>
+</div><div class='output co'>#&gt; <span style='color: #555555;'># A tibble: 17 x 8</span><span>
 #&gt;    patnum site_number is_ur max_visit_mean max_visit_sd ae_per_visit_me… visit
-#&gt;    </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>  </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>       </span><span style='color: #949494;font-style: italic;'>&lt;lgl&gt;</span><span>          </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>        </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>            </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;int&gt;</span><span>
-#&gt; </span><span style='color: #BCBCBC;'> 1</span><span> P0000… S0001       FALSE             20            4              0.5     1
-#&gt; </span><span style='color: #BCBCBC;'> 2</span><span> P0000… S0001       FALSE             20            4              0.5     2
-#&gt; </span><span style='color: #BCBCBC;'> 3</span><span> P0000… S0001       FALSE             20            4              0.5     3
-#&gt; </span><span style='color: #BCBCBC;'> 4</span><span> P0000… S0001       FALSE             20            4              0.5     4
-#&gt; </span><span style='color: #BCBCBC;'> 5</span><span> P0000… S0001       FALSE             20            4              0.5     5
-#&gt; </span><span style='color: #BCBCBC;'> 6</span><span> P0000… S0001       FALSE             20            4              0.5     6
-#&gt; </span><span style='color: #BCBCBC;'> 7</span><span> P0000… S0001       FALSE             20            4              0.5     7
-#&gt; </span><span style='color: #BCBCBC;'> 8</span><span> P0000… S0001       FALSE             20            4              0.5     8
-#&gt; </span><span style='color: #BCBCBC;'> 9</span><span> P0000… S0001       FALSE             20            4              0.5     9
-#&gt; </span><span style='color: #BCBCBC;'>10</span><span> P0000… S0001       FALSE             20            4              0.5    10
-#&gt; </span><span style='color: #BCBCBC;'>11</span><span> P0000… S0001       FALSE             20            4              0.5    11
-#&gt; </span><span style='color: #BCBCBC;'>12</span><span> P0000… S0001       FALSE             20            4              0.5    12
-#&gt; </span><span style='color: #BCBCBC;'>13</span><span> P0000… S0001       FALSE             20            4              0.5    13
-#&gt; </span><span style='color: #BCBCBC;'>14</span><span> P0000… S0001       FALSE             20            4              0.5    14
-#&gt; </span><span style='color: #BCBCBC;'>15</span><span> P0000… S0001       FALSE             20            4              0.5    15
-#&gt; </span><span style='color: #BCBCBC;'>16</span><span> P0000… S0001       FALSE             20            4              0.5    16
-#&gt; </span><span style='color: #BCBCBC;'>17</span><span> P0000… S0001       FALSE             20            4              0.5    17
-#&gt; </span><span style='color: #949494;'># … with 1 more variable: n_ae </span><span style='color: #949494;font-style: italic;'>&lt;int&gt;</span><span></div><div class='input'><span class='no'>df_visit</span> <span class='kw'>&lt;-</span> <span class='fu'>sim_test_data_study</span>(<span class='kw'>n_pat</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>n_sites</span> <span class='kw'>=</span> <span class='fl'>5</span>,
-    <span class='kw'>frac_site_with_ur</span> <span class='kw'>=</span> <span class='fl'>0.2</span>, <span class='kw'>ur_rate</span> <span class='kw'>=</span> <span class='fl'>0.5</span>)
-<span class='no'>df_visit</span>[<span class='fu'><a href='https://rdrr.io/r/base/which.html'>which</a></span>(<span class='no'>df_visit</span>$<span class='no'>patnum</span> <span class='kw'>==</span> <span class='st'>"P000001"</span>),]</div><div class='output co'>#&gt; </span><span style='color: #949494;'># A tibble: 23 x 8</span><span>
+#&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>  </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>       </span><span style='color: #555555;font-style: italic;'>&lt;lgl&gt;</span><span>          </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>        </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>            </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span>
+#&gt; </span><span style='color: #555555;'> 1</span><span> P0000… S0001       FALSE             20            4              0.5     1
+#&gt; </span><span style='color: #555555;'> 2</span><span> P0000… S0001       FALSE             20            4              0.5     2
+#&gt; </span><span style='color: #555555;'> 3</span><span> P0000… S0001       FALSE             20            4              0.5     3
+#&gt; </span><span style='color: #555555;'> 4</span><span> P0000… S0001       FALSE             20            4              0.5     4
+#&gt; </span><span style='color: #555555;'> 5</span><span> P0000… S0001       FALSE             20            4              0.5     5
+#&gt; </span><span style='color: #555555;'> 6</span><span> P0000… S0001       FALSE             20            4              0.5     6
+#&gt; </span><span style='color: #555555;'> 7</span><span> P0000… S0001       FALSE             20            4              0.5     7
+#&gt; </span><span style='color: #555555;'> 8</span><span> P0000… S0001       FALSE             20            4              0.5     8
+#&gt; </span><span style='color: #555555;'> 9</span><span> P0000… S0001       FALSE             20            4              0.5     9
+#&gt; </span><span style='color: #555555;'>10</span><span> P0000… S0001       FALSE             20            4              0.5    10
+#&gt; </span><span style='color: #555555;'>11</span><span> P0000… S0001       FALSE             20            4              0.5    11
+#&gt; </span><span style='color: #555555;'>12</span><span> P0000… S0001       FALSE             20            4              0.5    12
+#&gt; </span><span style='color: #555555;'>13</span><span> P0000… S0001       FALSE             20            4              0.5    13
+#&gt; </span><span style='color: #555555;'>14</span><span> P0000… S0001       FALSE             20            4              0.5    14
+#&gt; </span><span style='color: #555555;'>15</span><span> P0000… S0001       FALSE             20            4              0.5    15
+#&gt; </span><span style='color: #555555;'>16</span><span> P0000… S0001       FALSE             20            4              0.5    16
+#&gt; </span><span style='color: #555555;'>17</span><span> P0000… S0001       FALSE             20            4              0.5    17
+#&gt; </span><span style='color: #555555;'># … with 1 more variable: n_ae </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span></div><div class='input'><span class='va'>df_visit</span> <span class='op'>&lt;-</span> <span class='fu'>sim_test_data_study</span><span class='op'>(</span>n_pat <span class='op'>=</span> <span class='fl'>100</span>, n_sites <span class='op'>=</span> <span class='fl'>5</span>,
+    frac_site_with_ur <span class='op'>=</span> <span class='fl'>0.2</span>, ur_rate <span class='op'>=</span> <span class='fl'>0.5</span><span class='op'>)</span>
+<span class='va'>df_visit</span><span class='op'>[</span><span class='fu'><a href='https://rdrr.io/r/base/which.html'>which</a></span><span class='op'>(</span><span class='va'>df_visit</span><span class='op'>$</span><span class='va'>patnum</span> <span class='op'>==</span> <span class='st'>"P000001"</span><span class='op'>)</span>,<span class='op'>]</span>
+</div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 23 x 8</span><span>
 #&gt;    patnum site_number is_ur max_visit_mean max_visit_sd ae_per_visit_me… visit
-#&gt;    </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>  </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>       </span><span style='color: #949494;font-style: italic;'>&lt;lgl&gt;</span><span>          </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>        </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>            </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;int&gt;</span><span>
-#&gt; </span><span style='color: #BCBCBC;'> 1</span><span> P0000… S0001       TRUE              20            4             0.25     1
-#&gt; </span><span style='color: #BCBCBC;'> 2</span><span> P0000… S0001       TRUE              20            4             0.25     2
-#&gt; </span><span style='color: #BCBCBC;'> 3</span><span> P0000… S0001       TRUE              20            4             0.25     3
-#&gt; </span><span style='color: #BCBCBC;'> 4</span><span> P0000… S0001       TRUE              20            4             0.25     4
-#&gt; </span><span style='color: #BCBCBC;'> 5</span><span> P0000… S0001       TRUE              20            4             0.25     5
-#&gt; </span><span style='color: #BCBCBC;'> 6</span><span> P0000… S0001       TRUE              20            4             0.25     6
-#&gt; </span><span style='color: #BCBCBC;'> 7</span><span> P0000… S0001       TRUE              20            4             0.25     7
-#&gt; </span><span style='color: #BCBCBC;'> 8</span><span> P0000… S0001       TRUE              20            4             0.25     8
-#&gt; </span><span style='color: #BCBCBC;'> 9</span><span> P0000… S0001       TRUE              20            4             0.25     9
-#&gt; </span><span style='color: #BCBCBC;'>10</span><span> P0000… S0001       TRUE              20            4             0.25    10
-#&gt; </span><span style='color: #949494;'># … with 13 more rows, and 1 more variable: n_ae </span><span style='color: #949494;font-style: italic;'>&lt;int&gt;</span><span></div></span></pre>
+#&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>  </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>       </span><span style='color: #555555;font-style: italic;'>&lt;lgl&gt;</span><span>          </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>        </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>            </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span>
+#&gt; </span><span style='color: #555555;'> 1</span><span> P0000… S0001       TRUE              20            4             0.25     1
+#&gt; </span><span style='color: #555555;'> 2</span><span> P0000… S0001       TRUE              20            4             0.25     2
+#&gt; </span><span style='color: #555555;'> 3</span><span> P0000… S0001       TRUE              20            4             0.25     3
+#&gt; </span><span style='color: #555555;'> 4</span><span> P0000… S0001       TRUE              20            4             0.25     4
+#&gt; </span><span style='color: #555555;'> 5</span><span> P0000… S0001       TRUE              20            4             0.25     5
+#&gt; </span><span style='color: #555555;'> 6</span><span> P0000… S0001       TRUE              20            4             0.25     6
+#&gt; </span><span style='color: #555555;'> 7</span><span> P0000… S0001       TRUE              20            4             0.25     7
+#&gt; </span><span style='color: #555555;'> 8</span><span> P0000… S0001       TRUE              20            4             0.25     8
+#&gt; </span><span style='color: #555555;'> 9</span><span> P0000… S0001       TRUE              20            4             0.25     9
+#&gt; </span><span style='color: #555555;'>10</span><span> P0000… S0001       TRUE              20            4             0.25    10
+#&gt; </span><span style='color: #555555;'># … with 13 more rows, and 1 more variable: n_ae </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span></div></span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -271,7 +273,7 @@ ae_per_visit_mean.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

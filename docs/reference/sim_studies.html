@@ -92,7 +92,7 @@ or lower, use in combination with get_ecd_values()." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">simaerep</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.1</span>
       </span>
     </div>
 
@@ -121,10 +121,10 @@ or lower, use in combination with get_ecd_values()." />
       <a href="../articles/intro.html">Introduction</a>
     </li>
     <li>
-      <a href="../articles/usability_limits.html">Address Usability Limits of the Bootstrap Method</a>
+      <a href="../articles/usability_limits.html">Address Usability Limits of Bootstrap Method</a>
     </li>
     <li>
-      <a href="../articles/check_poisson.html">Checking the Applicability of a Poisson Test</a>
+      <a href="../articles/check_poisson.html">Check Poisson Test Applicability</a>
     </li>
   </ul>
 </li>
@@ -160,19 +160,19 @@ calculating a the bootstrapped probability of obtaining a specific p-value
 or lower, use in combination with <code><a href='get_ecd_values.html'>get_ecd_values()</a></code>.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>sim_studies</span>(
-  <span class='no'>df_visit</span>,
-  <span class='no'>df_site</span>,
-  <span class='kw'>r</span> <span class='kw'>=</span> <span class='fl'>100</span>,
-  <span class='kw'>poisson_test</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>prob_lower</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>r_prob_lower</span> <span class='kw'>=</span> <span class='fl'>1000</span>,
-  <span class='kw'>parallel</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>keep_ae</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>min_n_pat_with_med75</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>studies</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>.progress</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>
-)</pre>
+    <pre class="usage"><span class='fu'>sim_studies</span><span class='op'>(</span>
+  <span class='va'>df_visit</span>,
+  <span class='va'>df_site</span>,
+  r <span class='op'>=</span> <span class='fl'>100</span>,
+  poisson_test <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  prob_lower <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  r_prob_lower <span class='op'>=</span> <span class='fl'>1000</span>,
+  parallel <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  keep_ae <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  min_n_pat_with_med75 <span class='op'>=</span> <span class='fl'>1</span>,
+  studies <span class='op'>=</span> <span class='cn'>NULL</span>,
+  .progress <span class='op'>=</span> <span class='cn'>TRUE</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -233,42 +233,43 @@ site to simulate, Default: 1</p></td>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>Here we simulate study replicates maintaining the same number of
-sites, patients and vist_med75 by bootstrap resampling, then probabilities
+sites, patients and visit_med75 by bootstrap resampling, then probabilities
 for obtaining lower or same mean_ae count and p-values using poisson.test
 are calculated.</p>
 <p>adds column with simulated probabilities for equal or lower
 mean_ae at visit_med75</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>df_visit1</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='sim_test_data_study.html'>sim_test_data_study</a></span>(<span class='kw'>n_pat</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>n_sites</span> <span class='kw'>=</span> <span class='fl'>5</span>,
-                                      <span class='kw'>frac_site_with_ur</span> <span class='kw'>=</span> <span class='fl'>0.4</span>, <span class='kw'>ur_rate</span> <span class='kw'>=</span> <span class='fl'>0.6</span>)
+    <pre class="examples"><div class='input'><span class='va'>df_visit1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='sim_test_data_study.html'>sim_test_data_study</a></span><span class='op'>(</span>n_pat <span class='op'>=</span> <span class='fl'>100</span>, n_sites <span class='op'>=</span> <span class='fl'>5</span>,
+                                      frac_site_with_ur <span class='op'>=</span> <span class='fl'>0.4</span>, ur_rate <span class='op'>=</span> <span class='fl'>0.6</span><span class='op'>)</span>
 
-<span class='no'>df_visit1</span>$<span class='no'>study_id</span> <span class='kw'>&lt;-</span> <span class='st'>"A"</span>
+<span class='va'>df_visit1</span><span class='op'>$</span><span class='va'>study_id</span> <span class='op'>&lt;-</span> <span class='st'>"A"</span>
 
-<span class='no'>df_visit2</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='sim_test_data_study.html'>sim_test_data_study</a></span>(<span class='kw'>n_pat</span> <span class='kw'>=</span> <span class='fl'>1000</span>, <span class='kw'>n_sites</span> <span class='kw'>=</span> <span class='fl'>3</span>,
-                                      <span class='kw'>frac_site_with_ur</span> <span class='kw'>=</span> <span class='fl'>0.2</span>, <span class='kw'>ur_rate</span> <span class='kw'>=</span> <span class='fl'>0.1</span>)
+<span class='va'>df_visit2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='sim_test_data_study.html'>sim_test_data_study</a></span><span class='op'>(</span>n_pat <span class='op'>=</span> <span class='fl'>1000</span>, n_sites <span class='op'>=</span> <span class='fl'>3</span>,
+                                      frac_site_with_ur <span class='op'>=</span> <span class='fl'>0.2</span>, ur_rate <span class='op'>=</span> <span class='fl'>0.1</span><span class='op'>)</span>
 
-<span class='no'>df_visit2</span>$<span class='no'>study_id</span> <span class='kw'>&lt;-</span> <span class='st'>"B"</span>
+<span class='va'>df_visit2</span><span class='op'>$</span><span class='va'>study_id</span> <span class='op'>&lt;-</span> <span class='st'>"B"</span>
 
-<span class='no'>df_visit</span> <span class='kw'>&lt;-</span> <span class='fu'>bind_rows</span>(<span class='no'>df_visit1</span>, <span class='no'>df_visit2</span>)
+<span class='va'>df_visit</span> <span class='op'>&lt;-</span> <span class='fu'>bind_rows</span><span class='op'>(</span><span class='va'>df_visit1</span>, <span class='va'>df_visit2</span><span class='op'>)</span>
 
-<span class='no'>df_site</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='site_aggr.html'>site_aggr</a></span>(<span class='no'>df_visit</span>)
+<span class='va'>df_site</span> <span class='op'>&lt;-</span> <span class='fu'><a href='site_aggr.html'>site_aggr</a></span><span class='op'>(</span><span class='va'>df_visit</span><span class='op'>)</span>
 
-<span class='fu'>sim_studies</span>(<span class='fu'>ungroup</span>(<span class='no'>df_visit</span>), <span class='fu'>ungroup</span>(<span class='no'>df_site</span>), <span class='kw'>r</span> <span class='kw'>=</span> <span class='fl'>3</span>, <span class='kw'>keep_ae</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 24 x 10</span><span>
+<span class='fu'>sim_studies</span><span class='op'>(</span><span class='fu'>ungroup</span><span class='op'>(</span><span class='va'>df_visit</span><span class='op'>)</span>, <span class='fu'>ungroup</span><span class='op'>(</span><span class='va'>df_site</span><span class='op'>)</span>, r <span class='op'>=</span> <span class='fl'>3</span>, keep_ae <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span style='color: #555555;'># A tibble: 24 x 10</span><span>
 #&gt;        r study_id site_number visit_med75 n_pat_with_med75 n_pat_study n_ae_site
-#&gt;    </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>    </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>             </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>            </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>       </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>    
-#&gt; </span><span style='color: #BCBCBC;'> 1</span><span>     1 A        S0001                16               20          68 7,13,7,4…
-#&gt; </span><span style='color: #BCBCBC;'> 2</span><span>     1 A        S0002                17               17          64 1,9,11,4…
-#&gt; </span><span style='color: #BCBCBC;'> 3</span><span>     1 A        S0003                15               18          72 11,13,11…
-#&gt; </span><span style='color: #BCBCBC;'> 4</span><span>     1 A        S0004                14               18          76 2,3,3,9,…
-#&gt; </span><span style='color: #BCBCBC;'> 5</span><span>     1 A        S0005                15               18          72 2,9,9,4,…
-#&gt; </span><span style='color: #BCBCBC;'> 6</span><span>     1 B        S0001                15              297         597 8,9,8,5,…
-#&gt; </span><span style='color: #BCBCBC;'> 7</span><span>     1 B        S0002                15              296         598 9,14,8,7…
-#&gt; </span><span style='color: #BCBCBC;'> 8</span><span>     1 B        S0003                15              301         593 13,9,5,8…
-#&gt; </span><span style='color: #BCBCBC;'> 9</span><span>     2 A        S0001                16               20          68 10,7,5,3…
-#&gt; </span><span style='color: #BCBCBC;'>10</span><span>     2 A        S0002                17               17          64 9,12,6,1…
-#&gt; </span><span style='color: #949494;'># … with 14 more rows, and 3 more variables: n_ae_study </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span style='color: #949494;'>, pval </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #949494;'>,</span><span>
-#&gt; </span><span style='color: #949494;'>#   prob_low </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span></div></span></pre>
+#&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>             </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>            </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>       </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>    
+#&gt; </span><span style='color: #555555;'> 1</span><span>     1 A        S0001                16               20          68 7,13,7,4…
+#&gt; </span><span style='color: #555555;'> 2</span><span>     1 A        S0002                17               17          64 1,9,11,4…
+#&gt; </span><span style='color: #555555;'> 3</span><span>     1 A        S0003                15               18          72 11,13,11…
+#&gt; </span><span style='color: #555555;'> 4</span><span>     1 A        S0004                14               18          76 2,3,3,9,…
+#&gt; </span><span style='color: #555555;'> 5</span><span>     1 A        S0005                15               18          72 2,9,9,4,…
+#&gt; </span><span style='color: #555555;'> 6</span><span>     1 B        S0001                15              297         597 8,9,8,5,…
+#&gt; </span><span style='color: #555555;'> 7</span><span>     1 B        S0002                15              296         598 9,14,8,7…
+#&gt; </span><span style='color: #555555;'> 8</span><span>     1 B        S0003                15              301         593 13,9,5,8…
+#&gt; </span><span style='color: #555555;'> 9</span><span>     2 A        S0001                16               20          68 10,7,5,3…
+#&gt; </span><span style='color: #555555;'>10</span><span>     2 A        S0002                17               17          64 9,12,6,1…
+#&gt; </span><span style='color: #555555;'># … with 14 more rows, and 3 more variables: n_ae_study </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>, pval </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>,</span><span>
+#&gt; </span><span style='color: #555555;'>#   prob_low </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span></div></span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -284,7 +285,7 @@ mean_ae at visit_med75</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

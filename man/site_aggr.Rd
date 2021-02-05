@@ -4,32 +4,10 @@
 \alias{site_aggr}
 \title{aggregate from visit to site level}
 \usage{
-site_aggr(
-  df_visit,
-  col_study_id_str = "study_id",
-  col_site_id_str = "site_number",
-  col_patient_id_str = "patnum",
-  col_n_ae_str = "n_ae",
-  col_visit_str = "visit"
-)
+site_aggr(df_visit)
 }
 \arguments{
-\item{df_visit}{dataframe}
-
-\item{col_study_id_str}{column name for study id will be renamed to default
-in output, Default: study_id}
-
-\item{col_site_id_str}{column name for site id will be renamed to default in
-output, Default: site_number}
-
-\item{col_patient_id_str}{column name for patient id will be renamed to
-default in output, Default: patnum}
-
-\item{col_n_ae_str}{column name for number of ae will be renamed to default
-in output, Default: n_ae}
-
-\item{col_visit_str}{column name for consecutive visit number will be renamed
-to default in output, Default: visit}
+\item{df_visit}{dataframe with columns: study_id, site_number, patnum, visit, n_ae}
 }
 \value{
 dataframe with the following columns:

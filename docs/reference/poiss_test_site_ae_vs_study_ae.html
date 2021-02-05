@@ -90,7 +90,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">simaerep</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.1</span>
       </span>
     </div>
 
@@ -119,10 +119,10 @@
       <a href="../articles/intro.html">Introduction</a>
     </li>
     <li>
-      <a href="../articles/usability_limits.html">Address Usability Limits of the Bootstrap Method</a>
+      <a href="../articles/usability_limits.html">Address Usability Limits of Bootstrap Method</a>
     </li>
     <li>
-      <a href="../articles/check_poisson.html">Checking the Applicability of a Poisson Test</a>
+      <a href="../articles/check_poisson.html">Check Poisson Test Applicability</a>
     </li>
   </ul>
 </li>
@@ -156,7 +156,7 @@
     <p>helper function used by <code><a href='sim_sites.html'>sim_sites()</a></code></p>
     </div>
 
-    <pre class="usage"><span class='fu'>poiss_test_site_ae_vs_study_ae</span>(<span class='no'>site_ae</span>, <span class='no'>study_ae</span>, <span class='no'>visit_med75</span>)</pre>
+    <pre class="usage"><span class='fu'>poiss_test_site_ae_vs_study_ae</span><span class='op'>(</span><span class='va'>site_ae</span>, <span class='va'>study_ae</span>, <span class='va'>visit_med75</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -186,16 +186,18 @@
     <div class='dont-index'><p><code><a href='sim_sites.html'>sim_sites()</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>poiss_test_site_ae_vs_study_ae</span>(
-   <span class='kw'>site_ae</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>5</span>, <span class='fl'>3</span>, <span class='fl'>3</span>, <span class='fl'>2</span>, <span class='fl'>1</span>, <span class='fl'>6</span>),
-   <span class='kw'>study_ae</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>9</span>, <span class='fl'>8</span>, <span class='fl'>7</span>, <span class='fl'>9</span>, <span class='fl'>6</span>, <span class='fl'>7</span>, <span class='fl'>8</span>),
-   <span class='kw'>visit_med75</span> <span class='kw'>=</span> <span class='fl'>10</span>
-)</div><div class='output co'>#&gt; [1] 0.0009782833</div><div class='input'>
-<span class='fu'>poiss_test_site_ae_vs_study_ae</span>(
-   <span class='kw'>site_ae</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>11</span>, <span class='fl'>9</span>, <span class='fl'>8</span>, <span class='fl'>6</span>, <span class='fl'>3</span>),
-   <span class='kw'>study_ae</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>9</span>, <span class='fl'>8</span>, <span class='fl'>7</span>, <span class='fl'>9</span>, <span class='fl'>6</span>, <span class='fl'>7</span>, <span class='fl'>8</span>),
-   <span class='kw'>visit_med75</span> <span class='kw'>=</span> <span class='fl'>10</span>
-)</div><div class='output co'>#&gt; [1] 0.9154536</div></pre>
+    <pre class="examples"><div class='input'><span class='fu'>poiss_test_site_ae_vs_study_ae</span><span class='op'>(</span>
+   site_ae <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>5</span>, <span class='fl'>3</span>, <span class='fl'>3</span>, <span class='fl'>2</span>, <span class='fl'>1</span>, <span class='fl'>6</span><span class='op'>)</span>,
+   study_ae <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>9</span>, <span class='fl'>8</span>, <span class='fl'>7</span>, <span class='fl'>9</span>, <span class='fl'>6</span>, <span class='fl'>7</span>, <span class='fl'>8</span><span class='op'>)</span>,
+   visit_med75 <span class='op'>=</span> <span class='fl'>10</span>
+<span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] 0.0009782833</div><div class='input'>
+<span class='fu'>poiss_test_site_ae_vs_study_ae</span><span class='op'>(</span>
+   site_ae <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>11</span>, <span class='fl'>9</span>, <span class='fl'>8</span>, <span class='fl'>6</span>, <span class='fl'>3</span><span class='op'>)</span>,
+   study_ae <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>9</span>, <span class='fl'>8</span>, <span class='fl'>7</span>, <span class='fl'>9</span>, <span class='fl'>6</span>, <span class='fl'>7</span>, <span class='fl'>8</span><span class='op'>)</span>,
+   visit_med75 <span class='op'>=</span> <span class='fl'>10</span>
+<span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] 0.9154536</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -211,7 +213,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

@@ -92,7 +92,7 @@ in combination with sim_studies()." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">simaerep</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.1</span>
       </span>
     </div>
 
@@ -121,10 +121,10 @@ in combination with sim_studies()." />
       <a href="../articles/intro.html">Introduction</a>
     </li>
     <li>
-      <a href="../articles/usability_limits.html">Address Usability Limits of the Bootstrap Method</a>
+      <a href="../articles/usability_limits.html">Address Usability Limits of Bootstrap Method</a>
     </li>
     <li>
-      <a href="../articles/check_poisson.html">Checking the Applicability of a Poisson Test</a>
+      <a href="../articles/check_poisson.html">Check Poisson Test Applicability</a>
     </li>
   </ul>
 </li>
@@ -160,7 +160,7 @@ a the bootstrapped probability of obtaining a specific p-value or lower, use
 in combination with <code><a href='sim_studies.html'>sim_studies()</a></code>.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>get_ecd_values</span>(<span class='no'>df_sim_studies</span>, <span class='no'>df_sim_sites</span>, <span class='no'>val_str</span>)</pre>
+    <pre class="usage"><span class='fu'>get_ecd_values</span><span class='op'>(</span><span class='va'>df_sim_studies</span>, <span class='va'>df_sim_sites</span>, <span class='va'>val_str</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -181,7 +181,7 @@ in combination with <code><a href='sim_studies.html'>sim_studies()</a></code>.</
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>dataframe with the following columns:</p><dl'>
+    <p>dataframe with the following columns:</p><dl>
 <dt><strong>study_id</strong></dt><dd><p>study identification</p></dd>
 <dt><strong>site_number</strong></dt><dd><p>site identification</p></dd>
 <dt><strong>visit_med75</strong></dt><dd><p>median(max(visit)) * 0.75</p></dd>
@@ -198,40 +198,42 @@ in combination with <code><a href='sim_studies.html'>sim_studies()</a></code>.</
 of <code><a href='sim_studies.html'>sim_studies()</a></code></p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>df_visit</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='sim_test_data_study.html'>sim_test_data_study</a></span>(<span class='kw'>n_pat</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>n_sites</span> <span class='kw'>=</span> <span class='fl'>5</span>,
-    <span class='kw'>frac_site_with_ur</span> <span class='kw'>=</span> <span class='fl'>0.4</span>, <span class='kw'>ur_rate</span> <span class='kw'>=</span> <span class='fl'>0.3</span>)
+    <pre class="examples"><div class='input'><span class='va'>df_visit</span> <span class='op'>&lt;-</span> <span class='fu'><a href='sim_test_data_study.html'>sim_test_data_study</a></span><span class='op'>(</span>n_pat <span class='op'>=</span> <span class='fl'>100</span>, n_sites <span class='op'>=</span> <span class='fl'>5</span>,
+    frac_site_with_ur <span class='op'>=</span> <span class='fl'>0.4</span>, ur_rate <span class='op'>=</span> <span class='fl'>0.3</span><span class='op'>)</span>
 
-<span class='no'>df_visit</span>$<span class='no'>study_id</span> <span class='kw'>&lt;-</span> <span class='st'>"A"</span>
-<span class='no'>df_site</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='site_aggr.html'>site_aggr</a></span>(<span class='no'>df_visit</span>)
+<span class='va'>df_visit</span><span class='op'>$</span><span class='va'>study_id</span> <span class='op'>&lt;-</span> <span class='st'>"A"</span>
+<span class='va'>df_site</span> <span class='op'>&lt;-</span> <span class='fu'><a href='site_aggr.html'>site_aggr</a></span><span class='op'>(</span><span class='va'>df_visit</span><span class='op'>)</span>
 
-<span class='no'>df_sim_sites</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='sim_sites.html'>sim_sites</a></span>(<span class='no'>df_site</span>, <span class='no'>df_visit</span>, <span class='kw'>r</span> <span class='kw'>=</span> <span class='fl'>100</span>)
+<span class='va'>df_sim_sites</span> <span class='op'>&lt;-</span> <span class='fu'><a href='sim_sites.html'>sim_sites</a></span><span class='op'>(</span><span class='va'>df_site</span>, <span class='va'>df_visit</span>, r <span class='op'>=</span> <span class='fl'>100</span><span class='op'>)</span>
 
-<span class='no'>df_sim_studies</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='sim_studies.html'>sim_studies</a></span>(
-  <span class='kw'>df_site</span> <span class='kw'>=</span> <span class='no'>df_site</span>,
-  <span class='kw'>df_visit</span> <span class='kw'>=</span> <span class='no'>df_visit</span>,
-  <span class='kw'>r</span> <span class='kw'>=</span> <span class='fl'>3</span>,
-  <span class='kw'>parallel</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>poisson_test</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>prob_lower</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>
-)
+<span class='va'>df_sim_studies</span> <span class='op'>&lt;-</span> <span class='fu'><a href='sim_studies.html'>sim_studies</a></span><span class='op'>(</span>
+  df_site <span class='op'>=</span> <span class='va'>df_site</span>,
+  df_visit <span class='op'>=</span> <span class='va'>df_visit</span>,
+  r <span class='op'>=</span> <span class='fl'>3</span>,
+  parallel <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  poisson_test <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  prob_lower <span class='op'>=</span> <span class='cn'>TRUE</span>
+<span class='op'>)</span>
 
-<span class='fu'>get_ecd_values</span>(<span class='no'>df_sim_studies</span>, <span class='no'>df_sim_sites</span>, <span class='st'>"prob_low"</span>)</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 5 x 8</span><span>
+<span class='fu'>get_ecd_values</span><span class='op'>(</span><span class='va'>df_sim_studies</span>, <span class='va'>df_sim_sites</span>, <span class='st'>"prob_low"</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span style='color: #555555;'># A tibble: 5 x 8</span><span>
 #&gt;   study_id site_number visit_med75 mean_ae_site_me… mean_ae_study_m…    pval
-#&gt;   </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>    </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>             </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>            </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>            </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>   </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>
-#&gt; </span><span style='color: #BCBCBC;'>1</span><span> A        S0001                16             5.9              7.71 0.008</span><span style='text-decoration: underline;'>30</span><span>
-#&gt; </span><span style='color: #BCBCBC;'>2</span><span> A        S0002                17             6.06             8.31 0.002</span><span style='text-decoration: underline;'>96</span><span>
-#&gt; </span><span style='color: #BCBCBC;'>3</span><span> A        S0003                15             8.22             6.40 1      
-#&gt; </span><span style='color: #BCBCBC;'>4</span><span> A        S0004                14             7.39             6.09 1      
-#&gt; </span><span style='color: #BCBCBC;'>5</span><span> A        S0005                15             7.28             6.64 1      
-#&gt; </span><span style='color: #949494;'># … with 2 more variables: prob_low </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #949494;'>, prob_low_ecd </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span></div><div class='input'><span class='fu'>get_ecd_values</span>(<span class='no'>df_sim_studies</span>, <span class='no'>df_sim_sites</span>, <span class='st'>"pval"</span>)</div><div class='output co'>#&gt; </span><span style='color: #949494;'># A tibble: 5 x 8</span><span>
+#&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>             </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>            </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>            </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>   </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
+#&gt; </span><span style='color: #555555;'>1</span><span> A        S0001                16             5.9              7.71 0.008</span><span style='text-decoration: underline;'>30</span><span>
+#&gt; </span><span style='color: #555555;'>2</span><span> A        S0002                17             6.06             8.31 0.002</span><span style='text-decoration: underline;'>96</span><span>
+#&gt; </span><span style='color: #555555;'>3</span><span> A        S0003                15             8.22             6.40 1      
+#&gt; </span><span style='color: #555555;'>4</span><span> A        S0004                14             7.39             6.09 1      
+#&gt; </span><span style='color: #555555;'>5</span><span> A        S0005                15             7.28             6.64 1      
+#&gt; </span><span style='color: #555555;'># … with 2 more variables: prob_low </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, prob_low_ecd </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span></div><div class='input'><span class='fu'>get_ecd_values</span><span class='op'>(</span><span class='va'>df_sim_studies</span>, <span class='va'>df_sim_sites</span>, <span class='st'>"pval"</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 5 x 8</span><span>
 #&gt;   study_id site_number visit_med75 mean_ae_site_me… mean_ae_study_m…    pval
-#&gt;   </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>    </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>             </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>            </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>            </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>   </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>
-#&gt; </span><span style='color: #BCBCBC;'>1</span><span> A        S0001                16             5.9              7.71 0.008</span><span style='text-decoration: underline;'>30</span><span>
-#&gt; </span><span style='color: #BCBCBC;'>2</span><span> A        S0002                17             6.06             8.31 0.002</span><span style='text-decoration: underline;'>96</span><span>
-#&gt; </span><span style='color: #BCBCBC;'>3</span><span> A        S0003                15             8.22             6.40 1      
-#&gt; </span><span style='color: #BCBCBC;'>4</span><span> A        S0004                14             7.39             6.09 1      
-#&gt; </span><span style='color: #BCBCBC;'>5</span><span> A        S0005                15             7.28             6.64 1      
-#&gt; </span><span style='color: #949494;'># … with 2 more variables: prob_low </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #949494;'>, pval_ecd </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span></div></span></pre>
+#&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>             </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>            </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>            </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>   </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
+#&gt; </span><span style='color: #555555;'>1</span><span> A        S0001                16             5.9              7.71 0.008</span><span style='text-decoration: underline;'>30</span><span>
+#&gt; </span><span style='color: #555555;'>2</span><span> A        S0002                17             6.06             8.31 0.002</span><span style='text-decoration: underline;'>96</span><span>
+#&gt; </span><span style='color: #555555;'>3</span><span> A        S0003                15             8.22             6.40 1      
+#&gt; </span><span style='color: #555555;'>4</span><span> A        S0004                14             7.39             6.09 1      
+#&gt; </span><span style='color: #555555;'>5</span><span> A        S0005                15             7.28             6.64 1      
+#&gt; </span><span style='color: #555555;'># … with 2 more variables: prob_low </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, pval_ecd </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span></div></span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -247,7 +249,7 @@ of <code><a href='sim_studies.html'>sim_studies()</a></code></p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>
