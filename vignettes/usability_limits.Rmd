@@ -83,7 +83,8 @@ df_grid <- df_grid %>%
                                                ae_per_visit_mean = am,
                                                frac_site_with_ur = fr,
                                                ur_rate = ur),
-      .progress = FALSE
+      .progress = FALSE,
+      .options = furrr_options(seed = TRUE)
     )
   )
 

@@ -83,6 +83,9 @@
     </li>
   </ul>
 </li>
+<li>
+  <a href="../news/index.html">Changelog</a>
+</li>
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
@@ -192,94 +195,32 @@
                                                ae_per_visit_mean <span class="op">=</span> <span class="va">am</span>,
                                                frac_site_with_ur <span class="op">=</span> <span class="va">fr</span>,
                                                ur_rate <span class="op">=</span> <span class="va">ur</span><span class="op">)</span>,
-      .progress <span class="op">=</span> <span class="cn">FALSE</span>
+      .progress <span class="op">=</span> <span class="cn">FALSE</span>,
+      .options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/furrr/man/furrr_options.html">furrr_options</a></span><span class="op">(</span>seed <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
     <span class="op">)</span>
-  <span class="op">)</span></code></pre></div>
-<pre><code>## Warning: UNRELIABLE VALUE: Future ('&lt;none&gt;') unexpectedly generated random
-## numbers without specifying argument '[future.]seed'. There is a risk that those
-## random numbers are not statistically sound and the overall results might be
-## invalid. To fix this, specify argument '[future.]seed', e.g. 'seed=TRUE'. This
-## ensures that proper, parallel-safe random numbers are produced via the L'Ecuyer-
-## CMRG method. To disable this check, use [future].seed=NULL, or set option
-## 'future.rng.onMisuse' to "ignore".
+  <span class="op">)</span>
 
-## Warning: UNRELIABLE VALUE: Future ('&lt;none&gt;') unexpectedly generated random
-## numbers without specifying argument '[future.]seed'. There is a risk that those
-## random numbers are not statistically sound and the overall results might be
-## invalid. To fix this, specify argument '[future.]seed', e.g. 'seed=TRUE'. This
-## ensures that proper, parallel-safe random numbers are produced via the L'Ecuyer-
-## CMRG method. To disable this check, use [future].seed=NULL, or set option
-## 'future.rng.onMisuse' to "ignore".
-
-## Warning: UNRELIABLE VALUE: Future ('&lt;none&gt;') unexpectedly generated random
-## numbers without specifying argument '[future.]seed'. There is a risk that those
-## random numbers are not statistically sound and the overall results might be
-## invalid. To fix this, specify argument '[future.]seed', e.g. 'seed=TRUE'. This
-## ensures that proper, parallel-safe random numbers are produced via the L'Ecuyer-
-## CMRG method. To disable this check, use [future].seed=NULL, or set option
-## 'future.rng.onMisuse' to "ignore".
-
-## Warning: UNRELIABLE VALUE: Future ('&lt;none&gt;') unexpectedly generated random
-## numbers without specifying argument '[future.]seed'. There is a risk that those
-## random numbers are not statistically sound and the overall results might be
-## invalid. To fix this, specify argument '[future.]seed', e.g. 'seed=TRUE'. This
-## ensures that proper, parallel-safe random numbers are produced via the L'Ecuyer-
-## CMRG method. To disable this check, use [future].seed=NULL, or set option
-## 'future.rng.onMisuse' to "ignore".
-
-## Warning: UNRELIABLE VALUE: Future ('&lt;none&gt;') unexpectedly generated random
-## numbers without specifying argument '[future.]seed'. There is a risk that those
-## random numbers are not statistically sound and the overall results might be
-## invalid. To fix this, specify argument '[future.]seed', e.g. 'seed=TRUE'. This
-## ensures that proper, parallel-safe random numbers are produced via the L'Ecuyer-
-## CMRG method. To disable this check, use [future].seed=NULL, or set option
-## 'future.rng.onMisuse' to "ignore".
-
-## Warning: UNRELIABLE VALUE: Future ('&lt;none&gt;') unexpectedly generated random
-## numbers without specifying argument '[future.]seed'. There is a risk that those
-## random numbers are not statistically sound and the overall results might be
-## invalid. To fix this, specify argument '[future.]seed', e.g. 'seed=TRUE'. This
-## ensures that proper, parallel-safe random numbers are produced via the L'Ecuyer-
-## CMRG method. To disable this check, use [future].seed=NULL, or set option
-## 'future.rng.onMisuse' to "ignore".
-
-## Warning: UNRELIABLE VALUE: Future ('&lt;none&gt;') unexpectedly generated random
-## numbers without specifying argument '[future.]seed'. There is a risk that those
-## random numbers are not statistically sound and the overall results might be
-## invalid. To fix this, specify argument '[future.]seed', e.g. 'seed=TRUE'. This
-## ensures that proper, parallel-safe random numbers are produced via the L'Ecuyer-
-## CMRG method. To disable this check, use [future].seed=NULL, or set option
-## 'future.rng.onMisuse' to "ignore".
-
-## Warning: UNRELIABLE VALUE: Future ('&lt;none&gt;') unexpectedly generated random
-## numbers without specifying argument '[future.]seed'. There is a risk that those
-## random numbers are not statistically sound and the overall results might be
-## invalid. To fix this, specify argument '[future.]seed', e.g. 'seed=TRUE'. This
-## ensures that proper, parallel-safe random numbers are produced via the L'Ecuyer-
-## CMRG method. To disable this check, use [future].seed=NULL, or set option
-## 'future.rng.onMisuse' to "ignore".</code></pre>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">df_grid</span></code></pre></div>
+<span class="va">df_grid</span></code></pre></div>
 <pre><code>## # A tibble: 1,000 x 4
 ##    ae_per_visit_mean frac_site_with_ur ur_rate df_visit             
 ##                &lt;dbl&gt;             &lt;dbl&gt;   &lt;dbl&gt; &lt;list&gt;               
-##  1              0.05              0.05   0.05  &lt;tibble [19,363 × 8]&gt;
-##  2              0.05              0.05   0.156 &lt;tibble [19,396 × 8]&gt;
-##  3              0.05              0.05   0.261 &lt;tibble [19,623 × 8]&gt;
-##  4              0.05              0.05   0.367 &lt;tibble [19,483 × 8]&gt;
-##  5              0.05              0.05   0.472 &lt;tibble [19,700 × 8]&gt;
-##  6              0.05              0.05   0.578 &lt;tibble [19,546 × 8]&gt;
-##  7              0.05              0.05   0.683 &lt;tibble [19,401 × 8]&gt;
-##  8              0.05              0.05   0.789 &lt;tibble [19,469 × 8]&gt;
-##  9              0.05              0.05   0.894 &lt;tibble [19,142 × 8]&gt;
-## 10              0.05              0.05   1     &lt;tibble [19,525 × 8]&gt;
+##  1              0.05              0.05   0.05  &lt;tibble [19,459 × 8]&gt;
+##  2              0.05              0.05   0.156 &lt;tibble [19,631 × 8]&gt;
+##  3              0.05              0.05   0.261 &lt;tibble [19,234 × 8]&gt;
+##  4              0.05              0.05   0.367 &lt;tibble [19,523 × 8]&gt;
+##  5              0.05              0.05   0.472 &lt;tibble [19,518 × 8]&gt;
+##  6              0.05              0.05   0.578 &lt;tibble [19,545 × 8]&gt;
+##  7              0.05              0.05   0.683 &lt;tibble [19,503 × 8]&gt;
+##  8              0.05              0.05   0.789 &lt;tibble [19,351 × 8]&gt;
+##  9              0.05              0.05   0.894 &lt;tibble [19,473 × 8]&gt;
+## 10              0.05              0.05   1     &lt;tibble [19,489 × 8]&gt;
 ## # … with 990 more rows</code></pre>
 </div>
 <div id="aggregate-test-data" class="section level2">
 <h2 class="hasAnchor">
 <a href="#aggregate-test-data" class="anchor"></a>Aggregate Test Data</h2>
 <p>We apply <a href="https://openpharma.github.io/simaerep/reference/site_aggr.html">site_aggr()</a> on the different simulated data sets.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">df_grid</span> <span class="op">&lt;-</span> <span class="va">df_grid</span> <span class="op">%&gt;%</span>
   <span class="fu">mutate</span><span class="op">(</span> 
     df_visit <span class="op">=</span> <span class="fu">map2</span><span class="op">(</span><span class="va">df_visit</span>, <span class="fu">row_number</span><span class="op">(</span><span class="op">)</span>,
@@ -295,23 +236,23 @@
 <pre><code>## # A tibble: 1,000 x 5
 ##    ae_per_visit_mean frac_site_with_ur ur_rate df_visit          df_site        
 ##                &lt;dbl&gt;             &lt;dbl&gt;   &lt;dbl&gt; &lt;list&gt;            &lt;list&gt;         
-##  1              0.05              0.05   0.05  &lt;tibble [19,363 … &lt;tibble [100 ×…
-##  2              0.05              0.05   0.156 &lt;tibble [19,396 … &lt;tibble [100 ×…
-##  3              0.05              0.05   0.261 &lt;tibble [19,623 … &lt;tibble [100 ×…
-##  4              0.05              0.05   0.367 &lt;tibble [19,483 … &lt;tibble [100 ×…
-##  5              0.05              0.05   0.472 &lt;tibble [19,700 … &lt;tibble [100 ×…
-##  6              0.05              0.05   0.578 &lt;tibble [19,546 … &lt;tibble [100 ×…
-##  7              0.05              0.05   0.683 &lt;tibble [19,401 … &lt;tibble [100 ×…
-##  8              0.05              0.05   0.789 &lt;tibble [19,469 … &lt;tibble [100 ×…
-##  9              0.05              0.05   0.894 &lt;tibble [19,142 … &lt;tibble [100 ×…
-## 10              0.05              0.05   1     &lt;tibble [19,525 … &lt;tibble [100 ×…
+##  1              0.05              0.05   0.05  &lt;tibble [19,459 … &lt;tibble [100 ×…
+##  2              0.05              0.05   0.156 &lt;tibble [19,631 … &lt;tibble [100 ×…
+##  3              0.05              0.05   0.261 &lt;tibble [19,234 … &lt;tibble [100 ×…
+##  4              0.05              0.05   0.367 &lt;tibble [19,523 … &lt;tibble [100 ×…
+##  5              0.05              0.05   0.472 &lt;tibble [19,518 … &lt;tibble [100 ×…
+##  6              0.05              0.05   0.578 &lt;tibble [19,545 … &lt;tibble [100 ×…
+##  7              0.05              0.05   0.683 &lt;tibble [19,503 … &lt;tibble [100 ×…
+##  8              0.05              0.05   0.789 &lt;tibble [19,351 … &lt;tibble [100 ×…
+##  9              0.05              0.05   0.894 &lt;tibble [19,473 … &lt;tibble [100 ×…
+## 10              0.05              0.05   1     &lt;tibble [19,489 … &lt;tibble [100 ×…
 ## # … with 990 more rows</code></pre>
 </div>
 <div id="simulate-sites" class="section level2">
 <h2 class="hasAnchor">
 <a href="#simulate-sites" class="anchor"></a>Simulate Sites</h2>
 <p>We apply <a href="https://openpharma.github.io/simaerep/reference/sim_sites.html">sim_sites()</a> to to calculate the AE under-reporting probability.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">df_grid</span> <span class="op">&lt;-</span> <span class="va">df_grid</span> <span class="op">%&gt;%</span>
   <span class="fu">mutate</span><span class="op">(</span> df_sim_sites <span class="op">=</span> <span class="fu">furrr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/furrr/man/future_map2.html">future_map2</a></span><span class="op">(</span><span class="va">df_site</span>, <span class="va">df_visit</span>,
                                             <span class="va">sim_sites</span>,
@@ -343,7 +284,7 @@
 <h2 class="hasAnchor">
 <a href="#evaluate-sites" class="anchor"></a>Evaluate Sites</h2>
 <p>We apply <a href="https://openpharma.github.io/simaerep/reference/eval_sites.html">eval_sites()</a> to balance the bootstrapped probabilities by the expected number of false positives.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">df_grid</span> <span class="op">&lt;-</span> <span class="va">df_grid</span> <span class="op">%&gt;%</span>
   <span class="fu">mutate</span><span class="op">(</span> df_eval <span class="op">=</span> <span class="fu">furrr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/furrr/man/future_map.html">future_map</a></span><span class="op">(</span><span class="va">df_sim_sites</span>,
                                       <span class="va">eval_sites</span>,
@@ -379,7 +320,7 @@
 <li>and the probabilities and p-values before adjusting for the expected false positives</li>
 </ul>
 <p>In all cases we use a 95% probability threshold.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">get_metrics</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">df_visit</span>, <span class="va">df_eval</span>, <span class="va">method</span><span class="op">)</span> <span class="op">{</span>
   
   <span class="kw">if</span> <span class="op">(</span><span class="va">method</span> <span class="op">==</span> <span class="st">"ptest"</span><span class="op">)</span> <span class="op">{</span>
@@ -466,7 +407,7 @@
 <div id="plot" class="section level1">
 <h1 class="hasAnchor">
 <a href="#plot" class="anchor"></a>Plot</h1>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">df_plot</span> <span class="op">&lt;-</span> <span class="va">df_grid</span> <span class="op">%&gt;%</span>
   <span class="fu">select</span><span class="op">(</span><span class="va">ae_per_visit_mean</span>, <span class="va">frac_site_with_ur</span>, <span class="va">ur_rate</span>, <span class="va">df_metric</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu">unnest</span><span class="op">(</span><span class="va">df_metric</span><span class="op">)</span>
@@ -478,13 +419,13 @@
 ##  1             0.05             0.05   0.05  S 1          0     5    95     0
 ##  2             0.05             0.05   0.05  S 1          0     5    94     1
 ##  3             0.05             0.05   0.05  S 1          0     5    95     0
-##  4             0.05             0.05   0.05  S 1          0     5    93     2
+##  4             0.05             0.05   0.05  S 1          0     5    92     3
 ##  5             0.05             0.05   0.156 S 2          0     5    95     0
-##  6             0.05             0.05   0.156 S 2          1     4    93     2
+##  6             0.05             0.05   0.156 S 2          0     5    95     0
 ##  7             0.05             0.05   0.156 S 2          0     5    95     0
-##  8             0.05             0.05   0.156 S 2          1     4    91     4
+##  8             0.05             0.05   0.156 S 2          0     5    91     4
 ##  9             0.05             0.05   0.261 S 3          0     5    95     0
-## 10             0.05             0.05   0.261 S 3          0     5    94     1
+## 10             0.05             0.05   0.261 S 3          0     5    93     2
 ## # … with 3,990 more rows, and 6 more variables: p &lt;dbl&gt;, n &lt;dbl&gt;, P &lt;dbl&gt;,
 ## #   N &lt;dbl&gt;, prob_type &lt;chr&gt;, method &lt;chr&gt;</code></pre>
 </div>
@@ -493,7 +434,7 @@
 <a href="#true-positive-rate---p---tpp" class="anchor"></a>True positive rate - P - TP/P</h1>
 <p>When comparing bootstrap method against the poisson.test benchmark test, we find that they perform mostly similar from a 0.05 - 0.3 ratio of under-reporting sites. Its performance is still acceptable from a 0.3 - 0.5 ratio and then becomes pretty useless.</p>
 <p>As expected detection of under-reporting sites is close too impossible when the ae/visit ratio is very low (0.05) with detection rates close to zero for all tested scenarios.</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">p</span> <span class="op">&lt;-</span> <span class="va">df_plot</span> <span class="op">%&gt;%</span>
   <span class="fu">mutate</span><span class="op">(</span> tp_P_ratio <span class="op">=</span> <span class="va">tp</span><span class="op">/</span><span class="va">P</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu">select</span><span class="op">(</span><span class="va">ae_per_visit_mean</span>, <span class="va">frac_site_with_ur</span>, <span class="va">ur_rate</span>, <span class="va">tp_P_ratio</span>, <span class="va">method</span>, <span class="va">prob_type</span><span class="op">)</span> <span class="op">%&gt;%</span>
@@ -519,7 +460,7 @@
 <h1 class="hasAnchor">
 <a href="#false-positive-rate-fpn" class="anchor"></a>False positive rate FP/N</h1>
 <p>We can show that adjusting the AE under-reporting probability for the expected number of false positives is quite effective.As the false positive rate is almost zero for all tested scenarios. However, this also comes at a cost lowering the true positive rate as well.</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">p</span> <span class="op">&lt;-</span> <span class="va">df_plot</span> <span class="op">%&gt;%</span>
   <span class="fu">mutate</span><span class="op">(</span> fpr <span class="op">=</span> <span class="va">fp</span><span class="op">/</span><span class="va">N</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu">select</span><span class="op">(</span><span class="va">ae_per_visit_mean</span>, <span class="va">frac_site_with_ur</span>, <span class="va">ur_rate</span>, <span class="va">fpr</span>, <span class="va">method</span>, <span class="va">prob_type</span><span class="op">)</span> <span class="op">%&gt;%</span>
