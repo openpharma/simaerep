@@ -22,8 +22,6 @@ suppressPackageStartupMessages(library(tidyverse))
 suppressPackageStartupMessages(library(knitr))
 suppressPackageStartupMessages(library(simaerep))
 suppressPackageStartupMessages(library(haven))
-suppressPackageStartupMessages(library(sqldf))
-
 ```
 
 # SAS files
