@@ -25,15 +25,16 @@ sim_studies(
 
 \item{r}{integer, denotes number of simulations, Default: 1000}
 
-\item{poisson_test}{logical, calculates poisson.test pvalue, Default: T}
+\item{poisson_test}{logical, calculates poisson.test pvalue, Default: TRUE}
 
 \item{prob_lower}{logical, calculates probability for getting a lower value,
-Default: F}
+Default: FALSE}
 
 \item{r_prob_lower}{integer, denotes number of simulations for prob_lower
 value calculation,, Default: 1000}
 
-\item{parallel}{logical, toggles parallel processing on and of, Default: F}
+\item{parallel}{logical, see examples for registering parallel processing framework
+, Default: FALSE}
 
 \item{keep_ae}{logical, keep ae numbers in output dataframe memory increase
 roughly 30 percent, Default: F}
@@ -77,5 +78,12 @@ df_visit <- bind_rows(df_visit1, df_visit2)
 
 df_site <- site_aggr(df_visit)
 
-sim_studies(ungroup(df_visit), ungroup(df_site), r = 3, keep_ae = TRUE)
+sim_studies(df_visit, df_site, r = 3, keep_ae = TRUE)
+
+# parallel processing -------------------------
+\dontrun{
+library(future)
+future::plan(multiprocess)
+sim_studies(df_visit, df_site, r = 3, keep_ae = TRUE, parallel = TRUE)
+}
 }

@@ -4,7 +4,7 @@
 \alias{prob_lower_site_ae_vs_study_ae}
 \title{calculate bootstrapped probability for obtaining a lower mean AE}
 \usage{
-prob_lower_site_ae_vs_study_ae(site_ae, study_ae, r = 1000, parallel = F)
+prob_lower_site_ae_vs_study_ae(site_ae, study_ae, r = 1000, parallel = FALSE)
 }
 \arguments{
 \item{site_ae}{vector with AE numbers}

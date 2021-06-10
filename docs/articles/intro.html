@@ -44,7 +44,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">simaerep</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
       </span>
     </div>
 
@@ -573,39 +573,25 @@
 <div id="alpha-error-correction" class="section level2">
 <h2 class="hasAnchor">
 <a href="#alpha-error-correction" class="anchor"></a>Alpha Error Correction</h2>
-<p>Our simulated test data set consists of just 6 sites. However, it is not uncommon for 100 sites or more to participate in the same clinical trial. This would mean that we need to perform 100 statistical tests, and applying a 5% significance threshold would lead to on average of 5 False Positives (FP). We therefore need to account for the number of expected FP when we are calculating the true under-reporting probability.</p>
-<ul>
-<li>For a given simulated probability calculate expected FP as probability * number of clinical trial sites.</li>
-<li>For a given simulated probability calculate the number of positives (P) as the count of sites with the same probability or lower.</li>
-<li>Calculate the P/FP ratio</li>
-<li>Express under-reporting probability as 1 - FP/P</li>
-</ul>
+<p>Our simulated test data set consists of just 6 sites. However, it is not uncommon for 100 sites or more to participate in the same clinical trial. This would mean that we need to perform 100 statistical tests, and applying a 5% significance threshold would lead to on average of 5 False Positives (FP). We therefore need to adjust the calculated p-values and bootstrapped probabilities using <code><a href="https://rdrr.io/r/stats/p.adjust.html">stats::p.adjust(p, method = "BH")</a></code>, which applies the <a href="https://www.statisticshowto.com/benjamini-hochberg-procedure/">Benjamin Hochberg Procedure</a>. <code><a href="../reference/eval_sites.html">eval_sites()</a></code> uses the the inverted adjusted values to calculates the final bootstrapped AE under-reporting probability (prob_low_prob_ur) and includes the poisson test derived under-reporting probability as a reference (pval_prob_ur).</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">df_eval</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/eval_sites.html">eval_sites</a></span><span class="op">(</span>
-  <span class="va">df_sim_sites</span>,
-  r_sim_sites <span class="op">=</span> <span class="fl">1000</span> <span class="co">#needs to be passed to in order to consider smallest value &gt; 0 for fp calculation</span>
-<span class="op">)</span>
+<code class="sourceCode R"><span class="va">df_eval</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/eval_sites.html">eval_sites</a></span><span class="op">(</span><span class="va">df_sim_sites</span>, method <span class="op">=</span> <span class="st">"BH"</span><span class="op">)</span>
 
 <span class="va">df_eval</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <table class="table">
 <colgroup>
-<col width="4%">
-<col width="5%">
-<col width="5%">
+<col width="6%">
 <col width="8%">
 <col width="8%">
-<col width="3%">
-<col width="4%">
-<col width="3%">
-<col width="7%">
-<col width="4%">
-<col width="8%">
+<col width="13%">
+<col width="14%">
 <col width="5%">
-<col width="8%">
-<col width="5%">
-<col width="10%">
-<col width="7%">
+<col width="6%">
+<col width="6%">
+<col width="9%">
+<col width="9%">
+<col width="12%">
 </colgroup>
 <thead><tr class="header">
 <th align="left">study_id</th>
@@ -615,14 +601,9 @@
 <th align="right">mean_ae_study_med75</th>
 <th align="right">pval</th>
 <th align="right">prob_low</th>
-<th align="right">n_site</th>
-<th align="right">pval_n_detected</th>
-<th align="right">pval_fp</th>
-<th align="right">pval_p_vs_fp_ratio</th>
+<th align="right">pval_adj</th>
 <th align="right">pval_prob_ur</th>
-<th align="right">prob_low_n_detected</th>
-<th align="right">prob_low_fp</th>
-<th align="right">prob_low_p_vs_fp_ratio</th>
+<th align="right">prob_low_adj</th>
 <th align="right">prob_low_prob_ur</th>
 </tr></thead>
 <tbody>
@@ -634,15 +615,10 @@
 <td align="right">6.712644</td>
 <td align="right">0.0e+00</td>
 <td align="right">0</td>
-<td align="right">6</td>
-<td align="right">1</td>
 <td align="right">0.00e+00</td>
-<td align="right">166749229.27</td>
 <td align="right">1.0000000</td>
-<td align="right">2</td>
-<td align="right">1e-04</td>
-<td align="right">20000</td>
-<td align="right">0.99995</td>
+<td align="right">0</td>
+<td align="right">1</td>
 </tr>
 <tr class="even">
 <td align="left">A</td>
@@ -652,15 +628,10 @@
 <td align="right">6.021739</td>
 <td align="right">7.5e-06</td>
 <td align="right">0</td>
-<td align="right">6</td>
-<td align="right">2</td>
-<td align="right">4.48e-05</td>
-<td align="right">44679.16</td>
+<td align="right">2.24e-05</td>
 <td align="right">0.9999776</td>
-<td align="right">2</td>
-<td align="right">1e-04</td>
-<td align="right">20000</td>
-<td align="right">0.99995</td>
+<td align="right">0</td>
+<td align="right">1</td>
 </tr>
 <tr class="odd">
 <td align="left">A</td>
@@ -670,15 +641,10 @@
 <td align="right">6.270588</td>
 <td align="right">1.0e+00</td>
 <td align="right">1</td>
-<td align="right">6</td>
-<td align="right">6</td>
-<td align="right">6.00e+00</td>
-<td align="right">1.00</td>
+<td align="right">1.00e+00</td>
 <td align="right">0.0000000</td>
-<td align="right">6</td>
-<td align="right">6e+00</td>
 <td align="right">1</td>
-<td align="right">0.00000</td>
+<td align="right">0</td>
 </tr>
 <tr class="even">
 <td align="left">A</td>
@@ -688,15 +654,10 @@
 <td align="right">5.347826</td>
 <td align="right">1.0e+00</td>
 <td align="right">1</td>
-<td align="right">6</td>
-<td align="right">6</td>
-<td align="right">6.00e+00</td>
-<td align="right">1.00</td>
+<td align="right">1.00e+00</td>
 <td align="right">0.0000000</td>
-<td align="right">6</td>
-<td align="right">6e+00</td>
 <td align="right">1</td>
-<td align="right">0.00000</td>
+<td align="right">0</td>
 </tr>
 <tr class="odd">
 <td align="left">A</td>
@@ -706,15 +667,10 @@
 <td align="right">5.941860</td>
 <td align="right">1.0e+00</td>
 <td align="right">1</td>
-<td align="right">6</td>
-<td align="right">6</td>
-<td align="right">6.00e+00</td>
-<td align="right">1.00</td>
+<td align="right">1.00e+00</td>
 <td align="right">0.0000000</td>
-<td align="right">6</td>
-<td align="right">6e+00</td>
 <td align="right">1</td>
-<td align="right">0.00000</td>
+<td align="right">0</td>
 </tr>
 <tr class="even">
 <td align="left">A</td>
@@ -724,24 +680,18 @@
 <td align="right">5.690476</td>
 <td align="right">1.0e+00</td>
 <td align="right">1</td>
-<td align="right">6</td>
-<td align="right">6</td>
-<td align="right">6.00e+00</td>
-<td align="right">1.00</td>
+<td align="right">1.00e+00</td>
 <td align="right">0.0000000</td>
-<td align="right">6</td>
-<td align="right">6e+00</td>
 <td align="right">1</td>
-<td align="right">0.00000</td>
+<td align="right">0</td>
 </tr>
 </tbody>
 </table>
-<p>the column <code>prob_low_p_vs_fp_ratio</code> contains the P/FP ratio. A ratio of 20 represents ~ 95 % probability of under-reporting (20/21) which we consider a sensible threshold.</p>
 </div>
 <div id="plot-results" class="section level2">
 <h2 class="hasAnchor">
 <a href="#plot-results" class="anchor"></a>Plot Results</h2>
-<p><code>plot_study</code> will plot mean ae development of all sites and visit level data for each flagged site using a P/FP threshold of 20</p>
+<p><code>plot_study</code> will plot mean ae development of all sites and visit level data for each flagged site with an AE under-reporting threshold of 95%.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/plot_study.html">plot_study</a></span><span class="op">(</span><span class="va">df_visit</span>, <span class="va">df_site</span>, <span class="va">df_eval</span>, study <span class="op">=</span> <span class="st">"A"</span><span class="op">)</span></code></pre></div>
 <p><img src="intro_files/figure-html/unnamed-chunk-8-1.png" width="960"></p>
