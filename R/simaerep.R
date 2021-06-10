@@ -48,7 +48,7 @@ if (getRversion() >= "2.15.1") {
 #' @export
 eval_sites <- function(df_sim_sites,
                         method = "BH",
-                        ... ) {
+                        ...) {
 
 
   if (is.null(method)) {
