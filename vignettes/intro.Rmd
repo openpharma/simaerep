@@ -177,28 +177,19 @@ We find that the probability of getting a mean ae at visit_med75 for sites S0001
 
 ## Alpha Error Correction
 
-Our simulated test data set consists of just 6 sites. However, it is not uncommon for 100 sites or more to participate in the same clinical trial. This would mean that we need to perform 100 statistical tests, and applying a 5% significance threshold would lead to on average of 5 False Positives (FP). We therefore need to account for the number of expected FP when we are calculating the true under-reporting probability.
-
-- For a given simulated probability calculate expected FP as probability * number of clinical trial sites.
-- For a given simulated probability calculate the number of positives (P) as the count of sites with the same probability or lower.
-- Calculate the P/FP ratio
-- Express under-reporting probability as 1 - FP/P
+Our simulated test data set consists of just 6 sites. However, it is not uncommon for 100 sites or more to participate in the same clinical trial. This would mean that we need to perform 100 statistical tests, and applying a 5% significance threshold would lead to on average of 5 False Positives (FP). We therefore need to adjust the calculated p-values and bootstrapped probabilities using `stats::p.adjust(p, method = "BH")`, which applies the [Benjamin Hochberg Procedure](https://www.statisticshowto.com/benjamini-hochberg-procedure/). `eval_sites()` uses the the inverted adjusted values to calculates the final bootstrapped AE under-reporting probability (prob_low_prob_ur) and includes the poisson test derived under-reporting probability as a reference (pval_prob_ur).
 
 ```{r}
-df_eval <- eval_sites(
-  df_sim_sites,
-  r_sim_sites = 1000 #needs to be passed to in order to consider smallest value > 0 for fp calculation
-)
+df_eval <- eval_sites(df_sim_sites, method = "BH")
 
 df_eval %>%
   kable()
 ```
 
-the column `prob_low_p_vs_fp_ratio` contains the P/FP ratio. A ratio of 20 represents ~ 95 % probability of under-reporting (20/21) which we consider a sensible threshold.
 
 ## Plot Results
 
-`plot_study` will plot mean ae development of all sites and visit level data for each flagged site using a P/FP threshold of 20
+`plot_study` will plot mean ae development of all sites and visit level data for each flagged site with an AE under-reporting threshold of 95%.
 
 ```{r fig.width = 10}
 plot_study(df_visit, df_site, df_eval, study = "A")

@@ -8,4 +8,8 @@
 /cache/
 */*_cache/
 
+<<<<<<< HEAD
 *.sas7bdat
+=======
+*.sas7bdat
+>>>>>>> master

@@ -92,7 +92,7 @@ or lower, use in combination with get_ecd_values()." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">simaerep</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
       </span>
     </div>
 
@@ -194,12 +194,12 @@ or lower, use in combination with <code><a href='get_ecd_values.html'>get_ecd_va
     </tr>
     <tr>
       <th>poisson_test</th>
-      <td><p>logical, calculates poisson.test pvalue, Default: T</p></td>
+      <td><p>logical, calculates poisson.test pvalue, Default: TRUE</p></td>
     </tr>
     <tr>
       <th>prob_lower</th>
       <td><p>logical, calculates probability for getting a lower value,
-Default: F</p></td>
+Default: FALSE</p></td>
     </tr>
     <tr>
       <th>r_prob_lower</th>
@@ -208,7 +208,8 @@ value calculation,, Default: 1000</p></td>
     </tr>
     <tr>
       <th>parallel</th>
-      <td><p>logical, toggles parallel processing on and of, Default: F</p></td>
+      <td><p>logical, see examples for registering parallel processing framework
+, Default: FALSE</p></td>
     </tr>
     <tr>
       <th>keep_ae</th>
@@ -257,7 +258,7 @@ mean_ae at visit_med75</p>
 
 <span class='va'>df_site</span> <span class='op'>&lt;-</span> <span class='fu'><a href='site_aggr.html'>site_aggr</a></span><span class='op'>(</span><span class='va'>df_visit</span><span class='op'>)</span>
 
-<span class='fu'>sim_studies</span><span class='op'>(</span><span class='fu'>ungroup</span><span class='op'>(</span><span class='va'>df_visit</span><span class='op'>)</span>, <span class='fu'>ungroup</span><span class='op'>(</span><span class='va'>df_site</span><span class='op'>)</span>, r <span class='op'>=</span> <span class='fl'>3</span>, keep_ae <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+<span class='fu'>sim_studies</span><span class='op'>(</span><span class='va'>df_visit</span>, <span class='va'>df_site</span>, r <span class='op'>=</span> <span class='fl'>3</span>, keep_ae <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; <span style='color: #555555;'># A tibble: 24 x 10</span><span>
 #&gt;        r study_id site_number visit_med75 n_pat_with_med75 n_pat_study n_ae_site
 #&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>             </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>            </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>       </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>    
@@ -272,7 +273,14 @@ mean_ae at visit_med75</p>
 #&gt; </span><span style='color: #555555;'> 9</span><span>     2 A        S0001                16               20          68 10,7,5,3…
 #&gt; </span><span style='color: #555555;'>10</span><span>     2 A        S0002                17               17          64 9,12,6,1…
 #&gt; </span><span style='color: #555555;'># … with 14 more rows, and 3 more variables: n_ae_study </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>, pval </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>,</span><span>
-#&gt; </span><span style='color: #555555;'>#   prob_low </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span></div></span></pre>
+#&gt; </span><span style='color: #555555;'>#   prob_low </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span></div><div class='input'>
+<span class='co'># parallel processing -------------------------</span>
+<span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
+<span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://github.com/HenrikBengtsson/future'>future</a></span><span class='op'>)</span>
+<span class='fu'>future</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/future/man/plan.html'>plan</a></span><span class='op'>(</span><span class='va'>multiprocess</span><span class='op'>)</span>
+<span class='fu'>sim_studies</span><span class='op'>(</span><span class='va'>df_visit</span>, <span class='va'>df_site</span>, r <span class='op'>=</span> <span class='fl'>3</span>, keep_ae <span class='op'>=</span> <span class='cn'>TRUE</span>, parallel <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+<span class='op'>}</span>
+</div></span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

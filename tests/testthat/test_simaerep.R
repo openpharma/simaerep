@@ -46,7 +46,7 @@ test_that("eval_sites_with_all_NA", {
   all_eval_cols_na <- df_eval %>%
     ungroup() %>%
     filter(study_id == "C") %>%
-    select(- study_id, - site_number, - visit_med75, - n_site) %>%
+    select(- study_id, - site_number, - visit_med75) %>%
     summarize_all(~ all(is.na(.))) %>%
     as.matrix() %>%
     .[1, ] %>%
@@ -58,7 +58,21 @@ test_that("eval_sites_with_all_NA", {
 
 test_that("eval_sites", {
 
-  df_eval <- eval_sites(df_sim_sites, r_sim_sites = 100)
+  df_eval <- eval_sites(df_sim_sites)
+
+  expect_true(
+      c(
+        "pval_adj",
+        "pval_prob_ur",
+        "prob_low_adj",
+        "prob_low_prob_ur"
+        ) %in% colnames(df_eval) %>%
+        all()
+    )
+
+  expect_warning({
+    df_eval <- eval_sites(df_sim_sites, method = NULL, r_sim_sites = 100)
+  })
 
   # stats should negatively correlate with P/fp ratio
   expect_true(cor(df_eval$prob_low, df_eval$prob_low_p_vs_fp_ratio) < 0)
@@ -128,18 +142,23 @@ test_that("prob_lower_site_ae_vs_study_ae", {
   expect_true(prob_low < 0.005)
   expect_true(prob_low > 0)
 
-  prob_low <- prob_lower_site_ae_vs_study_ae(site_ae = c(9, 8, 7, 9, 6, 7, 8), study_ae = c(5, 3, 3, 2, 1, 6))
+  prob_low <- prob_lower_site_ae_vs_study_ae(
+    site_ae = c(9, 8, 7, 9, 6, 7, 8),
+    study_ae = c(5, 3, 3, 2, 1, 6)
+  )
 
   expect_true(prob_low == 1)
 
   prob_low <- prob_lower_site_ae_vs_study_ae(
     site_ae = c(5, 3, 3, 2, 1, 6, 2, 1, 1, 1, 1),
     study_ae = c(9, 8, 7, 9, 6, 7, 8, 9, 9, 9),
-    parallel = T,
+    parallel = TRUE,
     r = 1e5
   )
 
-  prob_low <- prob_lower_site_ae_vs_study_ae(site_ae = c(9, 8, 7, 9, 6, 7, 8), study_ae = NULL)
+  prob_low <- prob_lower_site_ae_vs_study_ae(
+    site_ae = c(9, 8, 7, 9, 6, 7, 8),
+    study_ae = NULL)
 
   expect_true(prob_low == 1)
 })
