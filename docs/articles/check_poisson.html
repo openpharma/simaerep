@@ -44,7 +44,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">simaerep</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
       </span>
     </div>
 
@@ -178,7 +178,7 @@
 <span class="va">df_sim_sites</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sim_sites.html">sim_sites</a></span><span class="op">(</span><span class="va">df_site</span>, <span class="va">df_visit</span><span class="op">)</span>
 
 <span class="va">df_visit</span></code></pre></div>
-<pre><code>## # A tibble: 58,464 x 9
+<pre><code>## # A tibble: 58,619 x 9
 ##    patnum site_number is_ur max_visit_mean max_visit_sd ae_per_visit_me… visit
 ##    &lt;chr&gt;  &lt;chr&gt;       &lt;lgl&gt;          &lt;dbl&gt;        &lt;dbl&gt;            &lt;dbl&gt; &lt;int&gt;
 ##  1 P0000… S0001       TRUE              20            4             0.25     1
@@ -191,38 +191,38 @@
 ##  8 P0000… S0001       TRUE              20            4             0.25     8
 ##  9 P0000… S0001       TRUE              20            4             0.25     9
 ## 10 P0000… S0001       TRUE              20            4             0.25    10
-## # … with 58,454 more rows, and 2 more variables: n_ae &lt;int&gt;, study_id &lt;chr&gt;</code></pre>
+## # … with 58,609 more rows, and 2 more variables: n_ae &lt;int&gt;, study_id &lt;chr&gt;</code></pre>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">df_site</span></code></pre></div>
 <pre><code>## # A tibble: 300 x 6
 ##    study_id site_number n_patients visit_med75 n_pat_with_med75 mean_ae_site_me…
 ##    &lt;chr&gt;    &lt;chr&gt;            &lt;int&gt;       &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;
-##  1 ae_per_… S0001               10          15                8             3.62
-##  2 ae_per_… S0002               10          15                9             4.33
-##  3 ae_per_… S0003               10          15                8             3   
-##  4 ae_per_… S0004               10          15               10             3.2 
-##  5 ae_per_… S0005               10          15                9             4.89
-##  6 ae_per_… S0006               10          17                9             3.89
-##  7 ae_per_… S0007               10          16                9             6.33
-##  8 ae_per_… S0008               10          15               10             3.6 
-##  9 ae_per_… S0009               10          16                9             3.78
-## 10 ae_per_… S0010               10          15                8             3.88
+##  1 ae_per_… S0001               10          13               10             3.3 
+##  2 ae_per_… S0002               10          16                8             4.88
+##  3 ae_per_… S0003               10          16               10             3.5 
+##  4 ae_per_… S0004               10          18                8             4.62
+##  5 ae_per_… S0005               10          17                9             3   
+##  6 ae_per_… S0006               10          15                8             3.62
+##  7 ae_per_… S0007               10          17                7             4.57
+##  8 ae_per_… S0008               10          17                7             4   
+##  9 ae_per_… S0009               10          17               10             3.3 
+## 10 ae_per_… S0010               10          17                9             3.67
 ## # … with 290 more rows</code></pre>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">df_sim_sites</span></code></pre></div>
 <pre><code>## # A tibble: 300 x 7
-##    study_id site_number visit_med75 mean_ae_site_me… mean_ae_study_m…   pval
-##    &lt;chr&gt;    &lt;chr&gt;             &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;  &lt;dbl&gt;
-##  1 ae_per_… S0001                15            0.5              0.717 0.571 
-##  2 ae_per_… S0002                17            0.5              0.782 0.542 
-##  3 ae_per_… S0003                14            0.222            0.661 0.142 
-##  4 ae_per_… S0004                15            0.4              0.718 0.342 
-##  5 ae_per_… S0005                14            0.222            0.661 0.142 
-##  6 ae_per_… S0006                15            0.2              0.721 0.0563
-##  7 ae_per_… S0007                12            0.3              0.560 0.391 
-##  8 ae_per_… S0008                15            0.3              0.720 0.133 
-##  9 ae_per_… S0009                16            0.556            0.740 0.695 
-## 10 ae_per_… S0010                15            0.333            0.719 0.231 
+##    study_id site_number visit_med75 mean_ae_site_me… mean_ae_study_m…    pval
+##    &lt;chr&gt;    &lt;chr&gt;             &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;   &lt;dbl&gt;
+##  1 ae_per_… S0001                14            0                0.606 0.00583
+##  2 ae_per_… S0002                15            0                0.656 0.0125 
+##  3 ae_per_… S0003                14            0.25             0.603 0.254  
+##  4 ae_per_… S0004                15            0.375            0.653 0.504  
+##  5 ae_per_… S0005                15            0.625            0.651 1      
+##  6 ae_per_… S0006                15            0.125            0.655 0.0727 
+##  7 ae_per_… S0007                16            0.375            0.700 0.391  
+##  8 ae_per_… S0008                16            0.778            0.696 1      
+##  9 ae_per_… S0009                15            0.25             0.654 0.262  
+## 10 ae_per_… S0010                17            0.6              0.738 0.851  
 ## # … with 290 more rows, and 1 more variable: prob_low &lt;dbl&gt;</code></pre>
 </div>
 <div id="simulate-studies" class="section level2">
@@ -232,107 +232,37 @@
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>
 
-<span class="va">df_sim_studies</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sim_studies.html">sim_studies</a></span><span class="op">(</span><span class="va">df_visit</span>, <span class="va">df_site</span>,
+<span class="fu">future</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/future/man/plan.html">plan</a></span><span class="op">(</span><span class="va">multiprocess</span><span class="op">)</span></code></pre></div>
+<pre><code>## Warning: Strategy 'multiprocess' is deprecated in future (&gt;= 1.20.0). Instead,
+## explicitly specify either 'multisession' or 'multicore'. In the current R
+## session, 'multiprocess' equals 'multisession'.</code></pre>
+<pre><code>## Warning in supportsMulticoreAndRStudio(...): [ONE-TIME WARNING] Forked
+## processing ('multicore') is not supported when running R from RStudio
+## because it is considered unstable. For more details, how to control forked
+## processing or not, and how to silence this warning in future R sessions, see ?
+## parallelly::supportsMulticore</code></pre>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">df_sim_studies</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sim_studies.html">sim_studies</a></span><span class="op">(</span><span class="va">df_visit</span>, <span class="va">df_site</span>,
                               r <span class="op">=</span> <span class="fl">100</span>,
                               parallel <span class="op">=</span> <span class="cn">TRUE</span>,
                               poisson_test <span class="op">=</span> <span class="cn">TRUE</span>,
                               prob_lower <span class="op">=</span> <span class="cn">TRUE</span>,
-                              .progress <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
-<pre><code>## Warning: Problem with `mutate()` input `n_ae_set`.
-## ℹ UNRELIABLE VALUE: Future ('&lt;none&gt;') unexpectedly generated random numbers without specifying argument '[future.]seed'. There is a risk that those random numbers are not statistically sound and the overall results might be invalid. To fix this, specify argument '[future.]seed', e.g. 'seed=TRUE'. This ensures that proper, parallel-safe random numbers are produced via the L'Ecuyer-CMRG method. To disable this check, use [future].seed=NULL, or set option 'future.rng.onMisuse' to "ignore".
-## ℹ Input `n_ae_set` is `.f_map(.data$r, sim)`.</code></pre>
-<pre><code>## Warning: UNRELIABLE VALUE: Future ('&lt;none&gt;') unexpectedly generated random
-## numbers without specifying argument '[future.]seed'. There is a risk that those
-## random numbers are not statistically sound and the overall results might be
-## invalid. To fix this, specify argument '[future.]seed', e.g. 'seed=TRUE'. This
-## ensures that proper, parallel-safe random numbers are produced via the L'Ecuyer-
-## CMRG method. To disable this check, use [future].seed=NULL, or set option
-## 'future.rng.onMisuse' to "ignore".</code></pre>
-<pre><code>## Warning: Problem with `mutate()` input `n_ae_set`.
-## ℹ UNRELIABLE VALUE: Future ('&lt;none&gt;') unexpectedly generated random numbers without specifying argument '[future.]seed'. There is a risk that those random numbers are not statistically sound and the overall results might be invalid. To fix this, specify argument '[future.]seed', e.g. 'seed=TRUE'. This ensures that proper, parallel-safe random numbers are produced via the L'Ecuyer-CMRG method. To disable this check, use [future].seed=NULL, or set option 'future.rng.onMisuse' to "ignore".
-## ℹ Input `n_ae_set` is `.f_map(.data$r, sim)`.</code></pre>
-<pre><code>## Warning: UNRELIABLE VALUE: Future ('&lt;none&gt;') unexpectedly generated random
-## numbers without specifying argument '[future.]seed'. There is a risk that those
-## random numbers are not statistically sound and the overall results might be
-## invalid. To fix this, specify argument '[future.]seed', e.g. 'seed=TRUE'. This
-## ensures that proper, parallel-safe random numbers are produced via the L'Ecuyer-
-## CMRG method. To disable this check, use [future].seed=NULL, or set option
-## 'future.rng.onMisuse' to "ignore".</code></pre>
-<pre><code>## Warning: Problem with `mutate()` input `n_ae_set`.
-## ℹ UNRELIABLE VALUE: Future ('&lt;none&gt;') unexpectedly generated random numbers without specifying argument '[future.]seed'. There is a risk that those random numbers are not statistically sound and the overall results might be invalid. To fix this, specify argument '[future.]seed', e.g. 'seed=TRUE'. This ensures that proper, parallel-safe random numbers are produced via the L'Ecuyer-CMRG method. To disable this check, use [future].seed=NULL, or set option 'future.rng.onMisuse' to "ignore".
-## ℹ Input `n_ae_set` is `.f_map(.data$r, sim)`.</code></pre>
-<pre><code>## Warning: UNRELIABLE VALUE: Future ('&lt;none&gt;') unexpectedly generated random
-## numbers without specifying argument '[future.]seed'. There is a risk that those
-## random numbers are not statistically sound and the overall results might be
-## invalid. To fix this, specify argument '[future.]seed', e.g. 'seed=TRUE'. This
-## ensures that proper, parallel-safe random numbers are produced via the L'Ecuyer-
-## CMRG method. To disable this check, use [future].seed=NULL, or set option
-## 'future.rng.onMisuse' to "ignore".</code></pre>
-<pre><code>## Warning: Problem with `mutate()` input `n_ae_set`.
-## ℹ UNRELIABLE VALUE: Future ('&lt;none&gt;') unexpectedly generated random numbers without specifying argument '[future.]seed'. There is a risk that those random numbers are not statistically sound and the overall results might be invalid. To fix this, specify argument '[future.]seed', e.g. 'seed=TRUE'. This ensures that proper, parallel-safe random numbers are produced via the L'Ecuyer-CMRG method. To disable this check, use [future].seed=NULL, or set option 'future.rng.onMisuse' to "ignore".
-## ℹ Input `n_ae_set` is `.f_map(.data$r, sim)`.</code></pre>
-<pre><code>## Warning: UNRELIABLE VALUE: Future ('&lt;none&gt;') unexpectedly generated random
-## numbers without specifying argument '[future.]seed'. There is a risk that those
-## random numbers are not statistically sound and the overall results might be
-## invalid. To fix this, specify argument '[future.]seed', e.g. 'seed=TRUE'. This
-## ensures that proper, parallel-safe random numbers are produced via the L'Ecuyer-
-## CMRG method. To disable this check, use [future].seed=NULL, or set option
-## 'future.rng.onMisuse' to "ignore".</code></pre>
-<pre><code>## Warning: Problem with `mutate()` input `n_ae_set`.
-## ℹ UNRELIABLE VALUE: Future ('&lt;none&gt;') unexpectedly generated random numbers without specifying argument '[future.]seed'. There is a risk that those random numbers are not statistically sound and the overall results might be invalid. To fix this, specify argument '[future.]seed', e.g. 'seed=TRUE'. This ensures that proper, parallel-safe random numbers are produced via the L'Ecuyer-CMRG method. To disable this check, use [future].seed=NULL, or set option 'future.rng.onMisuse' to "ignore".
-## ℹ Input `n_ae_set` is `.f_map(.data$r, sim)`.</code></pre>
-<pre><code>## Warning: UNRELIABLE VALUE: Future ('&lt;none&gt;') unexpectedly generated random
-## numbers without specifying argument '[future.]seed'. There is a risk that those
-## random numbers are not statistically sound and the overall results might be
-## invalid. To fix this, specify argument '[future.]seed', e.g. 'seed=TRUE'. This
-## ensures that proper, parallel-safe random numbers are produced via the L'Ecuyer-
-## CMRG method. To disable this check, use [future].seed=NULL, or set option
-## 'future.rng.onMisuse' to "ignore".</code></pre>
-<pre><code>## Warning: Problem with `mutate()` input `n_ae_set`.
-## ℹ UNRELIABLE VALUE: Future ('&lt;none&gt;') unexpectedly generated random numbers without specifying argument '[future.]seed'. There is a risk that those random numbers are not statistically sound and the overall results might be invalid. To fix this, specify argument '[future.]seed', e.g. 'seed=TRUE'. This ensures that proper, parallel-safe random numbers are produced via the L'Ecuyer-CMRG method. To disable this check, use [future].seed=NULL, or set option 'future.rng.onMisuse' to "ignore".
-## ℹ Input `n_ae_set` is `.f_map(.data$r, sim)`.</code></pre>
-<pre><code>## Warning: UNRELIABLE VALUE: Future ('&lt;none&gt;') unexpectedly generated random
-## numbers without specifying argument '[future.]seed'. There is a risk that those
-## random numbers are not statistically sound and the overall results might be
-## invalid. To fix this, specify argument '[future.]seed', e.g. 'seed=TRUE'. This
-## ensures that proper, parallel-safe random numbers are produced via the L'Ecuyer-
-## CMRG method. To disable this check, use [future].seed=NULL, or set option
-## 'future.rng.onMisuse' to "ignore".</code></pre>
-<pre><code>## Warning: Problem with `mutate()` input `n_ae_set`.
-## ℹ UNRELIABLE VALUE: Future ('&lt;none&gt;') unexpectedly generated random numbers without specifying argument '[future.]seed'. There is a risk that those random numbers are not statistically sound and the overall results might be invalid. To fix this, specify argument '[future.]seed', e.g. 'seed=TRUE'. This ensures that proper, parallel-safe random numbers are produced via the L'Ecuyer-CMRG method. To disable this check, use [future].seed=NULL, or set option 'future.rng.onMisuse' to "ignore".
-## ℹ Input `n_ae_set` is `.f_map(.data$r, sim)`.</code></pre>
-<pre><code>## Warning: UNRELIABLE VALUE: Future ('&lt;none&gt;') unexpectedly generated random
-## numbers without specifying argument '[future.]seed'. There is a risk that those
-## random numbers are not statistically sound and the overall results might be
-## invalid. To fix this, specify argument '[future.]seed', e.g. 'seed=TRUE'. This
-## ensures that proper, parallel-safe random numbers are produced via the L'Ecuyer-
-## CMRG method. To disable this check, use [future].seed=NULL, or set option
-## 'future.rng.onMisuse' to "ignore".</code></pre>
-<pre><code>## Warning: Problem with `mutate()` input `n_ae_set`.
-## ℹ UNRELIABLE VALUE: Future ('&lt;none&gt;') unexpectedly generated random numbers without specifying argument '[future.]seed'. There is a risk that those random numbers are not statistically sound and the overall results might be invalid. To fix this, specify argument '[future.]seed', e.g. 'seed=TRUE'. This ensures that proper, parallel-safe random numbers are produced via the L'Ecuyer-CMRG method. To disable this check, use [future].seed=NULL, or set option 'future.rng.onMisuse' to "ignore".
-## ℹ Input `n_ae_set` is `.f_map(.data$r, sim)`.</code></pre>
-<pre><code>## Warning: UNRELIABLE VALUE: Future ('&lt;none&gt;') unexpectedly generated random
-## numbers without specifying argument '[future.]seed'. There is a risk that those
-## random numbers are not statistically sound and the overall results might be
-## invalid. To fix this, specify argument '[future.]seed', e.g. 'seed=TRUE'. This
-## ensures that proper, parallel-safe random numbers are produced via the L'Ecuyer-
-## CMRG method. To disable this check, use [future].seed=NULL, or set option
-## 'future.rng.onMisuse' to "ignore".</code></pre>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">df_sim_studies</span></code></pre></div>
+                              .progress <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
+
+<span class="va">df_sim_studies</span></code></pre></div>
 <pre><code>## # A tibble: 30,000 x 8
-##        r study_id site_number visit_med75 n_pat_with_med75 n_pat_study   pval
-##    &lt;dbl&gt; &lt;chr&gt;    &lt;chr&gt;             &lt;dbl&gt;            &lt;dbl&gt;       &lt;dbl&gt;  &lt;dbl&gt;
-##  1     1 ae_per_… S0001                15                8         888 0.378 
-##  2     1 ae_per_… S0002                15                9         887 1     
-##  3     1 ae_per_… S0003                15                8         888 1     
-##  4     1 ae_per_… S0004                15               10         886 0.951 
-##  5     1 ae_per_… S0005                15                9         887 1     
-##  6     1 ae_per_… S0006                17                9         760 1     
-##  7     1 ae_per_… S0007                16                9         833 0.950 
-##  8     1 ae_per_… S0008                15               10         886 1     
-##  9     1 ae_per_… S0009                16                9         833 0.901 
-## 10     1 ae_per_… S0010                15                8         888 0.0419
+##        r study_id site_number visit_med75 n_pat_with_med75 n_pat_study  pval
+##    &lt;dbl&gt; &lt;chr&gt;    &lt;chr&gt;             &lt;dbl&gt;            &lt;dbl&gt;       &lt;dbl&gt; &lt;dbl&gt;
+##  1     1 ae_per_… S0001                13               10         951 0.426
+##  2     1 ae_per_… S0002                16                8         840 1    
+##  3     1 ae_per_… S0003                16               10         838 0.442
+##  4     1 ae_per_… S0004                18                8         688 1    
+##  5     1 ae_per_… S0005                17                9         772 1    
+##  6     1 ae_per_… S0006                15                8         886 0.678
+##  7     1 ae_per_… S0007                17                7         774 1    
+##  8     1 ae_per_… S0008                17                7         774 0.681
+##  9     1 ae_per_… S0009                17               10         771 1    
+## 10     1 ae_per_… S0010                17                9         772 1    
 ## # … with 29,990 more rows, and 1 more variable: prob_low &lt;dbl&gt;</code></pre>
 </div>
 <div id="check-p-value-probabilities" class="section level2">
@@ -340,25 +270,25 @@
 <a href="#check-p-value-probabilities" class="anchor"></a>Check p-value Probabilities</h2>
 <p><a href="https://openpharma.github.io/simaerep/reference/get_ecd_values.html">get_ecd_values()</a> uses the p-value distribution in the dataframe returned from sim_studies() to train a empirical cumulative distribution function for each study which is then used to calculate the probability of a specific p-value or lower from the poisson.test p-value returned from sim_sites()</p>
 <p>Note: Dots on the edge of the graph that are cut off have zero value for the corresponding axis.</p>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">df_check_pval</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_ecd_values.html">get_ecd_values</a></span><span class="op">(</span><span class="va">df_sim_studies</span>, <span class="va">df_sim_sites</span>, val_str <span class="op">=</span> <span class="st">"pval"</span><span class="op">)</span>
 
 <span class="va">df_check_pval</span></code></pre></div>
 <pre><code>## # A tibble: 300 x 8
-##    study_id site_number visit_med75 mean_ae_site_me… mean_ae_study_m…   pval
-##    &lt;chr&gt;    &lt;chr&gt;             &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;  &lt;dbl&gt;
-##  1 ae_per_… S0001                15            0.5              0.717 0.571 
-##  2 ae_per_… S0002                17            0.5              0.782 0.542 
-##  3 ae_per_… S0003                14            0.222            0.661 0.142 
-##  4 ae_per_… S0004                15            0.4              0.718 0.342 
-##  5 ae_per_… S0005                14            0.222            0.661 0.142 
-##  6 ae_per_… S0006                15            0.2              0.721 0.0563
-##  7 ae_per_… S0007                12            0.3              0.560 0.391 
-##  8 ae_per_… S0008                15            0.3              0.720 0.133 
-##  9 ae_per_… S0009                16            0.556            0.740 0.695 
-## 10 ae_per_… S0010                15            0.333            0.719 0.231 
+##    study_id site_number visit_med75 mean_ae_site_me… mean_ae_study_m…    pval
+##    &lt;chr&gt;    &lt;chr&gt;             &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;   &lt;dbl&gt;
+##  1 ae_per_… S0001                14            0                0.606 0.00583
+##  2 ae_per_… S0002                15            0                0.656 0.0125 
+##  3 ae_per_… S0003                14            0.25             0.603 0.254  
+##  4 ae_per_… S0004                15            0.375            0.653 0.504  
+##  5 ae_per_… S0005                15            0.625            0.651 1      
+##  6 ae_per_… S0006                15            0.125            0.655 0.0727 
+##  7 ae_per_… S0007                16            0.375            0.700 0.391  
+##  8 ae_per_… S0008                16            0.778            0.696 1      
+##  9 ae_per_… S0009                15            0.25             0.654 0.262  
+## 10 ae_per_… S0010                17            0.6              0.738 0.851  
 ## # … with 290 more rows, and 2 more variables: prob_low &lt;dbl&gt;, pval_ecd &lt;dbl&gt;</code></pre>
-<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">df_check_pval</span> <span class="op">%&gt;%</span>
   <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span><span class="op">(</span><span class="va">pval</span>, base <span class="op">=</span> <span class="fl">10</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span><span class="op">(</span><span class="va">pval_ecd</span>, base <span class="op">=</span> <span class="fl">10</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
     <span class="fu">geom_point</span><span class="op">(</span>alpha <span class="op">=</span> <span class="fl">0.5</span>, size <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> <span class="op">+</span>
@@ -373,26 +303,26 @@
 <h2 class="hasAnchor">
 <a href="#perform-same-check-on-bootstrapped-probabilities" class="anchor"></a>Perform Same Check on Bootstrapped Probabilities</h2>
 <p>Note: Dots on the edge of the graph that are cut off have zero value for the corresponding axis. For the tie simulations using 1000 repeats the smallest value greater zero we get for prob_low is 0.001 (1e-3).</p>
-<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">df_check_prob</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_ecd_values.html">get_ecd_values</a></span><span class="op">(</span><span class="va">df_sim_studies</span>, <span class="va">df_sim_sites</span>, val_str <span class="op">=</span> <span class="st">"prob_low"</span><span class="op">)</span>
 
 <span class="va">df_check_prob</span></code></pre></div>
 <pre><code>## # A tibble: 300 x 8
-##    study_id site_number visit_med75 mean_ae_site_me… mean_ae_study_m…   pval
-##    &lt;chr&gt;    &lt;chr&gt;             &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;  &lt;dbl&gt;
-##  1 ae_per_… S0001                15            0.5              0.717 0.571 
-##  2 ae_per_… S0002                17            0.5              0.782 0.542 
-##  3 ae_per_… S0003                14            0.222            0.661 0.142 
-##  4 ae_per_… S0004                15            0.4              0.718 0.342 
-##  5 ae_per_… S0005                14            0.222            0.661 0.142 
-##  6 ae_per_… S0006                15            0.2              0.721 0.0563
-##  7 ae_per_… S0007                12            0.3              0.560 0.391 
-##  8 ae_per_… S0008                15            0.3              0.720 0.133 
-##  9 ae_per_… S0009                16            0.556            0.740 0.695 
-## 10 ae_per_… S0010                15            0.333            0.719 0.231 
+##    study_id site_number visit_med75 mean_ae_site_me… mean_ae_study_m…    pval
+##    &lt;chr&gt;    &lt;chr&gt;             &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;   &lt;dbl&gt;
+##  1 ae_per_… S0001                14            0                0.606 0.00583
+##  2 ae_per_… S0002                15            0                0.656 0.0125 
+##  3 ae_per_… S0003                14            0.25             0.603 0.254  
+##  4 ae_per_… S0004                15            0.375            0.653 0.504  
+##  5 ae_per_… S0005                15            0.625            0.651 1      
+##  6 ae_per_… S0006                15            0.125            0.655 0.0727 
+##  7 ae_per_… S0007                16            0.375            0.700 0.391  
+##  8 ae_per_… S0008                16            0.778            0.696 1      
+##  9 ae_per_… S0009                15            0.25             0.654 0.262  
+## 10 ae_per_… S0010                17            0.6              0.738 0.851  
 ## # … with 290 more rows, and 2 more variables: prob_low &lt;dbl&gt;,
 ## #   prob_low_ecd &lt;dbl&gt;</code></pre>
-<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">df_check_prob</span> <span class="op">%&gt;%</span>
   <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span><span class="op">(</span><span class="va">prob_low</span>, base <span class="op">=</span> <span class="fl">10</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span><span class="op">(</span><span class="va">prob_low_ecd</span>, base <span class="op">=</span> <span class="fl">10</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
     <span class="fu">geom_point</span><span class="op">(</span>alpha <span class="op">=</span> <span class="fl">0.5</span>, size <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> <span class="op">+</span>

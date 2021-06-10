@@ -28,80 +28,86 @@ suppressPackageStartupMessages(library(sqldf))
 
 # SAS files
 
-Typically clinical data is stored in several SAS files in a standardized format. We need the files in which the visits and the AEs are recorded. For this demo we have selected an anonymized data set which only contains patients enrolled into the control arm. In those data sets the AE onset dates and the visit dates have been replaced with the number of days that have passed since a specific cut-off date. However, the cleaning and joining logic is the same as for date columns.
+Typically clinical data is stored in several SAS files in a standardized format. We need the files in which the visits and the AEs are recorded. For this demo we have selected an anonymized data set which only contains patients enrolled into the control arm. In those data sets the AE onset dates and the visit dates have been replaced with the number of days that have passed since a specific cut-off date. We can proceed in a similar way
 
 ```{r}
 df_ae <- haven::read_sas('adae.sas7bdat') %>%
-  select(STUDYID, SUBJID, SITEID, AESTDY) %>%
-  group_by(SUBJID) %>%
-  arrange(SUBJID, AESTDY) %>%
-  mutate(AENO = row_number())
+  select(STUDYID, SUBJID, SITEID, AESTDY) 
 
 df_ae
 
 df_vs <- haven::read_sas('advs.sas7bdat') %>%
-  select(STUDYID, SUBJID, SITEID, ADY) %>%
-  distinct() %>%
-  arrange(SUBJID, ADY) %>%
-  group_by(SUBJID) %>%
-  mutate(VISNO = row_number()) %>%
-  mutate(ADY_PREV = lag(ADY),
-         ADY_PREV = ifelse(is.na(ADY_PREV), - Inf, ADY_PREV),
-         MAX_VISNO = max(VISNO))
+  select(STUDYID, SUBJID, SITEID, ADY) 
 
 df_vs
 ```
 
-We need to join the visit and the AE dataset on the corresponding study day columns ADY and AESTDY. We are going to collect all AEs of a patient and assign them to the next visit. If there is no next visit we assign it to the last visit. If the study day (or date) for the AE is missing we will also assign that AE to the last visit. The easiest way to do this is to use SQL. We can use the `sqldf` package to perform that join for `R` dataframes. For other `R` methods for conditional joins see this [blog post](https://www.mango-solutions.com/in-between-a-rock-and-a-conditional-join/).
+In order to assign each AE to a visit we union both event tables and sort by date.
 
 ```{r}
-df_aevs <- sqldf::sqldf("
-  SELECT 
-    df_vs.SUBJID,
-    df_vs.STUDYID,
-    df_vs.SITEID,
-    df_vs.VISNO,  
-    df_vs.ADY_PREV,
-    df_vs.ADY,
-    df_ae.AESTDY,
-    df_ae.AENO
-  FROM df_vs
-  LEFT JOIN df_ae
-    ON df_ae.SUBJID = df_vs.SUBJID
-    AND df_ae.STUDYID = df_vs.STUDYID
-    AND df_ae.SITEID = df_vs.SITEID
-    AND (
-      -- match AEs to next visit
-      (df_ae.AESTDY <= df_vs.ADY AND df_ae.AESTDY > df_vs.ADY_PREV)
-      OR
-      -- match AEs that occured after last visit to last visit
-      (df_vs.VISNO = df_vs.MAX_VISNO AND df_ae.AESTDY > df_vs.ADY)
-      OR
-      -- match AEs with AESTDY NULL to last visit
-      (df_vs.VISNO = df_vs.MAX_VISNO AND df_ae.AESTDY IS NULL)
-    )
-  ")
+df_ae <- df_ae %>%
+  rename(DY = AESTDY) %>%
+  mutate(EVENT = "AE")
 
-df_aevs <- as_tibble(df_aevs)
+df_vs <- df_vs %>%
+  rename(DY = ADY) %>%
+  mutate(EVENT = "VS") %>%
+  # we ignore visits that have no date
+  filter(! is.na(DY)) %>%
+  # we are not interested in same day visits
+  distinct()
 
-df_aevs
+df_aevs <- bind_rows(df_ae, df_vs) %>%
+  # NA's get sorted towards the end thus AEs with no date get sorted towards last visit
+  arrange(STUDYID, SITEID, SUBJID, DY) %>%
+  group_by(STUDYID, SITEID, SUBJID) %>%
+  mutate(AE_NO = cumsum(ifelse(EVENT == "AE", 1, 0)),
+         VS_NO = cumsum(ifelse(EVENT == "VS", 1, 0))) %>%
+  # we remove patients with 0 visits
+  filter(max(VS_NO) > 0) %>%
+  # AE's before fist visit should register to visit 1 not zero
+  mutate(VS_NO = ifelse(VS_NO == 0, 1, VS_NO))
 ```
 
-Next we need to aggregate to the visit level.
+patient example with AE before first visit and AEs with NA in date
 
 ```{r}
+df_aevs %>%
+  filter(SUBJID == "01007004") %>%
+  knitr::kable()
 
+```
+
+Then we aggregate on visit number.
+
+```{r}
 df_aevs_aggr <- df_aevs %>%
-  group_by(STUDYID, SUBJID, SITEID, VISNO) %>%
-  summarize(AENO = max(AENO)) %>%
-  group_by(SUBJID) %>%
-  arrange(SUBJID, VISNO) %>%
-  fill(AENO, .direction = "down") %>%
-  mutate(AENO = ifelse(is.na(AENO), 0, AENO))
+  group_by(STUDYID, SITEID, SUBJID, VS_NO) %>%
+  summarise(MIN_AE_NO = min(AE_NO),
+            MAX_AE_NO = max(AE_NO),
+            .groups = "drop") %>%
+  group_by(STUDYID, SITEID, SUBJID) %>%
+  mutate(MAX_VS_PAT = max(VS_NO)) %>%
+  ungroup() %>%
+  # assign AEs that occur after last visit to last AE
+  mutate(
+    CUM_AE = ifelse(
+      VS_NO == MAX_VS_PAT,
+      MAX_AE_NO,
+      MIN_AE_NO)
+    )
+```
 
-df_aevs_aggr
+Same patient example as before.
+
+```{r}
+df_aevs_aggr  %>%
+  filter(SUBJID == "01007004") %>%
+  knitr::kable()
 
 ```
+
+
 
 As a control we check whether the numbers of visits and AEs of our processed data still matches the number of AEs in our original data.
 
@@ -111,12 +117,16 @@ stopifnot(nrow(df_aevs_aggr) == nrow(df_vs))
 
 n_aes <- df_aevs_aggr %>%
   group_by(SUBJID) %>%
-  summarize(n_aes = max(AENO)) %>%
+  summarize(n_aes = max(CUM_AE)) %>%
   pull(n_aes) %>%
   sum()
-  
-stopifnot(n_aes == nrow(df_ae))
 
+n_aes_original <- df_ae %>%
+  # all AEs for patients with more than 1 visit
+  filter(SUBJID %in% df_aevs$SUBJID) %>%
+  nrow()
+
+stopifnot(n_aes == n_aes_original)
 ```
 
 # {simaerep}
@@ -129,9 +139,10 @@ df_visit <- df_aevs_aggr %>%
     study_id = "STUDYID",
     site_number = "SITEID",
     patnum = "SUBJID",
-    n_ae = "AENO",
-    visit = "VISNO"
-  ) 
+    n_ae = "CUM_AE",
+    visit = "VS_NO"
+  )  %>%
+  select(study_id, site_number, patnum, n_ae, visit)
 
 df_visit
 
