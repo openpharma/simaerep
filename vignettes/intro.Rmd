@@ -45,10 +45,8 @@ In a nutshell we will perform the following steps.
 3) Draw with replacement as many patients from 2) as determined in 1) and calculate the mean cumulative AE count of the draw (figure 1b).
 4) Repeat 3) 1000 times.
 5) Calculate probability of obtaining mean cumulative AE count or lower as obtained in 1) based on results of 4).
-6) Repeat 1-5) for all sites in trial
-7) For a probability determined in 6) calculate expected false positive rate (FP) as probability * number of clinical trial sites.
-8) For a probability determined in 5) calculate all positives (p) as the count of sites with the same probability or lower.
-9) Calculate AE under-reporting probability for all sites  as 1 - FP/p with results from 7-8)
+6) Repeat 1-5) for all sites in trial.
+7) Adjust probabilities using the [Benjamin Hochberg Procedure](https://www.statisticshowto.com/benjamini-hochberg-procedure/) in order to correct alpha error.
 
 
 
