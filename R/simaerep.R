@@ -277,7 +277,8 @@ get_ecd_values <- function(df_sim_studies, df_sim_sites, val_str) {
 
 
 #' @title create a study specific patient pool for sampling
-#' @description helper function for \code{\link[simaerep]{sim_sites}}, filter all visits greater than max_visit_med75_study
+#' @description helper function for \code{\link[simaerep]{sim_sites}},
+#' filter all visits greater than max_visit_med75_study
 #' returns dataframe with one column for studies and one column with nested
 #' patient data.
 #' @param df_visit dataframe, created by \code{\link[simaerep]{sim_sites}}
