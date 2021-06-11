@@ -131,7 +131,7 @@ eval_sites <- function(df_sim_sites,
 #'
 #' df_sim_sites <- sim_sites(df_site, df_visit, r = 100)
 #'
-#' df_eval <- eval_sites(df_sim_sites, r_sim_sites = 100)
+#' df_eval <- eval_sites_deprecated(df_sim_sites, r_sim_sites = 100)
 #' df_eval
 #' @rdname eval_sites_deprecated
 #' @seealso [site_aggr()][site_aggr()], [sim_sites()][sim_sites()]
@@ -276,21 +276,27 @@ get_ecd_values <- function(df_sim_studies, df_sim_sites, val_str) {
 
 
 
-#' @title create patient pool for sampling for simulations
-#' @description helper function for [sim_sites()][sim_sites()], filter all visits greater than max_visit_med75_study
+#' @title create a study specific patient pool for sampling
+#' @description helper function for \code{\link[simaerep]{sim_sites}}, filter all visits greater than max_visit_med75_study
 #' returns dataframe with one column for studies and one column with nested
 #' patient data.
-#' @param df_visit dataframe, created by [sim_sites()][sim_sites()]
-#' @param df_site dataframe created by [site_aggr()][site_aggr()]
+#' @param df_visit dataframe, created by \code{\link[simaerep]{sim_sites}}
+#' @param df_site dataframe created by \code{\link[simaerep]{site_aggr}}
 #' @return dataframe with nested pat_pool column
 #' @examples
-#' df_visit <- sim_test_data_study(n_pat = 100, n_sites = 5,
-#'     frac_site_with_ur = 0.4, ur_rate = 0.6)
+#' df_visit <- sim_test_data_study(
+#'   n_pat = 100,
+#'   n_sites = 5,
+#'   frac_site_with_ur = 0.4,
+#'   ur_rate = 0.6
+#')
 #'
 #' df_visit$study_id <- "A"
+#'
 #' df_site <- site_aggr(df_visit)
 #'
 #' df_pat_pool <- pat_pool(df_visit, df_site)
+#'
 #' df_pat_pool
 #' @rdname pat_pool
 #' @export
@@ -381,8 +387,8 @@ prob_lower_site_ae_vs_study_ae <- function(site_ae, study_ae, r = 1000, parallel
 #' @description collects the number of AEs of all eligible patients that
 #'   meet visit_med75 criteria of site. Then  calculates poisson.test pvalue and
 #'   bootstrapped probability of having a lower mean value.
-#' @param df_visit dataframe, created by [sim_sites()][sim_sites()]
-#' @param df_site dataframe created by [site_aggr()][site_aggr()]
+#' @param df_visit dataframe, created by \code{\link[simaerep]{sim_sites}}
+#' @param df_site dataframe created by \code{\link[simaerep]{site_aggr}}
 #' @param r integer, denotes number of simulations, default = 1000
 #' @param poisson_test logical, calculates poisson.test pvalue
 #' @param prob_lower logical, calculates probability for getting a lower value
@@ -393,17 +399,31 @@ prob_lower_site_ae_vs_study_ae <- function(site_ae, study_ae, r = 1000, parallel
 #'   \item{**visit_med75**}{median(max(visit)) * 0.75}
 #'   \item{**mean_ae_site_med75**}{mean AE at visit_med75 site level}
 #'   \item{**mean_ae_study_med75**}{mean AE at visit_med75 study level}
-#'   \item{**pval**}{p-value as returned by `poisson.test`}
+#'   \item{**pval**}{p-value as returned by \code{\link[stats]{poisson.test}}}
 #'   \item{**prob_low**}{bootstrapped probability for having mean_ae_site_med75 or lower}
 #'  }
 #' @examples
-#' df_visit <- sim_test_data_study(n_pat = 100, n_sites = 5,
-#'     frac_site_with_ur = 0.4, ur_rate = 0.2)
+#' df_visit <- sim_test_data_study(
+#'    n_pat = 100,
+#'    n_sites = 5,
+#'    frac_site_with_ur = 0.4,
+#'    ur_rate = 0.2
+#')
+#'
 #' df_visit$study_id <- "A"
+#'
 #' df_site <- site_aggr(df_visit)
+#'
 #' df_sim_sites <- sim_sites(df_site, df_visit, r = 100)
-#' df_sim_sites
+#'
+#' df_sim_sites %>%
+#'  knitr::kable(digits = 2)
 #' @rdname sim_sites
+#' @seealso \code{\link[simaerep]{sim_sites}},
+#' \code{\link[simaerep]{site_aggr}},
+#' \code{\link[simaerep]{pat_pool}},
+#' \code{\link[simaerep]{prob_lower_site_ae_vs_study_ae}},
+#' \code{\link[simaerep]{poiss_test_site_ae_vs_study_ae}},
 #' @export
 #' @import dplyr
 #' @import purrr
@@ -696,11 +716,19 @@ sim_studies <- function(df_visit,
 #'   \item{**mean_ae_site_med75**}{mean AE at visit_med75, site level}
 #'}
 #' @examples
-#' df_visit <- sim_test_data_study(n_pat = 100, n_sites = 5,
-#'     frac_site_with_ur = 0.4, ur_rate = 0.6)
+#' df_visit <- sim_test_data_study(
+#'   n_pat = 100,
+#'   n_sites = 5,
+#'   frac_site_with_ur = 0.4,
+#'   ur_rate = 0.6
+#' )
+#'
 #' df_visit$study_id <- "A"
+#'
 #' df_site <- site_aggr(df_visit)
-#' df_site
+#'
+#' df_site %>%
+#'   knitr::kable(digits = 2)
 #' @rdname site_aggr
 #' @export
 site_aggr <- function(df_visit) {

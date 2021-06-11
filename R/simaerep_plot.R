@@ -414,7 +414,7 @@ plot_sim_examples <- function(substract_ae_per_pat = c(0, 1, 3), ...) {
 #'
 #' df_sim_sites <- sim_sites(df_site, df_visit, r = 100)
 #'
-#' df_eval <- eval_sites(df_sim_sites, r_sim_sites = 100)
+#' df_eval <- eval_sites(df_sim_sites)
 #'
 #' plot_study(df_visit, df_site, df_eval, study = "A")
 #' @rdname plot_study

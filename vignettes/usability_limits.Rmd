@@ -138,7 +138,6 @@ We apply [eval_sites()](https://openpharma.github.io/simaerep/reference/eval_sit
 df_grid <- df_grid %>%
   mutate( df_eval = furrr::future_map(df_sim_sites,
                                       eval_sites,
-                                      r_sim_sites = 1000,
                                       .progress = FALSE,
                                       .options = furrr_options(seed = TRUE)
                                       )
@@ -259,7 +258,8 @@ p <- df_plot %>%
     geom_line(aes(linetype = prob_type), size = 0.5, alpha = 0.5) +
     facet_grid( frac_site_with_ur ~ ur_rate) +
     scale_color_manual(values = c("dodgerblue3", "skyblue1", "sienna4", "peru")) +
-    theme(panel.grid = element_blank(), legend.position = "right") + 
+    theme(panel.grid = element_blank(), legend.position = "bottom",
+          axis.text.x = element_text(angle = 90, vjust = 0.5)) + 
     labs(title = "AE Under Reporting Rate ~ Rate of AE Under-Reporting Sites",
          y = "True positive rate - tp/P",
          x = "AEs per Visit")
@@ -285,7 +285,8 @@ p <- df_plot %>%
     geom_line(size = 0.5, alpha = 0.5) +
     facet_grid( frac_site_with_ur ~ ur_rate) +
     scale_color_manual(values = c("dodgerblue3", "skyblue1", "sienna4", "peru")) +
-    theme(panel.grid = element_blank(), legend.position = "right") + 
+    theme(panel.grid = element_blank(), legend.position = "bottom",
+          axis.text.x = element_text(angle = 90, vjust = 0.5)) + 
     labs(title = "AE Under Reporting Rate by Rate of AE Under-Reporting Sites",
          y = "False positive rate - fp/N",
          x = "AEs per Visit")

@@ -7,9 +7,9 @@
 sim_sites(df_site, df_visit, r = 1000, poisson_test = TRUE, prob_lower = TRUE)
 }
 \arguments{
-\item{df_site}{dataframe created by \code{\link[=site_aggr]{site_aggr()}}}
+\item{df_site}{dataframe created by \code{\link[simaerep]{site_aggr}}}
 
-\item{df_visit}{dataframe, created by \code{\link[=sim_sites]{sim_sites()}}}
+\item{df_visit}{dataframe, created by \code{\link[simaerep]{sim_sites}}}
 
 \item{r}{integer, denotes number of simulations, default = 1000}
 
@@ -25,7 +25,7 @@ dataframe with the following columns:
 \item{\strong{visit_med75}}{median(max(visit)) * 0.75}
 \item{\strong{mean_ae_site_med75}}{mean AE at visit_med75 site level}
 \item{\strong{mean_ae_study_med75}}{mean AE at visit_med75 study level}
-\item{\strong{pval}}{p-value as returned by \code{poisson.test}}
+\item{\strong{pval}}{p-value as returned by \code{\link[stats]{poisson.test}}}
 \item{\strong{prob_low}}{bootstrapped probability for having mean_ae_site_med75 or lower}
 }
 }
@@ -35,10 +35,26 @@ meet visit_med75 criteria of site. Then  calculates poisson.test pvalue and
 bootstrapped probability of having a lower mean value.
 }
 \examples{
-df_visit <- sim_test_data_study(n_pat = 100, n_sites = 5,
-    frac_site_with_ur = 0.4, ur_rate = 0.2)
+df_visit <- sim_test_data_study(
+   n_pat = 100,
+   n_sites = 5,
+   frac_site_with_ur = 0.4,
+   ur_rate = 0.2
+)
+
 df_visit$study_id <- "A"
+
 df_site <- site_aggr(df_visit)
+
 df_sim_sites <- sim_sites(df_site, df_visit, r = 100)
-df_sim_sites
+
+df_sim_sites \%>\%
+ knitr::kable(digits = 2)
+}
+\seealso{
+\code{\link[simaerep]{sim_sites}},
+\code{\link[simaerep]{site_aggr}},
+\code{\link[simaerep]{pat_pool}},
+\code{\link[simaerep]{prob_lower_site_ae_vs_study_ae}},
+\code{\link[simaerep]{poiss_test_site_ae_vs_study_ae}},
 }

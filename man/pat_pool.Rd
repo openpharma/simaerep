@@ -2,30 +2,36 @@
 % Please edit documentation in R/simaerep.R
 \name{pat_pool}
 \alias{pat_pool}
-\title{create patient pool for sampling for simulations}
+\title{create a study specific patient pool for sampling}
 \usage{
 pat_pool(df_visit, df_site)
 }
 \arguments{
-\item{df_visit}{dataframe, created by \code{\link[=sim_sites]{sim_sites()}}}
+\item{df_visit}{dataframe, created by \code{\link[simaerep]{sim_sites}}}
 
-\item{df_site}{dataframe created by \code{\link[=site_aggr]{site_aggr()}}}
+\item{df_site}{dataframe created by \code{\link[simaerep]{site_aggr}}}
 }
 \value{
 dataframe with nested pat_pool column
 }
 \description{
-helper function for \code{\link[=sim_sites]{sim_sites()}}, filter all visits greater than max_visit_med75_study
+helper function for \code{\link[simaerep]{sim_sites}}, filter all visits greater than max_visit_med75_study
 returns dataframe with one column for studies and one column with nested
 patient data.
 }
 \examples{
-df_visit <- sim_test_data_study(n_pat = 100, n_sites = 5,
-    frac_site_with_ur = 0.4, ur_rate = 0.6)
+df_visit <- sim_test_data_study(
+  n_pat = 100,
+  n_sites = 5,
+  frac_site_with_ur = 0.4,
+  ur_rate = 0.6
+)
 
 df_visit$study_id <- "A"
+
 df_site <- site_aggr(df_visit)
 
 df_pat_pool <- pat_pool(df_visit, df_site)
+
 df_pat_pool
 }

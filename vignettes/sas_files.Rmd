@@ -157,7 +157,7 @@ df_sim_sites
 ```
 
 ```{r}
-df_eval <- simaerep::eval_sites(df_sim_sites, r_sim_sites = 1000)
+df_eval <- simaerep::eval_sites(df_sim_sites)
 
 df_eval
 ```

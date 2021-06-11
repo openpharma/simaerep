@@ -19,7 +19,7 @@ df_site <- site_aggr(df_visit)
 
 df_sim_sites <- sim_sites(df_site, df_visit, r = 100)
 
-df_eval <- eval_sites(df_sim_sites, r_sim_sites = 100)
+df_eval <- eval_sites(df_sim_sites)
 
 
 # tests -----------------------------------------------------------------------

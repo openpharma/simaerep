@@ -288,7 +288,6 @@
 <code class="sourceCode R"><span class="va">df_grid</span> <span class="op">&lt;-</span> <span class="va">df_grid</span> <span class="op">%&gt;%</span>
   <span class="fu">mutate</span><span class="op">(</span> df_eval <span class="op">=</span> <span class="fu">furrr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/furrr/man/future_map.html">future_map</a></span><span class="op">(</span><span class="va">df_sim_sites</span>,
                                       <span class="va">eval_sites</span>,
-                                      r_sim_sites <span class="op">=</span> <span class="fl">1000</span>,
                                       .progress <span class="op">=</span> <span class="cn">FALSE</span>,
                                       .options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/furrr/man/furrr_options.html">furrr_options</a></span><span class="op">(</span>seed <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
                                       <span class="op">)</span>
@@ -449,7 +448,8 @@
     <span class="fu">geom_line</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>linetype <span class="op">=</span> <span class="va">prob_type</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">0.5</span>, alpha <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span> <span class="op">+</span>
     <span class="fu">facet_grid</span><span class="op">(</span> <span class="va">frac_site_with_ur</span> <span class="op">~</span> <span class="va">ur_rate</span><span class="op">)</span> <span class="op">+</span>
     <span class="fu">scale_color_manual</span><span class="op">(</span>values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"dodgerblue3"</span>, <span class="st">"skyblue1"</span>, <span class="st">"sienna4"</span>, <span class="st">"peru"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-    <span class="fu">theme</span><span class="op">(</span>panel.grid <span class="op">=</span> <span class="fu">element_blank</span><span class="op">(</span><span class="op">)</span>, legend.position <span class="op">=</span> <span class="st">"right"</span><span class="op">)</span> <span class="op">+</span> 
+    <span class="fu">theme</span><span class="op">(</span>panel.grid <span class="op">=</span> <span class="fu">element_blank</span><span class="op">(</span><span class="op">)</span>, legend.position <span class="op">=</span> <span class="st">"bottom"</span>,
+          axis.text.x <span class="op">=</span> <span class="fu">element_text</span><span class="op">(</span>angle <span class="op">=</span> <span class="fl">90</span>, vjust <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> 
     <span class="fu">labs</span><span class="op">(</span>title <span class="op">=</span> <span class="st">"AE Under Reporting Rate ~ Rate of AE Under-Reporting Sites"</span>,
          y <span class="op">=</span> <span class="st">"True positive rate - tp/P"</span>,
          x <span class="op">=</span> <span class="st">"AEs per Visit"</span><span class="op">)</span>
@@ -475,7 +475,8 @@
     <span class="fu">geom_line</span><span class="op">(</span>size <span class="op">=</span> <span class="fl">0.5</span>, alpha <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span> <span class="op">+</span>
     <span class="fu">facet_grid</span><span class="op">(</span> <span class="va">frac_site_with_ur</span> <span class="op">~</span> <span class="va">ur_rate</span><span class="op">)</span> <span class="op">+</span>
     <span class="fu">scale_color_manual</span><span class="op">(</span>values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"dodgerblue3"</span>, <span class="st">"skyblue1"</span>, <span class="st">"sienna4"</span>, <span class="st">"peru"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-    <span class="fu">theme</span><span class="op">(</span>panel.grid <span class="op">=</span> <span class="fu">element_blank</span><span class="op">(</span><span class="op">)</span>, legend.position <span class="op">=</span> <span class="st">"right"</span><span class="op">)</span> <span class="op">+</span> 
+    <span class="fu">theme</span><span class="op">(</span>panel.grid <span class="op">=</span> <span class="fu">element_blank</span><span class="op">(</span><span class="op">)</span>, legend.position <span class="op">=</span> <span class="st">"bottom"</span>,
+          axis.text.x <span class="op">=</span> <span class="fu">element_text</span><span class="op">(</span>angle <span class="op">=</span> <span class="fl">90</span>, vjust <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> 
     <span class="fu">labs</span><span class="op">(</span>title <span class="op">=</span> <span class="st">"AE Under Reporting Rate by Rate of AE Under-Reporting Sites"</span>,
          y <span class="op">=</span> <span class="st">"False positive rate - fp/N"</span>,
          x <span class="op">=</span> <span class="st">"AEs per Visit"</span><span class="op">)</span>
