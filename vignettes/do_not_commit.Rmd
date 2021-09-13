@@ -1,13 +1,10 @@
 ---
-title: "Introduction"
+title: "Supplementary Material to: Cross-Company collaboration to leverage analytics for clinical quality and accelerate drug development - the IMPALA industry group (Ménard et. al.)"
 output:
-  html_document:
+  pdf_document:
     toc: true
     toc_depth: 3
-    toc_float: true
     number_sections: true
-    code_folding: show
-    collapse: false
 editor_options:
   chunk_output_type: console
 ---
@@ -31,6 +28,10 @@ Monitoring of Adverse Event (AE) reporting in clinical trials is important for p
 use bootstrap-based simulation to assign an AE under-reporting probability to each site in a clinical trial.
 The method is inspired by the 'infer' R package and Allen Downey's blog article: ["There is only one test!"](
 http://allendowney.blogspot.com/2011/05/there-is-only-one-test.html).
+
+## Publication
+
+Koneswarakantha, B., Barmaz, Y., Ménard, T. et al. Follow-up on the Use of Advanced Analytics for Clinical Quality Assurance: Bootstrap Resampling to Enhance Detection of Adverse Event Under-Reporting. Drug Saf (2020). [https://doi.org/10.1007/s40264-020-01011-5](https://doi.org/10.1007/s40264-020-01011-5)
 
 ## Adverse Events
 
@@ -101,16 +102,12 @@ In our sample data 2 sites (S0001 and S0002) are under-reporting AEs
 
 ## Specifying the Evaluation Point visit_med75
 
-In an ongoing trial all patients will have a different number of consecutive visits. To find a cut-off visit to normalize the data we specify a single evaluation point for a given site based on the number of visits of the patient population. 
-
-For determining the visit number at which we are going to evaluate AE reporting we take the maximum visit of each patient at a site and take the median. Then we multiply with 0.75 which will give us a cut-off point determining which patient will be evaluated. Of those patients we will evaluate we take the minimum of all maximum visits hence ensuring that we take the highest visit number possible without excluding more patients from the analysis. In order to ensure that the sampling pool for that visit is large enough we limit the visit number by the 80% quantile of maximum visits of all patients in the study.
-
-For this we use `site_aggr` to aggregate the simulated visit level data to site level.
+In an ongoing trial all patients will have a different number of consecutive visits. To find a cut-off visit to normalize the data we specify a single evaluation point for a given site based on the number of visits of the patient population. We take the median of the maximum visit of all the patients and multiply by 0.75 (visit_med75). For this we use `site_aggr` to aggregate the simulated visit level data to site level.
 
 ```{r warning= FALSE}
 
 df_visit$study_id <- "A"
-df_site <- site_aggr(df_visit, method = "med75_adj")
+df_site <- site_aggr(df_visit)
 
 df_site %>%
   kable()
@@ -118,7 +115,7 @@ df_site %>%
 plot_visit_med75(df_visit, df_site, study_id_str = "A", n_site = 6)
 ```
 
-Using the adjusted visit_med75 will drop a few patients (dashed lines) but will by definition at least include 50% of all patients favoring patients that have higher number of visits. By looking at the mean ae development (purple line) we can already easily spot the two under-reporting sites. Same goes for looking at the `mean_ae_site_med75` column in `df_site`. Next we will use bootstrap simulations to determine the probability for obtaining each mean ae value or lower at visit_med75 by chance.
+Using the visit_med75 will drop a few patients (dashed lines) but will by definition at least include 50% of all patients favoring patients that have higher number of visits. By looking at the mean ae development (purple line) we can already easily spot the two under-reporting sites. Same goes for looking at the `mean_ae_site_med75` column in `df_site`. Next we will use bootstrap simulations to determine the probability for obtaining each mean ae value or lower at visit_med75 by chance.
 
 ## Bootstrap Simulations
 
@@ -185,6 +182,7 @@ Our simulated test data set consists of just 6 sites. However, it is not uncommo
 df_eval <- eval_sites(df_sim_sites, method = "BH")
 
 df_eval %>%
+  select(- visit_med75, - mean_ae_site_med75, - mean_ae_study_med75) %>%
   kable()
 ```
 

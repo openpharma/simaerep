@@ -15,7 +15,8 @@ pat_pool(df_visit, df_site)
 dataframe with nested pat_pool column
 }
 \description{
-helper function for \code{\link[simaerep]{sim_sites}}, filter all visits greater than max_visit_med75_study
+helper function for \code{\link[simaerep]{sim_sites}},
+filter all visits greater than max_visit_med75_study
 returns dataframe with one column for studies and one column with nested
 patient data.
 }

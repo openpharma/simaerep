@@ -4,7 +4,7 @@
 \alias{plot_visit_med75}
 \title{plot patient visits against visit_med75}
 \usage{
-plot_visit_med75(df_visit, df_site, study_id_str, n_sites = 6)
+plot_visit_med75(df_visit, df_site = NULL, study_id_str, n_sites = 6)
 }
 \arguments{
 \item{df_visit}{dataframe}

@@ -276,7 +276,7 @@ test_that("site_aggr", {
   expect_true(all(c(
     "study_id",
     "site_number",
-    "n_patients",
+    "n_pat",
     "n_pat_with_med75",
     "visit_med75",
     "mean_ae_site_med75"
@@ -303,4 +303,66 @@ test_that("poiss_test_site_ae_vs_study_ae", {
                                            visit_med75 = 10)
 
   expect_true(pval == 1)
+})
+
+
+test_that("check_visit_med75_qup8_maximum", {
+  set.seed(1)
+
+  # create three small sites with early and late starting patients
+  df_visit1 <- sim_test_data_study(
+    n_pat = 18,
+    n_sites = 3,
+    frac_site_with_ur = 0.4,
+    ur_rate = 0.2,
+    max_visit_sd = 2,
+    max_visit_mean = 20
+  )
+
+  df_visit2 <- sim_test_data_study(
+    n_pat = 9,
+    n_sites = 3,
+    frac_site_with_ur = 0.4,
+    ur_rate = 0.2,
+    max_visit_sd = 2,
+    max_visit_mean = 5
+  )
+
+
+  df_visit1$patnum <- paste0("A", df_visit1$patnum)
+  df_visit2$patnum <- paste0("B", df_visit2$patnum)
+
+  df_visit <- bind_rows(df_visit1, df_visit2)
+
+  # create three larger sites with only late starting patients
+  df_visit3 <- sim_test_data_study(
+    n_pat = 60,
+    n_sites = 3,
+    frac_site_with_ur = 0.4,
+    ur_rate = 0.2,
+    max_visit_sd = 2,
+    max_visit_mean = 10
+  )
+
+  df_visit3$site_number <- paste0("C", df_visit3$site_number)
+
+  df_visit <- bind_rows(df_visit, df_visit3)
+
+  df_visit$study_id <- "A"
+
+  df_site <- site_aggr(df_visit)
+
+  study_qup8_max_visit <- df_visit %>%
+    group_by(patnum) %>%
+    summarise(max_visit = max(visit)) %>%
+    pull(max_visit) %>%
+    quantile(0.8) %>%
+    round()
+
+  testthat::expect_true(max(df_site$visit_med75) <= study_qup8_max_visit)
+
+  # nolint start
+  # plot_visit_med75(df_visit, df_site, study_id_str = "A", n_site = 6)
+  # nolint end
+
 })
