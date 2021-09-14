@@ -32,6 +32,7 @@ articles:
   - usability_limits
   - check_poisson
   - sas_files
+  - visit_med75
 
 reference:
 - title: Main Functions
@@ -58,6 +59,9 @@ reference:
   - poiss_test_site_ae_vs_study_ae
   - prob_lower_site_ae_vs_study_ae
   - sim_test_data_patient
+  - get_visit_med75
+  - pat_aggr
+  - get_site_mean_ae_dev
 - title: Deprecated
   contents:
   - eval_sites_deprecated

@@ -50,7 +50,8 @@ get_site_mean_ae_dev <- function(df_visit, df_pat, df_site) {
 #' @return dataframe
 #' @rdname get_visit_med75
 get_visit_med75 <- function(df_pat,
-                            method = "med75_adj") {
+                            method = "med75_adj",
+                            min_pat_pool = 0.2) {
 
   df_site <- df_pat %>%
     group_by(.data$study_id, .data$site_number) %>%
@@ -75,7 +76,7 @@ get_visit_med75 <- function(df_pat,
       ) %>%
       group_by(.data$study_id) %>%
       mutate(
-        study_qup8_max_visit = quantile(.data$max_visit_per_pat, probs = c(0.8)),
+        study_qup8_max_visit = quantile(.data$max_visit_per_pat, probs = c(1 - min_pat_pool)),
         study_qup8_max_visit = round(.data$study_qup8_max_visit, 0)
       ) %>%
       group_by(
@@ -817,6 +818,8 @@ sim_studies <- function(df_visit,
 #'  n_ae
 #'@param method character, one of c("med75", "med75_adj") defining method for
 #'  defining evaluation point visit_med75 (see details), Default: "med75_adj"
+#'@param min_pat_pool, double, minimum ratio of available patients available for
+#'  sampling. Determines maximum visit_med75 value see Details. Default: 0.2
 #'@details For determining the visit number at which we are going to evaluate AE
 #'  reporting we take the maximum visit of each patient at the site and take the
 #'  median. Then we multiply with 0.75 which will give us a cut-off point
@@ -851,7 +854,8 @@ sim_studies <- function(df_visit,
 #'@export
 #'@importFrom stats quantile
 site_aggr <- function(df_visit,
-                      method = "med75_adj") {
+                      method = "med75_adj",
+                      min_pat_pool = 0.2) {
 
   stopifnot(
     all(c("study_id", "site_number", "patnum", "n_ae", "visit") %in% names(df_visit))
@@ -867,7 +871,7 @@ site_aggr <- function(df_visit,
 
   # Aggregate on site level ------------------------------------------
 
-  df_site <- get_visit_med75(df_pat, method = method)
+  df_site <- get_visit_med75(df_pat, method = method, min_pat_pool = min_pat_pool)
 
   # Calculate mean cumulative AE at med75 per Site ------------------
 
@@ -1001,7 +1005,7 @@ sim_test_data_study <- function(n_pat = 1000,
     mutate(patnum = str_pad(patnum, width = 6, side = "left", pad = "0"),
            patnum = paste0("P", patnum),
            site_number = seq(1, n_pat),
-           site_number = cut(.data$site_number, n_sites, labels = FALSE),
+           site_number = if (n_sites > 1) cut(.data$site_number, n_sites, labels = FALSE) else 1,
            is_ur = ifelse(.data$site_number <= (max(.data$site_number) * frac_site_with_ur), TRUE, FALSE),
            site_number = str_pad(.data$site_number, width = 4, side = "left", pad = "0"),
            site_number = paste0("S", .data$site_number),

@@ -783,6 +783,7 @@ plot_study <- function(df_visit,
 #' @param df_site dataframe, as returned by site_aggr()
 #' @param study_id_str character, specify study in study_id column
 #' @param n_sites integer, Default: 6
+#' @inheritParams site_aggr
 #' @return ggplot
 #' @details ""
 #' @examples
@@ -797,7 +798,8 @@ plot_study <- function(df_visit,
 #' @export
 plot_visit_med75 <- function(df_visit, df_site = NULL,
                              study_id_str,
-                             n_sites = 6) {
+                             n_sites = 6,
+                             min_pat_pool = 0.2) {
 
   # to suppress warning about unused argument
   df_site_deprecated <- df_site # nolint
@@ -807,10 +809,10 @@ plot_visit_med75 <- function(df_visit, df_site = NULL,
   df_site_min_med75 <- site_aggr(df_visit, method = "med75")
   df_site_max_med75 <- site_aggr(df_visit, method = "med75_adj")
 
-  study_qup8_max_visit <- df_pat %>%
+  study_possible_max_visit <- df_pat %>%
     filter(.data$study_id == study_id_str) %>%
-    summarize(study_qup8_max_visit = quantile(.data$max_visit_per_pat, 0.8)) %>%
-    pull(.data$study_qup8_max_visit) %>%
+    summarize(study_possible_max_visit = quantile(.data$max_visit_per_pat, 1 - min_pat_pool)) %>%
+    pull(.data$study_possible_max_visit) %>%
     round(0)
 
   df_mean_ae_dev <- get_site_mean_ae_dev(df_visit, df_pat, df_site_max_med75)
@@ -872,7 +874,7 @@ plot_visit_med75 <- function(df_visit, df_site = NULL,
     geom_line(
       aes_string(y = "mean_ae_site", group = "site_number"),
       data = df_mean_ae_dev,
-      color = "purple",
+      color = "slateblue3",
       alpha = 0.5,
       size = 2
     ) +
@@ -882,16 +884,18 @@ plot_visit_med75 <- function(df_visit, df_site = NULL,
       linetype = 2
     ) +
     geom_vline(aes_string(xintercept = "visit_med75_max"),
-               linetype = 2,
-               color = "purple"
+               linetype = 1,
+               color = "slateblue3"
     ) +
     geom_vline(
       aes_string(xintercept = "visit_med75_min"),
-      linetype = 3
+      linetype = 3,
+      color = "slateblue3"
     ) +
     geom_vline(
-      xintercept = study_qup8_max_visit,
-      linetype = 3
+      xintercept = study_possible_max_visit,
+      linetype = 2,
+      color = "slateblue3"
     ) +
     geom_text(aes_string(label = "label"),
       df_label,
@@ -908,12 +912,12 @@ plot_visit_med75 <- function(df_visit, df_site = NULL,
     theme(plot.caption.position = "panel")
   # nolint start
   cap <- paste(c(
-    "purple line:                mean site ae of patients with visit_med75",
-    "grey line:                  patient included",
-    "black dashed line:          patient excluded",
-    "left dotted vertical line:  visit_med75, 0.75 x median of maximum patient visits of site ",
-    "purple vertical line:       visit_med75 adjusted, increased to minimum maximum patient visit of included patients",
-    "right dotted vertical line: maximum value for visit_med75 adjusted, 80% quantile of maximum patient visits of study",
+    "purple line:          mean site ae of patients with visit_med75",
+    "grey line:            patient included",
+    "black dashed line:    patient excluded",
+    "dotted vertical line: visit_med75, 0.75 x median of maximum patient visits of site ",
+    "solid vertical line:  visit_med75 adjusted, increased to minimum maximum patient visit of included patients",
+    "dashed vertical line: maximum value for visit_med75 adjusted, 80% quantile of maximum patient visits of study",
     "\n"
 
   ), collapse = "\n")

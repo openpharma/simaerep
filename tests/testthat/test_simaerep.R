@@ -56,6 +56,29 @@ test_that("eval_sites_with_all_NA", {
 
 })
 
+
+test_that("sim_test_data_study", {
+
+  df_visit <- sim_test_data_study(
+    n_pat = 3,
+    n_sites = 1,
+    max_visit_sd = 2,
+    max_visit_mean = 40
+  )
+
+  expect_true(n_distinct(df_visit$site_number) == 1)
+
+  df_visit <- sim_test_data_study(
+    n_pat = 6,
+    n_sites = 2,
+    max_visit_sd = 2,
+    max_visit_mean = 40
+  )
+
+  expect_true(n_distinct(df_visit$site_number) == 2)
+
+})
+
 test_that("eval_sites", {
 
   df_eval <- eval_sites(df_sim_sites)

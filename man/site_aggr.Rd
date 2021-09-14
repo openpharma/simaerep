@@ -4,7 +4,7 @@
 \alias{site_aggr}
 \title{aggregate from visit to site level}
 \usage{
-site_aggr(df_visit, method = "med75_adj")
+site_aggr(df_visit, method = "med75_adj", min_pat_pool = 0.2)
 }
 \arguments{
 \item{df_visit}{dataframe with columns: study_id, site_number, patnum, visit,
@@ -12,12 +12,15 @@ n_ae}
 
 \item{method}{character, one of c("med75", "med75_adj") defining method for
 defining evaluation point visit_med75 (see details), Default: "med75_adj"}
+
+\item{min_pat_pool, }{double, minimum ratio of available patients available for
+sampling. Determines maximum visit_med75 value see Details. Default: 0.2}
 }
 \value{
 dataframe with the following columns: \describe{
 \item{\strong{study_id}}{study identification} \item{\strong{site_number}}{site
 identification} \item{\strong{n_pat}}{number of patients, site level}
-\item{\strong{visit_med75}}{median(max(visit)) * 0.75}
+\item{\strong{visit_med75}}{adjusted median(max(visit)) * 0.75 see Details}
 \item{\strong{n_pat_with_med75}}{number of patients that meet visit_med75
 criterion, site level} \item{\strong{mean_ae_site_med75}}{mean AE at visit_med75,
 site level} }
