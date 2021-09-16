@@ -24,6 +24,38 @@ df_eval <- eval_sites(df_sim_sites)
 
 # tests -----------------------------------------------------------------------
 
+test_that("check_df_visit", {
+  df_visit_filt <- df_visit %>%
+    filter(visit != 3)
+
+  # nolint start
+  expect_warning({df_visit_corr <- check_df_visit(df_visit_filt)})
+  expect_true(3 %in% df_visit_corr$visit)
+  expect_true(nrow(df_visit_corr) == nrow(df_visit))
+
+  expect_warning({df_visit_corr <- check_df_visit(bind_rows(df_visit, df_visit))})
+  expect_true(nrow(df_visit_corr) == nrow(df_visit))
+  # nolint end
+
+  expect_error({
+    df_visit %>%
+      mutate_at(vars(n_ae, visit), as.character) %>%
+      check_df_visit()
+    },
+    regexp = "n_ae and vist columns must be numeric"
+  )
+
+  expect_error({
+    df_visit %>%
+      summarise_all(~ NA) %>%
+      bind_rows(df_visit) %>%
+      check_df_visit()
+    },
+    regexp = "NA detected in columns: study_id,site_number,patnum,n_ae,visit"
+  )
+
+})
+
 test_that("test if returned dfs are grouped", {
   expect_false(is_grouped_df(df_site))
   expect_false(is_grouped_df(df_sim_sites))

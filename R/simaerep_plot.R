@@ -438,6 +438,8 @@ plot_study <- function(df_visit,
                        pval = FALSE) {
   # TODO: parametrize scores, fix legend
 
+  df_visit <- check_df_visit(df_visit)
+
   # alert level -------------------------------------------------------------
 
   if (is_null(df_al)) {
@@ -599,7 +601,12 @@ plot_study <- function(df_visit,
            .data$mean_ae,
            .data$n_pat,
            .data$n_pat_with_med75) %>%
-    left_join(df_eval, by = c("study_id", "site_number")) %>%
+    left_join(
+      select(df_eval,
+              - .data$n_pat,
+              - .data$n_pat_with_med75)
+      , by = c("study_id", "site_number")
+    ) %>%
     left_join(df_alert, by = c("study_id", "site_number")) %>%
     select(
       .data$study_id,
@@ -796,10 +803,13 @@ plot_study <- function(df_visit,
 #' plot_visit_med75(df_visit, df_site, study_id_str = "A", n_site = 6)
 #' @rdname plot_visit_med75
 #' @export
-plot_visit_med75 <- function(df_visit, df_site = NULL,
+plot_visit_med75 <- function(df_visit,
+                             df_site = NULL,
                              study_id_str,
                              n_sites = 6,
                              min_pat_pool = 0.2) {
+
+  df_visit <- check_df_visit(df_visit)
 
   # to suppress warning about unused argument
   df_site_deprecated <- df_site # nolint
@@ -816,7 +826,6 @@ plot_visit_med75 <- function(df_visit, df_site = NULL,
     round(0)
 
   df_mean_ae_dev <- get_site_mean_ae_dev(df_visit, df_pat, df_site_max_med75)
-
 
   df_plot <- df_site_min_med75 %>%
     rename(visit_med75_min = .data$visit_med75) %>%
@@ -863,6 +872,9 @@ plot_visit_med75 <- function(df_visit, df_site = NULL,
   ae_max <- df_plot %>%
     .$n_ae %>%
     max()
+
+  df_mean_ae_dev <- df_mean_ae_dev %>%
+    filter(.data$site_number %in% unique(df_plot$site_number))
 
   p <- df_plot %>%
     ggplot(aes_string("visit", "n_ae")) +

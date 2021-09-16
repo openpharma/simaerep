@@ -33,6 +33,7 @@ articles:
   - check_poisson
   - sas_files
   - visit_med75
+  - visits_or_days
 
 reference:
 - title: Main Functions
@@ -42,6 +43,7 @@ reference:
   - sim_sites
   - eval_sites
   - plot_study
+  - check_df_visit
 - title: Simulate Data
   desc: ~
   contents:
@@ -62,6 +64,8 @@ reference:
   - get_visit_med75
   - pat_aggr
   - get_site_mean_ae_dev
+  - aggr_duplicated_visits
+  - exp_implicit_missing_visits
 - title: Deprecated
   contents:
   - eval_sites_deprecated

@@ -4,6 +4,168 @@ if (getRversion() >= "2.15.1") {
   utils::globalVariables(c("possibly_ecdf"))
 }
 
+#' @title integrity check for df_visit
+#' @description Used by all functions that accept df_visit as a parameter.
+#'   Checks for NA columns, numeric visits and aes, implicitly missing and
+#'   duplicated visits.
+#' @inheritParams site_aggr
+#' @return corrected df_visit
+#' @examples
+#' df_visit_filt <- df_visit %>%
+#'   filter(visit != 3)
+#'
+#' df_visit_corr <- check_df_visit(df_visit_filt)
+#' 3 %in% df_visit_corr$visit
+#' nrow(df_visit_corr) == nrow(df_visit)
+#'
+#' df_visit_corr <- check_df_visit(bind_rows(df_visit, df_visit))
+#' nrow(df_visit_corr) == nrow(df_visit)
+#'
+#' @rdname check_df_visit
+#' @export
+check_df_visit <- function(df_visit) {
+  stopifnot(
+    all(c("study_id", "site_number", "patnum", "n_ae", "visit") %in% names(df_visit))
+  )
+
+  cols_na <- df_visit %>%
+    summarise_at(
+      vars(
+        .data$study_id,
+        .data$site_number,
+        .data$patnum,
+        .data$n_ae,
+        .data$visit),
+      ~ any(is.na(.))
+    ) %>%
+    unlist()
+
+  if (any(cols_na)) {
+    stop(paste("NA detected in columns:", paste(names(cols_na)[cols_na], collapse = ",")))
+  }
+
+  stopifnot("n_ae and vist columns must be numeric" =
+      df_visit %>%
+        summarise_at(
+          vars(
+            .data$n_ae,
+            .data$visit
+          ),
+          ~ is.numeric(.)
+        ) %>%
+        unlist() %>%
+        all()
+  )
+
+  df_visit <- exp_implicit_missing_visits(df_visit)
+
+  df_visit <- aggr_duplicated_visits(df_visit)
+
+  return(df_visit)
+}
+
+#' @title aggregate duplicated visits
+#' @description called by check_df_visit()
+#' @inheritParams site_aggr
+#' @return df_visit corrected
+#' @rdname aggr_duplicated_visits
+#' @export
+aggr_duplicated_visits <- function(df_visit) {
+  df_visit_out <- df_visit %>%
+    group_by(
+      .data$study_id,
+      .data$site_number,
+      .data$patnum,
+      .data$visit
+    ) %>%
+    summarise(n_ae = max(.data$n_ae), .groups = "drop")
+
+  if (nrow(df_visit_out) < nrow(df_visit)) {
+    warning("Duplicated visit entries for some patients detected and corrected.")
+  }
+
+  return(df_visit_out)
+}
+
+#' @title expose implicitly missing visits
+#' @description called by check_df_visit()
+#' @param df_visit PARAM_DESCRIPTION
+#' @return df_visit corrected
+#' @rdname exp_implicit_missing_visits
+#' @export
+exp_implicit_missing_visits <- function(df_visit) {
+
+
+  df_complete <- df_visit %>%
+    group_by(.data$study_id) %>%
+    mutate(min_study_visit = min(.data$visit),
+              max_study_visit = max(.data$visit)) %>%
+    select(
+      .data$study_id,
+      .data$site_number,
+      .data$patnum,
+      .data$min_study_visit,
+      .data$max_study_visit
+    ) %>%
+    distinct() %>%
+    mutate(
+      visit = map2(
+        .data$min_study_visit,
+        .data$max_study_visit,
+        function(x, y) seq(x, y, 1)
+      )
+    ) %>%
+    unnest(.data$visit) %>%
+    select(
+      .data$study_id,
+      .data$site_number,
+      .data$patnum,
+      .data$min_study_visit,
+      .data$visit
+    )
+
+  df_visit_out <- df_visit %>%
+    group_by(.data$study_id, .data$site_number, .data$patnum) %>%
+    mutate(min_visit_pat = min(.data$visit),
+           max_visit_pat = max(.data$visit)) %>%
+    ungroup() %>%
+    right_join(
+      df_complete,
+      by = c("study_id", "site_number", "patnum", "visit")
+    ) %>%
+    group_by(.data$study_id, .data$site_number, .data$patnum) %>%
+    arrange(.data$visit) %>%
+    fill(.data$n_ae, .direction = "down") %>%
+    mutate(
+      min_visit_pat = min(.data$min_visit_pat, na.rm = TRUE),
+      max_visit_pat = max(.data$max_visit_pat, na.rm = TRUE)
+    ) %>%
+    group_by(.data$study_id) %>%
+    mutate(min_study_visit = min(.data$min_study_visit, na.rm = TRUE)) %>%
+    ungroup() %>%
+    filter(
+      .data$visit >= .data$min_study_visit &
+      .data$visit <= .data$max_visit_pat
+    ) %>%
+    mutate(n_ae = ifelse(is.na(.data$n_ae), 0, .data$n_ae)) %>%
+    select(
+      .data$study_id,
+      .data$site_number,
+      .data$patnum,
+      .data$n_ae,
+      .data$visit
+    ) %>%
+    arrange(.data$study_id, .data$site_number, .data$patnum, .data$visit)
+
+  if (nrow(df_visit_out) > nrow(df_visit)) {
+    warning("implicitly missing visit numbers detected and corrected")
+  }
+
+  stopifnot(nrow(df_visit_out) >= nrow(df_visit))
+
+  return(df_visit_out)
+}
+
 #' @title aggregate visit to patient level
 #' @description used by site_aggr(), max_visit_per_pat
 #' @param df_visit dataframe
@@ -160,7 +322,7 @@ eval_sites <- function(df_sim_sites,
 
 
   if (is.null(method)) {
-    warning("using deprecated method for probability adjustment to expected false discovery rate")
+    warning("using deprecated method for probability adjustment")
     df_out <- eval_sites_deprecated(df_sim_sites, ...)
     return(df_out)
   }
@@ -543,18 +705,17 @@ sim_sites <- function(df_site,
                       poisson_test = TRUE,
                       prob_lower = TRUE) {
 
+  df_visit <- check_df_visit(df_visit)
+
   df_pat_pool <- pat_pool(df_visit, df_site)
 
   df_sim_prep <- df_visit %>%
-    left_join(select(df_site,
-                     .data$study_id,
-                     .data$site_number,
-                     .data$visit_med75),
-      by = c("study_id", "site_number")
-    ) %>%
+    left_join(df_site, by = c("study_id", "site_number")) %>%
     filter(.data$visit == .data$visit_med75) %>%
     group_by(.data$study_id,
              .data$site_number,
+             .data$n_pat,
+             .data$n_pat_with_med75,
              .data$visit_med75) %>%
     summarise(patients = list(unique(.data$patnum)))
 
@@ -592,6 +753,8 @@ sim_sites <- function(df_site,
     select(- n_ae_site, - n_ae_study) %>%
     select(.data$study_id,
            .data$site_number,
+           .data$n_pat,
+           .data$n_pat_with_med75,
            .data$visit_med75,
            .data$mean_ae_site_med75,
            .data$mean_ae_study_med75,
@@ -733,6 +896,8 @@ sim_studies <- function(df_visit,
                         .progress = TRUE
                         ) {
 
+  df_visit <- check_df_visit(df_visit)
+
   df_config <- get_pat_pool_config(df_visit = df_visit,
                                    df_site = df_site,
                                    min_n_pat_with_med75 = min_n_pat_with_med75)
@@ -857,15 +1022,14 @@ site_aggr <- function(df_visit,
                       method = "med75_adj",
                       min_pat_pool = 0.2) {
 
-  stopifnot(
-    all(c("study_id", "site_number", "patnum", "n_ae", "visit") %in% names(df_visit))
-  )
-
+  # Checks ----------------------------------------------------------
   stopifnot(
     method %in% c("med75", "med75_adj")
   )
 
-  # Aggregate on patient level
+  df_visit <- check_df_visit(df_visit)
+
+  # Aggregate on patient level---------------------------------------
 
   df_pat <- pat_aggr(df_visit)
 

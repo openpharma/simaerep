@@ -8,8 +8,6 @@
 /cache/
 */*_cache/
 
-<<<<<<< HEAD
 *.sas7bdat
-=======
-*.sas7bdat
->>>>>>> master
+
+vignettes/do_not_commit.Rmd

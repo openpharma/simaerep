@@ -45,7 +45,7 @@ plot_visit_med75(df_visit, df_site, study_id_str = "A", n_site = 6)
 
 # Only few Patients per Site
 
-If we only have a few patients per site chances will be greater that the smallest maximum visit of those patients that make the cut-off is much greater than the cut-off point and we could thus inlclude more visits into our analysis. For those cases we adjust the evaluation point to the smallest maximum visit of all patients that make the initial cut.
+If we only have a few patients per site chances will be greater that the smallest maximum visit of those patients that make the cut-off is much greater than the cut-off point and we could thus include more visits into our analysis. For those cases we adjust the evaluation point to the smallest maximum visit of all patients that make the initial cut.
 
 ```{r}
 set.seed(1)
