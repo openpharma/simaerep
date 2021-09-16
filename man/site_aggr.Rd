@@ -4,24 +4,40 @@
 \alias{site_aggr}
 \title{aggregate from visit to site level}
 \usage{
-site_aggr(df_visit)
+site_aggr(df_visit, method = "med75_adj", min_pat_pool = 0.2)
 }
 \arguments{
-\item{df_visit}{dataframe with columns: study_id, site_number, patnum, visit, n_ae}
+\item{df_visit}{dataframe with columns: study_id, site_number, patnum, visit,
+n_ae}
+
+\item{method}{character, one of c("med75", "med75_adj") defining method for
+defining evaluation point visit_med75 (see details), Default: "med75_adj"}
+
+\item{min_pat_pool, }{double, minimum ratio of available patients available for
+sampling. Determines maximum visit_med75 value see Details. Default: 0.2}
 }
 \value{
-dataframe with the following columns:
-\describe{
-\item{\strong{study_id}}{study identification}
-\item{\strong{site_number}}{site identification}
-\item{\strong{n_patients}}{number of patients, site level}
-\item{\strong{visit_med75}}{median(max(visit)) * 0.75}
-\item{\strong{n_pat_with_med75}}{number of patients that meet visit_med75 criterion, site level}
-\item{\strong{mean_ae_site_med75}}{mean AE at visit_med75, site level}
-}
+dataframe with the following columns: \describe{
+\item{\strong{study_id}}{study identification} \item{\strong{site_number}}{site
+identification} \item{\strong{n_pat}}{number of patients, site level}
+\item{\strong{visit_med75}}{adjusted median(max(visit)) * 0.75 see Details}
+\item{\strong{n_pat_with_med75}}{number of patients that meet visit_med75
+criterion, site level} \item{\strong{mean_ae_site_med75}}{mean AE at visit_med75,
+site level} }
 }
 \description{
 calculates visit_med75, n_pat_with_med75 and mean_ae_site_med75
+}
+\details{
+For determining the visit number at which we are going to evaluate AE
+reporting we take the maximum visit of each patient at the site and take the
+median. Then we multiply with 0.75 which will give us a cut-off point
+determining which patient will be evaluated. Of those patients we will
+evaluate we take the minimum of all maximum visits hence ensuring that we
+take the highest visit number possible without excluding more patients from
+the analysis. In order to ensure that the sampling pool for that visit is
+large enough we limit the visit number by the 80\% quantile of maximum visits
+of all patients in the study.
 }
 \examples{
 df_visit <- sim_test_data_study(

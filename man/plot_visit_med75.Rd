@@ -4,7 +4,13 @@
 \alias{plot_visit_med75}
 \title{plot patient visits against visit_med75}
 \usage{
-plot_visit_med75(df_visit, df_site, study_id_str, n_sites = 6)
+plot_visit_med75(
+  df_visit,
+  df_site = NULL,
+  study_id_str,
+  n_sites = 6,
+  min_pat_pool = 0.2
+)
 }
 \arguments{
 \item{df_visit}{dataframe}
@@ -14,6 +20,9 @@ plot_visit_med75(df_visit, df_site, study_id_str, n_sites = 6)
 \item{study_id_str}{character, specify study in study_id column}
 
 \item{n_sites}{integer, Default: 6}
+
+\item{min_pat_pool}{double, minimum ratio of available patients available for
+sampling. Determines maximum visit_med75 value see Details. Default: 0.2}
 }
 \value{
 ggplot

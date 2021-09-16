@@ -4,6 +4,286 @@ if (getRversion() >= "2.15.1") {
   utils::globalVariables(c("possibly_ecdf"))
 }
 
+#' @title integrity check for df_visit
+#' @description Used by all functions that accept df_visit as a parameter.
+#'   Checks for NA columns, numeric visits and aes, implicitly missing and
+#'   duplicated visits.
+#' @inheritParams site_aggr
+#' @return corrected df_visit
+#' @examples
+#'
+#' df_visit <- sim_test_data_study(
+#'   n_pat = 100,
+#'   n_sites = 5,
+#'   frac_site_with_ur = 0.4,
+#'   ur_rate = 0.6
+#' )
+#'
+#' df_visit$study_id <- "A"
+#'
+#' df_visit_filt <- df_visit %>%
+#'   filter(visit != 3)
+#'
+#' df_visit_corr <- check_df_visit(df_visit_filt)
+#' 3 %in% df_visit_corr$visit
+#' nrow(df_visit_corr) == nrow(df_visit)
+#'
+#' df_visit_corr <- check_df_visit(bind_rows(df_visit, df_visit))
+#' nrow(df_visit_corr) == nrow(df_visit)
+#'
+#' @rdname check_df_visit
+#' @export
+check_df_visit <- function(df_visit) {
+  stopifnot(
+    all(c("study_id", "site_number", "patnum", "n_ae", "visit") %in% names(df_visit))
+  )
+
+  cols_na <- df_visit %>%
+    summarise_at(
+      vars(
+        .data$study_id,
+        .data$site_number,
+        .data$patnum,
+        .data$n_ae,
+        .data$visit),
+      ~ any(is.na(.))
+    ) %>%
+    unlist()
+
+  if (any(cols_na)) {
+    stop(paste("NA detected in columns:", paste(names(cols_na)[cols_na], collapse = ",")))
+  }
+
+  stopifnot("n_ae and vist columns must be numeric" =
+      df_visit %>%
+        summarise_at(
+          vars(
+            .data$n_ae,
+            .data$visit
+          ),
+          ~ is.numeric(.)
+        ) %>%
+        unlist() %>%
+        all()
+  )
+
+  df_visit <- exp_implicit_missing_visits(df_visit)
+
+  df_visit <- aggr_duplicated_visits(df_visit)
+
+  return(df_visit)
+}
+
+#' @title aggregate duplicated visits
+#' @description called by check_df_visit()
+#' @inheritParams site_aggr
+#' @return df_visit corrected
+#' @rdname aggr_duplicated_visits
+#' @export
+aggr_duplicated_visits <- function(df_visit) {
+  df_visit_out <- df_visit %>%
+    group_by(
+      .data$study_id,
+      .data$site_number,
+      .data$patnum,
+      .data$visit
+    ) %>%
+    summarise(n_ae = max(.data$n_ae), .groups = "drop")
+
+  if (nrow(df_visit_out) < nrow(df_visit)) {
+    warning("Duplicated visit entries for some patients detected and corrected.")
+  }
+
+  return(df_visit_out)
+}
+
+#' @title expose implicitly missing visits
+#' @description called by check_df_visit()
+#' @param df_visit PARAM_DESCRIPTION
+#' @return df_visit corrected
+#' @rdname exp_implicit_missing_visits
+#' @export
+exp_implicit_missing_visits <- function(df_visit) {
+
+
+  df_complete <- df_visit %>%
+    group_by(.data$study_id) %>%
+    mutate(min_study_visit = min(.data$visit),
+              max_study_visit = max(.data$visit)) %>%
+    select(
+      .data$study_id,
+      .data$site_number,
+      .data$patnum,
+      .data$min_study_visit,
+      .data$max_study_visit
+    ) %>%
+    distinct() %>%
+    mutate(
+      visit = map2(
+        .data$min_study_visit,
+        .data$max_study_visit,
+        function(x, y) seq(x, y, 1)
+      )
+    ) %>%
+    unnest(.data$visit) %>%
+    select(
+      .data$study_id,
+      .data$site_number,
+      .data$patnum,
+      .data$min_study_visit,
+      .data$visit
+    )
+
+  df_visit_out <- df_visit %>%
+    group_by(.data$study_id, .data$site_number, .data$patnum) %>%
+    mutate(min_visit_pat = min(.data$visit),
+           max_visit_pat = max(.data$visit)) %>%
+    ungroup() %>%
+    right_join(
+      df_complete,
+      by = c("study_id", "site_number", "patnum", "visit")
+    ) %>%
+    group_by(.data$study_id, .data$site_number, .data$patnum) %>%
+    arrange(.data$visit) %>%
+    fill(.data$n_ae, .direction = "down") %>%
+    mutate(
+      min_visit_pat = min(.data$min_visit_pat, na.rm = TRUE),
+      max_visit_pat = max(.data$max_visit_pat, na.rm = TRUE)
+    ) %>%
+    group_by(.data$study_id) %>%
+    mutate(min_study_visit = min(.data$min_study_visit, na.rm = TRUE)) %>%
+    ungroup() %>%
+    filter(
+      .data$visit >= .data$min_study_visit &
+      .data$visit <= .data$max_visit_pat
+    ) %>%
+    mutate(n_ae = ifelse(is.na(.data$n_ae), 0, .data$n_ae)) %>%
+    select(
+      .data$study_id,
+      .data$site_number,
+      .data$patnum,
+      .data$n_ae,
+      .data$visit
+    ) %>%
+    arrange(.data$study_id, .data$site_number, .data$patnum, .data$visit)
+
+  if (nrow(df_visit_out) > nrow(df_visit)) {
+    warning("implicitly missing visit numbers detected and corrected")
+  }
+
+  stopifnot(nrow(df_visit_out) >= nrow(df_visit))
+
+  return(df_visit_out)
+}
+
+#' @title aggregate visit to patient level
+#' @description used by site_aggr(), max_visit_per_pat
+#' @param df_visit dataframe
+#' @return dataframe
+#' @rdname pat_aggr
+#' @export
+pat_aggr <- function(df_visit) {
+
+  df_pat <- df_visit %>%
+    group_by(.data$study_id, .data$site_number, .data$patnum) %>%
+    summarise(max_visit_per_pat = max(.data$visit),
+              .groups = "drop")
+
+  return(df_pat)
+
+}
+
+#' @title get site mean ae development
+#' @description used by site_aggr(), plot_visit_med75, returns mean ae
+#'   development from visit 0 to visit_med75
+#' @param df_visit dataframe
+#' @param df_pat dataframe as returned by pat_aggr()
+#' @param df_site dataframe as returned by site_aggr()
+#' @return dataframe
+#' @rdname get_site_mean_ae_dev
+get_site_mean_ae_dev <- function(df_visit, df_pat, df_site) {
+
+  df_visit %>%
+    left_join(df_pat, by = c("study_id", "site_number", "patnum")) %>%
+    left_join(df_site, by = c("study_id", "site_number")) %>%
+    filter(
+      .data$visit <= .data$visit_med75,
+      .data$max_visit_per_pat >= .data$visit_med75
+    ) %>%
+    group_by(.data$study_id, .data$site_number, .data$visit_med75, .data$visit) %>%
+    summarise(mean_ae_site = mean(.data$n_ae),
+              .groups = "drop")
+}
+
+#' @title get visit_med75
+#' @description used by site_aggr()
+#' @param df_pat dataframe as returned by pat_aggr()
+#' @inheritParams site_aggr
+#' @return dataframe
+#' @rdname get_visit_med75
+get_visit_med75 <- function(df_pat,
+                            method = "med75_adj",
+                            min_pat_pool = 0.2) {
+
+  df_site <- df_pat %>%
+    group_by(.data$study_id, .data$site_number) %>%
+    summarise(
+      n_pat = n_distinct(.data$patnum),
+      visit_med75 = ceiling(median(.data$max_visit_per_pat) * 0.75),
+      n_pat_with_med75 = n_distinct(
+        .data$patnum[.data$max_visit_per_pat >= .data$visit_med75]
+      ),
+      .groups = "drop"
+    )
+
+
+  if (method == "med75_adj") {
+    df_site <- df_site %>%
+      right_join(
+        df_pat,
+        by = c("study_id", "site_number")
+      ) %>%
+      mutate(
+        pat_has_visit_med75 = ifelse(.data$max_visit_per_pat >= .data$visit_med75, 1, 0)
+      ) %>%
+      group_by(.data$study_id) %>%
+      mutate(
+        study_qup8_max_visit = quantile(.data$max_visit_per_pat, probs = c(1 - min_pat_pool)),
+        study_qup8_max_visit = round(.data$study_qup8_max_visit, 0)
+      ) %>%
+      group_by(
+        .data$study_id,
+        .data$site_number,
+        .data$n_pat,
+        .data$n_pat_with_med75,
+        .data$study_qup8_max_visit,
+        ) %>%
+      summarise(
+        visit_med75 = min(
+          .data$max_visit_per_pat[.data$pat_has_visit_med75 == 1]
+        ),
+        .groups = "drop"
+      ) %>%
+      mutate(
+        visit_med75 = ifelse(
+          .data$visit_med75 > .data$study_qup8_max_visit,
+          .data$study_qup8_max_visit,
+          .data$visit_med75
+        )
+      ) %>%
+      select(- .data$study_qup8_max_visit)
+  }
+
+  df_site <- df_site %>%
+    select(.data$study_id,
+           .data$site_number,
+           .data$n_pat,
+           .data$n_pat_with_med75,
+           .data$visit_med75)
+
+  return(df_site)
+}
+
 #' @title evaluate sites
 #' @description correct under-reporting probabilities using  \code{\link[stats]{p.adjust}}.
 #' @param df_sim_sites dataframe generated by \code{\link[simaerep]{sim_sites}}
@@ -52,7 +332,7 @@ eval_sites <- function(df_sim_sites,
 
 
   if (is.null(method)) {
-    warning("using deprecated method for probability adjustment to expected false discovery rate")
+    warning("using deprecated method for probability adjustment")
     df_out <- eval_sites_deprecated(df_sim_sites, ...)
     return(df_out)
   }
@@ -435,18 +715,17 @@ sim_sites <- function(df_site,
                       poisson_test = TRUE,
                       prob_lower = TRUE) {
 
+  df_visit <- check_df_visit(df_visit)
+
   df_pat_pool <- pat_pool(df_visit, df_site)
 
   df_sim_prep <- df_visit %>%
-    left_join(select(df_site,
-                     .data$study_id,
-                     .data$site_number,
-                     .data$visit_med75),
-      by = c("study_id", "site_number")
-    ) %>%
+    left_join(df_site, by = c("study_id", "site_number")) %>%
     filter(.data$visit == .data$visit_med75) %>%
     group_by(.data$study_id,
              .data$site_number,
+             .data$n_pat,
+             .data$n_pat_with_med75,
              .data$visit_med75) %>%
     summarise(patients = list(unique(.data$patnum)))
 
@@ -484,6 +763,8 @@ sim_sites <- function(df_site,
     select(- n_ae_site, - n_ae_study) %>%
     select(.data$study_id,
            .data$site_number,
+           .data$n_pat,
+           .data$n_pat_with_med75,
            .data$visit_med75,
            .data$mean_ae_site_med75,
            .data$mean_ae_study_med75,
@@ -625,6 +906,8 @@ sim_studies <- function(df_visit,
                         .progress = TRUE
                         ) {
 
+  df_visit <- check_df_visit(df_visit)
+
   df_config <- get_pat_pool_config(df_visit = df_visit,
                                    df_site = df_site,
                                    min_n_pat_with_med75 = min_n_pat_with_med75)
@@ -704,18 +987,30 @@ sim_studies <- function(df_visit,
 
 
 
-#' @title aggregate from visit to site level
-#' @description calculates visit_med75, n_pat_with_med75 and mean_ae_site_med75
-#' @param df_visit dataframe with columns: study_id, site_number, patnum, visit, n_ae
-#' @return dataframe with the following columns:
-#' \describe{
-#'   \item{**study_id**}{study identification}
-#'   \item{**site_number**}{site identification}
-#'   \item{**n_patients**}{number of patients, site level}
-#'   \item{**visit_med75**}{median(max(visit)) * 0.75}
-#'   \item{**n_pat_with_med75**}{number of patients that meet visit_med75 criterion, site level}
-#'   \item{**mean_ae_site_med75**}{mean AE at visit_med75, site level}
-#'}
+#'@title aggregate from visit to site level
+#'@description calculates visit_med75, n_pat_with_med75 and mean_ae_site_med75
+#'@param df_visit dataframe with columns: study_id, site_number, patnum, visit,
+#'  n_ae
+#'@param method character, one of c("med75", "med75_adj") defining method for
+#'  defining evaluation point visit_med75 (see details), Default: "med75_adj"
+#'@param min_pat_pool, double, minimum ratio of available patients available for
+#'  sampling. Determines maximum visit_med75 value see Details. Default: 0.2
+#'@details For determining the visit number at which we are going to evaluate AE
+#'  reporting we take the maximum visit of each patient at the site and take the
+#'  median. Then we multiply with 0.75 which will give us a cut-off point
+#'  determining which patient will be evaluated. Of those patients we will
+#'  evaluate we take the minimum of all maximum visits hence ensuring that we
+#'  take the highest visit number possible without excluding more patients from
+#'  the analysis. In order to ensure that the sampling pool for that visit is
+#'  large enough we limit the visit number by the 80% quantile of maximum visits
+#'  of all patients in the study.
+#'@return dataframe with the following columns: \describe{
+#'  \item{**study_id**}{study identification} \item{**site_number**}{site
+#'  identification} \item{**n_pat**}{number of patients, site level}
+#'  \item{**visit_med75**}{adjusted median(max(visit)) * 0.75 see Details}
+#'  \item{**n_pat_with_med75**}{number of patients that meet visit_med75
+#'  criterion, site level} \item{**mean_ae_site_med75**}{mean AE at visit_med75,
+#'  site level} }
 #' @examples
 #' df_visit <- sim_test_data_study(
 #'   n_pat = 100,
@@ -730,52 +1025,31 @@ sim_studies <- function(df_visit,
 #'
 #' df_site %>%
 #'   knitr::kable(digits = 2)
-#' @rdname site_aggr
-#' @export
-site_aggr <- function(df_visit) {
+#'@rdname site_aggr
+#'@export
+#'@importFrom stats quantile
+site_aggr <- function(df_visit,
+                      method = "med75_adj",
+                      min_pat_pool = 0.2) {
 
+  # Checks ----------------------------------------------------------
   stopifnot(
-    all(c("study_id", "site_number", "patnum", "n_ae", "visit") %in% names(df_visit))
+    method %in% c("med75", "med75_adj")
   )
+
+  df_visit <- check_df_visit(df_visit)
+
+  # Aggregate on patient level---------------------------------------
+
+  df_pat <- pat_aggr(df_visit)
 
   # Aggregate on site level ------------------------------------------
 
-  df_visit <- df_visit %>%
-    group_by(.data$study_id, .data$site_number, .data$patnum) %>%
-    mutate(max_visit_per_pat = max(.data$visit))
-
-  df_pat <- df_visit %>%
-    select(.data$study_id,
-           .data$site_number,
-           .data$patnum,
-           .data$max_visit_per_pat) %>%
-    distinct()
-
-  df_site <- df_pat %>%
-    group_by(.data$study_id, .data$site_number) %>%
-    mutate(
-      n_patients = n_distinct(.data$patnum)
-      # , visit_min = min(max_visit_per_pat)
-      # , visit_median = median(max_visit_per_pat)
-      # , visit_mean = mean(max_visit_per_pat)
-      # , visit_max = max(max_visit_per_pat)
-      , visit_med75 = ceiling(median(.data$max_visit_per_pat) * 0.75),
-      n_pat_with_med75 = ifelse(.data$max_visit_per_pat >= .data$visit_med75, 1, 0),
-      n_pat_with_med75 = sum(.data$n_pat_with_med75)
-      # , freq_pat_with_med75 = n_pat_with_med75 / n_patients
-    ) %>%
-    select(- .data$patnum,
-           - .data$max_visit_per_pat) %>%
-    distinct()
+  df_site <- get_visit_med75(df_pat, method = method, min_pat_pool = min_pat_pool)
 
   # Calculate mean cumulative AE at med75 per Site ------------------
 
-  df_mean_ae_dev <- df_visit %>%
-    left_join(df_site, by = c("study_id", "site_number")) %>%
-    filter(.data$visit <= .data$visit_med75, .data$max_visit_per_pat >= .data$visit_med75) %>%
-    group_by(.data$study_id, .data$site_number, .data$visit_med75, .data$visit) %>%
-    summarise(mean_ae_site = mean(.data$n_ae)) %>%
-    ungroup()
+  df_mean_ae_dev <- get_site_mean_ae_dev(df_visit, df_pat, df_site)
 
   df_mean_ae_med75 <- df_mean_ae_dev %>%
     filter(.data$visit == .data$visit_med75) %>%
@@ -787,9 +1061,10 @@ site_aggr <- function(df_visit) {
   # Add mean cumulative AE to site aggregate ----------------------
 
   df_site <- df_site %>%
-    left_join(df_mean_ae_med75, by = c("study_id", "site_number"))
+    left_join(df_mean_ae_med75, by = c("study_id", "site_number")) %>%
+    ungroup()
 
-  return(ungroup(df_site))
+  return(df_site)
 }
 
 
@@ -904,7 +1179,7 @@ sim_test_data_study <- function(n_pat = 1000,
     mutate(patnum = str_pad(patnum, width = 6, side = "left", pad = "0"),
            patnum = paste0("P", patnum),
            site_number = seq(1, n_pat),
-           site_number = cut(.data$site_number, n_sites, labels = FALSE),
+           site_number = if (n_sites > 1) cut(.data$site_number, n_sites, labels = FALSE) else 1,
            is_ur = ifelse(.data$site_number <= (max(.data$site_number) * frac_site_with_ur), TRUE, FALSE),
            site_number = str_pad(.data$site_number, width = 4, side = "left", pad = "0"),
            site_number = paste0("S", .data$site_number),

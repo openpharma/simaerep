@@ -91,7 +91,7 @@ given study and compares against visit_med75." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">simaerep</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.0</span>
       </span>
     </div>
 
@@ -127,6 +127,12 @@ given study and compares against visit_med75." />
     </li>
     <li>
       <a href="../articles/sas_files.html">SAS Files as a Data Source</a>
+    </li>
+    <li>
+      <a href="../articles/visit_med75.html">Adjusted Evaluation Point visit_med75</a>
+    </li>
+    <li>
+      <a href="../articles/visits_or_days.html">Aggregate AEs by Days or Visit?</a>
     </li>
   </ul>
 </li>
@@ -164,7 +170,13 @@ given study and compares against visit_med75." />
 given study and compares against visit_med75.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>plot_visit_med75</span><span class='op'>(</span><span class='va'>df_visit</span>, <span class='va'>df_site</span>, <span class='va'>study_id_str</span>, n_sites <span class='op'>=</span> <span class='fl'>6</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>plot_visit_med75</span><span class='op'>(</span>
+  <span class='va'>df_visit</span>,
+  df_site <span class='op'>=</span> <span class='cn'>NULL</span>,
+  <span class='va'>study_id_str</span>,
+  n_sites <span class='op'>=</span> <span class='fl'>6</span>,
+  min_pat_pool <span class='op'>=</span> <span class='fl'>0.2</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -185,6 +197,11 @@ given study and compares against visit_med75.</p>
       <th>n_sites</th>
       <td><p>integer, Default: 6</p></td>
     </tr>
+    <tr>
+      <th>min_pat_pool</th>
+      <td><p>double, minimum ratio of available patients available for
+sampling. Determines maximum visit_med75 value see Details. Default: 0.2</p></td>
+    </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
@@ -202,7 +219,13 @@ given study and compares against visit_med75.</p>
 <span class='va'>df_site</span> <span class='op'>&lt;-</span> <span class='fu'><a href='site_aggr.html'>site_aggr</a></span><span class='op'>(</span><span class='va'>df_visit</span><span class='op'>)</span>
 
 <span class='fu'>plot_visit_med75</span><span class='op'>(</span><span class='va'>df_visit</span>, <span class='va'>df_site</span>, study_id_str <span class='op'>=</span> <span class='st'>"A"</span>, n_site <span class='op'>=</span> <span class='fl'>6</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='warning'>Warning: Removed 585 row(s) containing missing values (geom_path).</span></div><div class='img'><img src='plot_visit_med75-1.png' alt='' width='700' height='433' /></div></pre>
+</div><div class='output co'>#&gt; purple line:          mean site ae of patients with visit_med75
+#&gt; grey line:            patient included
+#&gt; black dashed line:    patient excluded
+#&gt; dotted vertical line: visit_med75, 0.75 x median of maximum patient visits of site 
+#&gt; solid vertical line:  visit_med75 adjusted, increased to minimum maximum patient visit of included patients
+#&gt; dashed vertical line: maximum value for visit_med75 adjusted, 80% quantile of maximum patient visits of study
+#&gt; </div><div class='img'><img src='plot_visit_med75-1.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

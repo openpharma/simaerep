@@ -32,6 +32,8 @@ articles:
   - usability_limits
   - check_poisson
   - sas_files
+  - visit_med75
+  - visits_or_days
 
 reference:
 - title: Main Functions
@@ -41,6 +43,7 @@ reference:
   - sim_sites
   - eval_sites
   - plot_study
+  - check_df_visit
 - title: Simulate Data
   desc: ~
   contents:
@@ -58,6 +61,11 @@ reference:
   - poiss_test_site_ae_vs_study_ae
   - prob_lower_site_ae_vs_study_ae
   - sim_test_data_patient
+  - get_visit_med75
+  - pat_aggr
+  - get_site_mean_ae_dev
+  - aggr_duplicated_visits
+  - exp_implicit_missing_visits
 - title: Deprecated
   contents:
   - eval_sites_deprecated

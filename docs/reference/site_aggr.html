@@ -90,7 +90,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">simaerep</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.0</span>
       </span>
     </div>
 
@@ -127,6 +127,12 @@
     <li>
       <a href="../articles/sas_files.html">SAS Files as a Data Source</a>
     </li>
+    <li>
+      <a href="../articles/visit_med75.html">Adjusted Evaluation Point visit_med75</a>
+    </li>
+    <li>
+      <a href="../articles/visits_or_days.html">Aggregate AEs by Days or Visit?</a>
+    </li>
   </ul>
 </li>
 <li>
@@ -162,29 +168,50 @@
     <p>calculates visit_med75, n_pat_with_med75 and mean_ae_site_med75</p>
     </div>
 
-    <pre class="usage"><span class='fu'>site_aggr</span><span class='op'>(</span><span class='va'>df_visit</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>site_aggr</span><span class='op'>(</span><span class='va'>df_visit</span>, method <span class='op'>=</span> <span class='st'>"med75_adj"</span>, min_pat_pool <span class='op'>=</span> <span class='fl'>0.2</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>df_visit</th>
-      <td><p>dataframe with columns: study_id, site_number, patnum, visit, n_ae</p></td>
+      <td><p>dataframe with columns: study_id, site_number, patnum, visit,
+n_ae</p></td>
+    </tr>
+    <tr>
+      <th>method</th>
+      <td><p>character, one of c("med75", "med75_adj") defining method for
+defining evaluation point visit_med75 (see details), Default: "med75_adj"</p></td>
+    </tr>
+    <tr>
+      <th>min_pat_pool, </th>
+      <td><p>double, minimum ratio of available patients available for
+sampling. Determines maximum visit_med75 value see Details. Default: 0.2</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>dataframe with the following columns:</p><dl>
-<dt><strong>study_id</strong></dt><dd><p>study identification</p></dd>
-<dt><strong>site_number</strong></dt><dd><p>site identification</p></dd>
-<dt><strong>n_patients</strong></dt><dd><p>number of patients, site level</p></dd>
-<dt><strong>visit_med75</strong></dt><dd><p>median(max(visit)) * 0.75</p></dd>
-<dt><strong>n_pat_with_med75</strong></dt><dd><p>number of patients that meet visit_med75 criterion, site level</p></dd>
-<dt><strong>mean_ae_site_med75</strong></dt><dd><p>mean AE at visit_med75, site level</p></dd>
-
+<dt><strong>study_id</strong></dt><dd><p>study identification</p></dd> <dt><strong>site_number</strong></dt><dd><p>site
+identification</p></dd> <dt><strong>n_pat</strong></dt><dd><p>number of patients, site level</p></dd>
+<dt><strong>visit_med75</strong></dt><dd><p>adjusted median(max(visit)) * 0.75 see Details</p></dd>
+<dt><strong>n_pat_with_med75</strong></dt><dd><p>number of patients that meet visit_med75
+criterion, site level</p></dd> <dt><strong>mean_ae_site_med75</strong></dt><dd><p>mean AE at visit_med75,
+site level</p></dd> 
 </dl>
 
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>For determining the visit number at which we are going to evaluate AE
+reporting we take the maximum visit of each patient at the site and take the
+median. Then we multiply with 0.75 which will give us a cut-off point
+determining which patient will be evaluated. Of those patients we will
+evaluate we take the minimum of all maximum visits hence ensuring that we
+take the highest visit number possible without excluding more patients from
+the analysis. In order to ensure that the sampling pool for that visit is
+large enough we limit the visit number by the 80% quantile of maximum visits
+of all patients in the study.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='va'>df_visit</span> <span class='op'>&lt;-</span> <span class='fu'><a href='sim_test_data_study.html'>sim_test_data_study</a></span><span class='op'>(</span>
@@ -202,13 +229,13 @@
   <span class='fu'>knitr</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/knitr/man/kable.html'>kable</a></span><span class='op'>(</span>digits <span class='op'>=</span> <span class='fl'>2</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; 
 #&gt; 
-#&gt; |study_id |site_number | n_patients| visit_med75| n_pat_with_med75| mean_ae_site_med75|
-#&gt; |:--------|:-----------|----------:|-----------:|----------------:|------------------:|
-#&gt; |A        |S0001       |         20|          15|               18|               3.00|
-#&gt; |A        |S0002       |         20|          17|               17|               3.76|
-#&gt; |A        |S0003       |         20|          15|               18|               8.28|
-#&gt; |A        |S0004       |         20|          14|               18|               7.28|
-#&gt; |A        |S0005       |         20|          15|               17|               7.29|</div></pre>
+#&gt; |study_id |site_number | n_pat| n_pat_with_med75| visit_med75| mean_ae_site_med75|
+#&gt; |:--------|:-----------|-----:|----------------:|-----------:|------------------:|
+#&gt; |A        |S0001       |    20|               18|          15|               3.44|
+#&gt; |A        |S0002       |    20|               18|          15|               3.67|
+#&gt; |A        |S0003       |    20|               18|          16|               8.56|
+#&gt; |A        |S0004       |    20|               18|          18|               9.83|
+#&gt; |A        |S0005       |    20|               19|          17|               9.26|</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

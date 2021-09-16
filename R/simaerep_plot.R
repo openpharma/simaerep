@@ -3,7 +3,7 @@
 # TODO: possible to avoid by pre-processing outside ggplot() call and using aes_str() instead of aes()
 if (getRversion() >= "2.15.1") {
   utils::globalVariables(c(".", "color_prob_cut", "label", "max_x", "max_y", "mean_ae", "min_x",
-                            "min_y", "n_ae", "n_ae_site", "n_ae_study", "n_patients", "patnum",
+                            "min_y", "n_ae", "n_ae_site", "n_ae_study", "n_pat", "patnum",
                             "prob_low_prob_ur", "pval_prob_ur", "ratio_cut", "site",
                             "title_add", "visit", "x", "y"))
 }
@@ -363,7 +363,12 @@ plot_sim_examples <- function(substract_ae_per_pat = c(0, 1, 3), ...) {
 
   p_empty <- ggplot() + theme_void()
 
-  legend_pane <- cowplot::plot_grid(p_legend, p_empty, rel_widths = c(2/3, 1/3), nrow = 1) # nolint
+  legend_pane <- cowplot::plot_grid(
+    p_legend,
+    p_empty,
+    rel_widths = c(2 / 3, 1 / 3),
+    nrow = 1
+  )
 
   cowplot::plot_grid(legend_pane)
   # title --------------------------------------------------------------------
@@ -432,6 +437,8 @@ plot_study <- function(df_visit,
                        n_sites = 16,
                        pval = FALSE) {
   # TODO: parametrize scores, fix legend
+
+  df_visit <- check_df_visit(df_visit)
 
   # alert level -------------------------------------------------------------
 
@@ -507,7 +514,7 @@ plot_study <- function(df_visit,
     group_by(.data$study_id,
              .data$site_number,
              .data$visit_med75,
-             .data$n_patients,
+             .data$n_pat,
              .data$visit,
              .data$alert_level_site) %>%
     summarise(mean_ae = mean(.data$n_ae)) %>%
@@ -521,7 +528,7 @@ plot_study <- function(df_visit,
     group_by(.data$study_id) %>%
     mutate(
       visit_med75 = ceiling(median(.data$max_visit_per_pat) * 0.75),
-      n_patients = n_distinct(.data$patnum)
+      n_pat = n_distinct(.data$patnum)
     ) %>%
     ungroup() %>%
     filter(.data$visit <= .data$visit_med75, .data$max_visit_per_pat >= .data$visit_med75) %>%
@@ -529,7 +536,7 @@ plot_study <- function(df_visit,
     mutate(n_pat_with_med75 = n_distinct(.data$patnum)) %>%
     group_by(.data$study_id,
              .data$visit,
-             .data$n_patients,
+             .data$n_pat,
              .data$n_pat_with_med75) %>%
     summarise(mean_ae = mean(.data$n_ae)) %>%
     ungroup()
@@ -592,16 +599,21 @@ plot_study <- function(df_visit,
            .data$site_number,
            .data$visit,
            .data$mean_ae,
-           .data$n_patients,
+           .data$n_pat,
            .data$n_pat_with_med75) %>%
-    left_join(df_eval, by = c("study_id", "site_number")) %>%
+    left_join(
+      select(df_eval,
+              - .data$n_pat,
+              - .data$n_pat_with_med75)
+      , by = c("study_id", "site_number")
+    ) %>%
     left_join(df_alert, by = c("study_id", "site_number")) %>%
     select(
       .data$study_id,
       .data$site_number,
       .data$visit,
       .data$mean_ae,
-      .data$n_patients,
+      .data$n_pat,
       .data$n_pat_with_med75,
       .data$prob_low_prob_ur,
       .data$prob_cut,
@@ -623,7 +635,7 @@ plot_study <- function(df_visit,
 
   max_visit_study <- max(df_mean_ae_dev_site$visit)
   max_ae_study <- max(df_mean_ae_dev_site$mean_ae)
-  n_pat <- unique(df_mean_ae_dev_study$n_patients)
+  n_pat <- unique(df_mean_ae_dev_study$n_pat)
   n_pat_with_med75 <- unique(df_mean_ae_dev_study$n_pat_with_med75)
   alert_level_study <- round(unique(df_visit$alert_level_study), 1)
   color_alert_level_study <- case_when(
@@ -713,7 +725,7 @@ plot_study <- function(df_visit,
               color = "gold3",
               size = 1,
               alpha = 0.5) +
-    geom_text(aes(label = paste0(n_pat_with_med75, "/", n_patients)),
+    geom_text(aes(label = paste0(n_pat_with_med75, "/", n_pat)),
               data = df_label,
               x = 0.2 * max_visit,
               y = 0.9 * max_ae,
@@ -778,6 +790,7 @@ plot_study <- function(df_visit,
 #' @param df_site dataframe, as returned by site_aggr()
 #' @param study_id_str character, specify study in study_id column
 #' @param n_sites integer, Default: 6
+#' @inheritParams site_aggr
 #' @return ggplot
 #' @details ""
 #' @examples
@@ -790,36 +803,46 @@ plot_study <- function(df_visit,
 #' plot_visit_med75(df_visit, df_site, study_id_str = "A", n_site = 6)
 #' @rdname plot_visit_med75
 #' @export
-plot_visit_med75 <- function(df_visit, df_site,
+plot_visit_med75 <- function(df_visit,
+                             df_site = NULL,
                              study_id_str,
-                             n_sites = 6) {
-  df_mean_ae_dev <- df_visit %>%
-    group_by(.data$study_id,
-             .data$site_number,
-             .data$patnum) %>%
-    mutate(max_visit_per_pat = max(.data$visit)) %>%
-    left_join(df_site, by = c("study_id", "site_number")) %>%
-    filter(.data$visit <= .data$visit_med75,
-           .data$max_visit_per_pat >= .data$visit_med75) %>%
-    group_by(.data$study_id,
-             .data$site_number,
-             .data$visit_med75,
-             .data$visit) %>%
-    summarise(mean_ae_site = mean(.data$n_ae)) %>%
-    ungroup()
+                             n_sites = 6,
+                             min_pat_pool = 0.2) {
 
-  df_mean_ae_med75 <- df_mean_ae_dev %>%
-    filter(.data$visit == .data$visit_med75) %>%
-    rename(mean_ae_site_med75 = .data$mean_ae_site) %>%
-    select(.data$study_id,
-           .data$site_number,
-           .data$mean_ae_site_med75)
+  df_visit <- check_df_visit(df_visit)
 
-  df_plot <- df_site %>%
-    ungroup() %>%
-    left_join(df_mean_ae_med75, by = c("study_id", "site_number")) %>%
+  # to suppress warning about unused argument
+  df_site_deprecated <- df_site # nolint
+
+  df_pat <- pat_aggr(df_visit)
+
+  df_site_min_med75 <- site_aggr(df_visit, method = "med75")
+  df_site_max_med75 <- site_aggr(df_visit, method = "med75_adj")
+
+  study_possible_max_visit <- df_pat %>%
     filter(.data$study_id == study_id_str) %>%
-    mutate(rnk_sites = rank(desc(.data$n_patients), ties.method = "first")) %>%
+    summarize(study_possible_max_visit = quantile(.data$max_visit_per_pat, 1 - min_pat_pool)) %>%
+    pull(.data$study_possible_max_visit) %>%
+    round(0)
+
+  df_mean_ae_dev <- get_site_mean_ae_dev(df_visit, df_pat, df_site_max_med75)
+
+  df_plot <- df_site_min_med75 %>%
+    rename(visit_med75_min = .data$visit_med75) %>%
+    left_join(
+      select(
+        df_site_max_med75,
+        .data$study_id,
+        .data$site_number,
+        visit_med75_max = .data$visit_med75
+        ),
+      by = c(
+        "study_id",
+        "site_number"
+      )
+    ) %>%
+    filter(.data$study_id == study_id_str) %>%
+    mutate(rnk_sites = rank(desc(.data$n_pat), ties.method = "first")) %>%
     filter(.data$rnk_sites <= n_sites) %>%
     left_join(df_visit, by = c("study_id", "site_number")) %>%
     left_join(select(df_mean_ae_dev, - .data$visit_med75),
@@ -828,7 +851,7 @@ plot_visit_med75 <- function(df_visit, df_site,
     group_by(.data$study_id, .data$site_number, .data$patnum) %>%
     mutate(
       max_visit_pat = max(.data$visit),
-      has_med75 = ifelse(.data$max_visit_pat >= .data$visit_med75, "yes", "no")
+      has_med75 = ifelse(.data$max_visit_pat >= .data$visit_med75_max, "yes", "no")
     ) %>%
     ungroup()
 
@@ -836,11 +859,11 @@ plot_visit_med75 <- function(df_visit, df_site,
     select(
       .data$study_id,
       .data$site_number,
-      .data$n_patients,
+      .data$n_pat,
       .data$n_pat_with_med75
     ) %>%
     distinct() %>%
-    mutate(label = paste0(.data$n_pat_with_med75, "/", .data$n_patients))
+    mutate(label = paste0(.data$n_pat_with_med75, "/", .data$n_pat))
 
   visit_max <- df_plot %>%
     .$max_visit_pat %>%
@@ -850,14 +873,21 @@ plot_visit_med75 <- function(df_visit, df_site,
     .$n_ae %>%
     max()
 
+  df_mean_ae_dev <- df_mean_ae_dev %>%
+    filter(.data$site_number %in% unique(df_plot$site_number))
+
   p <- df_plot %>%
     ggplot(aes_string("visit", "n_ae")) +
-    geom_line(aes_string(group = "patnum"),
-      filter(df_plot, .data$has_med75 == "yes"),
+    geom_line(
+      aes_string(group = "patnum"),
+      data = filter(df_plot, .data$has_med75 == "yes"),
       color = "grey"
     ) +
-    geom_line(aes_string(y = "mean_ae_site", group = "site_number"),
-      color = "purple",
+    geom_line(
+      aes_string(y = "mean_ae_site", group = "site_number"),
+      data = df_mean_ae_dev,
+      color = "slateblue3",
+      alpha = 0.5,
       size = 2
     ) +
     geom_line(aes_string(group = "patnum"),
@@ -865,8 +895,19 @@ plot_visit_med75 <- function(df_visit, df_site,
       color = "black",
       linetype = 2
     ) +
-    geom_vline(aes_string(xintercept = "visit_med75"),
-      linetype = 3
+    geom_vline(aes_string(xintercept = "visit_med75_max"),
+               linetype = 1,
+               color = "slateblue3"
+    ) +
+    geom_vline(
+      aes_string(xintercept = "visit_med75_min"),
+      linetype = 3,
+      color = "slateblue3"
+    ) +
+    geom_vline(
+      xintercept = study_possible_max_visit,
+      linetype = 2,
+      color = "slateblue3"
     ) +
     geom_text(aes_string(label = "label"),
       df_label,
@@ -877,18 +918,23 @@ plot_visit_med75 <- function(df_visit, df_site,
     facet_wrap(study_id ~ site_number) +
     labs(
       title = "Evaluation Point visit_med75",
-      subtitle = " 0.75 x median( max(visit per patient) ) ",
-      caption = paste(c(
-        "purple line: mean site ae of patients with visit_med75",
-        "grey line: patient included",
-        "black dashed line: patient excluded",
-        "horizontal dotted line marks visit_med75"
-      ),
-      collapse = "\n"
-      ),
       y = "# Cumulated AEs"
     ) +
-    theme_minimal()
+    theme_minimal() +
+    theme(plot.caption.position = "panel")
+  # nolint start
+  cap <- paste(c(
+    "purple line:          mean site ae of patients with visit_med75",
+    "grey line:            patient included",
+    "black dashed line:    patient excluded",
+    "dotted vertical line: visit_med75, 0.75 x median of maximum patient visits of site ",
+    "solid vertical line:  visit_med75 adjusted, increased to minimum maximum patient visit of included patients",
+    "dashed vertical line: maximum value for visit_med75 adjusted, 80% quantile of maximum patient visits of study",
+    "\n"
+
+  ), collapse = "\n")
+  # nolint end
+  cat(cap)
 
   return(p)
 }

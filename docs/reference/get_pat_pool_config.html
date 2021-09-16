@@ -91,7 +91,7 @@ pool to match the configuration of the sites" />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">simaerep</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.0</span>
       </span>
     </div>
 
@@ -127,6 +127,12 @@ pool to match the configuration of the sites" />
     </li>
     <li>
       <a href="../articles/sas_files.html">SAS Files as a Data Source</a>
+    </li>
+    <li>
+      <a href="../articles/visit_med75.html">Adjusted Evaluation Point visit_med75</a>
+    </li>
+    <li>
+      <a href="../articles/visits_or_days.html">Aggregate AEs by Days or Visit?</a>
     </li>
   </ul>
 </li>
@@ -211,12 +217,12 @@ simulation, Default: 1</p></td>
 <span class='va'>df_config</span>
 </div><div class='output co'>#&gt; <span style='color: #555555;'># A tibble: 8 x 6</span><span>
 #&gt;   study_id site_number visit_med75 n_pat_with_med75 n_pat_study pat_pool        
-#&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>             </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>            </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>       </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;list&gt;</span><span>          
-#&gt; </span><span style='color: #555555;'>1</span><span> A        S0001                16               19          66 </span><span style='color: #555555;'>&lt;tibble [85 × 3</span><span>…
-#&gt; </span><span style='color: #555555;'>2</span><span> A        S0002                15               19          73 </span><span style='color: #555555;'>&lt;tibble [92 × 3</span><span>…
-#&gt; </span><span style='color: #555555;'>3</span><span> A        S0003                15               17          75 </span><span style='color: #555555;'>&lt;tibble [92 × 3</span><span>…
-#&gt; </span><span style='color: #555555;'>4</span><span> A        S0004                15               20          72 </span><span style='color: #555555;'>&lt;tibble [92 × 3</span><span>…
-#&gt; </span><span style='color: #555555;'>5</span><span> A        S0005                15               16          76 </span><span style='color: #555555;'>&lt;tibble [92 × 3</span><span>…
+#&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>             </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>            </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span>       </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;list&gt;</span><span>          
+#&gt; </span><span style='color: #555555;'>1</span><span> A        S0001                17               17          59 </span><span style='color: #555555;'>&lt;tibble [76 × 3</span><span>…
+#&gt; </span><span style='color: #555555;'>2</span><span> A        S0002                15               18          71 </span><span style='color: #555555;'>&lt;tibble [89 × 3</span><span>…
+#&gt; </span><span style='color: #555555;'>3</span><span> A        S0003                16               17          65 </span><span style='color: #555555;'>&lt;tibble [82 × 3</span><span>…
+#&gt; </span><span style='color: #555555;'>4</span><span> A        S0004                15               20          69 </span><span style='color: #555555;'>&lt;tibble [89 × 3</span><span>…
+#&gt; </span><span style='color: #555555;'>5</span><span> A        S0005                16               16          66 </span><span style='color: #555555;'>&lt;tibble [82 × 3</span><span>…
 #&gt; </span><span style='color: #555555;'>6</span><span> B        S0001                15              302         602 </span><span style='color: #555555;'>&lt;tibble [904 × </span><span>…
 #&gt; </span><span style='color: #555555;'>7</span><span> B        S0002                15              301         603 </span><span style='color: #555555;'>&lt;tibble [904 × </span><span>…
 #&gt; </span><span style='color: #555555;'>8</span><span> B        S0003                15              301         603 </span><span style='color: #555555;'>&lt;tibble [904 × </span><span>…</div></span></pre>

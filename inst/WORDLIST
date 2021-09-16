@@ -1,6 +1,4 @@
-ADY
 AE
-AESTDY
 AEs
 Analytics
 BDBDBD
@@ -10,8 +8,10 @@ Downey's
 Downey’s
 FP
 Hochberg
+Lifecycle
 Modelling
 Ménard
+PARAM
 Saf
 TP
 Uncompliant
@@ -20,12 +20,14 @@ aes
 aggr
 al
 allendowney
+analytics
 anonymized
 blogspot
 codecov
 config
 cyclocomp
 darkblue
+df
 doi
 ecd
 ecdf
@@ -51,6 +53,7 @@ rpois
 sd
 tibble
 ttest
+unadjusted
 uncompliant
 underdispersion
 ur
