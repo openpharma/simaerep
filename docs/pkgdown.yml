@@ -3,10 +3,13 @@ pkgdown: 1.6.1
 pkgdown_sha: ~
 articles:
   check_poisson: check_poisson.html
+  do_not_commit: do_not_commit.html
   intro: intro.html
   sas_files: sas_files.html
   usability_limits: usability_limits.html
-last_built: 2021-06-11T08:12Z
+  visit_med75: visit_med75.html
+  visits_or_days: visits_or_days.html
+last_built: 2021-09-16T22:16Z
 urls:
   reference: https://openpharma.github.io/simaerep//reference
   article: https://openpharma.github.io/simaerep//articles

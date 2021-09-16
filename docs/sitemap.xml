@@ -4,10 +4,19 @@
     <loc>https://openpharma.github.io/simaerep//index.html</loc>
   </url>
   <url>
+    <loc>https://openpharma.github.io/simaerep//reference/aggr_duplicated_visits.html</loc>
+  </url>
+  <url>
+    <loc>https://openpharma.github.io/simaerep//reference/check_df_visit.html</loc>
+  </url>
+  <url>
     <loc>https://openpharma.github.io/simaerep//reference/eval_sites.html</loc>
   </url>
   <url>
     <loc>https://openpharma.github.io/simaerep//reference/eval_sites_deprecated.html</loc>
+  </url>
+  <url>
+    <loc>https://openpharma.github.io/simaerep//reference/exp_implicit_missing_visits.html</loc>
   </url>
   <url>
     <loc>https://openpharma.github.io/simaerep//reference/get_ecd_values.html</loc>
@@ -16,7 +25,16 @@
     <loc>https://openpharma.github.io/simaerep//reference/get_pat_pool_config.html</loc>
   </url>
   <url>
+    <loc>https://openpharma.github.io/simaerep//reference/get_site_mean_ae_dev.html</loc>
+  </url>
+  <url>
+    <loc>https://openpharma.github.io/simaerep//reference/get_visit_med75.html</loc>
+  </url>
+  <url>
     <loc>https://openpharma.github.io/simaerep//reference/lint_package.html</loc>
+  </url>
+  <url>
+    <loc>https://openpharma.github.io/simaerep//reference/pat_aggr.html</loc>
   </url>
   <url>
     <loc>https://openpharma.github.io/simaerep//reference/pat_pool.html</loc>
@@ -64,6 +82,9 @@
     <loc>https://openpharma.github.io/simaerep//articles/check_poisson.html</loc>
   </url>
   <url>
+    <loc>https://openpharma.github.io/simaerep//articles/do_not_commit.html</loc>
+  </url>
+  <url>
     <loc>https://openpharma.github.io/simaerep//articles/intro.html</loc>
   </url>
   <url>
@@ -71,5 +92,11 @@
   </url>
   <url>
     <loc>https://openpharma.github.io/simaerep//articles/usability_limits.html</loc>
+  </url>
+  <url>
+    <loc>https://openpharma.github.io/simaerep//articles/visit_med75.html</loc>
+  </url>
+  <url>
+    <loc>https://openpharma.github.io/simaerep//articles/visits_or_days.html</loc>
   </url>
 </urlset>

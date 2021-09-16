@@ -84,6 +84,9 @@
     <li>
       <a href="../articles/visit_med75.html">Adjusted Evaluation Point visit_med75</a>
     </li>
+    <li>
+      <a href="../articles/visits_or_days.html">Aggregate AEs by Days or Visit?</a>
+    </li>
   </ul>
 </li>
 <li>
@@ -108,11 +111,7 @@
       
 
       </header><script src="visits_or_days_files/header-attrs-2.5/header-attrs.js"></script><link href="visits_or_days_files/anchor-sections-1.0/anchor-sections.css" rel="stylesheet">
-<script src="visits_or_days_files/anchor-sections-1.0/anchor-sections.js"></script><script src="visits_or_days_files/htmlwidgets-1.5.3/htmlwidgets.js"></script><script src="visits_or_days_files/jquery-1.12.4/jquery.min.js"></script><link href="visits_or_days_files/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet">
-<script src="visits_or_days_files/datatables-binding-0.16/datatables.js"></script><link href="visits_or_days_files/dt-core-1.10.20/css/jquery.dataTables.min.css" rel="stylesheet">
-<link href="visits_or_days_files/dt-core-1.10.20/css/jquery.dataTables.extra.css" rel="stylesheet">
-<script src="visits_or_days_files/dt-core-1.10.20/js/jquery.dataTables.min.js"></script><link href="visits_or_days_files/crosstalk-1.1.0.1/css/crosstalk.css" rel="stylesheet">
-<script src="visits_or_days_files/crosstalk-1.1.0.1/js/crosstalk.min.js"></script><div class="row">
+<script src="visits_or_days_files/anchor-sections-1.0/anchor-sections.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Aggregate AEs by Days or Visit?</h1>
@@ -286,13 +285,13 @@
 <p>We do have gaps in between the days leading to implicitly missing values. <code>simaerep</code> will correct this automatically and throw a warning.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">df_site</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/site_aggr.html">site_aggr</a></span><span class="op">(</span>df_visit <span class="op">=</span> <span class="va">df_days</span><span class="op">)</span></code></pre></div>
-<pre><code>## Warning in complete_implicitly_missing_visits(df_visit): implicitly missing
-## visit numbers detected and corrected</code></pre>
+<pre><code>## Warning in exp_implicit_missing_visits(df_visit): implicitly missing visit
+## numbers detected and corrected</code></pre>
 <p>to silence the warning we can use <code>check df_visit()</code> which is also called internally by all other functions accepting <code>df_visit</code> as an argument.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">df_days</span> <span class="op">&lt;-</span> <span class="fu">simaerep</span><span class="fu">:::</span><span class="fu"><a href="../reference/check_df_visit.html">check_df_visit</a></span><span class="op">(</span><span class="va">df_days</span><span class="op">)</span></code></pre></div>
-<pre><code>## Warning in complete_implicitly_missing_visits(df_visit): implicitly missing
-## visit numbers detected and corrected</code></pre>
+<pre><code>## Warning in exp_implicit_missing_visits(df_visit): implicitly missing visit
+## numbers detected and corrected</code></pre>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">df_days</span></code></pre></div>
 <pre><code>## # A tibble: 57,873 x 5
@@ -358,9 +357,117 @@
   <span class="fu">arrange</span><span class="op">(</span><span class="fu">desc</span><span class="op">(</span><span class="va">prob_low_prob_ur_vs</span><span class="op">)</span><span class="op">)</span>
 
 <span class="va">df_comp</span> <span class="op">%&gt;%</span>
-  <span class="fu">DT</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/DT/man/datatable.html">datatable</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<div id="htmlwidget-d532571c623c9195652c" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-d532571c623c9195652c">{"x":{"filter":"none","data":[["1","2","3","4","5","6","7","8","9","10","11","12","13"],["084","078","073","067","079","086","066","070","080","085","069","090","071"],[0.975,0.975,0.409375,1,0.83125,0.45,0.55,0.409375,0.0475,0.0475,0,0,0],[0.9625,0.9625,0.8,0.7375,0.6875,0.6875,0.192307692307692,0.192307692307692,0.192307692307692,0.192307692307692,0.192307692307692,0.192307692307692,0.192307692307692],[5,5,6,17,13,5,6,15,20,1,3,3,2],[5,5,5,15,12,5,5,17,20,1,5,4,3]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>site_number<\/th>\n      <th>prob_low_prob_ur_days<\/th>\n      <th>prob_low_prob_ur_vs<\/th>\n      <th>n_pat_with_med75_days<\/th>\n      <th>n_pat_with_med75_vs<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[2,3,4,5]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script><div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<table class="table">
+<colgroup>
+<col width="12%">
+<col width="22%">
+<col width="20%">
+<col width="22%">
+<col width="20%">
+</colgroup>
+<thead><tr class="header">
+<th align="left">site_number</th>
+<th align="right">prob_low_prob_ur_days</th>
+<th align="right">prob_low_prob_ur_vs</th>
+<th align="right">n_pat_with_med75_days</th>
+<th align="right">n_pat_with_med75_vs</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">084</td>
+<td align="right">0.975000</td>
+<td align="right">0.9625000</td>
+<td align="right">5</td>
+<td align="right">5</td>
+</tr>
+<tr class="even">
+<td align="left">078</td>
+<td align="right">0.975000</td>
+<td align="right">0.9625000</td>
+<td align="right">5</td>
+<td align="right">5</td>
+</tr>
+<tr class="odd">
+<td align="left">073</td>
+<td align="right">0.409375</td>
+<td align="right">0.8000000</td>
+<td align="right">6</td>
+<td align="right">5</td>
+</tr>
+<tr class="even">
+<td align="left">067</td>
+<td align="right">1.000000</td>
+<td align="right">0.7375000</td>
+<td align="right">17</td>
+<td align="right">15</td>
+</tr>
+<tr class="odd">
+<td align="left">079</td>
+<td align="right">0.831250</td>
+<td align="right">0.6875000</td>
+<td align="right">13</td>
+<td align="right">12</td>
+</tr>
+<tr class="even">
+<td align="left">086</td>
+<td align="right">0.450000</td>
+<td align="right">0.6875000</td>
+<td align="right">5</td>
+<td align="right">5</td>
+</tr>
+<tr class="odd">
+<td align="left">066</td>
+<td align="right">0.550000</td>
+<td align="right">0.1923077</td>
+<td align="right">6</td>
+<td align="right">5</td>
+</tr>
+<tr class="even">
+<td align="left">070</td>
+<td align="right">0.409375</td>
+<td align="right">0.1923077</td>
+<td align="right">15</td>
+<td align="right">17</td>
+</tr>
+<tr class="odd">
+<td align="left">080</td>
+<td align="right">0.047500</td>
+<td align="right">0.1923077</td>
+<td align="right">20</td>
+<td align="right">20</td>
+</tr>
+<tr class="even">
+<td align="left">085</td>
+<td align="right">0.047500</td>
+<td align="right">0.1923077</td>
+<td align="right">1</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">069</td>
+<td align="right">0.000000</td>
+<td align="right">0.1923077</td>
+<td align="right">3</td>
+<td align="right">5</td>
+</tr>
+<tr class="even">
+<td align="left">090</td>
+<td align="right">0.000000</td>
+<td align="right">0.1923077</td>
+<td align="right">3</td>
+<td align="right">4</td>
+</tr>
+<tr class="odd">
+<td align="left">071</td>
+<td align="right">0.000000</td>
+<td align="right">0.1923077</td>
+<td align="right">2</td>
+<td align="right">3</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/stats/cor.test.html">cor.test</a></span><span class="op">(</span>
   <span class="va">df_comp</span><span class="op">$</span><span class="va">prob_low_prob_ur_vs</span>,
   <span class="va">df_comp</span><span class="op">$</span><span class="va">prob_low_prob_ur_days</span>,

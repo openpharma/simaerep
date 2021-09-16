@@ -11,6 +11,16 @@ if (getRversion() >= "2.15.1") {
 #' @inheritParams site_aggr
 #' @return corrected df_visit
 #' @examples
+#'
+#' df_visit <- sim_test_data_study(
+#'   n_pat = 100,
+#'   n_sites = 5,
+#'   frac_site_with_ur = 0.4,
+#'   ur_rate = 0.6
+#' )
+#'
+#' df_visit$study_id <- "A"
+#'
 #' df_visit_filt <- df_visit %>%
 #'   filter(visit != 3)
 #'

@@ -44,7 +44,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">simaerep</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0.900</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.0</span>
       </span>
     </div>
 
@@ -83,6 +83,9 @@
     </li>
     <li>
       <a href="../articles/visit_med75.html">Adjusted Evaluation Point visit_med75</a>
+    </li>
+    <li>
+      <a href="../articles/visits_or_days.html">Aggregate AEs by Days or Visit?</a>
     </li>
   </ul>
 </li>
@@ -157,7 +160,7 @@
 <div id="only-few-patients-per-site" class="section level1">
 <h1 class="hasAnchor">
 <a href="#only-few-patients-per-site" class="anchor"></a>Only few Patients per Site</h1>
-<p>If we only have a few patients per site chances will be greater that the smallest maximum visit of those patients that make the cut-off is much greater than the cut-off point and we could thus inlclude more visits into our analysis. For those cases we adjust the evaluation point to the smallest maximum visit of all patients that make the initial cut.</p>
+<p>If we only have a few patients per site chances will be greater that the smallest maximum visit of those patients that make the cut-off is much greater than the cut-off point and we could thus include more visits into our analysis. For those cases we adjust the evaluation point to the smallest maximum visit of all patients that make the initial cut.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>
 

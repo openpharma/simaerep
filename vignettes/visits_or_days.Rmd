@@ -238,7 +238,7 @@ df_comp <- df_eval_days %>%
   arrange(desc(prob_low_prob_ur_vs))
 
 df_comp %>%
-  DT::datatable()
+  knitr::kable()
 
 cor.test(
   df_comp$prob_low_prob_ur_vs,

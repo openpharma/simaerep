@@ -92,7 +92,7 @@ in combination with sim_studies()." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">simaerep</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.0</span>
       </span>
     </div>
 
@@ -128,6 +128,12 @@ in combination with sim_studies()." />
     </li>
     <li>
       <a href="../articles/sas_files.html">SAS Files as a Data Source</a>
+    </li>
+    <li>
+      <a href="../articles/visit_med75.html">Adjusted Evaluation Point visit_med75</a>
+    </li>
+    <li>
+      <a href="../articles/visits_or_days.html">Aggregate AEs by Days or Visit?</a>
     </li>
   </ul>
 </li>
@@ -222,24 +228,26 @@ of <code><a href='sim_studies.html'>sim_studies()</a></code></p>
 <span class='op'>)</span>
 
 <span class='fu'>get_ecd_values</span><span class='op'>(</span><span class='va'>df_sim_studies</span>, <span class='va'>df_sim_sites</span>, <span class='st'>"prob_low"</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span style='color: #555555;'># A tibble: 5 x 8</span><span>
-#&gt;   study_id site_number visit_med75 mean_ae_site_me… mean_ae_study_m…    pval
-#&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>             </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>            </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>            </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>   </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
-#&gt; </span><span style='color: #555555;'>1</span><span> A        S0001                15             5.44             7.11 1.47</span><span style='color: #555555;'>e</span><span style='color: #BB0000;'>-2</span><span>
-#&gt; </span><span style='color: #555555;'>2</span><span> A        S0002                17             5.82             8.46 4.53</span><span style='color: #555555;'>e</span><span style='color: #BB0000;'>-4</span><span>
-#&gt; </span><span style='color: #555555;'>3</span><span> A        S0003                15             8.28             6.39 1.00</span><span style='color: #555555;'>e</span><span>+0
-#&gt; </span><span style='color: #555555;'>4</span><span> A        S0004                14             7.28             6.14 1.00</span><span style='color: #555555;'>e</span><span>+0
-#&gt; </span><span style='color: #555555;'>5</span><span> A        S0005                15             7.29             6.65 1.00</span><span style='color: #555555;'>e</span><span>+0
-#&gt; </span><span style='color: #555555;'># … with 2 more variables: prob_low </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, prob_low_ecd </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span></div><div class='input'><span class='fu'>get_ecd_values</span><span class='op'>(</span><span class='va'>df_sim_studies</span>, <span class='va'>df_sim_sites</span>, <span class='st'>"pval"</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 5 x 8</span><span>
-#&gt;   study_id site_number visit_med75 mean_ae_site_me… mean_ae_study_m…    pval
-#&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>             </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>            </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>            </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>   </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
-#&gt; </span><span style='color: #555555;'>1</span><span> A        S0001                15             5.44             7.11 1.47</span><span style='color: #555555;'>e</span><span style='color: #BB0000;'>-2</span><span>
-#&gt; </span><span style='color: #555555;'>2</span><span> A        S0002                17             5.82             8.46 4.53</span><span style='color: #555555;'>e</span><span style='color: #BB0000;'>-4</span><span>
-#&gt; </span><span style='color: #555555;'>3</span><span> A        S0003                15             8.28             6.39 1.00</span><span style='color: #555555;'>e</span><span>+0
-#&gt; </span><span style='color: #555555;'>4</span><span> A        S0004                14             7.28             6.14 1.00</span><span style='color: #555555;'>e</span><span>+0
-#&gt; </span><span style='color: #555555;'>5</span><span> A        S0005                15             7.29             6.65 1.00</span><span style='color: #555555;'>e</span><span>+0
-#&gt; </span><span style='color: #555555;'># … with 2 more variables: prob_low </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, pval_ecd </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span></div></span></pre>
+</div><div class='output co'>#&gt; <span style='color: #555555;'># A tibble: 5 x 10</span><span>
+#&gt;   study_id site_number n_pat n_pat_with_med75 visit_med75 mean_ae_site_me…
+#&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>       </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span>            </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span>       </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>            </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
+#&gt; </span><span style='color: #555555;'>1</span><span> A        S0001          20               16          16             5.88
+#&gt; </span><span style='color: #555555;'>2</span><span> A        S0002          20               17          16             6   
+#&gt; </span><span style='color: #555555;'>3</span><span> A        S0003          20               18          17            10.1 
+#&gt; </span><span style='color: #555555;'>4</span><span> A        S0004          20               18          16             8.11
+#&gt; </span><span style='color: #555555;'>5</span><span> A        S0005          20               16          15             7.31
+#&gt; </span><span style='color: #555555;'># … with 4 more variables: mean_ae_study_med75 </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, pval </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>,</span><span>
+#&gt; </span><span style='color: #555555;'>#   prob_low </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, prob_low_ecd </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span></div><div class='input'><span class='fu'>get_ecd_values</span><span class='op'>(</span><span class='va'>df_sim_studies</span>, <span class='va'>df_sim_sites</span>, <span class='st'>"pval"</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 5 x 10</span><span>
+#&gt;   study_id site_number n_pat n_pat_with_med75 visit_med75 mean_ae_site_me…
+#&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>       </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span>            </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span>       </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>            </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
+#&gt; </span><span style='color: #555555;'>1</span><span> A        S0001          20               16          16             5.88
+#&gt; </span><span style='color: #555555;'>2</span><span> A        S0002          20               17          16             6   
+#&gt; </span><span style='color: #555555;'>3</span><span> A        S0003          20               18          17            10.1 
+#&gt; </span><span style='color: #555555;'>4</span><span> A        S0004          20               18          16             8.11
+#&gt; </span><span style='color: #555555;'>5</span><span> A        S0005          20               16          15             7.31
+#&gt; </span><span style='color: #555555;'># … with 4 more variables: mean_ae_study_med75 </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, pval </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>,</span><span>
+#&gt; </span><span style='color: #555555;'>#   prob_low </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, pval_ecd </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span></div></span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
