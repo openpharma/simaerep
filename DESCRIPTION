@@ -1,6 +1,6 @@
 Package: simaerep
 Title: Simulate adverse event reporting in clinical trials with the goal of detecting under-reporting sites
-Version: 0.3.0
+Version: 0.3.1
 Authors@R: 
     person(given = "Bjoern",
            family = "Koneswarakantha",

@@ -1,6 +1,6 @@
 # MIT License
 
-Copyright (c) 2020 openpharma
+Copyright (c) 2020 F. Hoffmann-La Roche Ltd and simaerep authors
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

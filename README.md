@@ -48,6 +48,10 @@ Saf (2020). <https://doi.org/10.1007/s40264-020-01011-5>
     Applicability](https://openpharma.github.io/simaerep/articles/check_poisson.html)
 -   [SAS
     Files](https://openpharma.github.io/simaerep/articles/sas_files.html)
+-   [Adjusted Evaluation Point
+    visit\_med75](https://openpharma.github.io/simaerep/articles/visit_med75.html)
+-   [Aggregate AEs by Days or
+    Visit?](https://openpharma.github.io/simaerep/articles/visits_or_days.html)
 
 # Application
 
