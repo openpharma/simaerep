@@ -421,3 +421,19 @@ test_that("check_visit_med75_qup8_maximum", {
   # nolint end
 
 })
+
+test_that("prep_for_sim", {
+
+   df_prep <- prep_for_sim(df_site, df_visit)
+
+   # ae vector for site must match number of patients at site.
+   df_prep %>%
+     mutate(check = map2(
+       n_pat_with_med75, n_ae_site,
+       function(x, y) x == length(y))
+     ) %>%
+     pull(check) %>%
+     unlist() %>%
+     all() %>%
+     expect_true()
+})

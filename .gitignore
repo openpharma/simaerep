@@ -11,3 +11,4 @@
 *.sas7bdat
 
 vignettes/do_not_commit.Rmd
+vignettes/ae_profile.csv

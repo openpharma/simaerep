@@ -38,8 +38,7 @@ Suggests:
     knitr,
     tibble,
     spelling,
-    haven,
-    sqldf
+    haven
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
 Language: en-US

@@ -1,0 +1,140 @@
+---
+title: "Portfolio Performance"
+output:
+  html_document:
+    toc: true
+    toc_depth: 3
+    toc_float: true
+    number_sections: true
+    code_folding: show
+    collapse: false
+editor_options:
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, cache = FALSE)
+```
+
+# Load
+```{r}
+suppressPackageStartupMessages(library(tidyverse))
+suppressPackageStartupMessages(library(knitr))
+suppressPackageStartupMessages(library(furrr))
+suppressPackageStartupMessages(library(future))
+suppressPackageStartupMessages(library(simaerep))
+```
+
+# Get Portfolio Configuration
+
+```{r}
+df_visit1 <- sim_test_data_study(n_pat = 100, n_sites = 10,
+   frac_site_with_ur = 0.4, ur_rate = 0.6)
+
+df_visit1$study_id <- "A"
+
+df_visit2 <- sim_test_data_study(n_pat = 100, n_sites = 10,
+                                      frac_site_with_ur = 0.2, ur_rate = 0.1)
+
+df_visit2$study_id <- "B"
+
+df_visit <- bind_rows(df_visit1, df_visit2)
+
+df_site_max <- df_visit %>%
+  group_by(study_id, site_number, patnum) %>%
+  summarise(max_visit = max(visit),
+            max_ae = max(n_ae),
+            .groups = "drop")
+
+df_config <- simaerep::get_config(df_site_max, anonymize = TRUE)
+
+df_config
+```
+
+# Simulate Portfolio from Configration
+
+```{r}
+df_portf <- sim_test_data_portfolio(df_config)
+df_portf
+```
+
+# Get Under-Reporting Probability for Different Under Reporting Scenarios
+
+```{r}
+
+suppressWarnings(future::plan(multiprocess))
+
+set.seed(1)
+
+df_scen <- sim_scenarios(df_portf,
+                         frac_pat_with_ur = c(0, 0.005, 0.01, 0.05, 0.1, 0.25, 0.5, 0.75, 1),
+                         ur_rate = c(0.1, 0.25, 0.5, 0.75, 1),
+                         parallel = TRUE)
+
+df_scen
+```
+
+# Plot
+
+```{r}
+plot_scenarios <- function(df_scen) {
+  df_plot <- df_scen %>%
+    mutate(perc_pat_on_site = n_pat_with_med75 / (n_pat_with_med75_study + n_pat_with_med75),
+           perc_pat_on_site = cut(perc_pat_on_site, c(0, 0.005, 0.01, 0.05, 0.1, 0.25, 0.5, 0.75, 1.01)), include.lowest = TRUE) %>%
+    group_by(perc_pat_on_site, frac_pat_with_ur, ur_rate) %>%
+    summarise(pr = sum(ifelse(prob_low_prob_ur > 0.95, 1, 0)) / n(),
+              n = n(),
+              n_sites = n_distinct(paste(study_id, site_number)),
+              .groups = "drop")
+  
+  p1 <- df_plot %>%
+      ggplot(aes(frac_pat_with_ur, pr)) +
+      geom_line() +
+      geom_point() +
+      facet_grid(ur_rate ~ perc_pat_on_site)
+  
+  p2 <- df_plot %>%
+    distinct(perc_pat_on_site, n_sites) %>%
+    ggplot(aes(perc_pat_on_site, n_sites)) +
+    geom_col(width = 0.5)
+  
+  return(list(p1, p2))
+}
+
+plot_scenarios(df_scen)
+```
+
+# Load Realisitc Configuration
+
+## Load
+
+```{r}
+df_config <- readr::read_csv("vignettes/ae_profile.csv")
+```
+
+## Simulate Portfolio
+
+```{r}
+df_portf <- sim_test_data_portfolio(df_config, parallel = TRUE, progress = TRUE)
+df_portf
+```
+
+## Get Under-Reporting Probability for Different Under Reporting Scenarios
+
+```{r}
+df_scen <- sim_scenarios(df_portf,
+                         frac_pat_with_ur = c(0, 0.005, 0.01, 0.75, 1),
+                         ur_rate = c(0.5, 0.75, 1),
+                         parallel = TRUE)
+
+
+
+df_scen <- sim_scenarios(df_portf,
+                         frac_pat_with_ur = c(0, 0.005, 0.01, 0.05, 0.1, 0.25, 0.5, 0.75, 1),
+                         ur_rate = c(0.1, 0.25, 0.5, 0.75, 1),
+                         parallel = TRUE)
+
+df_scen
+
+```
+
