@@ -1358,6 +1358,31 @@ sim_scenario <- function(n_ae_site, n_ae_study, frac_pat_with_ur, ur_rate) {
   return(list(n_ae_site = n_ae_site, n_ae_study = n_ae_study))
 }
 
+
+sim_scenarios2(df_portf,
+               additional_sites_with_ur = c(1, 2, 3),
+               ur_rate = c(0.25, 0.5),
+               r = 1000,
+               poisson = FALSE,
+               prob_lower = TRUE,
+               parallel = FALSE,
+               progress = TRUE) {
+
+  if(progress) {
+    message("aggregating site level")
+  }
+  df_visit <- check_df_visit(df_portf)
+
+  df_mean_pat <- df_visit %>%
+    group_by(study_id, site_number, visit) %>%
+    summarise(n_pat = n_distinct(patnum)) %>%
+    group_by(study_id, visit) %>%
+    summarise(mean_n_pat = mean(n_pat),
+              sum_n_pat = sum(n_pat),
+              n_sites = n_distinct(site_number))
+
+}
+
 sim_scenarios <- function(df_portf,
                           frac_pat_with_ur = c(0.1, 0.25),
                           ur_rate = c(0.25, 0.5),
@@ -1367,14 +1392,17 @@ sim_scenarios <- function(df_portf,
                           parallel = FALSE,
                           progress = TRUE) {
 
-  df_vist <- check_df_visit(df_portf)
+  if(progress) {
+    message("aggregating site level")
+  }
+  df_visit <- check_df_visit(df_portf)
 
-  df_site <- site_aggr(df_vist)
+  df_site <- site_aggr(df_visit)
 
   if(progress) {
     message("prepping for simulation")
   }
-  df_sim_prep <- prep_for_sim(df_site = df_site, df_visit = df_vist)
+  df_sim_prep <- prep_for_sim(df_site = df_site, df_visit = df_visit)
 
   # create scenario grid
 

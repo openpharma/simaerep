@@ -1,0 +1,24 @@
+version: '3.7'
+services:
+  build_image:
+    build: .
+    image: 'simaerep'
+    command: /bin/bash
+    
+  shell:
+    image: 'simaerep'
+    working_dir: /app
+    # make container wait
+    command: tail -F anything
+    volumes: 
+      - '.:/app'
+  rstudio:
+    image: 'simaerep'
+    ports: 
+      - '8787:8787'
+    volumes: 
+      - '.:/home/rstudio/app'
+    command: /init
+    environment:
+      PASSWORD: '123'
+      USER: 'rstudio'

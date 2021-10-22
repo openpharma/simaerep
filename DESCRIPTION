@@ -28,9 +28,9 @@ Imports:
     forcats,
     cowplot,
     RColorBrewer,
-    feather,
     furrr (>= 0.2.1),
-    future
+    future,
+    progressr
 Suggests:
     testthat,
     devtools,

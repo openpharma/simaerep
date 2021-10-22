@@ -115,6 +115,7 @@ df_config <- readr::read_csv("vignettes/ae_profile.csv")
 ## Simulate Portfolio
 
 ```{r}
+future::plan(multisession, workers = 8)
 df_portf <- sim_test_data_portfolio(df_config, parallel = TRUE, progress = TRUE)
 df_portf
 ```
@@ -122,12 +123,6 @@ df_portf
 ## Get Under-Reporting Probability for Different Under Reporting Scenarios
 
 ```{r}
-df_scen <- sim_scenarios(df_portf,
-                         frac_pat_with_ur = c(0, 0.005, 0.01, 0.75, 1),
-                         ur_rate = c(0.5, 0.75, 1),
-                         parallel = TRUE)
-
-
 
 df_scen <- sim_scenarios(df_portf,
                          frac_pat_with_ur = c(0, 0.005, 0.01, 0.05, 0.1, 0.25, 0.5, 0.75, 1),
@@ -136,5 +131,192 @@ df_scen <- sim_scenarios(df_portf,
 
 df_scen
 
+readr::write_csv(df_scen, file = "vignettes/scen.csv")
+```
+
+## AUC
+
+```{r}
+
+df_scen <- readr::read_csv("vignettes/scen.csv")
+
+df_scen_gr <- df_scen %>%
+  left_join(distinct(select(df_config, study_id, ae_per_visit_mean)),
+            by = c("study_id")) %>%
+  mutate(perc_pat_on_site = n_pat_with_med75 / (n_pat_with_med75_study + n_pat_with_med75),
+         perc_pat_on_site = cut(perc_pat_on_site, c(0, 0.005, 0.01, 0.05, 0.1, 0.25, 0.5, 0.75, 1.01)), include.lowest = TRUE,
+         ae_per_visit_mean = cut(ae_per_visit_mean, c(0, 0.2, 0.35, 0.5, 0.75, max(ae_per_visit_mean) + 0.1), include.lowest = TRUE)
+         )
+
+df_scen0 <- df_scen_gr %>%
+  filter(ur_rate == 0) %>%
+  select(perc_pat_on_site, ae_per_visit_mean, prob_low_prob_ur) %>%
+  mutate(is_ur = factor("no", levels = c("yes", "no")))  %>%
+  group_by(perc_pat_on_site, ae_per_visit_mean) %>%
+  nest()
+
+df_scengr0 <- df_scen_gr %>%
+  filter(ur_rate > 0) %>%
+  select(perc_pat_on_site, ae_per_visit_mean, prob_low_prob_ur, ur_rate, frac_pat_with_ur) %>%
+  mutate(is_ur = factor("yes", levels = c("yes", "no")))  %>%
+  group_by(perc_pat_on_site, ae_per_visit_mean, ur_rate, frac_pat_with_ur) %>%
+  nest()
+
+df_auc <- df_scengr0 %>%
+  left_join(df_scen0, by = c("perc_pat_on_site", "ae_per_visit_mean")) %>%
+  mutate(data = map2(data.x, data.y, bind_rows)) %>%
+  select(- data.x, - data.y) %>%
+  mutate(auc = map(data, yardstick::roc_auc, is_ur, prob_low_prob_ur),
+         auc = map_dbl(auc, pull, .estimate),
+         pr  = map(data, yardstick::pr_auc, is_ur, prob_low_prob_ur),
+         pr  = map_dbl(pr, pull, .estimate),
+         prc = map(data, yardstick::pr_curve, is_ur, prob_low_prob_ur),
+         prc = map(prc, filter, ! is.infinite(.threshold)),
+         roc = map(data, yardstick::roc_curve, is_ur, prob_low_prob_ur),
+         roc = map(roc, filter, ! is.infinite(.threshold)),
+         thresh_precp99 = map(prc, filter, precision >= 0.99),
+         thresh_precp99  = map(thresh_precp99, filter, .threshold == min(.threshold)),
+         thresh_precp99  = map_dbl(thresh_precp99, ~ ifelse(nrow(.) == 0, NA, pull(., .threshold))),
+         thresh_joud_pr  = map(prc, filter, precision + recall == max(precision + recall, na.rm = TRUE)),
+         thresh_joud_pr  = map(thresh_joud_pr, filter, .threshold == min(.threshold)),
+         thresh_joud_pr  = map_dbl(thresh_joud_pr, pull, .threshold),
+         thresh_joud_roc = map(roc, filter, specificity + sensitivity == max(specificity + sensitivity, na.rm = TRUE)),
+         thresh_joud_roc = map(thresh_joud_roc, filter, .threshold == min(.threshold)),
+         thresh_joud_roc = map_dbl(thresh_joud_roc, pull, .threshold),
+         n_sites = map_dbl(data, ~ nrow(.) / 2))  %>%
+  select(- data, - roc, - prc) %>%
+  unnest(auc) %>%
+  ungroup()
+
+df_auc  
+```
+
+
+## Setting Threshold
+
+we want to flag less than 0.1% of all regular cases.
+
+```{r}
+
+thresh <- df_scen_gr %>%
+  filter(ur_rate == 0, frac_pat_with_ur == 0) %>%
+  pull(prob_low_prob_ur) %>%
+  quantile(probs = 0.999)
+
+thresh
+
+n_sites <- df_scen %>%
+  select(study_id, site_number) %>%
+  distinct() %>%
+  nrow()
+
+n_sites
+
+n_sites * (1 - 0.999)
+```
+
+## Detection Rate
+
+```{r}
+df_pr_prep <- df_scen_gr %>%
+  group_by(perc_pat_on_site, ae_per_visit_mean, frac_pat_with_ur, ur_rate) %>%
+  summarise(dr = sum(ifelse(prob_low_prob_ur > thresh, 1, 0)) / n(),
+            n = n(),
+            n_sites = n_distinct(paste(study_id, site_number)),
+            .groups = "drop")
+
+df_pr_prep_ur0 <- df_pr_prep %>%
+  filter(ur_rate == 0) %>%
+  mutate(frac_pat_with_ur = list(unique(df_pr_prep$frac_pat_with_ur))) %>%
+  unnest(frac_pat_with_ur)
+
+df_pr_prep_urgr0 <- df_pr_prep %>%
+  filter(ur_rate > 0)
+  
+df_pr <- bind_rows(df_pr_prep_ur0, df_pr_prep_urgr0)   %>%
+  ungroup()
+
+df_pr
+```
+
+## Total Detection Rate per Under-Reporting Scenario
+
+```{r}
+df_pr %>%
+  mutate(x = str_split(perc_pat_on_site, ","),
+           xmin = map_chr(x, ~ .[[1]]),
+           xmax = map_chr(x, ~ .[[2]]),
+           xmin = as.double(str_extract(xmin, "(\\d|\\.)+")),
+           xmax = as.double(str_extract(xmax, "(\\d|\\.)+"))) %>%
+  filter(frac_pat_with_ur == xmin | frac_pat_with_ur == xmax) %>%
+  group_by(perc_pat_on_site, ae_per_visit_mean, ur_rate) %>%
+  summarise(dr = max(dr),
+            n_sites = max(n_sites),
+            .groups = "drop") %>%
+  group_by(ur_rate) %>%
+  mutate(weight = n_sites / sum(n_sites)) %>%
+  summarise(weighted_dr = sum(dr * weight)) %>%
+  knitr::kable()
+
+```
+
+
+
+## Plot
+
+```{r}
+
+plot_scen_perf <- function(df, y_title) {
+  
+  df_label <- df %>%
+    select(ae_per_visit_mean, perc_pat_on_site, n_sites) %>%
+    distinct() %>%
+    mutate(x = str_split(perc_pat_on_site, ","),
+           xmin = map_chr(x, ~ .[[1]]),
+           xmax = map_chr(x, ~ .[[2]]),
+           xmin = as.double(str_extract(xmin, "(\\d|\\.)+")),
+           xmax = as.double(str_extract(xmax, "(\\d|\\.)+")),
+           xmax = ifelse(xmax - xmin < 0.025, xmin + 0.025, xmax))
+  
+  
+  df %>%
+      ggplot() +
+      geom_rect(aes(xmin = xmin, xmax = xmax, ymin = 0, ymax = 1),
+                df_label,
+                fill = "lightgrey",
+                alpha = 1) +
+      geom_point(aes(0.5, 0.5, size = n_sites),
+                 color = "darkgrey") +
+      geom_text(aes(0.5, 0.85, label = n_sites),
+                df_label,
+                color = "darkgrey") +
+      geom_line(
+        aes(frac_pat_with_ur,
+            .estimate,
+            group = as.factor(ur_rate),
+            color =  fct_rev(as.factor(ur_rate)))
+      ) +
+      geom_point(
+        aes(frac_pat_with_ur,
+            .estimate,
+            group = as.factor(ur_rate),
+            color =  fct_rev(as.factor(ur_rate))),
+        alpha = 0.5, size = 1) +
+      scale_color_viridis_d(direction = 1) +
+      theme_minimal() +
+      facet_grid(ae_per_visit_mean ~ perc_pat_on_site) +
+      labs(
+        title = "Portfolio Performance Simulation",
+        subtitle = "Ratio of Patients at Under-Reporting Site ~ Study Average AE per Visit",
+        color = "Under Reporting Ratio",
+        size = "Number of Sites",
+        x = "Ratio of Under-Reporting Patients Study",
+        y = y_title
+        )
+}
+
+df_pr %>%
+  mutate(.estimate = .metric) %>%
+  plot_scen_perf(y_title = "Sensitivity 0.999 Threshold")
 ```
 
