@@ -1,5 +1,5 @@
 ---
-title: "Portfolio Performance"
+title: "simaerep Portfolio Performance"
 output:
   html_document:
     toc: true
@@ -25,7 +25,30 @@ suppressPackageStartupMessages(library(future))
 suppressPackageStartupMessages(library(simaerep))
 ```
 
-# Get Portfolio Configuration
+# Introduction
+
+## Portfolio Configuration
+
+The portfolio configuration consists of the following: 
+
+**site parameters:**
+
+- mean of all maximum patient visits
+- sd of of all maximum patient visits
+- total number patients
+
+**study parameters:**
+
+- mean AE per visit
+
+We can use those parameters to simulate test data for assessing simaerep performance on a given portfolio.
+
+We can start with a maximum aggregation of visit and n_ae on patient level starting with df_visit as we would use it for `simaerep::site_aggr()`. We can use `simaerep::get_config` to generate a valid portfolio configuration, which will automatically apply a few filters:
+
+- remove patients with 0 visits
+- minimum number of patients per study
+- minimum number of sites per study
+- anonymize study and site IDs
 
 ```{r}
 df_visit1 <- sim_test_data_study(n_pat = 100, n_sites = 10,
@@ -46,67 +69,28 @@ df_site_max <- df_visit %>%
             max_ae = max(n_ae),
             .groups = "drop")
 
-df_config <- simaerep::get_config(df_site_max, anonymize = TRUE)
+df_config <- simaerep::get_config(df_site_max, anonymize = TRUE, min_pat_per_study = 100, min_sites_per_study = 10)
 
 df_config
 ```
 
-# Simulate Portfolio from Configration
+## Simulate Portfolio from Configration
+
+We can now apply sim_test_data_portfolio which uses `sim_test_data_study()` to generate artificial data on visit level.
 
 ```{r}
 df_portf <- sim_test_data_portfolio(df_config)
 df_portf
 ```
 
-# Get Under-Reporting Probability for Different Under Reporting Scenarios
-
-```{r}
-
-suppressWarnings(future::plan(multiprocess))
-
-set.seed(1)
-
-df_scen <- sim_scenarios(df_portf,
-                         frac_pat_with_ur = c(0, 0.005, 0.01, 0.05, 0.1, 0.25, 0.5, 0.75, 1),
-                         ur_rate = c(0.1, 0.25, 0.5, 0.75, 1),
-                         parallel = TRUE)
-
-df_scen
-```
-
-# Plot
-
-```{r}
-plot_scenarios <- function(df_scen) {
-  df_plot <- df_scen %>%
-    mutate(perc_pat_on_site = n_pat_with_med75 / (n_pat_with_med75_study + n_pat_with_med75),
-           perc_pat_on_site = cut(perc_pat_on_site, c(0, 0.005, 0.01, 0.05, 0.1, 0.25, 0.5, 0.75, 1.01)), include.lowest = TRUE) %>%
-    group_by(perc_pat_on_site, frac_pat_with_ur, ur_rate) %>%
-    summarise(pr = sum(ifelse(prob_low_prob_ur > 0.95, 1, 0)) / n(),
-              n = n(),
-              n_sites = n_distinct(paste(study_id, site_number)),
-              .groups = "drop")
-  
-  p1 <- df_plot %>%
-      ggplot(aes(frac_pat_with_ur, pr)) +
-      geom_line() +
-      geom_point() +
-      facet_grid(ur_rate ~ perc_pat_on_site)
-  
-  p2 <- df_plot %>%
-    distinct(perc_pat_on_site, n_sites) %>%
-    ggplot(aes(perc_pat_on_site, n_sites)) +
-    geom_col(width = 0.5)
-  
-  return(list(p1, p2))
-}
-
-plot_scenarios(df_scen)
-```
 
 # Load Realisitc Configuration
 
+The information contained in a portfolio configuration is very scarce and thus can be shared more easily within the industry. 
+
 ## Load
+
+Here we load a realistic portfolio configuration.
 
 ```{r}
 df_config <- readr::read_csv("vignettes/ae_profile.csv")
@@ -114,209 +98,101 @@ df_config <- readr::read_csv("vignettes/ae_profile.csv")
 
 ## Simulate Portfolio
 
+And again simulate artificial visit level data.
+
 ```{r}
-future::plan(multisession, workers = 8)
 df_portf <- sim_test_data_portfolio(df_config, parallel = TRUE, progress = TRUE)
 df_portf
 ```
 
 ## Get Under-Reporting Probability for Different Under Reporting Scenarios
 
+The performance of detecting AE under-reporting is dependent on three things:
+
+- the higher the mean AE per visit on study level the better
+- the higher the number of patients at an under-reporting site the better
+- the higher the number of under-reporting sites the worse
+
+In our initial usability assessment we have fixed those parameters. Here we are going leave them as they are in the portfolio. The vanilla version of our artificial portfolio data does not contain any under-reporting sites yet. However `simaerep::sim_scenarios()` will apply under-reporting scenarios to each site. Reducing the number of AEs by a given under-reporting (ur_rate) for all patients at the site and add the corresponding under-reporting statistics. Since the under-reporting probability is also affected by the number of other sites that are under-reporting we additionally calculate under-reporting statistics in a scenario where additional under reporting sites are present. For this we use the median number of patients per site at the study to calculate the final number of patients for which we lower the AEs in a given under-reporting scenario. 
+
 ```{r}
 
-df_scen <- sim_scenarios(df_portf,
-                         frac_pat_with_ur = c(0, 0.005, 0.01, 0.05, 0.1, 0.25, 0.5, 0.75, 1),
+df_scen <- sim_scenarios2(df_portf,
+                         additional_sites_with_ur = 5,
                          ur_rate = c(0.1, 0.25, 0.5, 0.75, 1),
-                         parallel = TRUE)
+                         parallel = TRUE,
+                         poisson = TRUE,
+                         prob_lower = TRUE,
+                         progress = TRUE)
 
 df_scen
 
 readr::write_csv(df_scen, file = "vignettes/scen.csv")
 ```
 
-## AUC
+
+## Portfolio Performance
+
+We can calculate the portfolio performance as the overall true positive rate (tpr as tp/P) on the basis of desired false positive rates (fpr as fp/P).
+We calculate a threshold based on the desired fpr using the vanilla scenario with no under-reporting sites. Then we check how many sites with known under-reporting get flagged to calculate tpr.
 
 ```{r}
-
-df_scen <- readr::read_csv("vignettes/scen.csv")
-
-df_scen_gr <- df_scen %>%
-  left_join(distinct(select(df_config, study_id, ae_per_visit_mean)),
-            by = c("study_id")) %>%
-  mutate(perc_pat_on_site = n_pat_with_med75 / (n_pat_with_med75_study + n_pat_with_med75),
-         perc_pat_on_site = cut(perc_pat_on_site, c(0, 0.005, 0.01, 0.05, 0.1, 0.25, 0.5, 0.75, 1.01)), include.lowest = TRUE,
-         ae_per_visit_mean = cut(ae_per_visit_mean, c(0, 0.2, 0.35, 0.5, 0.75, max(ae_per_visit_mean) + 0.1), include.lowest = TRUE)
-         )
-
-df_scen0 <- df_scen_gr %>%
-  filter(ur_rate == 0) %>%
-  select(perc_pat_on_site, ae_per_visit_mean, prob_low_prob_ur) %>%
-  mutate(is_ur = factor("no", levels = c("yes", "no")))  %>%
-  group_by(perc_pat_on_site, ae_per_visit_mean) %>%
-  nest()
-
-df_scengr0 <- df_scen_gr %>%
-  filter(ur_rate > 0) %>%
-  select(perc_pat_on_site, ae_per_visit_mean, prob_low_prob_ur, ur_rate, frac_pat_with_ur) %>%
-  mutate(is_ur = factor("yes", levels = c("yes", "no")))  %>%
-  group_by(perc_pat_on_site, ae_per_visit_mean, ur_rate, frac_pat_with_ur) %>%
-  nest()
-
-df_auc <- df_scengr0 %>%
-  left_join(df_scen0, by = c("perc_pat_on_site", "ae_per_visit_mean")) %>%
-  mutate(data = map2(data.x, data.y, bind_rows)) %>%
-  select(- data.x, - data.y) %>%
-  mutate(auc = map(data, yardstick::roc_auc, is_ur, prob_low_prob_ur),
-         auc = map_dbl(auc, pull, .estimate),
-         pr  = map(data, yardstick::pr_auc, is_ur, prob_low_prob_ur),
-         pr  = map_dbl(pr, pull, .estimate),
-         prc = map(data, yardstick::pr_curve, is_ur, prob_low_prob_ur),
-         prc = map(prc, filter, ! is.infinite(.threshold)),
-         roc = map(data, yardstick::roc_curve, is_ur, prob_low_prob_ur),
-         roc = map(roc, filter, ! is.infinite(.threshold)),
-         thresh_precp99 = map(prc, filter, precision >= 0.99),
-         thresh_precp99  = map(thresh_precp99, filter, .threshold == min(.threshold)),
-         thresh_precp99  = map_dbl(thresh_precp99, ~ ifelse(nrow(.) == 0, NA, pull(., .threshold))),
-         thresh_joud_pr  = map(prc, filter, precision + recall == max(precision + recall, na.rm = TRUE)),
-         thresh_joud_pr  = map(thresh_joud_pr, filter, .threshold == min(.threshold)),
-         thresh_joud_pr  = map_dbl(thresh_joud_pr, pull, .threshold),
-         thresh_joud_roc = map(roc, filter, specificity + sensitivity == max(specificity + sensitivity, na.rm = TRUE)),
-         thresh_joud_roc = map(thresh_joud_roc, filter, .threshold == min(.threshold)),
-         thresh_joud_roc = map_dbl(thresh_joud_roc, pull, .threshold),
-         n_sites = map_dbl(data, ~ nrow(.) / 2))  %>%
-  select(- data, - roc, - prc) %>%
-  unnest(auc) %>%
-  ungroup()
-
-df_auc  
-```
-
-
-## Setting Threshold
-
-we want to flag less than 0.1% of all regular cases.
-
-```{r}
-
-thresh <- df_scen_gr %>%
-  filter(ur_rate == 0, frac_pat_with_ur == 0) %>%
-  pull(prob_low_prob_ur) %>%
-  quantile(probs = 0.999)
-
-thresh
-
-n_sites <- df_scen %>%
-  select(study_id, site_number) %>%
-  distinct() %>%
-  nrow()
-
-n_sites
-
-n_sites * (1 - 0.999)
-```
-
-## Detection Rate
-
-```{r}
-df_pr_prep <- df_scen_gr %>%
-  group_by(perc_pat_on_site, ae_per_visit_mean, frac_pat_with_ur, ur_rate) %>%
-  summarise(dr = sum(ifelse(prob_low_prob_ur > thresh, 1, 0)) / n(),
-            n = n(),
-            n_sites = n_distinct(paste(study_id, site_number)),
-            .groups = "drop")
-
-df_pr_prep_ur0 <- df_pr_prep %>%
-  filter(ur_rate == 0) %>%
-  mutate(frac_pat_with_ur = list(unique(df_pr_prep$frac_pat_with_ur))) %>%
-  unnest(frac_pat_with_ur)
-
-df_pr_prep_urgr0 <- df_pr_prep %>%
-  filter(ur_rate > 0)
+get_portf_perf <- function(df_scen, stat = "prob_low_prob_ur", fpr = c(0.001, 0.01, 0.05)) {
+  stat_at_0 <- df_scen %>%
+    filter(ur_rate == 0, frac_pat_with_ur == 0) %>%
+    pull(.data[[stat]])
   
-df_pr <- bind_rows(df_pr_prep_ur0, df_pr_prep_urgr0)   %>%
-  ungroup()
-
-df_pr
-```
-
-## Total Detection Rate per Under-Reporting Scenario
-
-```{r}
-df_pr %>%
-  mutate(x = str_split(perc_pat_on_site, ","),
-           xmin = map_chr(x, ~ .[[1]]),
-           xmax = map_chr(x, ~ .[[2]]),
-           xmin = as.double(str_extract(xmin, "(\\d|\\.)+")),
-           xmax = as.double(str_extract(xmax, "(\\d|\\.)+"))) %>%
-  filter(frac_pat_with_ur == xmin | frac_pat_with_ur == xmax) %>%
-  group_by(perc_pat_on_site, ae_per_visit_mean, ur_rate) %>%
-  summarise(dr = max(dr),
-            n_sites = max(n_sites),
-            .groups = "drop") %>%
-  group_by(ur_rate) %>%
-  mutate(weight = n_sites / sum(n_sites)) %>%
-  summarise(weighted_dr = sum(dr * weight)) %>%
-  knitr::kable()
-
-```
-
-
-
-## Plot
-
-```{r}
-
-plot_scen_perf <- function(df, y_title) {
+  df_thresh <- tibble(
+      fpr = fpr
+    ) %>%
+    mutate(thresh = map_dbl(fp, ~ quantile(stat_at_0, probs =  1 - .)))
+    
   
-  df_label <- df %>%
-    select(ae_per_visit_mean, perc_pat_on_site, n_sites) %>%
-    distinct() %>%
-    mutate(x = str_split(perc_pat_on_site, ","),
-           xmin = map_chr(x, ~ .[[1]]),
-           xmax = map_chr(x, ~ .[[2]]),
-           xmin = as.double(str_extract(xmin, "(\\d|\\.)+")),
-           xmax = as.double(str_extract(xmax, "(\\d|\\.)+")),
-           xmax = ifelse(xmax - xmin < 0.025, xmin + 0.025, xmax))
+  df_prep <- df_scen %>%
+    mutate(data = list(df_thresh)) %>%
+    unnest(data) %>%
+    mutate(stat = .data[[stat]]) %>%
+    group_by(fp, thresh, additional_sites_with_ur, ur_rate) %>%
+    summarise(dr = sum(ifelse(.data$stat >= thresh, 1, 0)) / n_distinct(paste(study_id, site_number)), .groups = "drop")
+    
+  df_prep_0 <- df_prep %>%
+    filter(ur_rate == 0) %>%
+    mutate(additional_sites_with_ur = list(unique(df_prep$additional_sites_with_ur))) %>%
+    unnest(additional_sites_with_ur)
   
+  df_prep_gr0 <- df_prep %>%
+    filter(ur_rate > 0)
   
-  df %>%
-      ggplot() +
-      geom_rect(aes(xmin = xmin, xmax = xmax, ymin = 0, ymax = 1),
-                df_label,
-                fill = "lightgrey",
-                alpha = 1) +
-      geom_point(aes(0.5, 0.5, size = n_sites),
-                 color = "darkgrey") +
-      geom_text(aes(0.5, 0.85, label = n_sites),
-                df_label,
-                color = "darkgrey") +
-      geom_line(
-        aes(frac_pat_with_ur,
-            .estimate,
-            group = as.factor(ur_rate),
-            color =  fct_rev(as.factor(ur_rate)))
-      ) +
-      geom_point(
-        aes(frac_pat_with_ur,
-            .estimate,
-            group = as.factor(ur_rate),
-            color =  fct_rev(as.factor(ur_rate))),
-        alpha = 0.5, size = 1) +
-      scale_color_viridis_d(direction = 1) +
-      theme_minimal() +
-      facet_grid(ae_per_visit_mean ~ perc_pat_on_site) +
-      labs(
-        title = "Portfolio Performance Simulation",
-        subtitle = "Ratio of Patients at Under-Reporting Site ~ Study Average AE per Visit",
-        color = "Under Reporting Ratio",
-        size = "Number of Sites",
-        x = "Ratio of Under-Reporting Patients Study",
-        y = y_title
-        )
+  bind_rows(df_prep_0, df_prep_gr0) %>%
+    arrange(fp, ur_rate)
 }
 
-df_pr %>%
-  mutate(.estimate = .metric) %>%
-  plot_scen_perf(y_title = "Sensitivity 0.999 Threshold")
+df_perf <- get_portf_perf(df_scen)
+
+df_perf %>%
+    pivot_wider(
+    names_from = additional_sites_with_ur,
+    values_from = dr,
+    names_prefix = "extra_ur_sites_"
+  ) %>%
+  knitr::kable(digits = 3)
+
+```
+
+
+# Benchmark simaerep Using Portfolio Performance
+
+One of the latest changes to simaerep was an improvement to the visit_med75 calculation. We can check how this has affected portfolio performance.
+
+```{r}
+df_scen_old_visit_med75 <- sim_scenarios2(df_portf,
+                                           additional_sites_with_ur = 5,
+                                           ur_rate = c(0.1, 0.25, 0.5, 0.75, 1),
+                                           parallel = TRUE,
+                                           poisson = TRUE,
+                                           prob_lower = TRUE,
+                                           progress = TRUE,
+                                           site_aggr_args = list(method = "med75")) # default is "med75_adj"
+
 ```
 

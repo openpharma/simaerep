@@ -1359,27 +1359,131 @@ sim_scenario <- function(n_ae_site, n_ae_study, frac_pat_with_ur, ur_rate) {
 }
 
 
-sim_scenarios2(df_portf,
-               additional_sites_with_ur = c(1, 2, 3),
+sim_scenarios2 <- function(df_portf,
+               additional_sites_with_ur = 3,
                ur_rate = c(0.25, 0.5),
                r = 1000,
                poisson = FALSE,
                prob_lower = TRUE,
                parallel = FALSE,
-               progress = TRUE) {
+               progress = TRUE,
+               site_aggr_args = list(),
+               eval_sites_args = list()) {
+
+  stopifnot("all site_aggr_args list items must be named" = all(names(site_aggr_args) != ""))
+  stopifnot("all eval_sites_args list items must be named" = all(names(eval_sites_args) != ""))
 
   if(progress) {
     message("aggregating site level")
   }
+
   df_visit <- check_df_visit(df_portf)
 
-  df_mean_pat <- df_visit %>%
+  df_site <- do.call(site_aggr,c(list(df_visit = df_visit), site_aggr_args))
+
+  if(progress) {
+    message("prepping for simulation")
+  }
+
+  df_sim_prep <- prep_for_sim(df_site = df_site, df_visit = df_visit)
+
+  if(progress) {
+    message("generating scenarios")
+  }
+
+  # create scenario grid
+
+  df_median_pat <- df_visit %>%
     group_by(study_id, site_number, visit) %>%
-    summarise(n_pat = n_distinct(patnum)) %>%
+    summarise(n_pat = n_distinct(patnum),
+              .groups = "drop") %>%
     group_by(study_id, visit) %>%
-    summarise(mean_n_pat = mean(n_pat),
+    summarise(mean_n_pat = median(n_pat),
               sum_n_pat = sum(n_pat),
-              n_sites = n_distinct(site_number))
+              n_sites = n_distinct(site_number),
+              .groups = "drop")
+
+  ur_rate <- ur_rate[ur_rate > 0]
+
+  df_grid_gr0 <- df_site %>%
+    select(study_id, site_number, n_pat_with_med75, visit_med75) %>%
+    left_join(df_median_pat, by = c(study_id = "study_id", visit_med75 = "visit")) %>%
+    mutate(additional_sites_with_ur = list(0:additional_sites_with_ur)) %>%
+    unnest(additional_sites_with_ur) %>%
+    mutate(frac_pat_with_ur = (n_pat_with_med75 + additional_sites_with_ur * mean_n_pat) / sum_n_pat,
+           ur_rate = list(ur_rate)) %>%
+    unnest(ur_rate) %>%
+    select(study_id, site_number, additional_sites_with_ur, frac_pat_with_ur, ur_rate)
+
+  df_grid_0 <- df_grid_gr0 %>%
+    select(study_id, site_number) %>%
+    distinct() %>%
+    mutate(additional_sites_with_ur = 0,
+           frac_pat_with_ur = 0,
+           ur_rate = 0)
+
+  df_grid <- bind_rows(df_grid_0, df_grid_gr0)
+
+  df_scen_prep <- df_sim_prep %>%
+    left_join(df_grid, by = c("study_id", "site_number"))
+
+  # generating scenarios
+
+  df_scen <- df_scen_prep %>%
+    mutate(scenarios = purrr::pmap(
+      list(n_ae_site, n_ae_study, frac_pat_with_ur, ur_rate),
+      sim_scenario
+    )
+    ) %>%
+    select(- n_ae_site, - n_ae_study) %>%
+    mutate(n_ae_site = map(scenarios, "n_ae_site"),
+           n_ae_study = map(scenarios, "n_ae_study")) %>%
+    select(- scenarios)
+
+  if(progress) {
+    message("getting under-reporting stats")
+  }
+
+  if(parallel) {
+    .purrr <- furrr::future_map
+    .purrr_args <- list(.options = furrr_options(seed = NULL))
+  } else {
+    .purrr <- purrr::map
+    .purrr_args <- list()
+  }
+
+  df_sim_sites <- df_scen %>%
+    mutate(study_id_gr = study_id,
+           site_number_gr = site_number) %>%
+    group_by(study_id_gr, site_number_gr) %>%
+    nest() %>%
+    ungroup() %>%
+    select(- study_id_gr, - site_number_gr)
+
+  progressr::with_progress(
+    ls_df_sim_sites <- purrr_bar(
+      df_sim_sites$data,
+      .purrr = .purrr,
+      .f = sim_after_prep,
+      .f_args = list(
+        r = r,
+        poisson = poisson,
+        prob_lower = prob_lower
+      ),
+      .purrr_args = .purrr_args,
+      .steps = nrow(df_sim_sites),
+      .progress = progress
+    )
+  )
+
+  if(progress) {
+    message("evaluating stats")
+  }
+
+  df_sim_sites <- bind_rows(ls_df_sim_sites)
+
+  df_eval <- do.call(eval_sites,c(list(df_sim_sites = df_sim_sites), eval_sites_args)) %>%
+    arrange(study_id, site_number, additional_sites_with_ur, frac_pat_with_ur, ur_rate)
 
 }
 
@@ -1392,6 +1496,8 @@ sim_scenarios <- function(df_portf,
                           parallel = FALSE,
                           progress = TRUE) {
 
+
+
   if(progress) {
     message("aggregating site level")
   }
@@ -1403,6 +1509,11 @@ sim_scenarios <- function(df_portf,
     message("prepping for simulation")
   }
   df_sim_prep <- prep_for_sim(df_site = df_site, df_visit = df_visit)
+
+  if(progress) {
+    message("generating under-reporting scenarios")
+  }
+
 
   # create scenario grid
 
@@ -1418,14 +1529,16 @@ sim_scenarios <- function(df_portf,
       tibble(frac_pat_with_ur = 0, ur_rate = 0)
     )
 
+  df_scen_prep <- df_sim_prep %>%
+    mutate(grid = list(df_grid)) %>%
+    unnest(.data$grid)
+
   # generate under reporting scenarios
   if(progress) {
     message("generating under-reporting scenarios")
   }
 
-  df_scen <- df_sim_prep %>%
-    mutate(grid = list(df_grid)) %>%
-    unnest(.data$grid) %>%
+  df_scen <- df_scen_prep %>%
     mutate(scenarios = purrr::pmap(
       list(n_ae_site, n_ae_study, frac_pat_with_ur, ur_rate),
       sim_scenario
