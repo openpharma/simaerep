@@ -22,13 +22,13 @@ if (getRversion() >= "2.15.1") {
 #' df_visit$study_id <- "A"
 #'
 #' df_visit_filt <- df_visit %>%
-#'   filter(visit != 3)
+#'   dplyr::filter(visit != 3)
 #'
 #' df_visit_corr <- check_df_visit(df_visit_filt)
 #' 3 %in% df_visit_corr$visit
 #' nrow(df_visit_corr) == nrow(df_visit)
 #'
-#' df_visit_corr <- check_df_visit(bind_rows(df_visit, df_visit))
+#' df_visit_corr <- check_df_visit(dplyr::bind_rows(df_visit, df_visit))
 #' nrow(df_visit_corr) == nrow(df_visit)
 #'
 #' @rdname check_df_visit
@@ -72,10 +72,10 @@ check_df_visit <- function(df_visit) {
   )
 
   df_visit %>%
-    group_by(study_id, patnum) %>%
-    summarise(n_sites = n_distinct(site_number), .groups = "drop") %>%
-    mutate(check = n_sites == 1) %>%
-    pull(check) %>%
+    group_by(.data$study_id, .data$patnum) %>%
+    summarise(n_sites = n_distinct(.data$site_number), .groups = "drop") %>%
+    mutate(check = .data$n_sites == 1) %>%
+    pull(.data$check) %>%
     unlist() %>%
     all() %>%
     stopifnot("patient ids must be site exclusive" = .)
@@ -682,6 +682,7 @@ prob_lower_site_ae_vs_study_ae <- function(site_ae, study_ae, r = 1000, parallel
 #' @param r integer, denotes number of simulations, default = 1000
 #' @param poisson_test logical, calculates poisson.test pvalue
 #' @param prob_lower logical, calculates probability for getting a lower value
+#' @param progress logical, display progress bar, Default = FALSE
 #' @return dataframe with the following columns:
 #' \describe{
 #'   \item{**study_id**}{study identification}
@@ -717,12 +718,15 @@ prob_lower_site_ae_vs_study_ae <- function(site_ae, study_ae, r = 1000, parallel
 #' \code{\link[simaerep]{pat_pool}},
 #' \code{\link[simaerep]{prob_lower_site_ae_vs_study_ae}},
 #' \code{\link[simaerep]{poiss_test_site_ae_vs_study_ae}},
+#' \code{\link[simaerep]{sim_sites}},
+#' \code{\link[simaerep]{prep_for_sim}}
 #' @export
 sim_sites <- function(df_site,
                       df_visit,
                       r = 1000,
                       poisson_test = TRUE,
-                      prob_lower = TRUE) {
+                      prob_lower = TRUE,
+                      progress = FALSE) {
 
   df_visit <- check_df_visit(df_visit)
 
@@ -731,15 +735,19 @@ sim_sites <- function(df_site,
   df_sim <- sim_after_prep(df_sim_prep,
                            r = r,
                            poisson_test = poisson_test,
-                           prob_lower = prob_lower)
+                           prob_lower = prob_lower,
+                           progress = progress)
 
   return(df_sim)
 }
 
-#' @title prepare data for simulation
-#' @description collect AEs per patient at visit_med75 for site and study as a vector of integers
-#' @inheritParams sim_sites()
-#' @return dataframe
+#'@title prepare data for simulation
+#'@description Internal function called by \code{\link[simaerep]{sim_sites}}.
+#'  Collect AEs per patient at visit_med75 for site and study as a vector of
+#'  integers.
+#'@param df_visit dataframe, created by \code{\link[simaerep]{sim_sites}}
+#'@param df_site dataframe created by \code{\link[simaerep]{site_aggr}}
+#'@return dataframe
 #' @examples
 #' df_visit <- sim_test_data_study(
 #'    n_pat = 100,
@@ -754,8 +762,9 @@ sim_sites <- function(df_site,
 #'
 #' df_prep <- prep_for_sim(df_site, df_visit)
 #' df_prep
-#' @rdname prep_for_sim
-#' @export
+#'@rdname prep_for_sim
+#' @seealso \code{\link[simaerep]{sim_sites}}, \code{\link[simaerep]{sim_after_prep}}
+#'@export
 prep_for_sim <- function(df_site, df_visit) {
 
   df_pat_pool <- pat_pool(df_visit, df_site)
@@ -773,9 +782,18 @@ prep_for_sim <- function(df_site, df_visit) {
   df_sim_prep <- df_sim_prep %>%
     left_join(df_pat_pool, "study_id") %>%
     mutate(
-      pat_pool = map2(.data$pat_pool, .data$visit_med75, function(x, y) filter(x, .data$visit == y)),
-      n_ae_site = map2(.data$pat_pool, .data$patients, function(x, y) filter(x, .data$patnum %in% y)),
-      n_ae_study = map2(.data$pat_pool, .data$patients, function(x, y) filter(x, ! .data$patnum %in% y)),
+      pat_pool = map2(
+        .data$pat_pool, .data$visit_med75,
+        function(x, y) filter(x, .data$visit == y)
+      ),
+      n_ae_site = map2(
+        .data$pat_pool, .data$patients,
+        function(x, y) filter(x, .data$patnum %in% y)
+      ),
+      n_ae_study = map2(
+        .data$pat_pool, .data$patients,
+        function(x, y) filter(x, ! .data$patnum %in% y)
+      ),
       n_ae_site = map(.data$n_ae_site, "n_ae"),
       n_ae_study = map(.data$n_ae_study, "n_ae")
     ) %>%
@@ -786,10 +804,13 @@ prep_for_sim <- function(df_site, df_visit) {
 
 }
 
-#' @title prepare data for simulation
-#' @description collect AEs per patient at visit_med75 for site and study as a vector of integers
-#' @inheritParams sim_sites()
-#' @return dataframe
+#'@title start simulation after preparation
+#'@description Internal function called by \code{\link[simaerep]{sim_sites}}
+#'  after \code{\link[simaerep]{prep_for_sim}}
+#'@param df_sim_prep dataframe as returned by
+#'  \code{\link[simaerep]{prep_for_sim}}
+#'@inheritParams sim_sites
+#'@return dataframe
 #' @examples
 #' df_visit <- sim_test_data_study(
 #'    n_pat = 100,
@@ -807,8 +828,10 @@ prep_for_sim <- function(df_site, df_visit) {
 #' df_sim <- sim_after_prep(df_prep)
 #'
 #' df_sim
-#' @rdname prep_for_sim
-#' @export
+#'@rdname sim_after_prep
+#'@seealso \code{\link[simaerep]{sim_sites}},
+#'  \code{\link[simaerep]{prep_for_sim}}
+#'@export
 sim_after_prep <- function(df_sim_prep,
                            r = 1000,
                            poisson_test = FALSE,
@@ -852,7 +875,7 @@ sim_after_prep <- function(df_sim_prep,
            .data$mean_ae_site_med75,
            .data$mean_ae_study_med75,
            .data$n_pat_with_med75_study,
-           everything()) %>%
+           dplyr::everything()) %>%
     ungroup()
 
   return(df_sim)
@@ -879,7 +902,7 @@ sim_after_prep <- function(df_sim_prep,
 #'
 #' df_visit2$study_id <- "B"
 #'
-#' df_visit <- bind_rows(df_visit1, df_visit2)
+#' df_visit <- dplyr::bind_rows(df_visit1, df_visit2)
 #'
 #' df_site <- site_aggr(df_visit)
 #'
@@ -955,7 +978,7 @@ get_pat_pool_config <- function(df_visit, df_site, min_n_pat_with_med75 = 1) {
 #'
 #' df_visit2$study_id <- "B"
 #'
-#' df_visit <- bind_rows(df_visit1, df_visit2)
+#' df_visit <- dplyr::bind_rows(df_visit1, df_visit2)
 #'
 #' df_site <- site_aggr(df_visit)
 #'
@@ -1003,8 +1026,6 @@ sim_studies <- function(df_visit,
 
   # set-up multiprocessing -------------------------------------
   if (parallel) {
-    requireNamespace("furrr")
-    suppressWarnings(future::plan(multiprocess))
     .f_map <- function(...) {
       furrr::future_map(
         ...,

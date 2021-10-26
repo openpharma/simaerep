@@ -5,8 +5,8 @@
 \title{execute a purrr or furrr function with a progress bar}
 \usage{
 purrr_bar(
-  .purrr,
   ...,
+  .purrr,
   .f,
   .f_args = list(),
   .purrr_args = list(),
@@ -16,40 +16,75 @@ purrr_bar(
 )
 }
 \arguments{
-\item{.purrr}{purrr or furrr function}
-
 \item{...}{iterable arguments passed to .purrr}
+
+\item{.purrr}{purrr or furrr function}
 
 \item{.f}{function to be executed over iterables}
 
 \item{.f_args}{list of arguments passed to .f, Default: list()}
+
+\item{.purrr_args}{list of arguments passed to .purrr, Default: list()}
 
 \item{.steps}{integer number of iterations}
 
 \item{.slow}{logical slows down execution, Default: FALSE}
 
 \item{.progress}{logical, show progress bar, Default: TRUE}
-
-\item{.purr_args}{list of arguments passed to .purrr, Default: list()}
 }
 \description{
 call still needs to be wrapped in with_progress()
 }
 \examples{
+# purrr::map
+progressr::with_progress(
+  purrr_bar(rep(0.25, 5), .purrr = purrr::map, .f = Sys.sleep, .steps = 5)
+)
 
-with_progress(purrr_bar(purrr::map, rep(0.25, 5), .f = Sys.sleep, .steps = 5))
-with_progress(purrr_bar(purrr::walk, rep(0.25, 5), .f = Sys.sleep, .steps = 5))
-with_progress(purrr_bar(purrr::walk, rep(0.25, 5), .f = Sys.sleep, .steps = 5,
-              .progress = FALSE))
+# purrr::walk
+progressr::with_progress(
+ purrr_bar(rep(0.25, 5), .purrr = purrr::walk,.f = Sys.sleep, .steps = 5)
+)
 
-with_progress(
+# progress bar off
+progressr::with_progress(
   purrr_bar(
-    purrr::map2,
+    rep(0.25, 5), .purrr = purrr::walk,.f = Sys.sleep, .steps = 5, .progress = FALSE
+  )
+)
+
+# purrr::map2
+progressr::with_progress(
+  purrr_bar(
     rep(1, 5), rep(2, 5),
+    .purrr = purrr::map2,
     .f = `+`,
     .steps = 5,
     .slow = TRUE
  )
 )
 
+# purrr::pmap
+progressr::with_progress(
+  purrr_bar(
+    list(rep(1, 5), rep(2, 5)),
+    .purrr = purrr::pmap,
+    .f = `+`,
+    .steps = 5,
+    .slow = TRUE
+ )
+)
+
+# define function within purr_bar() call
+progressr::with_progress(
+  purrr_bar(
+    list(rep(1, 5), rep(2, 5)),
+    .purrr = purrr::pmap,
+    .f = function(x, y) {
+      paste0(x, y)
+    },
+    .steps = 5,
+    .slow = TRUE
+ )
+)
 }

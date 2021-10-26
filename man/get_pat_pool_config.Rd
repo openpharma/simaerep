@@ -35,7 +35,7 @@ df_visit2 <- sim_test_data_study(n_pat = 1000, n_sites = 3,
 
 df_visit2$study_id <- "B"
 
-df_visit <- bind_rows(df_visit1, df_visit2)
+df_visit <- dplyr::bind_rows(df_visit1, df_visit2)
 
 df_site <- site_aggr(df_visit)
 

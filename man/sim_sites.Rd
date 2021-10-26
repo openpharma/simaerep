@@ -4,7 +4,14 @@
 \alias{sim_sites}
 \title{calculate prob_lower and poisson.test pvalue for study sites}
 \usage{
-sim_sites(df_site, df_visit, r = 1000, poisson_test = TRUE, prob_lower = TRUE)
+sim_sites(
+  df_site,
+  df_visit,
+  r = 1000,
+  poisson_test = TRUE,
+  prob_lower = TRUE,
+  progress = FALSE
+)
 }
 \arguments{
 \item{df_site}{dataframe created by \code{\link[simaerep]{site_aggr}}}
@@ -16,15 +23,20 @@ sim_sites(df_site, df_visit, r = 1000, poisson_test = TRUE, prob_lower = TRUE)
 \item{poisson_test}{logical, calculates poisson.test pvalue}
 
 \item{prob_lower}{logical, calculates probability for getting a lower value}
+
+\item{progress}{logical, display progress bar, Default = FALSE}
 }
 \value{
 dataframe with the following columns:
 \describe{
 \item{\strong{study_id}}{study identification}
 \item{\strong{site_number}}{site identification}
+\item{\strong{n_pat}}{number of patients at site}
 \item{\strong{visit_med75}}{median(max(visit)) * 0.75}
+\item{\strong{n_pat_with_med75}}{number of patients at site with med75}
 \item{\strong{mean_ae_site_med75}}{mean AE at visit_med75 site level}
 \item{\strong{mean_ae_study_med75}}{mean AE at visit_med75 study level}
+\item{\strong{n_pat_with_med75_study}}{number of patients at study with med75 excl. site}
 \item{\strong{pval}}{p-value as returned by \code{\link[stats]{poisson.test}}}
 \item{\strong{prob_low}}{bootstrapped probability for having mean_ae_site_med75 or lower}
 }
@@ -57,4 +69,6 @@ df_sim_sites \%>\%
 \code{\link[simaerep]{pat_pool}},
 \code{\link[simaerep]{prob_lower_site_ae_vs_study_ae}},
 \code{\link[simaerep]{poiss_test_site_ae_vs_study_ae}},
+\code{\link[simaerep]{sim_sites}},
+\code{\link[simaerep]{prep_for_sim}}
 }

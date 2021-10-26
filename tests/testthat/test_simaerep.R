@@ -450,7 +450,7 @@ test_that("portfolio_sim", {
      df_site_max,
      anonymize = TRUE,
      min_pat_per_study = 100,
-     min_sites_per_study = 10
+     min_sites_per_study = 5
    )
 
    expect_true(
@@ -495,7 +495,7 @@ test_that("portfolio_sim", {
    expect_true(
      all(
        c("fpr", "thresh", "extra_ur_sites", "ur_rate",
-         "dr") %in% colnames(df_portf)
+         "tpr") %in% colnames(df_perf)
      )
    )
 
