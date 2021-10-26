@@ -131,7 +131,7 @@ sim_scenario <- function(n_ae_site, n_ae_study, frac_pat_with_ur, ur_rate) {
 #' @title Simulate Under-Reporting Scenarios
 #' @description Use with simulated portfolio data to generate under-reporting
 #'   stats for specified scenarios
-#' @param df_portf dataframe as returned by \code{\link{sim_test_data_portfolio}
+#' @param df_portf dataframe as returned by \code{\link{sim_test_data_portfolio}}
 #' @param extra_ur_sites numeric, set maximum number of additional
 #'   under-reporting sites, see details Default: 3
 #' @param ur_rate numeric vector, set under-reporting rates for scenarious
@@ -140,9 +140,9 @@ sim_scenario <- function(n_ae_site, n_ae_study, frac_pat_with_ur, ur_rate) {
 #' @param parallel logical, use parallel processing see details, Default: FALSE
 #' @param progress logical, show progress bar, Default: TRUE
 #' @param site_aggr_args named list of parameters passed to
-#'   \code{\link{site_aggr}, Default: list()
+#'   \code{\link{site_aggr}}, Default: list()
 #' @param eval_sites_args named list of parameters passed to
-#'   \code{\link{eval_sites}, Default: list()
+#'   \code{\link{eval_sites}}, Default: list()
 #' @return dataframe with the following columns: \describe{
 #'   \item{**study_id**}{study identification} \item{**site_number**}{site
 #'   identification} \item{**n_pat**}{number of patients at site}
@@ -163,7 +163,7 @@ sim_scenario <- function(n_ae_site, n_ae_study, frac_pat_with_ur, ur_rate) {
 #'   under-reporting as 1 - pval_adj, poisson.test (use as benchmark)}
 #'   \item{**prob_low_prob_ur**}{probability under-reporting as 1 -
 #'   prob_low_adj, bootstrapped (use)}
-#' @details `sim_scenarios()` will apply under-reporting scenarios to each site.
+#' @details `sim_ur_scenarios()` will apply under-reporting scenarios to each site.
 #'   Reducing the number of AEs by a given under-reporting (ur_rate) for all
 #'   patients at the site and add the corresponding under-reporting statistics.
 #'   Since the under-reporting probability is also affected by the number of
@@ -176,17 +176,17 @@ sim_scenario <- function(n_ae_site, n_ae_study, frac_pat_with_ur, ur_rate) {
 #'   run. For this to work we need to specify the plan for how the code should
 #'   run, e.g. `plan(multisession, workers = 18)`
 #' @examples
-#' \dontrun{
+#' if (interactive) {
 #' df_visit1 <- sim_test_data_study(n_pat = 100, n_sites = 10,
 #'                                  frac_site_with_ur = 0.4, ur_rate = 0.6)
-#'
+#'.
 #' df_visit1$study_id <- "A"
-#'
+#'.
 #' df_visit2 <- sim_test_data_study(n_pat = 100, n_sites = 10,
 #'                                  frac_site_with_ur = 0.2, ur_rate = 0.1)
-#'
+#'.
 #' df_visit2$study_id <- "B"
-#'
+#'.
 #' df_visit <- bind_rows(df_visit1, df_visit2)
 #'
 #' df_site_max <- df_visit %>%
@@ -195,42 +195,34 @@ sim_scenario <- function(n_ae_site, n_ae_study, frac_pat_with_ur, ur_rate) {
 #'             max_ae = max(n_ae),
 #'             .groups = "drop")
 #'
-#' df_config <- simaerep::get_config(df_site_max, anonymize = TRUE, min_pat_per_study = 100, min_sites_per_study = 10)
+#' df_config <- simaerep::get_config(df_site_max)
 #'
 #' df_config
 #'
 #' df_portf <- sim_test_data_portfolio(df_config)
+#'
 #' df_portf
 #'
-#' df_scen_adj <- sim_scenarios(df_portf,
-#'                           extra_ur_sites = 2,
-#'                           ur_rate = c(0.5, 1),
-#'                           parallel = FALSE,
-#'                           poisson = FALSE,
-#'                           prob_lower = TRUE,
-#'                           progress = TRUE,
-#'                           site_aggr_args = list(method = "med75_adj"))
-#'
-#' df_scen_adj
+#' df_scen <- sim_ur_scenarios(df_portf,
+#'                             extra_ur_sites = 2,
+#'                             ur_rate = c(0.5, 1))
 #'
 #'
-#' df_scen_old <- sim_scenarios(df_portf,
-#'                           extra_ur_sites = 2,
-#'                           ur_rate = c(0.5, 1),
-#'                           parallel = FALSE,
-#'                           poisson = FALSE,
-#'                           prob_lower = TRUE,
-#'                           progress = TRUE,
-#'                           site_aggr_args = list(method = "med75"))
+#' df_scen
 #'
-#' df_scen_old
+#' df_perf <- get_portf_perf(df_scen)
 #'
+#' df_perf
 #' }
-#' @seealso \code{\link[purrr]{map2}},\code{\link[purrr]{map}}
-#'   \code{\link[furrr]{future_map}} \code{\link[progressr]{with_progress}}
-#' @rdname sim_scenarios2
+#' @seealso
+#'  \code{\link{sim_test_data_study}}
+#'  \code{\link{get_config}}
+#'  \code{\link{sim_test_data_portfolio}}
+#'  \code{\link{sim_ur_scenarios}}
+#'  \code{\link{get_portf_perf}}
+#' @rdname sim_ur_scenarios
 #' @export
-sim_scenarios <- function(df_portf,
+sim_ur_scenarios <- function(df_portf,
                           extra_ur_sites = 3,
                           ur_rate = c(0.25, 0.5),
                           r = 1000,
@@ -364,23 +356,70 @@ sim_scenarios <- function(df_portf,
 }
 
 
-#' @title FUNCTION_TITLE
-#' @description FUNCTION_DESCRIPTION
-#' @param df_config PARAM_DESCRIPTION
-#' @param parallel PARAM_DESCRIPTION, Default: FALSE
-#' @param progress PARAM_DESCRIPTION, Default: TRUE
-#' @return OUTPUT_DESCRIPTION
-#' @details DETAILS
+#' @title Simulate Portfolio Test Data
+#' @description Simulate visit level data from a portfolio configuration.
+#' @param df_config dataframe as returned by \code{\link{get_config}}
+#' @param parallel logical activate parallel processing, see details, Default: FALSE
+#' @param progress logical, Default: TRUE
+#'@return dataframe with the following columns: \describe{
+#'  \item{**study_id**}{study identification} \item{**ae_per_visit_mean**}{mean
+#'  AE per visit per study} \item{**site_number**}{site}
+#'  \item{**max_visit_sd**}{standard deviation of maximum patient visits per
+#'  site} \item{**max_visit_mean**}{mean of maximum patient visits per site}
+#'  \item{**patnum**}{number of patients}
+#'  \item{**visit**}{visit number}
+#'  \item{**n_ae**}{cumulative sum of AEs}
+#'}
+#' @details uses \code{\link{sim_test_data_study}}.
+#'   We use the `furrr` package to
+#'   implement parallel processing as these simulations can take a long time to
+#'   run. For this to work we need to specify the plan for how the code should
+#'   run, e.g. `plan(multisession, workers = 3)
 #' @examples
-#' \dontrun{
-#' if(interactive()){
-#'  #EXAMPLE1
-#'  }
+#' if (interactive) {
+#' df_visit1 <- sim_test_data_study(n_pat = 100, n_sites = 10,
+#'                                  frac_site_with_ur = 0.4, ur_rate = 0.6)
+#'.
+#' df_visit1$study_id <- "A"
+#'.
+#' df_visit2 <- sim_test_data_study(n_pat = 100, n_sites = 10,
+#'                                  frac_site_with_ur = 0.2, ur_rate = 0.1)
+#'.
+#' df_visit2$study_id <- "B"
+#'.
+#' df_visit <- bind_rows(df_visit1, df_visit2)
+#'
+#' df_site_max <- df_visit %>%
+#'   group_by(study_id, site_number, patnum) %>%
+#'   summarise(max_visit = max(visit),
+#'             max_ae = max(n_ae),
+#'             .groups = "drop")
+#'
+#' df_config <- simaerep::get_config(df_site_max)
+#'
+#' df_config
+#'
+#' df_portf <- sim_test_data_portfolio(df_config)
+#'
+#' df_portf
+#'
+#' df_scen <- sim_ur_scenarios(df_portf,
+#'                             extra_ur_sites = 2,
+#'                             ur_rate = c(0.5, 1))
+#'
+#'
+#' df_scen
+#'
+#' df_perf <- get_portf_perf(df_scen)
+#'
+#' df_perf
 #' }
 #' @seealso
-#'  \code{\link[furrr]{future_map2}}
-#'  \code{\link[purrr]{map2}}
-#'  \code{\link[progressr]{with_progress}}
+#'  \code{\link{sim_test_data_study}}
+#'  \code{\link{get_config}}
+#'  \code{\link{sim_test_data_portfolio}}
+#'  \code{\link{sim_ur_scenarios}}
+#'  \code{\link{get_portf_perf}}
 #' @rdname sim_test_data_portfolio
 #' @export
 sim_test_data_portfolio <- function(df_config, parallel = FALSE, progress = TRUE) {
@@ -465,23 +504,70 @@ sim_test_data_portfolio <- function(df_config, parallel = FALSE, progress = TRUE
   return(df_portf)
 }
 
-#' @title FUNCTION_TITLE
-#' @description FUNCTION_DESCRIPTION
-#' @param df_site PARAM_DESCRIPTION
-#' @param min_pat_per_study PARAM_DESCRIPTION, Default: 100
-#' @param min_sites_per_study PARAM_DESCRIPTION, Default: 10
-#' @param anonymize PARAM_DESCRIPTION, Default: TRUE
-#' @param pad_width PARAM_DESCRIPTION, Default: 4
-#' @return OUTPUT_DESCRIPTION
-#' @details DETAILS
+#'@title Get Portfolio Configuration
+#'@description Get Portfolio configuration from a dataframe aggregated on
+#'  patient level with max_ae and max_visit. Will filter studies with only a few
+#'  sites and patients and will anonymize IDs. Portfolio configuration can be
+#'  used by \code{\link{sim_test_data_portfolio}} to generate data for an
+#'  artificial portfolio.
+#'@param df_site dataframe aggregated on patient level with max_ae and max_visit
+#'@param min_pat_per_study minimum number of patients per study, Default: 100
+#'@param min_sites_per_study minimum number of sites per study, Default: 10
+#'@param anonymize logical, Default: TRUE
+#'@param pad_width padding width for newly created IDs, Default: 4
+#'@return dataframe with the following columns: \describe{
+#'  \item{**study_id**}{study identification} \item{**ae_per_visit_mean**}{mean
+#'  AE per visit per study} \item{**site_number**}{site}
+#'  \item{**max_visit_sd**}{standard deviation of maximum patient visits per
+#'  site} \item{**max_visit_mean**}{mean of maximum patient visits per site}
+#'  \item{**n_pat**}{number of patients} }
 #' @examples
-#' \dontrun{
-#' if(interactive()){
-#'  #EXAMPLE1
-#'  }
+#' if (interactive) {
+#' df_visit1 <- sim_test_data_study(n_pat = 100, n_sites = 10,
+#'                                  frac_site_with_ur = 0.4, ur_rate = 0.6)
+#'.
+#' df_visit1$study_id <- "A"
+#'.
+#' df_visit2 <- sim_test_data_study(n_pat = 100, n_sites = 10,
+#'                                  frac_site_with_ur = 0.2, ur_rate = 0.1)
+#'.
+#' df_visit2$study_id <- "B"
+#'.
+#' df_visit <- bind_rows(df_visit1, df_visit2)
+#'
+#' df_site_max <- df_visit %>%
+#'   group_by(study_id, site_number, patnum) %>%
+#'   summarise(max_visit = max(visit),
+#'             max_ae = max(n_ae),
+#'             .groups = "drop")
+#'
+#' df_config <- simaerep::get_config(df_site_max)
+#'
+#' df_config
+#'
+#' df_portf <- sim_test_data_portfolio(df_config)
+#'
+#' df_portf
+#'
+#' df_scen <- sim_ur_scenarios(df_portf,
+#'                             extra_ur_sites = 2,
+#'                             ur_rate = c(0.5, 1))
+#'
+#'
+#' df_scen
+#'
+#' df_perf <- get_portf_perf(df_scen)
+#'
+#' df_perf
 #' }
-#' @rdname get_config
-#' @export
+#' @seealso
+#'  \code{\link{sim_test_data_study}}
+#'  \code{\link{get_config}}
+#'  \code{\link{sim_test_data_portfolio}}
+#'  \code{\link{sim_ur_scenarios}}
+#'  \code{\link{get_portf_perf}}
+#'@rdname get_config
+#'@export
 get_config <- function(df_site,
                        min_pat_per_study = 100,
                        min_sites_per_study = 10,
@@ -538,18 +624,71 @@ get_config <- function(df_site,
   return(df_config)
 }
 
+#' @title Get Portfolio Performance
+#' @description Performance as true positive rate (tpr as tp/P) on the basis of desired false positive rates (fpr as fp/P).
+#' @param df_scen dataframe as returned by \code{\link{sim_ur_scenarios}}
+#' @param stat character denoting the column name of the under-reporting statistic, Default: 'prob_low_prob_ur'
+#' @param fpr numeric vector specifying fals positive rates, Default: c(0.001, 0.01, 0.05)
+#' @return dataframe
+#' @details DETAILS
+#' @examples
+#' df_visit1 <- sim_test_data_study(n_pat = 100, n_sites = 10,
+#'                                  frac_site_with_ur = 0.4, ur_rate = 0.6)
+#'
+#' df_visit1$study_id <- "A"
+#'
+#' df_visit2 <- sim_test_data_study(n_pat = 100, n_sites = 10,
+#'                                  frac_site_with_ur = 0.2, ur_rate = 0.1)
+#'
+#' df_visit2$study_id <- "B"
+#'
+#' df_visit <- bind_rows(df_visit1, df_visit2)
+#'
+#' df_site_max <- df_visit %>%
+#'   group_by(study_id, site_number, patnum) %>%
+#'   summarise(max_visit = max(visit),
+#'             max_ae = max(n_ae),
+#'             .groups = "drop")
+#'
+#' df_config <- simaerep::get_config(df_site_max)
+#'
+#' df_config
+#'
+#' df_portf <- sim_test_data_portfolio(df_config)
+#'
+#' df_portf
+#'
+#' df_scen <- sim_ur_scenarios(df_portf,
+#'                             extra_ur_sites = 2,
+#'                             ur_rate = c(0.5, 1))
+#'
+#'
+#' df_scen
+#'
+#' df_perf <- get_portf_perf(df_scen)
+#'
+#' df_perf
+#' @seealso
+#'  \code{\link{sim_test_data_study}}
+#'  \code{\link{get_config}}
+#'  \code{\link{sim_test_data_portfolio}}
+#'  \code{\link{sim_ur_scenarios}}
+#'  \code{\link{get_portf_perf}}
+#' @rdname get_portf_perf
+#' @export
 get_portf_perf <- function(df_scen, stat = "prob_low_prob_ur", fpr = c(0.001, 0.01, 0.05)) {
 
   if (anyNA(df_scen[[stat]])) {
     mes <- df_scen %>%
-      mutate(extra_ur_sites = as.factor(extra_ur_sites)) %>%
-      group_by(extra_ur_sites, .drop = FALSE) %>%
+      mutate(extra_ur_sites = as.factor(extra_ur_sites),
+             ur_rate = as.factor(ur_rate)) %>%
+      group_by(extra_ur_sites, ur_rate, .drop = FALSE) %>%
       mutate(n_sites_total = n_distinct(site_number)) %>%
-      group_by(extra_ur_sites, n_sites_total) %>%
+      group_by(extra_ur_sites, ur_rate, n_sites_total) %>%
       filter(is.na(.data[[stat]])) %>%
       summarise(n = n_distinct(site_number), .groups = "drop") %>%
       mutate(ratio_sites_with_na = n / ifelse(is.na(n_sites_total), 0, n_sites_total)) %>%
-      select(extra_ur_sites, ratio_sites_with_na) %>%
+      select(extra_ur_sites, ur_rate, ratio_sites_with_na) %>%
       knitr::kable() %>%
       paste(collapse = "\n")
 
@@ -565,7 +704,7 @@ get_portf_perf <- function(df_scen, stat = "prob_low_prob_ur", fpr = c(0.001, 0.
   df_thresh <- tibble(
     fpr = fpr
   ) %>%
-    mutate(thresh = map_dbl(fpr, ~ quantile(stat_at_0, probs =  1 - .)))
+    mutate(thresh = map_dbl(fpr, ~ quantile(stat_at_0, probs =  1 - ., na.rm = TRUE)))
 
 
   df_prep <- df_scen %>%

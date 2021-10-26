@@ -30,13 +30,13 @@ Imports:
     RColorBrewer,
     furrr (>= 0.2.1),
     future,
-    progressr
+    progressr,
+    knitr,
+    tibble
 Suggests:
     testthat,
     devtools,
     pkgdown,
-    knitr,
-    tibble,
     spelling,
     haven
 Roxygen: list(markdown = TRUE)

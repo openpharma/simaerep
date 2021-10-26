@@ -17,4 +17,6 @@
 #' @importFrom dplyr group_by_at n is_grouped_df
 #' @importFrom tidyr tibble unnest nest fill
 #' @importFrom lintr lint_package
+#' @importFrom knitr kable
+#' @importFrom tibble tibble
 NULL
