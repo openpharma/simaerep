@@ -12,6 +12,8 @@
 
 vignettes/do_not_commit.Rmd
 vignettes/ae_profile.csv
+vignettes/scen.csv
+vignettes/scen_old.csv
 run_remote.md
 .vscode
 

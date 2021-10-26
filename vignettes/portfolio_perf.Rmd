@@ -98,9 +98,11 @@ df_config <- readr::read_csv("vignettes/ae_profile.csv")
 
 ## Simulate Portfolio
 
-And again simulate artificial visit level data.
+And again simulate artificial visit level data. Using parallel processing.
 
 ```{r}
+plan(multisession, workers = 18)
+
 df_portf <- sim_test_data_portfolio(df_config, parallel = TRUE, progress = TRUE)
 df_portf
 ```
@@ -117,8 +119,10 @@ In our initial usability assessment we have fixed those parameters. Here we are 
 
 ```{r}
 
-df_scen <- sim_scenarios2(df_portf,
-                         additional_sites_with_ur = 5,
+plan(multisession, workers = 18)
+
+df_scen <- sim_scenarios(df_portf,
+                         extra_ur_sites = 5,
                          ur_rate = c(0.1, 0.25, 0.5, 0.75, 1),
                          parallel = TRUE,
                          poisson = TRUE,
@@ -138,6 +142,25 @@ We calculate a threshold based on the desired fpr using the vanilla scenario wit
 
 ```{r}
 get_portf_perf <- function(df_scen, stat = "prob_low_prob_ur", fpr = c(0.001, 0.01, 0.05)) {
+  
+  if (anyNA(df_scen[[stat]])) {
+    mes <- df_scen %>%
+      mutate(extra_ur_sites = as.factor(extra_ur_sites)) %>%
+      group_by(extra_ur_sites, .drop = FALSE) %>%
+      mutate(n_sites_total = n_distinct(site_number)) %>%
+      group_by(extra_ur_sites, n_sites_total) %>%
+      filter(is.na(.data[[stat]])) %>%
+      summarise(n = n_distinct(site_number), .groups = "drop") %>%
+      mutate(ratio_sites_with_na = n / ifelse(is.na(n_sites_total), 0, n_sites_total)) %>%
+      select(extra_ur_sites, ratio_sites_with_na) %>%
+      knitr::kable() %>%
+      paste(collapse = "\n")
+    
+    warning(
+      paste("Some Simulation Scenarios have returned NA stat values.\n", mes))
+    
+  }
+  
   stat_at_0 <- df_scen %>%
     filter(ur_rate == 0, frac_pat_with_ur == 0) %>%
     pull(.data[[stat]])
@@ -145,33 +168,36 @@ get_portf_perf <- function(df_scen, stat = "prob_low_prob_ur", fpr = c(0.001, 0.
   df_thresh <- tibble(
       fpr = fpr
     ) %>%
-    mutate(thresh = map_dbl(fp, ~ quantile(stat_at_0, probs =  1 - .)))
+    mutate(thresh = map_dbl(fpr, ~ quantile(stat_at_0, probs =  1 - .)))
     
   
   df_prep <- df_scen %>%
     mutate(data = list(df_thresh)) %>%
     unnest(data) %>%
     mutate(stat = .data[[stat]]) %>%
-    group_by(fp, thresh, additional_sites_with_ur, ur_rate) %>%
-    summarise(dr = sum(ifelse(.data$stat >= thresh, 1, 0)) / n_distinct(paste(study_id, site_number)), .groups = "drop")
+    group_by(fpr, thresh, extra_ur_sites, ur_rate) %>%
+    summarise(
+      dr = sum(ifelse(.data$stat >= thresh, 1, 0), na.rm = TRUE) / 
+           n_distinct(paste(study_id, site_number)),
+      .groups = "drop")
     
   df_prep_0 <- df_prep %>%
     filter(ur_rate == 0) %>%
-    mutate(additional_sites_with_ur = list(unique(df_prep$additional_sites_with_ur))) %>%
-    unnest(additional_sites_with_ur)
+    mutate(extra_ur_sites = list(unique(df_prep$extra_ur_sites))) %>%
+    unnest(extra_ur_sites)
   
   df_prep_gr0 <- df_prep %>%
     filter(ur_rate > 0)
   
   bind_rows(df_prep_0, df_prep_gr0) %>%
-    arrange(fp, ur_rate)
+    arrange(fpr, ur_rate)
 }
 
 df_perf <- get_portf_perf(df_scen)
 
 df_perf %>%
     pivot_wider(
-    names_from = additional_sites_with_ur,
+    names_from = extra_ur_sites,
     values_from = dr,
     names_prefix = "extra_ur_sites_"
   ) %>%
@@ -182,11 +208,13 @@ df_perf %>%
 
 # Benchmark simaerep Using Portfolio Performance
 
-One of the latest changes to simaerep was an improvement to the visit_med75 calculation. We can check how this has affected portfolio performance.
+One of the latest update to simaerep was an improvement to the visit_med75 calculation. We can check how this has affected portfolio performance.
 
 ```{r}
-df_scen_old_visit_med75 <- sim_scenarios2(df_portf,
-                                           additional_sites_with_ur = 5,
+plan(multisession, workers = 18)
+
+df_scen_old_visit_med75 <- sim_scenarios(df_portf,
+                                           extra_ur_sites = 5,
                                            ur_rate = c(0.1, 0.25, 0.5, 0.75, 1),
                                            parallel = TRUE,
                                            poisson = TRUE,
@@ -194,5 +222,35 @@ df_scen_old_visit_med75 <- sim_scenarios2(df_portf,
                                            progress = TRUE,
                                            site_aggr_args = list(method = "med75")) # default is "med75_adj"
 
+readr::write_csv(df_scen_old_visit_med75, file = "vignettes/scen_old.csv")
+
+```
+
+```{r}
+# df_scen_old_visit_med75 <- readr::read_csv("vignettes/scen_old.csv")
+
+df_perf_old <- get_portf_perf(df_scen_old_visit_med75)
+
+df_perf_old %>%
+    pivot_wider(
+    names_from = extra_ur_sites,
+    values_from = dr,
+    names_prefix = "extra_ur_sites_"
+  ) %>%
+  knitr::kable(digits = 3)
+
+```
+
+```{r}
+df_perf %>%
+  mutate(type = "med75_adj") %>%
+  bind_rows(
+    df_perf_old %>%
+      mutate(type = "med75")
+  ) %>%
+  ggplot(aes(x = fpr, y = dr, color = type)) +
+    geom_line() +
+    geom_point() +
+    facet_grid(ur_rate ~ extra_ur_sites)
 ```
 

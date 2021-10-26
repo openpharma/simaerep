@@ -22,7 +22,6 @@ if (getRversion() >= "2.15.1") {
 #' @param color_low character, hex color value, Default: '#25A69A'
 #' @param size_dots integer, Default: 10
 #' @return ggplot object
-#' @importFrom magrittr %>%
 #' @details ' '
 #' @examples
 #' study <- tibble(
@@ -73,14 +72,14 @@ plot_dots <- function(df,
 
   df_label <- df %>%
     group_by_at(vars(one_of(col_group))) %>%
-    summarize(
+    summarise(
       x = max(.data$x),
       y = max(.data$y),
       mean_ae = mean(.data$n_ae),
       label = paste("\u00d8:", round(mean(.data$n_ae), 1))
     )
 
-  if (!is_null(thresh)) {
+  if (!is.null(thresh)) {
     df_label <- df_label %>%
       mutate(color = ifelse(.data$mean_ae >= thresh, color_high, color_low))
   } else {
@@ -155,7 +154,6 @@ plot_dots <- function(df,
 #'  \code{\link[cowplot]{get_legend}},\code{\link[cowplot]{plot_grid}}
 #' @rdname plot_sim_example
 #' @export
-#' @importFrom cowplot get_legend plot_grid
 plot_sim_example <- function(substract_ae_per_pat = 0,
                              size_dots = 10,
                              size_raster_label = 12,
@@ -306,7 +304,6 @@ plot_sim_example <- function(substract_ae_per_pat = 0,
 #'  \code{\link[cowplot]{ggdraw}},\code{\link[cowplot]{draw_label}},\code{\link[cowplot]{plot_grid}}
 #' @rdname plot_sim_examples
 #' @export
-#' @importFrom cowplot ggdraw draw_label plot_grid
 
 plot_sim_examples <- function(substract_ae_per_pat = c(0, 1, 3), ...) {
   make_title <- function(x, fontface = "bold", size = 14, angle = 0) {
@@ -424,10 +421,6 @@ plot_sim_examples <- function(substract_ae_per_pat = c(0, 1, 3), ...) {
 #' plot_study(df_visit, df_site, df_eval, study = "A")
 #' @rdname plot_study
 #' @export
-#' @importFrom cowplot plot_grid ggdraw draw_label
-#' @importFrom forcats fct_relevel
-#' @importFrom RColorBrewer brewer.pal
-#' @importFrom utils head
 #' @import ggplot2
 plot_study <- function(df_visit,
                        df_site,
@@ -442,7 +435,7 @@ plot_study <- function(df_visit,
 
   # alert level -------------------------------------------------------------
 
-  if (is_null(df_al)) {
+  if (is.null(df_al)) {
     df_visit <- df_visit %>%
       mutate(alert_level_site = NA,
              alert_level_study = NA)
@@ -821,7 +814,7 @@ plot_visit_med75 <- function(df_visit,
 
   study_possible_max_visit <- df_pat %>%
     filter(.data$study_id == study_id_str) %>%
-    summarize(study_possible_max_visit = quantile(.data$max_visit_per_pat, 1 - min_pat_pool)) %>%
+    summarise(study_possible_max_visit = quantile(.data$max_visit_per_pat, 1 - min_pat_pool)) %>%
     pull(.data$study_possible_max_visit) %>%
     round(0)
 

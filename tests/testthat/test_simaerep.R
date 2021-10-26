@@ -79,7 +79,7 @@ test_that("eval_sites_with_all_NA", {
     ungroup() %>%
     filter(study_id == "C") %>%
     select(- study_id, - site_number, - visit_med75) %>%
-    summarize_all(~ all(is.na(.))) %>%
+    summarise_all(~ all(is.na(.))) %>%
     as.matrix() %>%
     .[1, ] %>%
     all()

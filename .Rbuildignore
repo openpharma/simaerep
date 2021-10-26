@@ -10,3 +10,4 @@
 ^.\.sas7bdat$
 ^Dockerfile$
 ^docker-compose.yml$
+^.dockerignore$
