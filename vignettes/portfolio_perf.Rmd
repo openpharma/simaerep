@@ -13,7 +13,7 @@ editor_options:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, cache = FALSE)
+knitr::opts_chunk$set(echo = TRUE, cache = TRUE)
 ```
 
 # Load
@@ -74,7 +74,7 @@ df_config <- simaerep::get_config(df_site_max, anonymize = TRUE, min_pat_per_stu
 df_config
 ```
 
-## Simulate Portfolio from Configration
+## Simulate Portfolio from Configuration
 
 We can now apply sim_test_data_portfolio which uses `sim_test_data_study()` to generate artificial data on visit level.
 
@@ -84,7 +84,7 @@ df_portf
 ```
 
 
-# Load Realisitc Configuration
+# Load Realistic Configuration
 
 The information contained in a portfolio configuration is very scarce and thus can be shared more easily within the industry. 
 
@@ -93,7 +93,7 @@ The information contained in a portfolio configuration is very scarce and thus c
 Here we load a realistic portfolio configuration.
 
 ```{r}
-df_config <- readr::read_csv("vignettes/ae_profile.csv")
+df_config <- readr::read_csv("ae_profile.csv")
 ```
 
 ## Simulate Portfolio
@@ -131,7 +131,7 @@ df_scen <- sim_ur_scenarios(df_portf,
 
 df_scen
 
-readr::write_csv(df_scen, file = "vignettes/scen.csv")
+readr::write_csv(df_scen, file = "scen.csv")
 ```
 
 
@@ -141,57 +141,6 @@ We can calculate the portfolio performance as the overall true positive rate (tp
 We calculate a threshold based on the desired fpr using the vanilla scenario with no under-reporting sites. Then we check how many sites with known under-reporting get flagged to calculate tpr.
 
 ```{r}
-get_portf_perf <- function(df_scen, stat = "prob_low_prob_ur", fpr = c(0.001, 0.01, 0.05)) {
-  
-  if (anyNA(df_scen[[stat]])) {
-    mes <- df_scen %>%
-      mutate(extra_ur_sites = as.factor(extra_ur_sites)) %>%
-      group_by(extra_ur_sites, .drop = FALSE) %>%
-      mutate(n_sites_total = n_distinct(site_number)) %>%
-      group_by(extra_ur_sites, n_sites_total) %>%
-      filter(is.na(.data[[stat]])) %>%
-      summarise(n = n_distinct(site_number), .groups = "drop") %>%
-      mutate(ratio_sites_with_na = n / ifelse(is.na(n_sites_total), 0, n_sites_total)) %>%
-      select(extra_ur_sites, ratio_sites_with_na) %>%
-      knitr::kable() %>%
-      paste(collapse = "\n")
-    
-    warning(
-      paste("Some Simulation Scenarios have returned NA stat values.\n", mes))
-    
-  }
-  
-  stat_at_0 <- df_scen %>%
-    filter(ur_rate == 0, frac_pat_with_ur == 0) %>%
-    pull(.data[[stat]])
-  
-  df_thresh <- tibble(
-      fpr = fpr
-    ) %>%
-    mutate(thresh = map_dbl(fpr, ~ quantile(stat_at_0, probs =  1 - .)))
-    
-  
-  df_prep <- df_scen %>%
-    mutate(data = list(df_thresh)) %>%
-    unnest(data) %>%
-    mutate(stat = .data[[stat]]) %>%
-    group_by(fpr, thresh, extra_ur_sites, ur_rate) %>%
-    summarise(
-      dr = sum(ifelse(.data$stat >= thresh, 1, 0), na.rm = TRUE) / 
-           n_distinct(paste(study_id, site_number)),
-      .groups = "drop")
-    
-  df_prep_0 <- df_prep %>%
-    filter(ur_rate == 0) %>%
-    mutate(extra_ur_sites = list(unique(df_prep$extra_ur_sites))) %>%
-    unnest(extra_ur_sites)
-  
-  df_prep_gr0 <- df_prep %>%
-    filter(ur_rate > 0)
-  
-  bind_rows(df_prep_0, df_prep_gr0) %>%
-    arrange(fpr, ur_rate)
-}
 
 df_perf <- get_portf_perf(df_scen)
 
@@ -208,7 +157,7 @@ df_perf %>%
 
 # Benchmark simaerep Using Portfolio Performance
 
-One of the latest update to simaerep was an improvement to the visit_med75 calculation. We can check how this has affected portfolio performance.
+One of the latest update to simaerep was an improvement to the visit_med75 calculation. We can check how this has affected portfolio performance. We find that we have most likely slightly increased performance.
 
 ```{r}
 plan(multisession, workers = 18)
@@ -222,7 +171,7 @@ df_scen_old_visit_med75 <- sim_ur_scenarios(df_portf,
                                            progress = TRUE,
                                            site_aggr_args = list(method = "med75")) # default is "med75_adj"
 
-readr::write_csv(df_scen_old_visit_med75, file = "vignettes/scen_old.csv")
+readr::write_csv(df_scen_old_visit_med75, file = "scen_old.csv")
 
 ```
 
@@ -241,7 +190,7 @@ df_perf_old %>%
 
 ```
 
-```{r}
+```{r, fig.width=12, fig.height = 10}
 df_perf %>%
   mutate(type = "med75_adj") %>%
   bind_rows(

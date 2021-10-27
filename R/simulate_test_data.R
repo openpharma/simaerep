@@ -400,14 +400,14 @@ sim_ur_scenarios <- function(df_portf,
 #' if (interactive()) {
 #' df_visit1 <- sim_test_data_study(n_pat = 100, n_sites = 10,
 #'                                  frac_site_with_ur = 0.4, ur_rate = 0.6)
-#'.
+#'
 #' df_visit1$study_id <- "A"
-#'.
+#'
 #' df_visit2 <- sim_test_data_study(n_pat = 100, n_sites = 10,
 #'                                  frac_site_with_ur = 0.2, ur_rate = 0.1)
-#'.
+#'
 #' df_visit2$study_id <- "B"
-#'.
+#'
 #' df_visit <- dplyr::bind_rows(df_visit1, df_visit2)
 #'
 #' df_site_max <- df_visit %>%
@@ -502,7 +502,8 @@ sim_test_data_portfolio <- function(df_config, parallel = FALSE, progress = TRUE
               ae_per_visit_mean = ae_per_visit_mean
             ) %>%
               select(
-                .data$patnum, .data$visit, .data$n_ae
+                # using rlang::.data here causes error with furrr
+                patnum, visit, n_ae
               )
           },
           .progress = progress,

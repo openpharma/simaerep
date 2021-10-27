@@ -14,6 +14,7 @@
 #'   purrr_bar(rep(0.25, 5), .purrr = purrr::map, .f = Sys.sleep, .steps = 5)
 #' )
 #'
+#'\dontrun{
 #' # purrr::walk
 #' progressr::with_progress(
 #'  purrr_bar(rep(0.25, 5), .purrr = purrr::walk,.f = Sys.sleep, .steps = 5)
@@ -60,6 +61,7 @@
 #'     .slow = TRUE
 #'  )
 #')
+#'}
 #' @rdname purrr_bar
 #' @export
 purrr_bar <- function(...,
