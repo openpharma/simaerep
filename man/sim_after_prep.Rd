@@ -22,7 +22,7 @@ sim_after_prep(
 
 \item{prob_lower}{logical, calculates probability for getting a lower value}
 
-\item{progress}{logical, display progress bar, Default = FALSE}
+\item{progress}{logical, display progress bar, Default = TRUE}
 }
 \value{
 dataframe

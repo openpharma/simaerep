@@ -2,7 +2,8 @@
 % Please edit documentation in R/progress.R
 \name{purrr_bar}
 \alias{purrr_bar}
-\title{execute a purrr or furrr function with a progress bar}
+\title{execute a purrr or furrr function with a progress
+bar}
 \usage{
 purrr_bar(
   ...,
@@ -41,6 +42,7 @@ progressr::with_progress(
   purrr_bar(rep(0.25, 5), .purrr = purrr::map, .f = Sys.sleep, .steps = 5)
 )
 
+\dontrun{
 # purrr::walk
 progressr::with_progress(
  purrr_bar(rep(0.25, 5), .purrr = purrr::walk,.f = Sys.sleep, .steps = 5)
@@ -87,4 +89,11 @@ progressr::with_progress(
     .slow = TRUE
  )
 )
+
+# with mutate
+progressr::with_progress(
+ tibble(x = rep(0.25, 5)) \%>\%
+  mutate(x = purrr_bar(x, .purrr = purrr::map, .f = Sys.sleep, .steps = 5))
+)
+}
 }

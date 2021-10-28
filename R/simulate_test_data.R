@@ -185,14 +185,14 @@ sim_scenario <- function(n_ae_site, n_ae_study, frac_pat_with_ur, ur_rate) {
 #' if (interactive()) {
 #' df_visit1 <- sim_test_data_study(n_pat = 100, n_sites = 10,
 #'                                  frac_site_with_ur = 0.4, ur_rate = 0.6)
-#'.
+#'
 #' df_visit1$study_id <- "A"
-#'.
+#'
 #' df_visit2 <- sim_test_data_study(n_pat = 100, n_sites = 10,
 #'                                  frac_site_with_ur = 0.2, ur_rate = 0.1)
-#'.
+#'
 #' df_visit2$study_id <- "B"
-#'.
+#'
 #' df_visit <- dplyr::bind_rows(df_visit1, df_visit2)
 #'
 #' df_site_max <- df_visit %>%
@@ -247,21 +247,21 @@ sim_ur_scenarios <- function(df_portf,
   extra_ur_sites <- as.integer(extra_ur_sites)
 
 
-  if(progress) {
+  if (progress) {
     message("aggregating site level")
   }
 
   df_visit <- check_df_visit(df_portf)
 
-  df_site <- do.call(site_aggr,c(list(df_visit = df_visit), site_aggr_args))
+  df_site <- do.call(site_aggr, c(list(df_visit = df_visit), site_aggr_args))
 
-  if(progress) {
+  if (progress) {
     message("prepping for simulation")
   }
 
   df_sim_prep <- prep_for_sim(df_site = df_site, df_visit = df_visit)
 
-  if(progress) {
+  if (progress) {
     message("generating scenarios")
   }
 
@@ -323,11 +323,11 @@ sim_ur_scenarios <- function(df_portf,
            n_ae_study = map(.data$scenarios, "n_ae_study")) %>%
     select(- .data$scenarios)
 
-  if(progress) {
+  if (progress) {
     message("getting under-reporting stats")
   }
 
-  if(parallel) {
+  if (parallel) {
     .purrr <- furrr::future_map
     .purrr_args <- list(.options = furrr_options(seed = NULL))
   } else {
@@ -343,7 +343,7 @@ sim_ur_scenarios <- function(df_portf,
     ungroup() %>%
     select(- .data$study_id_gr, - .data$site_number_gr)
 
-  progressr::with_progress(
+  with_progress_cnd(
     ls_df_sim_sites <- purrr_bar(
       df_sim_sites$data,
       .purrr = .purrr,
@@ -351,21 +351,23 @@ sim_ur_scenarios <- function(df_portf,
       .f_args = list(
         r = r,
         poisson_test = poisson_test,
-        prob_lower = prob_lower
+        prob_lower = prob_lower,
+        progress = FALSE
       ),
       .purrr_args = .purrr_args,
       .steps = nrow(df_sim_sites),
       .progress = progress
-    )
+    ),
+    progress = progress
   )
 
-  if(progress) {
+  if (progress) {
     message("evaluating stats")
   }
 
   df_sim_sites <- bind_rows(ls_df_sim_sites)
 
-  df_eval <- do.call(eval_sites,c(list(df_sim_sites = df_sim_sites), eval_sites_args)) %>%
+  df_eval <- do.call(eval_sites, c(list(df_sim_sites = df_sim_sites), eval_sites_args)) %>%
     arrange(
       .data$study_id,
       .data$site_number,
@@ -471,7 +473,7 @@ sim_test_data_portfolio <- function(df_config, parallel = FALSE, progress = TRUE
 
   # exec --------------------------
 
-  if(parallel) {
+  if (parallel) {
     .purrr <- furrr::future_pmap
     .purrr_args <- list(.options = furrr_options(seed = NULL))
   } else {
@@ -479,7 +481,7 @@ sim_test_data_portfolio <- function(df_config, parallel = FALSE, progress = TRUE
     .purrr_args <- list()
   }
 
-  progressr::with_progress(
+  with_progress_cnd(
     df_config_sim <- df_config %>%
       mutate(
         sim = purrr_bar(
@@ -510,7 +512,8 @@ sim_test_data_portfolio <- function(df_config, parallel = FALSE, progress = TRUE
           .purrr_args = .purrr_args,
           .steps = nrow(.)
         )
-      )
+      ),
+    progress = progress
   )
 
   df_portf <- df_config_sim %>%
@@ -654,10 +657,13 @@ get_config <- function(df_site,
 }
 
 #' @title Get Portfolio Performance
-#' @description Performance as true positive rate (tpr as tp/P) on the basis of desired false positive rates (fpr as fp/P).
+#' @description Performance as true positive rate (tpr as tp/P) on the basis of
+#'   desired false positive rates (fpr as fp/P).
 #' @param df_scen dataframe as returned by \code{\link{sim_ur_scenarios}}
-#' @param stat character denoting the column name of the under-reporting statistic, Default: 'prob_low_prob_ur'
-#' @param fpr numeric vector specifying false positive rates, Default: c(0.001, 0.01, 0.05)
+#' @param stat character denoting the column name of the under-reporting
+#'   statistic, Default: 'prob_low_prob_ur'
+#' @param fpr numeric vector specifying false positive rates, Default: c(0.001,
+#'   0.01, 0.05)
 #' @return dataframe
 #' @details DETAILS
 #' @examples
@@ -697,12 +703,9 @@ get_config <- function(df_site,
 #' df_perf <- get_portf_perf(df_scen)
 #'
 #' df_perf
-#' @seealso
-#'  \code{\link{sim_test_data_study}}
-#'  \code{\link{get_config}}
-#'  \code{\link{sim_test_data_portfolio}}
-#'  \code{\link{sim_ur_scenarios}}
-#'  \code{\link{get_portf_perf}}
+#' @seealso \code{\link{sim_test_data_study}} \code{\link{get_config}}
+#' \code{\link{sim_test_data_portfolio}} \code{\link{sim_ur_scenarios}}
+#' \code{\link{get_portf_perf}}
 #' @rdname get_portf_perf
 #' @export
 get_portf_perf <- function(df_scen, stat = "prob_low_prob_ur", fpr = c(0.001, 0.01, 0.05)) {
@@ -767,4 +770,3 @@ get_portf_perf <- function(df_scen, stat = "prob_low_prob_ur", fpr = c(0.001, 0.
   bind_rows(df_prep_0, df_prep_gr0) %>%
     arrange(.data$fpr, .data$ur_rate)
 }
-

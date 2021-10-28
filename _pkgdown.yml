@@ -73,6 +73,8 @@ reference:
   - prep_for_sim
   - sim_after_prep
   - get_ecd_values
+  - purrr_bar
+  - with_progress_cnd
 - title: Deprecated
   contents:
   - eval_sites_deprecated

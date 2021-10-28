@@ -10,7 +10,7 @@ sim_sites(
   r = 1000,
   poisson_test = TRUE,
   prob_lower = TRUE,
-  progress = FALSE
+  progress = TRUE
 )
 }
 \arguments{
@@ -24,7 +24,7 @@ sim_sites(
 
 \item{prob_lower}{logical, calculates probability for getting a lower value}
 
-\item{progress}{logical, display progress bar, Default = FALSE}
+\item{progress}{logical, display progress bar, Default = TRUE}
 }
 \value{
 dataframe with the following columns:

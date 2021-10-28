@@ -682,7 +682,7 @@ prob_lower_site_ae_vs_study_ae <- function(site_ae, study_ae, r = 1000, parallel
 #' @param r integer, denotes number of simulations, default = 1000
 #' @param poisson_test logical, calculates poisson.test pvalue
 #' @param prob_lower logical, calculates probability for getting a lower value
-#' @param progress logical, display progress bar, Default = FALSE
+#' @param progress logical, display progress bar, Default = TRUE
 #' @return dataframe with the following columns:
 #' \describe{
 #'   \item{**study_id**}{study identification}
@@ -726,7 +726,7 @@ sim_sites <- function(df_site,
                       r = 1000,
                       poisson_test = TRUE,
                       prob_lower = TRUE,
-                      progress = FALSE) {
+                      progress = TRUE) {
 
   df_visit <- check_df_visit(df_visit)
 
@@ -847,17 +847,20 @@ sim_after_prep <- function(df_sim_prep,
   }
 
   if (prob_lower) {
-    df_sim <- df_sim %>%
-      mutate(
-        prob_low = purrr_bar(
-          .data$n_ae_site, .data$n_ae_study,
-          .purrr = map2_dbl,
-          .f = prob_lower_site_ae_vs_study_ae,
-          .f_args = list(r = r),
-          .steps = nrow(df_sim),
-          .progress = progress
-        )
-      )
+    with_progress_cnd(
+      df_sim <- df_sim %>%
+        mutate(
+          prob_low = purrr_bar(
+            .data$n_ae_site, .data$n_ae_study,
+            .purrr = map2_dbl,
+            .f = prob_lower_site_ae_vs_study_ae,
+            .f_args = list(r = r),
+            .steps = nrow(df_sim),
+            .progress = progress
+          )
+        ),
+      progress = progress
+    )
   }
 
   # clean
@@ -1232,5 +1235,3 @@ poiss_test_site_ae_vs_study_ae <- function(site_ae,
 
   return(pval)
 }
-
-

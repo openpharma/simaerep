@@ -17,7 +17,12 @@ knitr::opts_chunk$set(echo = TRUE, cache = TRUE)
 ```
 
 # Load
-```{r}
+```{r load}
+# RAM ~26 GB
+# plan 2GB per core
+
+plan(multisession, workers = 13)
+
 suppressPackageStartupMessages(library(tidyverse))
 suppressPackageStartupMessages(library(knitr))
 suppressPackageStartupMessages(library(furrr))
@@ -50,7 +55,7 @@ We can start with a maximum aggregation of visit and n_ae on patient level start
 - minimum number of sites per study
 - anonymize study and site IDs
 
-```{r}
+```{r ex_config}
 df_visit1 <- sim_test_data_study(n_pat = 100, n_sites = 10,
    frac_site_with_ur = 0.4, ur_rate = 0.6)
 
@@ -78,7 +83,7 @@ df_config
 
 We can now apply sim_test_data_portfolio which uses `sim_test_data_study()` to generate artificial data on visit level.
 
-```{r}
+```{r ex_portf}
 df_portf <- sim_test_data_portfolio(df_config)
 df_portf
 ```
@@ -92,16 +97,16 @@ The information contained in a portfolio configuration is very scarce and thus c
 
 Here we load a realistic portfolio configuration.
 
-```{r}
+```{r real_config}
 df_config <- readr::read_csv("ae_profile.csv")
+df_config
 ```
 
 ## Simulate Portfolio
 
 And again simulate artificial visit level data. Using parallel processing.
 
-```{r}
-plan(multisession, workers = 18)
+```{r sim_portf}
 
 df_portf <- sim_test_data_portfolio(df_config, parallel = TRUE, progress = TRUE)
 df_portf
@@ -117,9 +122,7 @@ The performance of detecting AE under-reporting is dependent on three things:
 
 In our initial usability assessment we have fixed those parameters. Here we are going leave them as they are in the portfolio. The vanilla version of our artificial portfolio data does not contain any under-reporting sites yet. However `simaerep::sim_ur_scenarios()` will apply under-reporting scenarios to each site. Reducing the number of AEs by a given under-reporting (ur_rate) for all patients at the site and add the corresponding under-reporting statistics. Since the under-reporting probability is also affected by the number of other sites that are under-reporting we additionally calculate under-reporting statistics in a scenario where additional under reporting sites are present. For this we use the median number of patients per site at the study to calculate the final number of patients for which we lower the AEs in a given under-reporting scenario. 
 
-```{r}
-
-plan(multisession, workers = 18)
+```{r sim_ur_scen}
 
 df_scen <- sim_ur_scenarios(df_portf,
                          extra_ur_sites = 5,
@@ -140,7 +143,7 @@ readr::write_csv(df_scen, file = "scen.csv")
 We can calculate the portfolio performance as the overall true positive rate (tpr as tp/P) on the basis of desired false positive rates (fpr as fp/P).
 We calculate a threshold based on the desired fpr using the vanilla scenario with no under-reporting sites. Then we check how many sites with known under-reporting get flagged to calculate tpr.
 
-```{r}
+```{r portf_scen}
 
 df_perf <- get_portf_perf(df_scen)
 
@@ -157,10 +160,11 @@ df_perf %>%
 
 # Benchmark simaerep Using Portfolio Performance
 
+## Effect of Adjusting visit_med75
+
 One of the latest update to simaerep was an improvement to the visit_med75 calculation. We can check how this has affected portfolio performance. We find that we have most likely slightly increased performance.
 
 ```{r}
-plan(multisession, workers = 18)
 
 df_scen_old_visit_med75 <- sim_ur_scenarios(df_portf,
                                            extra_ur_sites = 5,
@@ -189,6 +193,55 @@ df_perf_old %>%
   knitr::kable(digits = 3)
 
 ```
+
+## Days vs. Visits
+
+The maximum number of days per patient can be up to several years, so > 1000 days. simaerep exposes implicitly missing entries which can lead to single patients having 1000 entries or more, one entry for each day on the study. In order to avoid to generate a huge portfolio data frame we preserve memory by wrapping `sim_test_data_portfolio()` and `sim_ur_scenarios()` into a single call and apply it per study.
+
+```{r}
+
+wr <- function(df) {
+  df_portf <- sim_test_data_portfolio(df, parallel = FALSE, progress = FALSE)
+  df_scen <- sim_ur_scenarios(df_portf,
+                               extra_ur_sites = 5,
+                               ur_rate = c(0.1, 0.25, 0.5, 0.75, 1),
+                               parallel = FALSE,
+                               poisson = TRUE,
+                               prob_lower = TRUE,
+                               progress = FALSE)
+  return(df_scen)
+}
+
+df_prep <- df_config %>%
+  select(- max_visit_sd, - max_visit_mean) %>%
+  rename(max_visit_sd = max_days_sd,
+         max_visit_mean = max_days_mean) %>%
+  group_by(study_id_gr = study_id) %>%
+  nest() %>%
+  ungroup() 
+
+progressr::with_progress(
+  df_scen_days <- df_prep %>%
+    mutate(data = purrr_bar(
+      .data$data,
+      .purrr = furrr::future_map,
+      .f = wr,
+      .progress = TRUE,
+      .steps = nrow(.)
+      )
+   )
+)
+
+df_scen_days <- df_scen_days %>%
+  unnest(data) %>%
+  select(- study_id_gr)
+
+readr::write_csv(df_scen_days, file = "scen_days.csv")
+
+```
+
+
+## Plot
 
 ```{r, fig.width=12, fig.height = 10}
 df_perf %>%

@@ -9,15 +9,18 @@ get_portf_perf(df_scen, stat = "prob_low_prob_ur", fpr = c(0.001, 0.01, 0.05))
 \arguments{
 \item{df_scen}{dataframe as returned by \code{\link{sim_ur_scenarios}}}
 
-\item{stat}{character denoting the column name of the under-reporting statistic, Default: 'prob_low_prob_ur'}
+\item{stat}{character denoting the column name of the under-reporting
+statistic, Default: 'prob_low_prob_ur'}
 
-\item{fpr}{numeric vector specifying fals positive rates, Default: c(0.001, 0.01, 0.05)}
+\item{fpr}{numeric vector specifying false positive rates, Default: c(0.001,
+0.01, 0.05)}
 }
 \value{
 dataframe
 }
 \description{
-Performance as true positive rate (tpr as tp/P) on the basis of desired false positive rates (fpr as fp/P).
+Performance as true positive rate (tpr as tp/P) on the basis of
+desired false positive rates (fpr as fp/P).
 }
 \details{
 DETAILS
@@ -61,9 +64,7 @@ df_perf <- get_portf_perf(df_scen)
 df_perf
 }
 \seealso{
-\code{\link{sim_test_data_study}}
-\code{\link{get_config}}
-\code{\link{sim_test_data_portfolio}}
-\code{\link{sim_ur_scenarios}}
+\code{\link{sim_test_data_study}} \code{\link{get_config}}
+\code{\link{sim_test_data_portfolio}} \code{\link{sim_ur_scenarios}}
 \code{\link{get_portf_perf}}
 }
