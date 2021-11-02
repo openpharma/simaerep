@@ -29,7 +29,6 @@ Imports:
     cowplot,
     RColorBrewer,
     furrr (>= 0.2.1),
-    future,
     progressr,
     knitr,
     tibble
