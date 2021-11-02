@@ -30,13 +30,13 @@ df_visit <- sim_test_data_study(
 df_visit$study_id <- "A"
 
 df_visit_filt <- df_visit \%>\%
-  filter(visit != 3)
+  dplyr::filter(visit != 3)
 
 df_visit_corr <- check_df_visit(df_visit_filt)
 3 \%in\% df_visit_corr$visit
 nrow(df_visit_corr) == nrow(df_visit)
 
-df_visit_corr <- check_df_visit(bind_rows(df_visit, df_visit))
+df_visit_corr <- check_df_visit(dplyr::bind_rows(df_visit, df_visit))
 nrow(df_visit_corr) == nrow(df_visit)
 
 }

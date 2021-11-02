@@ -11,7 +11,6 @@
 #' @seealso \code{\link[lintr]{lint_package}}
 #' @rdname lint_package
 #' @export
-#' @importFrom lintr lint_package
 lint_package <- function(path = ".", ...) {
 
   lint_results <- lintr::lint_package(path = path,

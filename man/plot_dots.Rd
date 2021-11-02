@@ -51,12 +51,12 @@ different groupings can be applied
 ' '
 }
 \examples{
-study <- tibble(
+study <- tibble::tibble(
   site = LETTERS[1:3],
   patients = c(list(seq(1, 50, 1)), list(seq(1, 40, 1)), list(seq(1, 10, 1)))
 ) \%>\%
   tidyr::unnest(patients) \%>\%
-  mutate(n_ae = as.integer(runif(min = 0, max = 10, n = nrow(.))))
+  dplyr::mutate(n_ae = as.integer(runif(min = 0, max = 10, n = nrow(.))))
 
 plot_dots(study)
 }

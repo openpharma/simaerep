@@ -19,10 +19,16 @@
     <loc>https://openpharma.github.io/simaerep//reference/exp_implicit_missing_visits.html</loc>
   </url>
   <url>
+    <loc>https://openpharma.github.io/simaerep//reference/get_config.html</loc>
+  </url>
+  <url>
     <loc>https://openpharma.github.io/simaerep//reference/get_ecd_values.html</loc>
   </url>
   <url>
     <loc>https://openpharma.github.io/simaerep//reference/get_pat_pool_config.html</loc>
+  </url>
+  <url>
+    <loc>https://openpharma.github.io/simaerep//reference/get_portf_perf.html</loc>
   </url>
   <url>
     <loc>https://openpharma.github.io/simaerep//reference/get_site_mean_ae_dev.html</loc>
@@ -61,7 +67,19 @@
     <loc>https://openpharma.github.io/simaerep//reference/poiss_test_site_ae_vs_study_ae.html</loc>
   </url>
   <url>
+    <loc>https://openpharma.github.io/simaerep//reference/prep_for_sim.html</loc>
+  </url>
+  <url>
     <loc>https://openpharma.github.io/simaerep//reference/prob_lower_site_ae_vs_study_ae.html</loc>
+  </url>
+  <url>
+    <loc>https://openpharma.github.io/simaerep//reference/purrr_bar.html</loc>
+  </url>
+  <url>
+    <loc>https://openpharma.github.io/simaerep//reference/sim_after_prep.html</loc>
+  </url>
+  <url>
+    <loc>https://openpharma.github.io/simaerep//reference/sim_scenario.html</loc>
   </url>
   <url>
     <loc>https://openpharma.github.io/simaerep//reference/sim_sites.html</loc>
@@ -73,19 +91,28 @@
     <loc>https://openpharma.github.io/simaerep//reference/sim_test_data_patient.html</loc>
   </url>
   <url>
+    <loc>https://openpharma.github.io/simaerep//reference/sim_test_data_portfolio.html</loc>
+  </url>
+  <url>
     <loc>https://openpharma.github.io/simaerep//reference/sim_test_data_study.html</loc>
+  </url>
+  <url>
+    <loc>https://openpharma.github.io/simaerep//reference/sim_ur_scenarios.html</loc>
   </url>
   <url>
     <loc>https://openpharma.github.io/simaerep//reference/site_aggr.html</loc>
   </url>
   <url>
+    <loc>https://openpharma.github.io/simaerep//reference/with_progress_cnd.html</loc>
+  </url>
+  <url>
     <loc>https://openpharma.github.io/simaerep//articles/check_poisson.html</loc>
   </url>
   <url>
-    <loc>https://openpharma.github.io/simaerep//articles/do_not_commit.html</loc>
+    <loc>https://openpharma.github.io/simaerep//articles/intro.html</loc>
   </url>
   <url>
-    <loc>https://openpharma.github.io/simaerep//articles/intro.html</loc>
+    <loc>https://openpharma.github.io/simaerep//articles/portfolio_perf.html</loc>
   </url>
   <url>
     <loc>https://openpharma.github.io/simaerep//articles/sas_files.html</loc>

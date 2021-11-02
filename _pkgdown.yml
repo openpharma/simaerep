@@ -34,6 +34,7 @@ articles:
   - sas_files
   - visit_med75
   - visits_or_days
+  - portfolio_perf
 
 reference:
 - title: Main Functions
@@ -48,11 +49,14 @@ reference:
   desc: ~
   contents:
   - sim_test_data_study
+  - get_config
+  - sim_test_data_portfolio
 - title: Test Functions
-  desc: These functions are intented to check Poisson test applicability.
+  desc: These functions are intented to check simaerep performance.
   contents:
   - sim_studies
-  - get_ecd_values
+  - sim_ur_scenarios
+  - get_portf_perf
 - title: Helper Functions
   desc: These functions are intended to be called by other functions.
   contents:
@@ -66,11 +70,17 @@ reference:
   - get_site_mean_ae_dev
   - aggr_duplicated_visits
   - exp_implicit_missing_visits
+  - prep_for_sim
+  - sim_after_prep
+  - get_ecd_values
+  - purrr_bar
+  - with_progress_cnd
+  - sim_scenario
 - title: Deprecated
   contents:
   - eval_sites_deprecated
 - title: Additional Plot Functions
-  desc: These functions were intended for creating plots for the documentation.
+  desc: These functions are intended for creating plots for the documentation.
   contents:
   - plot_visit_med75
   - plot_sim_examples

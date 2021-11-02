@@ -79,7 +79,7 @@ test_that("eval_sites_with_all_NA", {
     ungroup() %>%
     filter(study_id == "C") %>%
     select(- study_id, - site_number, - visit_med75) %>%
-    summarize_all(~ all(is.na(.))) %>%
+    summarise_all(~ all(is.na(.))) %>%
     as.matrix() %>%
     .[1, ] %>%
     all()
@@ -420,4 +420,93 @@ test_that("check_visit_med75_qup8_maximum", {
   # plot_visit_med75(df_visit, df_site, study_id_str = "A", n_site = 6)
   # nolint end
 
+})
+
+test_that("prep_for_sim", {
+
+   df_prep <- prep_for_sim(df_site, df_visit)
+
+   # ae vector for site must match number of patients at site.
+   df_prep %>%
+     mutate(check = map2(
+       n_pat_with_med75, n_ae_site,
+       function(x, y) x == length(y))
+     ) %>%
+     pull(check) %>%
+     unlist() %>%
+     all() %>%
+     expect_true()
+})
+
+test_that("portfolio_sim", {
+
+   df_site_max <- df_visit %>%
+     group_by(study_id, site_number, patnum) %>%
+     summarise(max_visit = max(visit),
+               max_ae = max(n_ae),
+               .groups = "drop")
+
+   df_config <- simaerep::get_config(
+     df_site_max,
+     anonymize = TRUE,
+     min_pat_per_study = 100,
+     min_sites_per_study = 5
+   )
+
+   expect_true(
+     all(
+       c("study_id", "ae_per_visit_mean", "site_number", "max_visit_sd",
+         "max_visit_mean", "n_pat") %in% colnames(df_config)
+       )
+    )
+
+   df_portf <- sim_test_data_portfolio(df_config)
+
+   expect_true(
+     all(
+       c("study_id", "ae_per_visit_mean", "site_number", "max_visit_sd",
+         "max_visit_mean", "patnum", "visit", "n_ae") %in% colnames(df_portf)
+     )
+   )
+
+   df_scen_adj <- sim_ur_scenarios(df_portf,
+                             extra_ur_sites = 2,
+                             ur_rate = c(0.5, 1),
+                             parallel = FALSE,
+                             poisson = FALSE,
+                             prob_lower = TRUE,
+                             progress = TRUE,
+                             site_aggr_args = list(method = "med75_adj"))
+
+
+   df_scen_old <- sim_ur_scenarios(df_portf,
+                             extra_ur_sites = 2,
+                             ur_rate = c(0.5, 1),
+                             parallel = FALSE,
+                             poisson = FALSE,
+                             prob_lower = TRUE,
+                             progress = TRUE,
+                             site_aggr_args = list(method = "med75"))
+
+   expect_false(identical(df_scen_adj, df_scen_old))
+
+   df_perf <- get_portf_perf(df_scen_adj)
+
+   expect_true(
+     all(
+       c("fpr", "thresh", "extra_ur_sites", "ur_rate",
+         "tpr") %in% colnames(df_perf)
+     )
+   )
+
+   # warning should be given when there are stat values with NA
+
+   df_scen_na <- df_scen_adj %>%
+     bind_rows(
+       df_scen_adj %>%
+         mutate(prob_low_prob_ur = NA,
+                site_number = paste("A", site_number))
+     )
+
+   expect_warning(get_portf_perf(df_scen_na))
 })

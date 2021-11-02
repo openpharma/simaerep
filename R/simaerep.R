@@ -22,32 +22,36 @@ if (getRversion() >= "2.15.1") {
 #' df_visit$study_id <- "A"
 #'
 #' df_visit_filt <- df_visit %>%
-#'   filter(visit != 3)
+#'   dplyr::filter(visit != 3)
 #'
 #' df_visit_corr <- check_df_visit(df_visit_filt)
 #' 3 %in% df_visit_corr$visit
 #' nrow(df_visit_corr) == nrow(df_visit)
 #'
-#' df_visit_corr <- check_df_visit(bind_rows(df_visit, df_visit))
+#' df_visit_corr <- check_df_visit(dplyr::bind_rows(df_visit, df_visit))
 #' nrow(df_visit_corr) == nrow(df_visit)
 #'
 #' @rdname check_df_visit
 #' @export
 check_df_visit <- function(df_visit) {
+
+  df_visit <- ungroup(df_visit)
+
   stopifnot(
     all(c("study_id", "site_number", "patnum", "n_ae", "visit") %in% names(df_visit))
   )
 
   cols_na <- df_visit %>%
     summarise_at(
-      vars(
-        .data$study_id,
-        .data$site_number,
-        .data$patnum,
-        .data$n_ae,
-        .data$visit),
-      ~ any(is.na(.))
-    ) %>%
+        vars(
+          .data$study_id,
+          .data$site_number,
+          .data$patnum,
+          .data$n_ae,
+          .data$visit
+        ),
+        anyNA
+      ) %>%
     unlist()
 
   if (any(cols_na)) {
@@ -66,6 +70,15 @@ check_df_visit <- function(df_visit) {
         unlist() %>%
         all()
   )
+
+  df_visit %>%
+    group_by(.data$study_id, .data$patnum) %>%
+    summarise(n_sites = n_distinct(.data$site_number), .groups = "drop") %>%
+    mutate(check = .data$n_sites == 1) %>%
+    pull(.data$check) %>%
+    unlist() %>%
+    all() %>%
+    stopifnot("patient ids must be site exclusive" = .)
 
   df_visit <- exp_implicit_missing_visits(df_visit)
 
@@ -324,7 +337,6 @@ get_visit_med75 <- function(df_pat,
 #' @seealso \code{\link[simaerep]{site_aggr}},
 #' \code{\link[simaerep]{sim_sites}},
 #' \code{\link[stats]{p.adjust}}
-#' @importFrom stats p.adjust
 #' @export
 eval_sites <- function(df_sim_sites,
                         method = "BH",
@@ -356,7 +368,7 @@ eval_sites <- function(df_sim_sites,
 
   if ("prob_low" %in% names(df_out)) {
 
-    if (anyNA(df_out$pval)) {
+    if (anyNA(df_out$prob_low)) {
       warning("prob_lower column contains NA")
     }
 
@@ -616,11 +628,10 @@ pat_pool <- function(df_visit, df_site) {
 #' @seealso \code{\link[purrr]{safely}}
 #' @rdname prob_lower_site_ae_vs_study_ae
 #' @export
-#' @importFrom purrr safely
 prob_lower_site_ae_vs_study_ae <- function(site_ae, study_ae, r = 1000, parallel = FALSE) {
 
   # if there is only one site
-  if (is_null(study_ae)) {
+  if (is.null(study_ae)) {
     prob_lower <- 1
     return(prob_lower)
   }
@@ -637,8 +648,6 @@ prob_lower_site_ae_vs_study_ae <- function(site_ae, study_ae, r = 1000, parallel
   # set-up multiprocessing
   # multiprocessing currently not used by sim_sites()
   if (parallel) {
-    requireNamespace("furrr")
-    suppressWarnings(future::plan(multiprocess))
     .f_map_int <- function(...) {
         furrr::future_map_int(..., .options = furrr_options(seed = TRUE))
       }
@@ -673,13 +682,17 @@ prob_lower_site_ae_vs_study_ae <- function(site_ae, study_ae, r = 1000, parallel
 #' @param r integer, denotes number of simulations, default = 1000
 #' @param poisson_test logical, calculates poisson.test pvalue
 #' @param prob_lower logical, calculates probability for getting a lower value
+#' @param progress logical, display progress bar, Default = TRUE
 #' @return dataframe with the following columns:
 #' \describe{
 #'   \item{**study_id**}{study identification}
 #'   \item{**site_number**}{site identification}
+#'   \item{**n_pat**}{number of patients at site}
 #'   \item{**visit_med75**}{median(max(visit)) * 0.75}
+#'   \item{**n_pat_with_med75**}{number of patients at site with med75}
 #'   \item{**mean_ae_site_med75**}{mean AE at visit_med75 site level}
 #'   \item{**mean_ae_study_med75**}{mean AE at visit_med75 study level}
+#'   \item{**n_pat_with_med75_study**}{number of patients at study with med75 excl. site}
 #'   \item{**pval**}{p-value as returned by \code{\link[stats]{poisson.test}}}
 #'   \item{**prob_low**}{bootstrapped probability for having mean_ae_site_med75 or lower}
 #'  }
@@ -705,17 +718,54 @@ prob_lower_site_ae_vs_study_ae <- function(site_ae, study_ae, r = 1000, parallel
 #' \code{\link[simaerep]{pat_pool}},
 #' \code{\link[simaerep]{prob_lower_site_ae_vs_study_ae}},
 #' \code{\link[simaerep]{poiss_test_site_ae_vs_study_ae}},
+#' \code{\link[simaerep]{sim_sites}},
+#' \code{\link[simaerep]{prep_for_sim}}
 #' @export
-#' @import dplyr
-#' @import purrr
-#' @import tidyr
 sim_sites <- function(df_site,
                       df_visit,
                       r = 1000,
                       poisson_test = TRUE,
-                      prob_lower = TRUE) {
+                      prob_lower = TRUE,
+                      progress = TRUE) {
 
   df_visit <- check_df_visit(df_visit)
+
+  df_sim_prep <- prep_for_sim(df_site, df_visit)
+
+  df_sim <- sim_after_prep(df_sim_prep,
+                           r = r,
+                           poisson_test = poisson_test,
+                           prob_lower = prob_lower,
+                           progress = progress)
+
+  return(df_sim)
+}
+
+#'@title prepare data for simulation
+#'@description Internal function called by \code{\link[simaerep]{sim_sites}}.
+#'  Collect AEs per patient at visit_med75 for site and study as a vector of
+#'  integers.
+#'@param df_visit dataframe, created by \code{\link[simaerep]{sim_sites}}
+#'@param df_site dataframe created by \code{\link[simaerep]{site_aggr}}
+#'@return dataframe
+#' @examples
+#' df_visit <- sim_test_data_study(
+#'    n_pat = 100,
+#'    n_sites = 5,
+#'    frac_site_with_ur = 0.4,
+#'    ur_rate = 0.2
+#')
+#'
+#' df_visit$study_id <- "A"
+#'
+#' df_site <- site_aggr(df_visit)
+#'
+#' df_prep <- prep_for_sim(df_site, df_visit)
+#' df_prep
+#'@rdname prep_for_sim
+#' @seealso \code{\link[simaerep]{sim_sites}}, \code{\link[simaerep]{sim_after_prep}}
+#'@export
+prep_for_sim <- function(df_site, df_visit) {
 
   df_pat_pool <- pat_pool(df_visit, df_site)
 
@@ -727,19 +777,66 @@ sim_sites <- function(df_site,
              .data$n_pat,
              .data$n_pat_with_med75,
              .data$visit_med75) %>%
-    summarise(patients = list(unique(.data$patnum)))
+    summarise(patients = list(unique(.data$patnum)), .groups = "drop")
 
   df_sim_prep <- df_sim_prep %>%
     left_join(df_pat_pool, "study_id") %>%
     mutate(
-      pat_pool = map2(.data$pat_pool, .data$visit_med75, function(x, y) filter(x, .data$visit == y)),
-      n_ae_site = map2(.data$pat_pool, .data$patients, function(x, y) filter(x, .data$patnum %in% y)),
-      n_ae_study = map2(.data$pat_pool, .data$patients, function(x, y) filter(x, ! .data$patnum %in% y)),
+      pat_pool = map2(
+        .data$pat_pool, .data$visit_med75,
+        function(x, y) filter(x, .data$visit == y)
+      ),
+      n_ae_site = map2(
+        .data$pat_pool, .data$patients,
+        function(x, y) filter(x, .data$patnum %in% y)
+      ),
+      n_ae_study = map2(
+        .data$pat_pool, .data$patients,
+        function(x, y) filter(x, ! .data$patnum %in% y)
+      ),
       n_ae_site = map(.data$n_ae_site, "n_ae"),
       n_ae_study = map(.data$n_ae_study, "n_ae")
     ) %>%
     select(- .data$patients,
            - .data$pat_pool)
+
+  return(df_sim_prep)
+
+}
+
+#'@title start simulation after preparation
+#'@description Internal function called by \code{\link[simaerep]{sim_sites}}
+#'  after \code{\link[simaerep]{prep_for_sim}}
+#'@param df_sim_prep dataframe as returned by
+#'  \code{\link[simaerep]{prep_for_sim}}
+#'@inheritParams sim_sites
+#'@return dataframe
+#' @examples
+#' df_visit <- sim_test_data_study(
+#'    n_pat = 100,
+#'    n_sites = 5,
+#'    frac_site_with_ur = 0.4,
+#'    ur_rate = 0.2
+#')
+#'
+#' df_visit$study_id <- "A"
+#'
+#' df_site <- site_aggr(df_visit)
+#'
+#' df_prep <- prep_for_sim(df_site, df_visit)
+#'
+#' df_sim <- sim_after_prep(df_prep)
+#'
+#' df_sim
+#'@rdname sim_after_prep
+#'@seealso \code{\link[simaerep]{sim_sites}},
+#'  \code{\link[simaerep]{prep_for_sim}}
+#'@export
+sim_after_prep <- function(df_sim_prep,
+                           r = 1000,
+                           poisson_test = FALSE,
+                           prob_lower = TRUE,
+                           progress = FALSE) {
 
   df_sim <- df_sim_prep
 
@@ -750,17 +847,29 @@ sim_sites <- function(df_site,
   }
 
   if (prob_lower) {
-    df_sim <- df_sim %>%
-      mutate(prob_low = map2_dbl(.data$n_ae_site, .data$n_ae_study,
-        prob_lower_site_ae_vs_study_ae,
-        r = r
-      ))
+    with_progress_cnd(
+      df_sim <- df_sim %>%
+        mutate(
+          prob_low = purrr_bar(
+            .data$n_ae_site, .data$n_ae_study,
+            .purrr = map2_dbl,
+            .f = prob_lower_site_ae_vs_study_ae,
+            .f_args = list(r = r),
+            .steps = nrow(df_sim),
+            .progress = progress
+          )
+        ),
+      progress = progress
+    )
   }
 
-  df_sim %>%
-    mutate(mean_ae_site_med75 = map_dbl(n_ae_site, mean),
-           mean_ae_study_med75 = map_dbl(n_ae_study, mean)) %>%
-    select(- n_ae_site, - n_ae_study) %>%
+  # clean
+
+  df_sim <- df_sim %>%
+    mutate(mean_ae_site_med75 = map_dbl(.data$n_ae_site, mean),
+           mean_ae_study_med75 = map_dbl(.data$n_ae_study, mean),
+           n_pat_with_med75_study = map_int(.data$n_ae_study, length)) %>%
+    select(- .data$n_ae_site, - .data$n_ae_study) %>%
     select(.data$study_id,
            .data$site_number,
            .data$n_pat,
@@ -768,9 +877,12 @@ sim_sites <- function(df_site,
            .data$visit_med75,
            .data$mean_ae_site_med75,
            .data$mean_ae_study_med75,
-           everything()) %>%
-    ungroup() %>%
-    return()
+           .data$n_pat_with_med75_study,
+           dplyr::everything()) %>%
+    ungroup()
+
+  return(df_sim)
+
 }
 
 #' @title configure study patient pool by site parameters
@@ -793,7 +905,7 @@ sim_sites <- function(df_site,
 #'
 #' df_visit2$study_id <- "B"
 #'
-#' df_visit <- bind_rows(df_visit1, df_visit2)
+#' df_visit <- dplyr::bind_rows(df_visit1, df_visit2)
 #'
 #' df_site <- site_aggr(df_visit)
 #'
@@ -869,7 +981,7 @@ get_pat_pool_config <- function(df_visit, df_site, min_n_pat_with_med75 = 1) {
 #'
 #' df_visit2$study_id <- "B"
 #'
-#' df_visit <- bind_rows(df_visit1, df_visit2)
+#' df_visit <- dplyr::bind_rows(df_visit1, df_visit2)
 #'
 #' df_site <- site_aggr(df_visit)
 #'
@@ -885,14 +997,6 @@ get_pat_pool_config <- function(df_visit, df_site, min_n_pat_with_med75 = 1) {
 #'   mean_ae at visit_med75
 #' @rdname sim_studies
 #' @export
-#' @importFrom feather read_feather write_feather
-#' @import dplyr
-#' @import purrr
-#' @import tidyr
-#' @import furrr
-#' @import future
-#' @importFrom stringr str_count str_pad
-#' @importFrom rlang :=
 sim_studies <- function(df_visit,
                         df_site,
                         r = 100,
@@ -913,7 +1017,7 @@ sim_studies <- function(df_visit,
                                    min_n_pat_with_med75 = min_n_pat_with_med75)
 
   # filter studies --------------------------------------------
-  if (!is_null(studies)) {
+  if (!is.null(studies)) {
     if (!all(studies %in% unique(df_visit$study_id))) {
       stop("not all passed studies can be found in input data")
     }
@@ -925,8 +1029,6 @@ sim_studies <- function(df_visit,
 
   # set-up multiprocessing -------------------------------------
   if (parallel) {
-    requireNamespace("furrr")
-    suppressWarnings(future::plan(multiprocess))
     .f_map <- function(...) {
       furrr::future_map(
         ...,
@@ -1027,7 +1129,6 @@ sim_studies <- function(df_visit,
 #'   knitr::kable(digits = 2)
 #'@rdname site_aggr
 #'@export
-#'@importFrom stats quantile
 site_aggr <- function(df_visit,
                       method = "med75_adj",
                       min_pat_pool = 0.2) {
@@ -1091,15 +1192,13 @@ site_aggr <- function(df_visit,
 #' @seealso [sim_sites()][sim_sites()]
 #' @rdname poiss_test_site_ae_vs_study_ae
 #' @export
-#' @importFrom purrr safely
-#' @importFrom stats median runif poisson.test
 
 poiss_test_site_ae_vs_study_ae <- function(site_ae,
-                                             study_ae,
-                                             visit_med75) {
+                                           study_ae,
+                                           visit_med75) {
 
   # if there is only one site
-  if (is_null(study_ae)) {
+  if (is.null(study_ae)) {
     pval <- 1
     return(pval)
   }
@@ -1130,99 +1229,9 @@ poiss_test_site_ae_vs_study_ae <- function(site_ae,
   pval <- poisson_test$result$p.value
 
   # this controls for cases when poisson.test fails for some reason
-  if (is_null(pval)) {
+  if (is.null(pval)) {
     pval <- 1
   }
 
   return(pval)
-}
-
-
-#' @title simulate study test data
-#' @description evenly distributes a number of given patients across a number of
-#'   given sites. Then simulates ae development of each patient reducing the
-#'   number of reported AEs for patients distributed to AE-under-reporting sites.
-#' @param n_pat integer, number of patients, Default: 1000
-#' @param n_sites integer, number of sites, Default: 20
-#' @param frac_site_with_ur fraction of AE under-reporting sites, Default: 0
-#' @param ur_rate AE under-reporting rate, will lower mean ae per visit used to
-#'   simulate patients at sites flagged as AE-under-reporting., Default: 0
-#' @param max_visit_mean mean of the maximum number of visits of each patient,
-#'   Default: 20
-#' @param max_visit_sd standard deviation of maximum number of visits of each
-#'   patient, Default: 4
-#' @param ae_per_visit_mean mean ae per visit per patient, Default: 0.5
-#' @return tibble with columns site_number, patnum, is_ur, max_visit_mean,
-#'   max_visit_sd, ae_per_visit_mean, visit, n_ae
-#' @details maximum visit number will be sampled from normal distribution with
-#'   characteristics derived from max_visit_mean and max_visit_sd, while the ae
-#'   per visit will be sampled from a poisson distribution described by
-#'   ae_per_visit_mean.
-#' @examples
-#' set.seed(1)
-#' df_visit <- sim_test_data_study(n_pat = 100, n_sites = 5)
-#' df_visit[which(df_visit$patnum == "P000001"),]
-#' df_visit <- sim_test_data_study(n_pat = 100, n_sites = 5,
-#'     frac_site_with_ur = 0.2, ur_rate = 0.5)
-#' df_visit[which(df_visit$patnum == "P000001"),]
-#' @rdname sim_test_data_study
-#' @export
-sim_test_data_study <- function(n_pat = 1000,
-                                     n_sites = 20,
-                                     frac_site_with_ur = 0,
-                                     ur_rate = 0,
-                                     max_visit_mean = 20,
-                                     max_visit_sd = 4,
-                                     ae_per_visit_mean = 0.5
-                                     ) {
-  tibble(patnum = seq(1, n_pat)) %>%
-    mutate(patnum = str_pad(patnum, width = 6, side = "left", pad = "0"),
-           patnum = paste0("P", patnum),
-           site_number = seq(1, n_pat),
-           site_number = if (n_sites > 1) cut(.data$site_number, n_sites, labels = FALSE) else 1,
-           is_ur = ifelse(.data$site_number <= (max(.data$site_number) * frac_site_with_ur), TRUE, FALSE),
-           site_number = str_pad(.data$site_number, width = 4, side = "left", pad = "0"),
-           site_number = paste0("S", .data$site_number),
-           max_visit_mean = max_visit_mean,
-           max_visit_sd = max_visit_sd,
-           ae_per_visit_mean = ifelse(.data$is_ur, ae_per_visit_mean * (1 - ur_rate), ae_per_visit_mean),
-           aes = pmap(list(vm = max_visit_mean,
-                           vs = max_visit_sd,
-                           am = ae_per_visit_mean),
-                      function(vm, vs, am) sim_test_data_patient(
-                        .f_sample_max_visit = function() rnorm(1, mean = vm, sd = vs),
-                        .f_sample_ae_per_visit = function(max_visit) rpois(max_visit, am))),
-           aes = map(aes, ~ tibble(visit = seq(1, length(.)), n_ae = .))) %>%
-    unnest(aes)
-
-}
-
-#' @title simulate patient ae reporting test data
-#' @description helper function for [sim_test_data_study()][sim_test_data_study()]
-#' @param .f_sample_ae_per_visit function used to sample the aes for each visit,
-#'   Default: function(x) rpois(x, 0.5)
-#' @param .f_sample_max_visit function used to sample the maximum number of aes,
-#'   Default: function() rnorm(1, mean = 20, sd = 4)
-#' @return vector containing cumulative aes
-#' @details ""
-#' @examples
-#' replicate(5, sim_test_data_patient())
-#' replicate(5, sim_test_data_patient(
-#'     .f_sample_ae_per_visit = function(x) rpois(x, 1.2))
-#'   )
-#' replicate(5, sim_test_data_patient(
-#'     .f_sample_max_visit = function() rnorm(1, mean = 5, sd = 5))
-#'   )
-#' @importFrom stats ecdf rnorm rpois
-#' @rdname sim_test_data_patient
-#' @export
-sim_test_data_patient <- function(.f_sample_max_visit = function() rnorm(1, mean = 20, sd = 4),
-                                       .f_sample_ae_per_visit = function(max_visit) rpois(max_visit, 0.5)) {
-
-  max_visit <- as.integer(.f_sample_max_visit())
-  max_visit <- ifelse(max_visit < 1, 1, max_visit)
-  aes <- .f_sample_ae_per_visit(max_visit)
-  cum_aes <- cumsum(aes)
-
-  return(cum_aes)
 }

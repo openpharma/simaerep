@@ -1,6 +1,6 @@
 Package: simaerep
 Title: Simulate adverse event reporting in clinical trials with the goal of detecting under-reporting sites
-Version: 0.3.1
+Version: 0.3.2
 Authors@R: 
     person(given = "Bjoern",
            family = "Koneswarakantha",
@@ -16,9 +16,9 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Depends:
-    ggplot2,
-    dplyr
+    ggplot2
 Imports:
+    dplyr,
     lintr,
     tidyr,
     magrittr,
@@ -28,18 +28,16 @@ Imports:
     forcats,
     cowplot,
     RColorBrewer,
-    feather,
     furrr (>= 0.2.1),
-    future
+    progressr,
+    knitr,
+    tibble
 Suggests:
     testthat,
     devtools,
     pkgdown,
-    knitr,
-    tibble,
     spelling,
-    haven,
-    sqldf
+    haven
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
 Language: en-US
