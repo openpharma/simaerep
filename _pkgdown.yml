@@ -75,6 +75,7 @@ reference:
   - get_ecd_values
   - purrr_bar
   - with_progress_cnd
+  - sim_scenario
 - title: Deprecated
   contents:
   - eval_sites_deprecated

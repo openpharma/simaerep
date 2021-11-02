@@ -44,7 +44,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">simaerep</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2</span>
       </span>
     </div>
 
@@ -52,7 +52,7 @@
       <ul class="nav navbar-nav">
 <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -87,6 +87,9 @@
     <li>
       <a href="../articles/visits_or_days.html">Aggregate AEs by Days or Visit?</a>
     </li>
+    <li>
+      <a href="../articles/portfolio_perf.html">simaerep Portfolio Performance</a>
+    </li>
   </ul>
 </li>
 <li>
@@ -96,7 +99,7 @@
 <ul class="nav navbar-nav navbar-right">
 <li>
   <a href="https://github.com/openpharma/simaerep/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -110,8 +113,7 @@
 
       
 
-      </header><script src="visits_or_days_files/header-attrs-2.5/header-attrs.js"></script><link href="visits_or_days_files/anchor-sections-1.0/anchor-sections.css" rel="stylesheet">
-<script src="visits_or_days_files/anchor-sections-1.0/anchor-sections.js"></script><div class="row">
+      </header><script src="visits_or_days_files/header-attrs-2.6/header-attrs.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Aggregate AEs by Days or Visit?</h1>
@@ -270,7 +272,7 @@
 <code class="sourceCode R"><span class="va">df_days</span> </code></pre></div>
 <pre><code>## # A tibble: 3,220 x 5
 ##    study_id   site_number patnum   visit  n_ae
-##    &lt;chr&gt;      &lt;chr&gt;       &lt;chr&gt;    &lt;dbl&gt; &lt;dbl&gt;
+##  * &lt;chr&gt;      &lt;chr&gt;       &lt;chr&gt;    &lt;dbl&gt; &lt;dbl&gt;
 ##  1 CO-101-001 001         01001001    43     1
 ##  2 CO-101-001 001         01001001    44     2
 ##  3 CO-101-001 001         01001001   107     3
@@ -296,7 +298,7 @@
 <code class="sourceCode R"><span class="va">df_days</span></code></pre></div>
 <pre><code>## # A tibble: 57,873 x 5
 ##    study_id   site_number patnum   visit  n_ae
-##    &lt;chr&gt;      &lt;chr&gt;       &lt;chr&gt;    &lt;dbl&gt; &lt;dbl&gt;
+##  * &lt;chr&gt;      &lt;chr&gt;       &lt;chr&gt;    &lt;dbl&gt; &lt;dbl&gt;
 ##  1 CO-101-001 001         01001001     5     0
 ##  2 CO-101-001 001         01001001     6     0
 ##  3 CO-101-001 001         01001001     7     0

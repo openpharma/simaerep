@@ -18,9 +18,9 @@ knitr::opts_chunk$set(echo = TRUE, cache = FALSE)
 
 # Load
 ```{r}
-suppressPackageStartupMessages( library(tidyverse) )
-suppressPackageStartupMessages( library(knitr) )
-suppressPackageStartupMessages( library(simaerep) )
+suppressPackageStartupMessages(library(tidyverse))
+suppressPackageStartupMessages(library(knitr))
+suppressPackageStartupMessages(library(simaerep))
 ```
 
 # Introduction
@@ -89,6 +89,9 @@ df_visit2 <- sim_test_data_study(
 
 df_visit1$site_number <- paste0("A", df_visit1$site_number)
 df_visit2$site_number <- paste0("B", df_visit2$site_number)
+df_visit1$patnum <- paste0("A", df_visit1$patnum)
+df_visit2$patnum <- paste0("B", df_visit2$patnum)
+
 
 df_visit <- bind_rows(df_visit1, df_visit2)
 

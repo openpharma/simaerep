@@ -89,7 +89,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">simaerep</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2</span>
       </span>
     </div>
 
@@ -97,7 +97,7 @@
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -132,6 +132,9 @@
     <li>
       <a href="../articles/visits_or_days.html">Aggregate AEs by Days or Visit?</a>
     </li>
+    <li>
+      <a href="../articles/portfolio_perf.html">simaerep Portfolio Performance</a>
+    </li>
   </ul>
 </li>
 <li>
@@ -141,7 +144,7 @@
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/openpharma/simaerep/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -230,12 +233,24 @@
           <p><code><a href="sim_test_data_study.html">sim_test_data_study()</a></code> </p>
         </td>
         <td><p>simulate study test data</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="get_config.html">get_config()</a></code> </p>
+        </td>
+        <td><p>Get Portfolio Configuration</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="sim_test_data_portfolio.html">sim_test_data_portfolio()</a></code> </p>
+        </td>
+        <td><p>Simulate Portfolio Test Data</p></td>
       </tr>
     </tbody><tbody>
       <tr>
         <th colspan="2">
           <h2 id="section-test-functions" class="hasAnchor"><a href="#section-test-functions" class="anchor"></a>Test Functions</h2>
-          <p class="section-desc"><p>These functions are intented to check Poisson test applicability.</p></p>
+          <p class="section-desc"><p>These functions are intented to check simaerep performance.</p></p>
         </th>
       </tr>
       
@@ -252,9 +267,15 @@
       </tr><tr>
         
         <td>
-          <p><code><a href="get_ecd_values.html">get_ecd_values()</a></code> </p>
+          <p><code><a href="sim_ur_scenarios.html">sim_ur_scenarios()</a></code> </p>
         </td>
-        <td><p>get empirical cumulative distribution values of pval or prob_lower</p></td>
+        <td><p>Simulate Under-Reporting Scenarios</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="get_portf_perf.html">get_portf_perf()</a></code> </p>
+        </td>
+        <td><p>Get Portfolio Performance</p></td>
       </tr>
     </tbody><tbody>
       <tr>
@@ -328,6 +349,43 @@
           <p><code><a href="exp_implicit_missing_visits.html">exp_implicit_missing_visits()</a></code> </p>
         </td>
         <td><p>expose implicitly missing visits</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="prep_for_sim.html">prep_for_sim()</a></code> </p>
+        </td>
+        <td><p>prepare data for simulation</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="sim_after_prep.html">sim_after_prep()</a></code> </p>
+        </td>
+        <td><p>start simulation after preparation</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="get_ecd_values.html">get_ecd_values()</a></code> </p>
+        </td>
+        <td><p>get empirical cumulative distribution values of pval or prob_lower</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="purrr_bar.html">purrr_bar()</a></code> </p>
+        </td>
+        <td><p>execute a purrr or furrr function with a progress
+bar</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="with_progress_cnd.html">with_progress_cnd()</a></code> </p>
+        </td>
+        <td><p>conditional <code><a href='https://progressr.futureverse.org/reference/with_progress.html'>with_progress</a></code></p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="sim_scenario.html">sim_scenario()</a></code> </p>
+        </td>
+        <td><p>simulate single scenario</p></td>
       </tr>
     </tbody><tbody>
       <tr>
@@ -352,7 +410,7 @@
       <tr>
         <th colspan="2">
           <h2 id="section-additional-plot-functions" class="hasAnchor"><a href="#section-additional-plot-functions" class="anchor"></a>Additional Plot Functions</h2>
-          <p class="section-desc"><p>These functions were intended for creating plots for the documentation.</p></p>
+          <p class="section-desc"><p>These functions are intended for creating plots for the documentation.</p></p>
         </th>
       </tr>
       

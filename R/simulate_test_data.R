@@ -267,12 +267,12 @@ sim_ur_scenarios <- function(df_portf,
 
   # create scenario grid
 
-  df_median_pat <- df_visit %>%
+  df_mean_pat <- df_visit %>%
     group_by(.data$study_id, .data$site_number, .data$visit) %>%
     summarise(n_pat = n_distinct(.data$patnum),
               .groups = "drop") %>%
     group_by(.data$study_id, .data$visit) %>%
-    summarise(mean_n_pat = median(.data$n_pat),
+    summarise(mean_n_pat = mean(.data$n_pat),
               sum_n_pat = sum(.data$n_pat),
               n_sites = n_distinct(.data$site_number),
               .groups = "drop")
@@ -281,7 +281,7 @@ sim_ur_scenarios <- function(df_portf,
 
   df_grid_gr0 <- df_site %>%
     select(.data$study_id, .data$site_number, .data$n_pat_with_med75, .data$visit_med75) %>%
-    left_join(df_median_pat, by = c(study_id = "study_id", visit_med75 = "visit")) %>%
+    left_join(df_mean_pat, by = c(study_id = "study_id", visit_med75 = "visit")) %>%
     mutate(extra_ur_sites = list(0:extra_ur_sites)) %>%
     unnest(.data$extra_ur_sites) %>%
     mutate(
@@ -329,7 +329,7 @@ sim_ur_scenarios <- function(df_portf,
 
   if (parallel) {
     .purrr <- furrr::future_map
-    .purrr_args <- list(.options = furrr_options(seed = NULL))
+    .purrr_args <- list(.options = furrr_options(seed = TRUE))
   } else {
     .purrr <- purrr::map
     .purrr_args <- list()
@@ -475,7 +475,7 @@ sim_test_data_portfolio <- function(df_config, parallel = FALSE, progress = TRUE
 
   if (parallel) {
     .purrr <- furrr::future_pmap
-    .purrr_args <- list(.options = furrr_options(seed = NULL))
+    .purrr_args <- list(.options = furrr_options(seed = TRUE))
   } else {
     .purrr <- purrr::pmap
     .purrr_args <- list()

@@ -44,7 +44,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">simaerep</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2</span>
       </span>
     </div>
 
@@ -52,7 +52,7 @@
       <ul class="nav navbar-nav">
 <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -87,6 +87,9 @@
     <li>
       <a href="../articles/visits_or_days.html">Aggregate AEs by Days or Visit?</a>
     </li>
+    <li>
+      <a href="../articles/portfolio_perf.html">simaerep Portfolio Performance</a>
+    </li>
   </ul>
 </li>
 <li>
@@ -96,7 +99,7 @@
 <ul class="nav navbar-nav navbar-right">
 <li>
   <a href="https://github.com/openpharma/simaerep/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -110,8 +113,7 @@
 
       
 
-      </header><script src="intro_files/header-attrs-2.5/header-attrs.js"></script><link href="intro_files/anchor-sections-1.0/anchor-sections.css" rel="stylesheet">
-<script src="intro_files/anchor-sections-1.0/anchor-sections.js"></script><div class="row">
+      </header><script src="intro_files/header-attrs-2.6/header-attrs.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Introduction</h1>
@@ -500,15 +502,16 @@
   <span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <table class="table">
 <colgroup>
+<col width="6%">
 <col width="8%">
-<col width="10%">
-<col width="5%">
-<col width="15%">
-<col width="10%">
-<col width="16%">
+<col width="4%">
+<col width="12%">
+<col width="8%">
+<col width="14%">
+<col width="14%">
 <col width="17%">
-<col width="7%">
-<col width="8%">
+<col width="5%">
+<col width="6%">
 </colgroup>
 <thead><tr class="header">
 <th align="left">study_id</th>
@@ -518,6 +521,7 @@
 <th align="right">visit_med75</th>
 <th align="right">mean_ae_site_med75</th>
 <th align="right">mean_ae_study_med75</th>
+<th align="right">n_pat_with_med75_study</th>
 <th align="right">pval</th>
 <th align="right">prob_low</th>
 </tr></thead>
@@ -530,6 +534,7 @@
 <td align="right">15</td>
 <td align="right">3.000000</td>
 <td align="right">6.712644</td>
+<td align="right">87</td>
 <td align="right">0.0e+00</td>
 <td align="right">0</td>
 </tr>
@@ -541,6 +546,7 @@
 <td align="right">14</td>
 <td align="right">3.352941</td>
 <td align="right">6.021739</td>
+<td align="right">92</td>
 <td align="right">7.5e-06</td>
 <td align="right">0</td>
 </tr>
@@ -552,6 +558,7 @@
 <td align="right">17</td>
 <td align="right">8.500000</td>
 <td align="right">6.513514</td>
+<td align="right">74</td>
 <td align="right">1.0e+00</td>
 <td align="right">1</td>
 </tr>
@@ -563,6 +570,7 @@
 <td align="right">16</td>
 <td align="right">8.058824</td>
 <td align="right">6.261905</td>
+<td align="right">84</td>
 <td align="right">1.0e+00</td>
 <td align="right">1</td>
 </tr>
@@ -574,6 +582,7 @@
 <td align="right">16</td>
 <td align="right">7.555556</td>
 <td align="right">6.349398</td>
+<td align="right">83</td>
 <td align="right">1.0e+00</td>
 <td align="right">1</td>
 </tr>
@@ -585,6 +594,7 @@
 <td align="right">15</td>
 <td align="right">7.850000</td>
 <td align="right">5.690476</td>
+<td align="right">84</td>
 <td align="right">1.0e+00</td>
 <td align="right">1</td>
 </tr>
@@ -604,19 +614,20 @@
   <span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <table class="table">
 <colgroup>
-<col width="5%">
-<col width="7%">
+<col width="4%">
+<col width="6%">
 <col width="3%">
+<col width="9%">
+<col width="6%">
 <col width="10%">
-<col width="7%">
-<col width="11%">
+<col width="10%">
 <col width="12%">
 <col width="4%">
-<col width="5%">
-<col width="5%">
-<col width="7%">
-<col width="7%">
-<col width="10%">
+<col width="4%">
+<col width="4%">
+<col width="6%">
+<col width="6%">
+<col width="9%">
 </colgroup>
 <thead><tr class="header">
 <th align="left">study_id</th>
@@ -626,6 +637,7 @@
 <th align="right">visit_med75</th>
 <th align="right">mean_ae_site_med75</th>
 <th align="right">mean_ae_study_med75</th>
+<th align="right">n_pat_with_med75_study</th>
 <th align="right">pval</th>
 <th align="right">prob_low</th>
 <th align="right">pval_adj</th>
@@ -642,6 +654,7 @@
 <td align="right">15</td>
 <td align="right">3.000000</td>
 <td align="right">6.712644</td>
+<td align="right">87</td>
 <td align="right">0.0e+00</td>
 <td align="right">0</td>
 <td align="right">0.00e+00</td>
@@ -657,6 +670,7 @@
 <td align="right">14</td>
 <td align="right">3.352941</td>
 <td align="right">6.021739</td>
+<td align="right">92</td>
 <td align="right">7.5e-06</td>
 <td align="right">0</td>
 <td align="right">2.24e-05</td>
@@ -672,6 +686,7 @@
 <td align="right">17</td>
 <td align="right">8.500000</td>
 <td align="right">6.513514</td>
+<td align="right">74</td>
 <td align="right">1.0e+00</td>
 <td align="right">1</td>
 <td align="right">1.00e+00</td>
@@ -687,6 +702,7 @@
 <td align="right">16</td>
 <td align="right">8.058824</td>
 <td align="right">6.261905</td>
+<td align="right">84</td>
 <td align="right">1.0e+00</td>
 <td align="right">1</td>
 <td align="right">1.00e+00</td>
@@ -702,6 +718,7 @@
 <td align="right">16</td>
 <td align="right">7.555556</td>
 <td align="right">6.349398</td>
+<td align="right">83</td>
 <td align="right">1.0e+00</td>
 <td align="right">1</td>
 <td align="right">1.00e+00</td>
@@ -717,6 +734,7 @@
 <td align="right">15</td>
 <td align="right">7.850000</td>
 <td align="right">5.690476</td>
+<td align="right">84</td>
 <td align="right">1.0e+00</td>
 <td align="right">1</td>
 <td align="right">1.00e+00</td>

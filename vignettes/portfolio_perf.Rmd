@@ -13,28 +13,38 @@ editor_options:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, cache = TRUE)
+knitr::opts_chunk$set(echo = TRUE, cache = FALSE)
 ```
 
 # Load
 ```{r load}
-# RAM ~26 GB
-# plan 2GB per core
-
-plan(multisession, workers = 13)
-
 suppressPackageStartupMessages(library(tidyverse))
 suppressPackageStartupMessages(library(knitr))
 suppressPackageStartupMessages(library(furrr))
 suppressPackageStartupMessages(library(future))
 suppressPackageStartupMessages(library(simaerep))
+
+# RAM ~26 GB
+# plan 2GB per core
+plan(multisession, workers = 13)
 ```
 
 # Introduction
 
-## Portfolio Configuration
+We want to define minimal requirements for simulating test data that reflects realistic portfolio data which we then want to use to benchmark overall {simaerep} performance.
 
-The portfolio configuration consists of the following: 
+# Performance
+
+These simulations take some time to run and require multiple cores and appropriate memory. Rendering articles in {pkgdown} can be a bit unstable so we recommend to render first using pure {rmarkdown} to generate the intermediate csv files.
+
+```{r perf, eval = FALSE}
+rmarkdown::render("vignettes/_portfolio_perf.Rmd", knit_root_dir = "/home/koneswab/simaerep")
+```
+
+
+# Portfolio Configuration
+
+The portfolio configuration should give a minimal description of a portfolio without violating data privacy laws or competitive intellectual property. We propose to include the following metrics into the portfolio configuration: 
 
 **site parameters:**
 
@@ -46,7 +56,8 @@ The portfolio configuration consists of the following:
 
 - mean AE per visit
 
-We can use those parameters to simulate test data for assessing simaerep performance on a given portfolio.
+
+The information contained in a portfolio configuration is very scarce and thus can be shared more easily within the industry. We can use those parameters to simulate test data for assessing {simaerep} performance on a given portfolio.
 
 We can start with a maximum aggregation of visit and n_ae on patient level starting with df_visit as we would use it for `simaerep::site_aggr()`. We can use `simaerep::get_config` to generate a valid portfolio configuration, which will automatically apply a few filters:
 
@@ -74,7 +85,11 @@ df_site_max <- df_visit %>%
             max_ae = max(n_ae),
             .groups = "drop")
 
-df_config <- simaerep::get_config(df_site_max, anonymize = TRUE, min_pat_per_study = 100, min_sites_per_study = 10)
+df_config <- simaerep::get_config(
+  df_site_max, anonymize = TRUE,
+  min_pat_per_study = 100,
+  min_sites_per_study = 10
+)
 
 df_config
 ```
@@ -89,11 +104,7 @@ df_portf
 ```
 
 
-# Load Realistic Configuration
-
-The information contained in a portfolio configuration is very scarce and thus can be shared more easily within the industry. 
-
-## Load
+## Load Realistic Configuration
 
 Here we load a realistic portfolio configuration.
 
@@ -102,7 +113,7 @@ df_config <- readr::read_csv("ae_profile.csv")
 df_config
 ```
 
-## Simulate Portfolio
+# Simulate Portfolio
 
 And again simulate artificial visit level data. Using parallel processing.
 
@@ -112,17 +123,83 @@ df_portf <- sim_test_data_portfolio(df_config, parallel = TRUE, progress = TRUE)
 df_portf
 ```
 
-## Get Under-Reporting Probability for Different Under Reporting Scenarios
+## Confirm that Portfolio Simulation results in Similar Configuration
+
+```{r check_portf}
+df_site_max_portf <- df_portf %>%
+  group_by(study_id, site_number, patnum) %>%
+  summarise(max_visit = max(visit),
+            max_ae = max(n_ae),
+            .groups = "drop")
+
+df_config_portf <- simaerep::get_config(df_site_max_portf, anonymize = TRUE, min_pat_per_study = 100, min_sites_per_study = 10)
+
+df_comp <- df_config %>%
+  left_join(
+    df_config_portf,
+    by = c("study_id", "site_number"),
+    suffix = c(".ori", ".sim")
+  ) %>%
+  select(
+    study_id,
+    starts_with("ae"),
+    site_number,
+    contains("max_visit_sd"),
+    contains("max_visit_mean"),
+    contains("n_pat")
+  )
+
+df_comp %>%
+  select(study_id, starts_with("ae")) %>%
+  distinct() %>%
+  ggplot(aes(ae_per_visit_mean.ori, ae_per_visit_mean.sim)) +
+    geom_point() +
+    geom_smooth() +
+    labs(title = "simulated vs original AE per visit study mean") +
+    theme(aspect.ratio = 1)
+
+df_comp %>%
+  ggplot(aes(max_visit_sd.ori, max_visit_sd.sim)) +
+    geom_point() +
+    geom_smooth() +
+    geom_abline(slope = 1, color = "red") +
+    labs(title = "simulated vs original max visit sd site") +
+    theme(aspect.ratio = 1)
+```
+
+In our portfolio simulation we sample the patient maximum visit values from a normal distribution. If that returns values smaller than 1 we replace it with one. The larger the SD values compared to the mean values the more likely we will sample a  patient maximum visit smaller than one. Every time we have to do that correction we are lowering the patient maximum visit SD in our simulation, which we can see in the graph above.
+
+```{r check_portf_2}
+df_comp %>%
+  ggplot(aes(max_visit_mean.ori, max_visit_mean.sim)) +
+    geom_point() +
+    geom_smooth() +
+    geom_abline(slope = 1, color = "red") +
+    labs(title = "simulated vs original max visit mean site") +
+    theme(aspect.ratio = 1)
+
+df_comp %>%
+  ggplot(aes(n_pat.ori, n_pat.sim)) +
+    geom_point() +
+    geom_smooth() +
+    labs(title = "simulated vs original n_pat site") +
+    theme(aspect.ratio = 1)
+
+```
+
+
+
+# Get Under-Reporting Probability for Different Under Reporting Scenarios
 
 The performance of detecting AE under-reporting is dependent on three things:
 
 - the higher the mean AE per visit on study level the better
 - the higher the number of patients at an under-reporting site the better
-- the higher the number of under-reporting sites the worse
+- the higher the number of under-reporting sites in a study the worse
 
-In our initial usability assessment we have fixed those parameters. Here we are going leave them as they are in the portfolio. The vanilla version of our artificial portfolio data does not contain any under-reporting sites yet. However `simaerep::sim_ur_scenarios()` will apply under-reporting scenarios to each site. Reducing the number of AEs by a given under-reporting (ur_rate) for all patients at the site and add the corresponding under-reporting statistics. Since the under-reporting probability is also affected by the number of other sites that are under-reporting we additionally calculate under-reporting statistics in a scenario where additional under reporting sites are present. For this we use the median number of patients per site at the study to calculate the final number of patients for which we lower the AEs in a given under-reporting scenario. 
+In our initial usability assessment we have fixed those parameters. Here we are going leave them as they are in the portfolio. The vanilla version of our artificial portfolio data does not contain any under-reporting sites yet. However `simaerep::sim_ur_scenarios()` will apply under-reporting scenarios to each site. Reducing the number of AEs by a given under-reporting rate (ur_rate) for all patients at the site and add the corresponding under-reporting statistics. Since the under-reporting probability is also affected by the number of other sites that are under-reporting we additionally calculate under-reporting statistics in a scenario where additional under reporting sites are present. For this we use the mean number of patients per site at the study to calculate the final number of patients for which we lower the AEs in a given under-reporting scenario. 
 
-```{r sim_ur_scen}
+```{r sim_ur_scen, eval = FALSE}
 
 df_scen <- sim_ur_scenarios(df_portf,
                          extra_ur_sites = 5,
@@ -138,19 +215,21 @@ readr::write_csv(df_scen, file = "scen.csv")
 ```
 
 
-## Portfolio Performance
+# Portfolio Performance
 
-We can calculate the portfolio performance as the overall true positive rate (tpr as tp/P) on the basis of desired false positive rates (fpr as fp/P).
+We can calculate the portfolio performance as the overall true positive rate (tpr as tp/P) on the basis of desired false positive rates (fpr as fp/N).
 We calculate a threshold based on the desired fpr using the vanilla scenario with no under-reporting sites. Then we check how many sites with known under-reporting get flagged to calculate tpr.
 
 ```{r portf_scen}
+
+df_scen <- readr::read_csv("scen.csv")
 
 df_perf <- get_portf_perf(df_scen)
 
 df_perf %>%
     pivot_wider(
     names_from = extra_ur_sites,
-    values_from = dr,
+    values_from = tpr,
     names_prefix = "extra_ur_sites_"
   ) %>%
   knitr::kable(digits = 3)
@@ -164,7 +243,7 @@ df_perf %>%
 
 One of the latest update to simaerep was an improvement to the visit_med75 calculation. We can check how this has affected portfolio performance. We find that we have most likely slightly increased performance.
 
-```{r}
+```{r scen_old, warning = FALSE, eval = FALSE}
 
 df_scen_old_visit_med75 <- sim_ur_scenarios(df_portf,
                                            extra_ur_sites = 5,
@@ -179,15 +258,15 @@ readr::write_csv(df_scen_old_visit_med75, file = "scen_old.csv")
 
 ```
 
-```{r}
-# df_scen_old_visit_med75 <- readr::read_csv("vignettes/scen_old.csv")
+```{r scen_old_perf}
+df_scen_old_visit_med75 <- readr::read_csv("scen_old.csv")
 
 df_perf_old <- get_portf_perf(df_scen_old_visit_med75)
 
 df_perf_old %>%
     pivot_wider(
     names_from = extra_ur_sites,
-    values_from = dr,
+    values_from = tpr,
     names_prefix = "extra_ur_sites_"
   ) %>%
   knitr::kable(digits = 3)
@@ -198,7 +277,7 @@ df_perf_old %>%
 
 The maximum number of days per patient can be up to several years, so > 1000 days. simaerep exposes implicitly missing entries which can lead to single patients having 1000 entries or more, one entry for each day on the study. In order to avoid to generate a huge portfolio data frame we preserve memory by wrapping `sim_test_data_portfolio()` and `sim_ur_scenarios()` into a single call and apply it per study.
 
-```{r}
+```{r scen_days, eval = FALSE}
 
 wr <- function(df) {
   df_portf <- sim_test_data_portfolio(df, parallel = FALSE, progress = FALSE)
@@ -213,9 +292,10 @@ wr <- function(df) {
 }
 
 df_prep <- df_config %>%
-  select(- max_visit_sd, - max_visit_mean) %>%
+  select(- max_visit_sd, - max_visit_mean, - ae_per_visit_mean) %>%
   rename(max_visit_sd = max_days_sd,
-         max_visit_mean = max_days_mean) %>%
+         max_visit_mean = max_days_mean,
+         ae_per_visit_mean = ae_per_day_mean) %>%
   group_by(study_id_gr = study_id) %>%
   nest() %>%
   ungroup() 
@@ -227,7 +307,8 @@ progressr::with_progress(
       .purrr = furrr::future_map,
       .f = wr,
       .progress = TRUE,
-      .steps = nrow(.)
+      .steps = nrow(.),
+      .purrr_args = list(.options = furrr_options(seed = TRUE))
       )
    )
 )
@@ -240,19 +321,47 @@ readr::write_csv(df_scen_days, file = "scen_days.csv")
 
 ```
 
+```{r scen_days_perf}
+df_scen_days <- readr::read_csv("scen_days.csv")
+
+df_perf_days <- get_portf_perf(df_scen_days)
+
+df_perf_days %>%
+    pivot_wider(
+    names_from = extra_ur_sites,
+    values_from = tpr,
+    names_prefix = "extra_ur_sites_"
+  ) %>%
+  knitr::kable(digits = 3)
+
+```
+
+
 
 ## Plot
 
-```{r, fig.width=12, fig.height = 10}
+
+```{r, plot, fig.width=12, fig.height = 10}
 df_perf %>%
   mutate(type = "med75_adj") %>%
   bind_rows(
     df_perf_old %>%
       mutate(type = "med75")
   ) %>%
-  ggplot(aes(x = fpr, y = dr, color = type)) +
+  bind_rows(
+    df_perf_days %>%
+      mutate(type = "days")
+  ) %>%
+  ggplot(aes(x = fpr, y = tpr, color = type)) +
     geom_line() +
     geom_point() +
-    facet_grid(ur_rate ~ extra_ur_sites)
+    facet_grid(ur_rate ~ extra_ur_sites) +
+    theme(legend.position = "bottom")
+```
+
+Using days instead of visits does not provide a clear advantage while the adjusted method for determining the evaluation point visit_med75 seems to be advantageous.
+
+```{r close}
+plan(sequential)
 ```
 
