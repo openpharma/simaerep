@@ -92,7 +92,7 @@ bootstrapped probability of having a lower mean value." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">simaerep</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.3</span>
       </span>
     </div>
 
@@ -181,7 +181,8 @@ bootstrapped probability of having a lower mean value.</p>
   r <span class='op'>=</span> <span class='fl'>1000</span>,
   poisson_test <span class='op'>=</span> <span class='cn'>TRUE</span>,
   prob_lower <span class='op'>=</span> <span class='cn'>TRUE</span>,
-  progress <span class='op'>=</span> <span class='cn'>TRUE</span>
+  progress <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  check <span class='op'>=</span> <span class='cn'>TRUE</span>
 <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -210,6 +211,12 @@ bootstrapped probability of having a lower mean value.</p>
     <tr>
       <th>progress</th>
       <td><p>logical, display progress bar, Default = TRUE</p></td>
+    </tr>
+    <tr>
+      <th>check, </th>
+      <td><p>logical, perform data check and attempt repair with
+<a href='check_df_visit.html'>check_df_visit()</a>, computationally expensive on large data
+sets. Default: TRUE</p></td>
     </tr>
     </table>
 

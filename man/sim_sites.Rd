@@ -10,7 +10,8 @@ sim_sites(
   r = 1000,
   poisson_test = TRUE,
   prob_lower = TRUE,
-  progress = TRUE
+  progress = TRUE,
+  check = TRUE
 )
 }
 \arguments{
@@ -25,6 +26,10 @@ sim_sites(
 \item{prob_lower}{logical, calculates probability for getting a lower value}
 
 \item{progress}{logical, display progress bar, Default = TRUE}
+
+\item{check, }{logical, perform data check and attempt repair with
+\link[=check_df_visit]{check_df_visit()}, computationally expensive on large data
+sets. Default: TRUE}
 }
 \value{
 dataframe with the following columns:

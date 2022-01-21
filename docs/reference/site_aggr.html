@@ -90,7 +90,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">simaerep</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.3</span>
       </span>
     </div>
 
@@ -171,7 +171,7 @@
     <p>calculates visit_med75, n_pat_with_med75 and mean_ae_site_med75</p>
     </div>
 
-    <pre class="usage"><span class='fu'>site_aggr</span><span class='op'>(</span><span class='va'>df_visit</span>, method <span class='op'>=</span> <span class='st'>"med75_adj"</span>, min_pat_pool <span class='op'>=</span> <span class='fl'>0.2</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>site_aggr</span><span class='op'>(</span><span class='va'>df_visit</span>, method <span class='op'>=</span> <span class='st'>"med75_adj"</span>, min_pat_pool <span class='op'>=</span> <span class='fl'>0.2</span>, check <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -190,6 +190,12 @@ defining evaluation point visit_med75 (see details), Default: "med75_adj"</p></t
       <th>min_pat_pool, </th>
       <td><p>double, minimum ratio of available patients available for
 sampling. Determines maximum visit_med75 value see Details. Default: 0.2</p></td>
+    </tr>
+    <tr>
+      <th>check, </th>
+      <td><p>logical, perform data check and attempt repair with
+<a href='check_df_visit.html'>check_df_visit()</a>, computationally expensive on large data
+sets. Default: TRUE</p></td>
     </tr>
     </table>
 

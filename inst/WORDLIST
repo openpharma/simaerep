@@ -26,6 +26,7 @@ anonymized
 blogspot
 codecov
 config
+csv
 cyclocomp
 darkblue
 df
@@ -51,11 +52,14 @@ linter
 lintr
 multisession
 openpharma
+optionable
 patnum
+pkgdown
 poisson
 purrr
 pval
 pvalue
+rmarkdown
 rnorm
 rpois
 sd

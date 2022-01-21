@@ -44,7 +44,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">simaerep</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.3</span>
       </span>
     </div>
 
@@ -203,26 +203,26 @@
 <pre><code>## # A tibble: 20 x 6
 ##    study_id ae_per_visit_mean site_number max_visit_sd max_visit_mean n_pat
 ##    &lt;chr&gt;                &lt;dbl&gt; &lt;chr&gt;              &lt;dbl&gt;          &lt;dbl&gt; &lt;int&gt;
-##  1 0001                 0.392 0001                4.28           20.5    10
-##  2 0001                 0.392 0002                4.01           18.6    10
-##  3 0001                 0.392 0003                5.25           18.7    10
-##  4 0001                 0.392 0004                4.14           19.4    10
-##  5 0001                 0.392 0005                3.31           19.9    10
-##  6 0001                 0.392 0006                3.16           21      10
-##  7 0001                 0.392 0007                5.00           19.1    10
-##  8 0001                 0.392 0008                5.20           21.1    10
-##  9 0001                 0.392 0009                5.00           19.1    10
-## 10 0001                 0.392 0010                2.75           16.7    10
-## 11 0002                 0.471 0001                4.12           18.5    10
-## 12 0002                 0.471 0002                2.96           19.9    10
-## 13 0002                 0.471 0003                5.25           18.5    10
-## 14 0002                 0.471 0004                2.79           18.7    10
-## 15 0002                 0.471 0005                3.61           19.2    10
-## 16 0002                 0.471 0006                4.11           18.7    10
-## 17 0002                 0.471 0007                5.53           22.1    10
-## 18 0002                 0.471 0008                2.70           19.8    10
-## 19 0002                 0.471 0009                4.62           19.3    10
-## 20 0002                 0.471 0010                4.70           19.6    10</code></pre>
+##  1 0001                 0.412 0001                3.46           19      10
+##  2 0001                 0.412 0002                3.50           18.6    10
+##  3 0001                 0.412 0003                2.83           20      10
+##  4 0001                 0.412 0004                4.62           18.6    10
+##  5 0001                 0.412 0005                4.52           19.7    10
+##  6 0001                 0.412 0006                2.45           19.3    10
+##  7 0001                 0.412 0007                3.18           18.9    10
+##  8 0001                 0.412 0008                4.36           18.9    10
+##  9 0001                 0.412 0009                3.16           19.2    10
+## 10 0001                 0.412 0010                4.62           21.5    10
+## 11 0002                 0.48  0001                4.39           20.8    10
+## 12 0002                 0.48  0002                2.90           18.8    10
+## 13 0002                 0.48  0003                3.11           19.9    10
+## 14 0002                 0.48  0004                5.19           20.5    10
+## 15 0002                 0.48  0005                4.40           20.5    10
+## 16 0002                 0.48  0006                4.88           20.5    10
+## 17 0002                 0.48  0007                4.90           19.3    10
+## 18 0002                 0.48  0008                3.88           19.2    10
+## 19 0002                 0.48  0009                3.03           21.4    10
+## 20 0002                 0.48  0010                2.13           19.1    10</code></pre>
 <div id="simulate-portfolio-from-configuration" class="section level2">
 <h2 class="hasAnchor">
 <a href="#simulate-portfolio-from-configuration" class="anchor"></a>Simulate Portfolio from Configuration</h2>
@@ -230,20 +230,20 @@
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">df_portf</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sim_test_data_portfolio.html">sim_test_data_portfolio</a></span><span class="op">(</span><span class="va">df_config</span><span class="op">)</span>
 <span class="va">df_portf</span></code></pre></div>
-<pre><code>## # A tibble: 3,778 x 8
+<pre><code>## # A tibble: 3,827 x 8
 ##    study_id ae_per_visit_me… site_number max_visit_sd max_visit_mean patnum
 ##    &lt;chr&gt;               &lt;dbl&gt; &lt;chr&gt;              &lt;dbl&gt;          &lt;dbl&gt; &lt;chr&gt; 
-##  1 0001                0.392 0001                4.28           20.5 0001  
-##  2 0001                0.392 0001                4.28           20.5 0001  
-##  3 0001                0.392 0001                4.28           20.5 0001  
-##  4 0001                0.392 0001                4.28           20.5 0001  
-##  5 0001                0.392 0001                4.28           20.5 0001  
-##  6 0001                0.392 0001                4.28           20.5 0001  
-##  7 0001                0.392 0001                4.28           20.5 0001  
-##  8 0001                0.392 0001                4.28           20.5 0001  
-##  9 0001                0.392 0001                4.28           20.5 0001  
-## 10 0001                0.392 0001                4.28           20.5 0001  
-## # … with 3,768 more rows, and 2 more variables: visit &lt;int&gt;, n_ae &lt;int&gt;</code></pre>
+##  1 0001                0.412 0001                3.46             19 0001  
+##  2 0001                0.412 0001                3.46             19 0001  
+##  3 0001                0.412 0001                3.46             19 0001  
+##  4 0001                0.412 0001                3.46             19 0001  
+##  5 0001                0.412 0001                3.46             19 0001  
+##  6 0001                0.412 0001                3.46             19 0001  
+##  7 0001                0.412 0001                3.46             19 0001  
+##  8 0001                0.412 0001                3.46             19 0001  
+##  9 0001                0.412 0001                3.46             19 0001  
+## 10 0001                0.412 0001                3.46             19 0001  
+## # … with 3,817 more rows, and 2 more variables: visit &lt;int&gt;, n_ae &lt;int&gt;</code></pre>
 </div>
 <div id="load-realistic-configuration" class="section level2">
 <h2 class="hasAnchor">
@@ -290,7 +290,7 @@
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">df_portf</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sim_test_data_portfolio.html">sim_test_data_portfolio</a></span><span class="op">(</span><span class="va">df_config</span>, parallel <span class="op">=</span> <span class="cn">TRUE</span>, progress <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 <span class="va">df_portf</span></code></pre></div>
-<pre><code>## # A tibble: 1,997,429 x 11
+<pre><code>## # A tibble: 1,996,824 x 11
 ##    study_id ae_per_visit_me… ae_per_day_mean site_number max_visit_sd
 ##    &lt;chr&gt;               &lt;dbl&gt;           &lt;dbl&gt; &lt;chr&gt;              &lt;dbl&gt;
 ##  1 0001                0.269         0.00725 0001               0.707
@@ -303,7 +303,7 @@
 ##  8 0001                0.269         0.00725 0001               0.707
 ##  9 0001                0.269         0.00725 0001               0.707
 ## 10 0001                0.269         0.00725 0001               0.707
-## # … with 1,997,419 more rows, and 6 more variables: max_visit_mean &lt;dbl&gt;,
+## # … with 1,996,814 more rows, and 6 more variables: max_visit_mean &lt;dbl&gt;,
 ## #   max_days_sd &lt;dbl&gt;, max_days_mean &lt;dbl&gt;, patnum &lt;chr&gt;, visit &lt;int&gt;,
 ## #   n_ae &lt;int&gt;</code></pre>
 <div id="confirm-that-portfolio-simulation-results-in-similar-configuration" class="section level2">
@@ -418,10 +418,7 @@
 ##   extra_ur_sites = col_double(),
 ##   frac_pat_with_ur = col_double(),
 ##   ur_rate = col_double(),
-##   pval = col_double(),
 ##   prob_low = col_double(),
-##   pval_adj = col_double(),
-##   pval_prob_ur = col_double(),
 ##   prob_low_adj = col_double(),
 ##   prob_low_prob_ur = col_double()
 ## )</code></pre>
@@ -461,7 +458,7 @@
 <tbody>
 <tr class="odd">
 <td align="right">0.001</td>
-<td align="right">0.994</td>
+<td align="right">0.995</td>
 <td align="right">0.00</td>
 <td align="right">0.001</td>
 <td align="right">0.001</td>
@@ -472,62 +469,62 @@
 </tr>
 <tr class="even">
 <td align="right">0.001</td>
-<td align="right">0.994</td>
+<td align="right">0.995</td>
 <td align="right">0.10</td>
-<td align="right">0.009</td>
-<td align="right">0.009</td>
-<td align="right">0.008</td>
-<td align="right">0.008</td>
-<td align="right">0.008</td>
 <td align="right">0.007</td>
+<td align="right">0.006</td>
+<td align="right">0.006</td>
+<td align="right">0.006</td>
+<td align="right">0.006</td>
+<td align="right">0.006</td>
 </tr>
 <tr class="odd">
 <td align="right">0.001</td>
-<td align="right">0.994</td>
+<td align="right">0.995</td>
 <td align="right">0.25</td>
-<td align="right">0.079</td>
-<td align="right">0.075</td>
 <td align="right">0.070</td>
 <td align="right">0.066</td>
-<td align="right">0.063</td>
-<td align="right">0.060</td>
+<td align="right">0.062</td>
+<td align="right">0.058</td>
+<td align="right">0.055</td>
+<td align="right">0.053</td>
 </tr>
 <tr class="even">
 <td align="right">0.001</td>
-<td align="right">0.994</td>
+<td align="right">0.995</td>
 <td align="right">0.50</td>
-<td align="right">0.311</td>
-<td align="right">0.294</td>
-<td align="right">0.277</td>
-<td align="right">0.265</td>
-<td align="right">0.251</td>
-<td align="right">0.238</td>
+<td align="right">0.298</td>
+<td align="right">0.279</td>
+<td align="right">0.263</td>
+<td align="right">0.249</td>
+<td align="right">0.237</td>
+<td align="right">0.227</td>
 </tr>
 <tr class="odd">
 <td align="right">0.001</td>
-<td align="right">0.994</td>
+<td align="right">0.995</td>
 <td align="right">0.75</td>
-<td align="right">0.525</td>
-<td align="right">0.482</td>
-<td align="right">0.456</td>
-<td align="right">0.440</td>
-<td align="right">0.422</td>
-<td align="right">0.403</td>
+<td align="right">0.505</td>
+<td align="right">0.467</td>
+<td align="right">0.439</td>
+<td align="right">0.424</td>
+<td align="right">0.407</td>
+<td align="right">0.385</td>
 </tr>
 <tr class="even">
 <td align="right">0.001</td>
-<td align="right">0.994</td>
+<td align="right">0.995</td>
 <td align="right">1.00</td>
-<td align="right">0.625</td>
-<td align="right">0.540</td>
-<td align="right">0.508</td>
-<td align="right">0.492</td>
-<td align="right">0.468</td>
-<td align="right">0.444</td>
+<td align="right">0.611</td>
+<td align="right">0.531</td>
+<td align="right">0.493</td>
+<td align="right">0.479</td>
+<td align="right">0.460</td>
+<td align="right">0.432</td>
 </tr>
 <tr class="odd">
 <td align="right">0.010</td>
-<td align="right">0.963</td>
+<td align="right">0.954</td>
 <td align="right">0.00</td>
 <td align="right">0.010</td>
 <td align="right">0.010</td>
@@ -538,62 +535,62 @@
 </tr>
 <tr class="even">
 <td align="right">0.010</td>
-<td align="right">0.963</td>
+<td align="right">0.954</td>
 <td align="right">0.10</td>
-<td align="right">0.045</td>
-<td align="right">0.044</td>
-<td align="right">0.043</td>
-<td align="right">0.042</td>
-<td align="right">0.041</td>
-<td align="right">0.040</td>
+<td align="right">0.056</td>
+<td align="right">0.054</td>
+<td align="right">0.053</td>
+<td align="right">0.052</td>
+<td align="right">0.051</td>
+<td align="right">0.049</td>
 </tr>
 <tr class="odd">
 <td align="right">0.010</td>
-<td align="right">0.963</td>
+<td align="right">0.954</td>
 <td align="right">0.25</td>
-<td align="right">0.184</td>
-<td align="right">0.177</td>
-<td align="right">0.169</td>
-<td align="right">0.162</td>
-<td align="right">0.157</td>
-<td align="right">0.153</td>
+<td align="right">0.207</td>
+<td align="right">0.200</td>
+<td align="right">0.194</td>
+<td align="right">0.187</td>
+<td align="right">0.181</td>
+<td align="right">0.175</td>
 </tr>
 <tr class="even">
 <td align="right">0.010</td>
-<td align="right">0.963</td>
+<td align="right">0.954</td>
 <td align="right">0.50</td>
-<td align="right">0.462</td>
-<td align="right">0.447</td>
-<td align="right">0.431</td>
+<td align="right">0.483</td>
+<td align="right">0.467</td>
+<td align="right">0.453</td>
+<td align="right">0.439</td>
+<td align="right">0.427</td>
 <td align="right">0.416</td>
-<td align="right">0.403</td>
-<td align="right">0.392</td>
 </tr>
 <tr class="odd">
 <td align="right">0.010</td>
-<td align="right">0.963</td>
+<td align="right">0.954</td>
 <td align="right">0.75</td>
-<td align="right">0.662</td>
+<td align="right">0.680</td>
+<td align="right">0.656</td>
 <td align="right">0.633</td>
-<td align="right">0.608</td>
-<td align="right">0.585</td>
-<td align="right">0.566</td>
-<td align="right">0.551</td>
+<td align="right">0.610</td>
+<td align="right">0.590</td>
+<td align="right">0.574</td>
 </tr>
 <tr class="even">
 <td align="right">0.010</td>
-<td align="right">0.963</td>
+<td align="right">0.954</td>
 <td align="right">1.00</td>
-<td align="right">0.746</td>
-<td align="right">0.684</td>
-<td align="right">0.632</td>
-<td align="right">0.595</td>
-<td align="right">0.576</td>
-<td align="right">0.557</td>
+<td align="right">0.762</td>
+<td align="right">0.705</td>
+<td align="right">0.660</td>
+<td align="right">0.620</td>
+<td align="right">0.591</td>
+<td align="right">0.574</td>
 </tr>
 <tr class="odd">
 <td align="right">0.050</td>
-<td align="right">0.871</td>
+<td align="right">0.864</td>
 <td align="right">0.00</td>
 <td align="right">0.050</td>
 <td align="right">0.050</td>
@@ -604,58 +601,58 @@
 </tr>
 <tr class="even">
 <td align="right">0.050</td>
-<td align="right">0.871</td>
+<td align="right">0.864</td>
 <td align="right">0.10</td>
+<td align="right">0.161</td>
+<td align="right">0.159</td>
+<td align="right">0.157</td>
 <td align="right">0.154</td>
 <td align="right">0.152</td>
-<td align="right">0.149</td>
-<td align="right">0.147</td>
-<td align="right">0.145</td>
-<td align="right">0.142</td>
+<td align="right">0.150</td>
 </tr>
 <tr class="odd">
 <td align="right">0.050</td>
-<td align="right">0.871</td>
+<td align="right">0.864</td>
 <td align="right">0.25</td>
-<td align="right">0.356</td>
-<td align="right">0.349</td>
-<td align="right">0.341</td>
+<td align="right">0.369</td>
+<td align="right">0.362</td>
+<td align="right">0.355</td>
+<td align="right">0.348</td>
+<td align="right">0.340</td>
 <td align="right">0.334</td>
-<td align="right">0.326</td>
-<td align="right">0.319</td>
 </tr>
 <tr class="even">
 <td align="right">0.050</td>
-<td align="right">0.871</td>
+<td align="right">0.864</td>
 <td align="right">0.50</td>
-<td align="right">0.626</td>
+<td align="right">0.632</td>
+<td align="right">0.623</td>
 <td align="right">0.615</td>
-<td align="right">0.606</td>
-<td align="right">0.595</td>
-<td align="right">0.583</td>
-<td align="right">0.573</td>
+<td align="right">0.605</td>
+<td align="right">0.594</td>
+<td align="right">0.582</td>
 </tr>
 <tr class="odd">
 <td align="right">0.050</td>
-<td align="right">0.871</td>
+<td align="right">0.864</td>
 <td align="right">0.75</td>
 <td align="right">0.784</td>
-<td align="right">0.770</td>
-<td align="right">0.760</td>
-<td align="right">0.747</td>
-<td align="right">0.734</td>
-<td align="right">0.721</td>
+<td align="right">0.775</td>
+<td align="right">0.764</td>
+<td align="right">0.754</td>
+<td align="right">0.742</td>
+<td align="right">0.727</td>
 </tr>
 <tr class="even">
 <td align="right">0.050</td>
-<td align="right">0.871</td>
+<td align="right">0.864</td>
 <td align="right">1.00</td>
-<td align="right">0.833</td>
-<td align="right">0.812</td>
-<td align="right">0.789</td>
-<td align="right">0.772</td>
-<td align="right">0.749</td>
-<td align="right">0.725</td>
+<td align="right">0.830</td>
+<td align="right">0.810</td>
+<td align="right">0.791</td>
+<td align="right">0.774</td>
+<td align="right">0.757</td>
+<td align="right">0.733</td>
 </tr>
 </tbody>
 </table>

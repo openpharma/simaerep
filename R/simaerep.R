@@ -358,10 +358,19 @@ eval_sites <- function(df_sim_sites,
   df_out <- df_sim_sites
 
   if ("pval" %in% names(df_out)) {
-
+    # nolint start
     if (anyNA(df_out$pval)) {
-      warning("pval column contains NA")
+      warning_messages <- df_out %>%
+        filter(is.na(.data$pval)) %>%
+        mutate(
+          warning = paste0("\nstudy_id: ", .data$study_id, ", site_number: ", .data$site_number),
+          warning = paste0(.data$warning, ". pval == NA")
+        ) %>%
+        pull(.data$warning)
+
+      warning(warning_messages)
     }
+    # nolint end
 
     df_out <- df_out %>%
       group_by(.data$study_id) %>%
@@ -373,10 +382,19 @@ eval_sites <- function(df_sim_sites,
   }
 
   if ("prob_low" %in% names(df_out)) {
-
+    # nolint start
     if (anyNA(df_out$prob_low)) {
-      warning("prob_lower column contains NA")
+      warning_messages <- df_out %>%
+        filter(is.na(.data$prob_low)) %>%
+        mutate(
+          warning = paste0("\nstudy_id: ", .data$study_id, ", site_number: ", .data$site_number),
+          warning = paste0(.data$warning, ". prob_low == NA")
+        ) %>%
+        pull(.data$warning)
+
+      warning(warning_messages)
     }
+    # nolint end
 
     df_out <- df_out %>%
       group_by(.data$study_id) %>%
@@ -689,6 +707,9 @@ prob_lower_site_ae_vs_study_ae <- function(site_ae, study_ae, r = 1000, parallel
 #' @param poisson_test logical, calculates poisson.test pvalue
 #' @param prob_lower logical, calculates probability for getting a lower value
 #' @param progress logical, display progress bar, Default = TRUE
+#' @param check, logical, perform data check and attempt repair with
+#'  [check_df_visit()][check_df_visit], computationally expensive on large data
+#'  sets. Default: TRUE
 #' @return dataframe with the following columns:
 #' \describe{
 #'   \item{**study_id**}{study identification}
@@ -732,9 +753,11 @@ sim_sites <- function(df_site,
                       r = 1000,
                       poisson_test = TRUE,
                       prob_lower = TRUE,
-                      progress = TRUE) {
-
-  df_visit <- check_df_visit(df_visit)
+                      progress = TRUE,
+                      check = TRUE) {
+  if (check) {
+    df_visit <- check_df_visit(df_visit)
+  }
 
   df_sim_prep <- prep_for_sim(df_site, df_visit)
 
@@ -870,11 +893,18 @@ sim_after_prep <- function(df_sim_prep,
   }
 
   # clean
-
   df_sim <- df_sim %>%
     mutate(mean_ae_site_med75 = map_dbl(.data$n_ae_site, mean),
-           mean_ae_study_med75 = map_dbl(.data$n_ae_study, mean),
-           n_pat_with_med75_study = map_int(.data$n_ae_study, length)) %>%
+           n_pat_with_med75_study = map_int(.data$n_ae_study, length),
+           # replace empty vector with NA to silence warning
+           n_ae_study = ifelse(.data$n_pat_with_med75_study == 0, NA, .data$n_ae_study),
+           mean_ae_study_med75 = map_dbl(.data$n_ae_study, mean)) %>%
+    mutate(
+        across(
+          any_of(c("prob_low", "pval")),
+          ~ ifelse(.data$n_pat_with_med75_study == 0, NA, .)
+        )
+    ) %>%
     select(- .data$n_ae_site, - .data$n_ae_study) %>%
     select(.data$study_id,
            .data$site_number,
@@ -886,6 +916,26 @@ sim_after_prep <- function(df_sim_prep,
            .data$n_pat_with_med75_study,
            dplyr::everything()) %>%
     ungroup()
+
+  df_fail <- df_sim %>%
+    filter(is.na(.data$mean_ae_study_med75), .data$n_pat_with_med75_study == 0)
+
+  if (nrow(df_fail) > 0) {
+    warning_messages <- df_fail %>%
+      mutate(
+        warning = paste0(
+          "\nstudy_id: ",
+          .data$study_id,
+          ", site_number: ",
+          .data$site_number,
+          ". No adequate patients found in study pool at visit_med75: ",
+          .data$visit_med75
+          )
+      ) %>%
+      pull(.data$warning)
+
+    warning(warning_messages)
+  }
 
   return(df_sim)
 
@@ -1103,6 +1153,9 @@ sim_studies <- function(df_visit,
 #'  defining evaluation point visit_med75 (see details), Default: "med75_adj"
 #'@param min_pat_pool, double, minimum ratio of available patients available for
 #'  sampling. Determines maximum visit_med75 value see Details. Default: 0.2
+#'@param check, logical, perform data check and attempt repair with
+#'  [check_df_visit()][check_df_visit], computationally expensive on large data
+#'  sets. Default: TRUE
 #'@details For determining the visit number at which we are going to evaluate AE
 #'  reporting we take the maximum visit of each patient at the site and take the
 #'  median. Then we multiply with 0.75 which will give us a cut-off point
@@ -1137,14 +1190,16 @@ sim_studies <- function(df_visit,
 #'@export
 site_aggr <- function(df_visit,
                       method = "med75_adj",
-                      min_pat_pool = 0.2) {
+                      min_pat_pool = 0.2,
+                      check = TRUE) {
 
   # Checks ----------------------------------------------------------
   stopifnot(
     method %in% c("med75", "med75_adj")
   )
-
-  df_visit <- check_df_visit(df_visit)
+  if (check) {
+    df_visit <- check_df_visit(df_visit)
+  }
 
   # Aggregate on patient level---------------------------------------
 
