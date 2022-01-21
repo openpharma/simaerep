@@ -358,10 +358,19 @@ eval_sites <- function(df_sim_sites,
   df_out <- df_sim_sites
 
   if ("pval" %in% names(df_out)) {
-
+    # nolint start
     if (anyNA(df_out$pval)) {
-      warning("pval column contains NA")
+      warning_messages <- df_out %>%
+        filter(is.na(.data$pval)) %>%
+        mutate(
+          warning = paste0("\nstudy_id: ", .data$study_id, ", site_number: ", .data$site_number),
+          warning = paste0(.data$warning, ". pval == NA")
+        ) %>%
+        pull(.data$warning)
+
+      warning(warning_messages)
     }
+    # nolint end
 
     df_out <- df_out %>%
       group_by(.data$study_id) %>%
@@ -373,10 +382,19 @@ eval_sites <- function(df_sim_sites,
   }
 
   if ("prob_low" %in% names(df_out)) {
-
+    # nolint start
     if (anyNA(df_out$prob_low)) {
-      warning("prob_lower column contains NA")
+      warning_messages <- df_out %>%
+        filter(is.na(.data$prob_low)) %>%
+        mutate(
+          warning = paste0("\nstudy_id: ", .data$study_id, ", site_number: ", .data$site_number),
+          warning = paste0(.data$warning, ". prob_low == NA")
+        ) %>%
+        pull(.data$warning)
+
+      warning(warning_messages)
     }
+    # nolint end
 
     df_out <- df_out %>%
       group_by(.data$study_id) %>%
@@ -870,11 +888,18 @@ sim_after_prep <- function(df_sim_prep,
   }
 
   # clean
-
   df_sim <- df_sim %>%
     mutate(mean_ae_site_med75 = map_dbl(.data$n_ae_site, mean),
-           mean_ae_study_med75 = map_dbl(.data$n_ae_study, mean),
-           n_pat_with_med75_study = map_int(.data$n_ae_study, length)) %>%
+           n_pat_with_med75_study = map_int(.data$n_ae_study, length),
+           # replace empty vector with NA to silence warning
+           n_ae_study = ifelse(.data$n_pat_with_med75_study == 0, NA, .data$n_ae_study),
+           mean_ae_study_med75 = map_dbl(.data$n_ae_study, mean)) %>%
+    mutate(
+        across(
+          any_of(c("prob_low", "pval")),
+          ~ ifelse(.data$n_pat_with_med75_study == 0, NA, .)
+        )
+    ) %>%
     select(- .data$n_ae_site, - .data$n_ae_study) %>%
     select(.data$study_id,
            .data$site_number,
@@ -886,6 +911,26 @@ sim_after_prep <- function(df_sim_prep,
            .data$n_pat_with_med75_study,
            dplyr::everything()) %>%
     ungroup()
+
+  df_fail <- df_sim %>%
+    filter(is.na(.data$mean_ae_study_med75), .data$n_pat_with_med75_study == 0)
+
+  if (nrow(df_fail) > 0) {
+    warning_messages <- df_fail %>%
+      mutate(
+        warning = paste0(
+          "\nstudy_id: ",
+          .data$study_id,
+          ", site_number: ",
+          .data$site_number,
+          ". No adequate patients found in study pool at visit_med75: ",
+          .data$visit_med75
+          )
+      ) %>%
+      pull(.data$warning)
+
+    warning(warning_messages)
+  }
 
   return(df_sim)
 

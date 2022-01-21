@@ -531,3 +531,54 @@ test_that("portfolio_sim", {
 
    expect_warning(get_portf_perf(df_scen_na))
 })
+
+
+test_that("single site studies", {
+
+  df_visit1 <- sim_test_data_study(
+    n_pat = 100,
+    n_sites = 1,
+    frac_site_with_ur = 0.05,
+    ur_rate = 0.4,
+    ae_per_visit_mean = 0.5
+  )
+
+  df_visit1$study_id <- "A"
+
+  df_visit2 <- sim_test_data_study(
+    n_pat = 100,
+    n_sites = 1,
+    frac_site_with_ur = 0.05,
+    ur_rate = 0.4,
+    ae_per_visit_mean = 0.5
+  )
+
+  df_visit2$study_id <- "B"
+
+  df_visit <- bind_rows(df_visit1, df_visit2)
+
+  df_site <- site_aggr(df_visit)
+
+  df_sim_sites <- sim_sites(df_site, df_visit, r = 1000)
+
+  # ur stats should be NA
+  df_sim_sites %>%
+    filter(is.na(mean_ae_study_med75)) %>%
+    select(starts_with("pval"), starts_with("prob")) %>%
+    unlist() %>%
+    is.na() %>%
+    all() %>%
+    expect_true()
+
+
+  df_eval <- eval_sites(df_sim_sites)
+
+  df_eval %>%
+    filter(is.na(mean_ae_study_med75)) %>%
+    select(starts_with("pval"), starts_with("prob")) %>%
+    unlist() %>%
+    is.na() %>%
+    all() %>%
+    expect_true()
+
+})

@@ -44,7 +44,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">simaerep</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.3</span>
       </span>
     </div>
 
@@ -189,7 +189,7 @@
 <span class="va">df_sim_sites</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sim_sites.html">sim_sites</a></span><span class="op">(</span><span class="va">df_site</span>, <span class="va">df_visit</span><span class="op">)</span>
 
 <span class="va">df_visit</span></code></pre></div>
-<pre><code>## # A tibble: 58,578 x 9
+<pre><code>## # A tibble: 58,360 x 9
 ##    patnum site_number is_ur max_visit_mean max_visit_sd ae_per_visit_me… visit
 ##    &lt;chr&gt;  &lt;chr&gt;       &lt;lgl&gt;          &lt;dbl&gt;        &lt;dbl&gt;            &lt;dbl&gt; &lt;int&gt;
 ##  1 P0000… S0001       TRUE              20            4             0.25     1
@@ -202,38 +202,38 @@
 ##  8 P0000… S0001       TRUE              20            4             0.25     8
 ##  9 P0000… S0001       TRUE              20            4             0.25     9
 ## 10 P0000… S0001       TRUE              20            4             0.25    10
-## # … with 58,568 more rows, and 2 more variables: n_ae &lt;int&gt;, study_id &lt;chr&gt;</code></pre>
+## # … with 58,350 more rows, and 2 more variables: n_ae &lt;int&gt;, study_id &lt;chr&gt;</code></pre>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">df_site</span></code></pre></div>
 <pre><code>## # A tibble: 300 x 6
 ##    study_id      site_number n_pat n_pat_with_med75 visit_med75 mean_ae_site_me…
 ##    &lt;chr&gt;         &lt;chr&gt;       &lt;int&gt;            &lt;int&gt;       &lt;dbl&gt;            &lt;dbl&gt;
-##  1 ae_per_visit… S0001          10                8          15            0.375
-##  2 ae_per_visit… S0002          10               10          13            0.5  
-##  3 ae_per_visit… S0003          10                9          16            0.333
-##  4 ae_per_visit… S0004          10                9          15            0.333
-##  5 ae_per_visit… S0005          10               10          18            0.6  
-##  6 ae_per_visit… S0006          10                9          15            0.111
-##  7 ae_per_visit… S0007          10                8          18            0.25 
-##  8 ae_per_visit… S0008          10               10          16            0.5  
-##  9 ae_per_visit… S0009          10                9          17            0.889
-## 10 ae_per_visit… S0010          10                9          16            1    
+##  1 ae_per_visit… S0001          10                8          15            0.5  
+##  2 ae_per_visit… S0002          10                8          17            0.375
+##  3 ae_per_visit… S0003          10                7          19            1    
+##  4 ae_per_visit… S0004          10               10          14            0.1  
+##  5 ae_per_visit… S0005          10                9          16            0.333
+##  6 ae_per_visit… S0006          10                9          17            0.222
+##  7 ae_per_visit… S0007          10                9          15            0.333
+##  8 ae_per_visit… S0008          10                8          20            0.5  
+##  9 ae_per_visit… S0009          10               10          15            0.4  
+## 10 ae_per_visit… S0010          10                8          20            0.75 
 ## # … with 290 more rows</code></pre>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">df_sim_sites</span></code></pre></div>
 <pre><code>## # A tibble: 300 x 10
 ##    study_id site_number n_pat n_pat_with_med75 visit_med75 mean_ae_site_me…
 ##    &lt;chr&gt;    &lt;chr&gt;       &lt;int&gt;            &lt;int&gt;       &lt;dbl&gt;            &lt;dbl&gt;
-##  1 ae_per_… S0001          10                8          15            0.375
-##  2 ae_per_… S0002          10               10          13            0.5  
-##  3 ae_per_… S0003          10                9          16            0.333
-##  4 ae_per_… S0004          10                9          15            0.333
-##  5 ae_per_… S0005          10               10          18            0.6  
-##  6 ae_per_… S0006          10                9          15            0.111
-##  7 ae_per_… S0007          10                8          18            0.25 
-##  8 ae_per_… S0008          10               10          16            0.5  
-##  9 ae_per_… S0009          10                9          17            0.889
-## 10 ae_per_… S0010          10                9          16            1    
+##  1 ae_per_… S0001          10                8          15            0.5  
+##  2 ae_per_… S0002          10                8          17            0.375
+##  3 ae_per_… S0003          10                7          19            1    
+##  4 ae_per_… S0004          10               10          14            0.1  
+##  5 ae_per_… S0005          10                9          16            0.333
+##  6 ae_per_… S0006          10                9          17            0.222
+##  7 ae_per_… S0007          10                9          15            0.333
+##  8 ae_per_… S0008          10                8          20            0.5  
+##  9 ae_per_… S0009          10               10          15            0.4  
+## 10 ae_per_… S0010          10                8          20            0.75 
 ## # … with 290 more rows, and 4 more variables: mean_ae_study_med75 &lt;dbl&gt;,
 ## #   n_pat_with_med75_study &lt;int&gt;, pval &lt;dbl&gt;, prob_low &lt;dbl&gt;</code></pre>
 </div>
@@ -265,16 +265,16 @@
 <pre><code>## # A tibble: 30,000 x 8
 ##        r study_id site_number visit_med75 n_pat_with_med75 n_pat_study  pval
 ##    &lt;dbl&gt; &lt;chr&gt;    &lt;chr&gt;             &lt;dbl&gt;            &lt;int&gt;       &lt;dbl&gt; &lt;dbl&gt;
-##  1     1 ae_per_… S0001                15                8         884 1    
-##  2     1 ae_per_… S0002                13               10         946 0.140
-##  3     1 ae_per_… S0003                16                9         832 1    
-##  4     1 ae_per_… S0004                15                9         883 1    
-##  5     1 ae_per_… S0005                18               10         671 1    
-##  6     1 ae_per_… S0006                15                9         883 0.396
-##  7     1 ae_per_… S0007                18                8         673 1    
-##  8     1 ae_per_… S0008                16               10         831 1    
-##  9     1 ae_per_… S0009                17                9         753 1    
-## 10     1 ae_per_… S0010                16                9         832 0.429
+##  1     1 ae_per_… S0001                15                8         870 0.674
+##  2     1 ae_per_… S0002                17                8         755 1    
+##  3     1 ae_per_… S0003                19                7         565 1    
+##  4     1 ae_per_… S0004                14               10         910 1    
+##  5     1 ae_per_… S0005                16                9         816 1    
+##  6     1 ae_per_… S0006                17                9         754 0.695
+##  7     1 ae_per_… S0007                15                9         869 0.393
+##  8     1 ae_per_… S0008                20                8         465 0.569
+##  9     1 ae_per_… S0009                15               10         868 0.696
+## 10     1 ae_per_… S0010                20                8         465 1    
 ## # … with 29,990 more rows, and 1 more variable: prob_low &lt;dbl&gt;</code></pre>
 </div>
 <div id="check-p-value-probabilities" class="section level2">
@@ -289,16 +289,16 @@
 <pre><code>## # A tibble: 300 x 11
 ##    study_id site_number n_pat n_pat_with_med75 visit_med75 mean_ae_site_me…
 ##    &lt;chr&gt;    &lt;chr&gt;       &lt;int&gt;            &lt;int&gt;       &lt;dbl&gt;            &lt;dbl&gt;
-##  1 ae_per_… S0001          10                8          15            0.375
-##  2 ae_per_… S0002          10               10          13            0.5  
-##  3 ae_per_… S0003          10                9          16            0.333
-##  4 ae_per_… S0004          10                9          15            0.333
-##  5 ae_per_… S0005          10               10          18            0.6  
-##  6 ae_per_… S0006          10                9          15            0.111
-##  7 ae_per_… S0007          10                8          18            0.25 
-##  8 ae_per_… S0008          10               10          16            0.5  
-##  9 ae_per_… S0009          10                9          17            0.889
-## 10 ae_per_… S0010          10                9          16            1    
+##  1 ae_per_… S0001          10                8          15            0.5  
+##  2 ae_per_… S0002          10                8          17            0.375
+##  3 ae_per_… S0003          10                7          19            1    
+##  4 ae_per_… S0004          10               10          14            0.1  
+##  5 ae_per_… S0005          10                9          16            0.333
+##  6 ae_per_… S0006          10                9          17            0.222
+##  7 ae_per_… S0007          10                9          15            0.333
+##  8 ae_per_… S0008          10                8          20            0.5  
+##  9 ae_per_… S0009          10               10          15            0.4  
+## 10 ae_per_… S0010          10                8          20            0.75 
 ## # … with 290 more rows, and 5 more variables: mean_ae_study_med75 &lt;dbl&gt;,
 ## #   n_pat_with_med75_study &lt;int&gt;, pval &lt;dbl&gt;, prob_low &lt;dbl&gt;, pval_ecd &lt;dbl&gt;</code></pre>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
@@ -323,16 +323,16 @@
 <pre><code>## # A tibble: 300 x 11
 ##    study_id site_number n_pat n_pat_with_med75 visit_med75 mean_ae_site_me…
 ##    &lt;chr&gt;    &lt;chr&gt;       &lt;int&gt;            &lt;int&gt;       &lt;dbl&gt;            &lt;dbl&gt;
-##  1 ae_per_… S0001          10                8          15            0.375
-##  2 ae_per_… S0002          10               10          13            0.5  
-##  3 ae_per_… S0003          10                9          16            0.333
-##  4 ae_per_… S0004          10                9          15            0.333
-##  5 ae_per_… S0005          10               10          18            0.6  
-##  6 ae_per_… S0006          10                9          15            0.111
-##  7 ae_per_… S0007          10                8          18            0.25 
-##  8 ae_per_… S0008          10               10          16            0.5  
-##  9 ae_per_… S0009          10                9          17            0.889
-## 10 ae_per_… S0010          10                9          16            1    
+##  1 ae_per_… S0001          10                8          15            0.5  
+##  2 ae_per_… S0002          10                8          17            0.375
+##  3 ae_per_… S0003          10                7          19            1    
+##  4 ae_per_… S0004          10               10          14            0.1  
+##  5 ae_per_… S0005          10                9          16            0.333
+##  6 ae_per_… S0006          10                9          17            0.222
+##  7 ae_per_… S0007          10                9          15            0.333
+##  8 ae_per_… S0008          10                8          20            0.5  
+##  9 ae_per_… S0009          10               10          15            0.4  
+## 10 ae_per_… S0010          10                8          20            0.75 
 ## # … with 290 more rows, and 5 more variables: mean_ae_study_med75 &lt;dbl&gt;,
 ## #   n_pat_with_med75_study &lt;int&gt;, pval &lt;dbl&gt;, prob_low &lt;dbl&gt;,
 ## #   prob_low_ecd &lt;dbl&gt;</code></pre>

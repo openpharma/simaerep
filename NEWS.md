@@ -1,3 +1,6 @@
+# simaerep 0.3.3
+- better data checks and error messages #19, #20, # 21
+
 # simaerep 0.3.2
 - added portfolio performance assessment
 
