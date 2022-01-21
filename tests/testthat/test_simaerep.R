@@ -54,6 +54,27 @@ test_that("check_df_visit", {
     regexp = "NA detected in columns: study_id,site_number,patnum,n_ae,visit"
   )
 
+  expect_error({
+    df_visit %>%
+      group_by(study_id, site_number) %>%
+      mutate(patnum = as.character(row_number())) %>%
+      ungroup() %>%
+      check_df_visit()
+  },
+  regexp = "patient ids must be site exclusive"
+  )
+
+  expect_error({
+    df_visit %>%
+      group_by(study_id, site_number, patnum) %>%
+      arrange(visit, .by_group = TRUE) %>%
+      mutate(visit = row_number() - 1) %>%
+      ungroup() %>%
+      check_df_visit()
+  },
+  regexp = "visit numbering should start at 1"
+  )
+
 })
 
 test_that("test if returned dfs are grouped", {

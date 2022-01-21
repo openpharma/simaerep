@@ -58,18 +58,17 @@ check_df_visit <- function(df_visit) {
     stop(paste("NA detected in columns:", paste(names(cols_na)[cols_na], collapse = ",")))
   }
 
-  stopifnot("n_ae and vist columns must be numeric" =
-      df_visit %>%
-        summarise_at(
-          vars(
-            .data$n_ae,
-            .data$visit
-          ),
-          ~ is.numeric(.)
-        ) %>%
-        unlist() %>%
-        all()
-  )
+    df_visit %>%
+      summarise_at(
+        vars(
+          .data$n_ae,
+          .data$visit
+        ),
+        ~ is.numeric(.)
+      ) %>%
+      unlist() %>%
+      all() %>%
+      stopifnot("n_ae and vist columns must be numeric" = .)
 
   df_visit %>%
     group_by(.data$study_id, .data$patnum) %>%
@@ -79,6 +78,13 @@ check_df_visit <- function(df_visit) {
     unlist() %>%
     all() %>%
     stopifnot("patient ids must be site exclusive" = .)
+
+  df_visit %>%
+    mutate(check = .data$visit > 0) %>%
+    pull(.data$check) %>%
+    unlist() %>%
+    all() %>%
+    stopifnot("visit numbering should start at 1" = .)
 
   df_visit <- exp_implicit_missing_visits(df_visit)
 
