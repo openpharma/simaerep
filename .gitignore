@@ -19,3 +19,4 @@ vignettes/*.html
 run_remote.md
 .vscode
 
+*.csv
