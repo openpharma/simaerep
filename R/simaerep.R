@@ -707,6 +707,9 @@ prob_lower_site_ae_vs_study_ae <- function(site_ae, study_ae, r = 1000, parallel
 #' @param poisson_test logical, calculates poisson.test pvalue
 #' @param prob_lower logical, calculates probability for getting a lower value
 #' @param progress logical, display progress bar, Default = TRUE
+#' @param check, logical, perform data check and attempt repair with
+#'  [check_df_visit()][check_df_visit], computationally expensive on large data
+#'  sets. Default: TRUE
 #' @return dataframe with the following columns:
 #' \describe{
 #'   \item{**study_id**}{study identification}
@@ -750,9 +753,11 @@ sim_sites <- function(df_site,
                       r = 1000,
                       poisson_test = TRUE,
                       prob_lower = TRUE,
-                      progress = TRUE) {
-
-  df_visit <- check_df_visit(df_visit)
+                      progress = TRUE,
+                      check = TRUE) {
+  if (check) {
+    df_visit <- check_df_visit(df_visit)
+  }
 
   df_sim_prep <- prep_for_sim(df_site, df_visit)
 
@@ -1148,6 +1153,9 @@ sim_studies <- function(df_visit,
 #'  defining evaluation point visit_med75 (see details), Default: "med75_adj"
 #'@param min_pat_pool, double, minimum ratio of available patients available for
 #'  sampling. Determines maximum visit_med75 value see Details. Default: 0.2
+#'@param check, logical, perform data check and attempt repair with
+#'  [check_df_visit()][check_df_visit], computationally expensive on large data
+#'  sets. Default: TRUE
 #'@details For determining the visit number at which we are going to evaluate AE
 #'  reporting we take the maximum visit of each patient at the site and take the
 #'  median. Then we multiply with 0.75 which will give us a cut-off point
@@ -1182,14 +1190,16 @@ sim_studies <- function(df_visit,
 #'@export
 site_aggr <- function(df_visit,
                       method = "med75_adj",
-                      min_pat_pool = 0.2) {
+                      min_pat_pool = 0.2,
+                      check = TRUE) {
 
   # Checks ----------------------------------------------------------
   stopifnot(
     method %in% c("med75", "med75_adj")
   )
-
-  df_visit <- check_df_visit(df_visit)
+  if (check) {
+    df_visit <- check_df_visit(df_visit)
+  }
 
   # Aggregate on patient level---------------------------------------
 

@@ -203,26 +203,26 @@
 <pre><code>## # A tibble: 20 x 6
 ##    study_id ae_per_visit_mean site_number max_visit_sd max_visit_mean n_pat
 ##    &lt;chr&gt;                &lt;dbl&gt; &lt;chr&gt;              &lt;dbl&gt;          &lt;dbl&gt; &lt;int&gt;
-##  1 0001                 0.382 0001                4.34           21.2    10
-##  2 0001                 0.382 0002                3.94           21.2    10
-##  3 0001                 0.382 0003                5.23           17.5    10
-##  4 0001                 0.382 0004                3.37           18.5    10
-##  5 0001                 0.382 0005                4.08           18.3    10
-##  6 0001                 0.382 0006                4.76           18.3    10
-##  7 0001                 0.382 0007                4.03           18.4    10
-##  8 0001                 0.382 0008                4.24           21.2    10
-##  9 0001                 0.382 0009                3.02           19      10
-## 10 0001                 0.382 0010                2.49           20.2    10
-## 11 0002                 0.505 0001                3.77           19.2    10
-## 12 0002                 0.505 0002                4.37           18.3    10
-## 13 0002                 0.505 0003                2.22           19.6    10
-## 14 0002                 0.505 0004                4.79           18.7    10
-## 15 0002                 0.505 0005                2.79           17.7    10
-## 16 0002                 0.505 0006                3.86           22.3    10
-## 17 0002                 0.505 0007                4.42           18.7    10
-## 18 0002                 0.505 0008                5.03           21.2    10
-## 19 0002                 0.505 0009                4.24           19.8    10
-## 20 0002                 0.505 0010                4.01           22.1    10</code></pre>
+##  1 0001                 0.412 0001                3.46           19      10
+##  2 0001                 0.412 0002                3.50           18.6    10
+##  3 0001                 0.412 0003                2.83           20      10
+##  4 0001                 0.412 0004                4.62           18.6    10
+##  5 0001                 0.412 0005                4.52           19.7    10
+##  6 0001                 0.412 0006                2.45           19.3    10
+##  7 0001                 0.412 0007                3.18           18.9    10
+##  8 0001                 0.412 0008                4.36           18.9    10
+##  9 0001                 0.412 0009                3.16           19.2    10
+## 10 0001                 0.412 0010                4.62           21.5    10
+## 11 0002                 0.48  0001                4.39           20.8    10
+## 12 0002                 0.48  0002                2.90           18.8    10
+## 13 0002                 0.48  0003                3.11           19.9    10
+## 14 0002                 0.48  0004                5.19           20.5    10
+## 15 0002                 0.48  0005                4.40           20.5    10
+## 16 0002                 0.48  0006                4.88           20.5    10
+## 17 0002                 0.48  0007                4.90           19.3    10
+## 18 0002                 0.48  0008                3.88           19.2    10
+## 19 0002                 0.48  0009                3.03           21.4    10
+## 20 0002                 0.48  0010                2.13           19.1    10</code></pre>
 <div id="simulate-portfolio-from-configuration" class="section level2">
 <h2 class="hasAnchor">
 <a href="#simulate-portfolio-from-configuration" class="anchor"></a>Simulate Portfolio from Configuration</h2>
@@ -230,20 +230,20 @@
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">df_portf</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sim_test_data_portfolio.html">sim_test_data_portfolio</a></span><span class="op">(</span><span class="va">df_config</span><span class="op">)</span>
 <span class="va">df_portf</span></code></pre></div>
-<pre><code>## # A tibble: 3,804 x 8
+<pre><code>## # A tibble: 3,827 x 8
 ##    study_id ae_per_visit_me… site_number max_visit_sd max_visit_mean patnum
 ##    &lt;chr&gt;               &lt;dbl&gt; &lt;chr&gt;              &lt;dbl&gt;          &lt;dbl&gt; &lt;chr&gt; 
-##  1 0001                0.382 0001                4.34           21.2 0001  
-##  2 0001                0.382 0001                4.34           21.2 0001  
-##  3 0001                0.382 0001                4.34           21.2 0001  
-##  4 0001                0.382 0001                4.34           21.2 0001  
-##  5 0001                0.382 0001                4.34           21.2 0001  
-##  6 0001                0.382 0001                4.34           21.2 0001  
-##  7 0001                0.382 0001                4.34           21.2 0001  
-##  8 0001                0.382 0001                4.34           21.2 0001  
-##  9 0001                0.382 0001                4.34           21.2 0001  
-## 10 0001                0.382 0001                4.34           21.2 0001  
-## # … with 3,794 more rows, and 2 more variables: visit &lt;int&gt;, n_ae &lt;int&gt;</code></pre>
+##  1 0001                0.412 0001                3.46             19 0001  
+##  2 0001                0.412 0001                3.46             19 0001  
+##  3 0001                0.412 0001                3.46             19 0001  
+##  4 0001                0.412 0001                3.46             19 0001  
+##  5 0001                0.412 0001                3.46             19 0001  
+##  6 0001                0.412 0001                3.46             19 0001  
+##  7 0001                0.412 0001                3.46             19 0001  
+##  8 0001                0.412 0001                3.46             19 0001  
+##  9 0001                0.412 0001                3.46             19 0001  
+## 10 0001                0.412 0001                3.46             19 0001  
+## # … with 3,817 more rows, and 2 more variables: visit &lt;int&gt;, n_ae &lt;int&gt;</code></pre>
 </div>
 <div id="load-realistic-configuration" class="section level2">
 <h2 class="hasAnchor">
@@ -290,7 +290,7 @@
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">df_portf</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sim_test_data_portfolio.html">sim_test_data_portfolio</a></span><span class="op">(</span><span class="va">df_config</span>, parallel <span class="op">=</span> <span class="cn">TRUE</span>, progress <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 <span class="va">df_portf</span></code></pre></div>
-<pre><code>## # A tibble: 1,996,906 x 11
+<pre><code>## # A tibble: 1,996,824 x 11
 ##    study_id ae_per_visit_me… ae_per_day_mean site_number max_visit_sd
 ##    &lt;chr&gt;               &lt;dbl&gt;           &lt;dbl&gt; &lt;chr&gt;              &lt;dbl&gt;
 ##  1 0001                0.269         0.00725 0001               0.707
@@ -303,7 +303,7 @@
 ##  8 0001                0.269         0.00725 0001               0.707
 ##  9 0001                0.269         0.00725 0001               0.707
 ## 10 0001                0.269         0.00725 0001               0.707
-## # … with 1,996,896 more rows, and 6 more variables: max_visit_mean &lt;dbl&gt;,
+## # … with 1,996,814 more rows, and 6 more variables: max_visit_mean &lt;dbl&gt;,
 ## #   max_days_sd &lt;dbl&gt;, max_days_mean &lt;dbl&gt;, patnum &lt;chr&gt;, visit &lt;int&gt;,
 ## #   n_ae &lt;int&gt;</code></pre>
 <div id="confirm-that-portfolio-simulation-results-in-similar-configuration" class="section level2">

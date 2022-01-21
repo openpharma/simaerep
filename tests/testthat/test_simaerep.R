@@ -24,6 +24,83 @@ df_eval <- eval_sites(df_sim_sites)
 
 # tests -----------------------------------------------------------------------
 
+test_that("site_aggr and sim_sites check paramater", {
+
+  df_visit_faulty <- df_visit %>%
+    group_by(study_id, site_number) %>%
+    mutate(patnum = as.character(row_number())) %>%
+    ungroup()
+
+  expect_error({
+      site_aggr(df_visit_faulty)
+  },
+  regexp = "patient ids must be site exclusive"
+  )
+
+  df_site <- site_aggr(df_visit_faulty, check = FALSE)
+
+  expect_error({
+    sim_sites(df_site, df_visit_faulty, r = 100)
+    },
+    regexp = "patient ids must be site exclusive"
+  )
+
+  sim_sites(df_site, df_visit_faulty, r = 100, check = FALSE)
+
+})
+
+test_that("check_df_visit", {
+  df_visit_filt <- df_visit %>%
+    filter(visit != 3)
+
+  # nolint start
+  expect_warning({df_visit_corr <- check_df_visit(df_visit_filt)})
+  expect_true(3 %in% df_visit_corr$visit)
+  expect_true(nrow(df_visit_corr) == nrow(df_visit))
+
+  expect_warning({df_visit_corr <- check_df_visit(bind_rows(df_visit, df_visit))})
+  expect_true(nrow(df_visit_corr) == nrow(df_visit))
+  # nolint end
+
+  expect_error({
+    df_visit %>%
+      mutate_at(vars(n_ae, visit), as.character) %>%
+      check_df_visit()
+    },
+    regexp = "n_ae and vist columns must be numeric"
+  )
+
+  expect_error({
+    df_visit %>%
+      summarise_all(~ NA) %>%
+      bind_rows(df_visit) %>%
+      check_df_visit()
+    },
+    regexp = "NA detected in columns: study_id,site_number,patnum,n_ae,visit"
+  )
+
+  expect_error({
+    df_visit %>%
+      group_by(study_id, site_number) %>%
+      mutate(patnum = as.character(row_number())) %>%
+      ungroup() %>%
+      check_df_visit()
+  },
+  regexp = "patient ids must be site exclusive"
+  )
+
+  expect_error({
+    df_visit %>%
+      group_by(study_id, site_number, patnum) %>%
+      arrange(visit, .by_group = TRUE) %>%
+      mutate(visit = row_number() - 1) %>%
+      ungroup() %>%
+      check_df_visit()
+  },
+  regexp = "visit numbering should start at 1"
+  )
+
+})
 test_that("check_df_visit", {
   df_visit_filt <- df_visit %>%
     filter(visit != 3)

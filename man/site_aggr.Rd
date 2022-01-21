@@ -4,7 +4,7 @@
 \alias{site_aggr}
 \title{aggregate from visit to site level}
 \usage{
-site_aggr(df_visit, method = "med75_adj", min_pat_pool = 0.2)
+site_aggr(df_visit, method = "med75_adj", min_pat_pool = 0.2, check = TRUE)
 }
 \arguments{
 \item{df_visit}{dataframe with columns: study_id, site_number, patnum, visit,
@@ -15,6 +15,10 @@ defining evaluation point visit_med75 (see details), Default: "med75_adj"}
 
 \item{min_pat_pool, }{double, minimum ratio of available patients available for
 sampling. Determines maximum visit_med75 value see Details. Default: 0.2}
+
+\item{check, }{logical, perform data check and attempt repair with
+\link[=check_df_visit]{check_df_visit()}, computationally expensive on large data
+sets. Default: TRUE}
 }
 \value{
 dataframe with the following columns: \describe{
