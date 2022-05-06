@@ -9,7 +9,8 @@ plot_visit_med75(
   df_site = NULL,
   study_id_str,
   n_sites = 6,
-  min_pat_pool = 0.2
+  min_pat_pool = 0.2,
+  verbose = TRUE
 )
 }
 \arguments{
@@ -23,6 +24,8 @@ plot_visit_med75(
 
 \item{min_pat_pool}{double, minimum ratio of available patients available for
 sampling. Determines maximum visit_med75 value see Details. Default: 0.2}
+
+\item{verbose}{logical, Default: TRUE}
 }
 \value{
 ggplot

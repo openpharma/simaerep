@@ -783,6 +783,7 @@ plot_study <- function(df_visit,
 #' @param df_site dataframe, as returned by site_aggr()
 #' @param study_id_str character, specify study in study_id column
 #' @param n_sites integer, Default: 6
+#' @param verbose logical, Default: TRUE
 #' @inheritParams site_aggr
 #' @return ggplot
 #' @details ""
@@ -800,7 +801,8 @@ plot_visit_med75 <- function(df_visit,
                              df_site = NULL,
                              study_id_str,
                              n_sites = 6,
-                             min_pat_pool = 0.2) {
+                             min_pat_pool = 0.2,
+                             verbose = TRUE) {
 
   df_visit <- check_df_visit(df_visit)
 
@@ -927,7 +929,10 @@ plot_visit_med75 <- function(df_visit,
 
   ), collapse = "\n")
   # nolint end
-  cat(cap)
+
+  if (verbose) {
+    cat(cap)
+  }
 
   return(p)
 }
