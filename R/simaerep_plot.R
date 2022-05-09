@@ -433,6 +433,8 @@ plot_study <- function(df_visit,
 
   df_visit <- check_df_visit(df_visit)
 
+  stopifnot(study %in% unique(df_visit$study_id))
+
   # alert level -------------------------------------------------------------
 
   if (is.null(df_al)) {

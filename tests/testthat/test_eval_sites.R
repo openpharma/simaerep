@@ -19,7 +19,13 @@ test_that(
   df_sim_sites <- df_sim_sites %>%
     bind_rows(df_na)
 
-  expect_warning(df_eval <- eval_sites(df_sim_sites, r_sim_sites = 100))
+  # a new line is created for each site with NA values
+  # this cannot be captured with expect_warning()
+  # https://testthat.r-lib.org/articles/third-edition.html
+  # as of testthat 3.0
+  expect_snapshot(
+    df_eval <- eval_sites(df_sim_sites, r_sim_sites = 100)
+  )
 
   all_eval_cols_na <- df_eval %>%
     ungroup() %>%

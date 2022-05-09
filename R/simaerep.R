@@ -388,9 +388,11 @@ eval_sites <- function(df_sim_sites,
         filter(is.na(.data$prob_low)) %>%
         mutate(
           warning = paste0("\nstudy_id: ", .data$study_id, ", site_number: ", .data$site_number),
-          warning = paste0(.data$warning, ". prob_low == NA")
+          warning = paste0(.data$warning, ", prob_low == NA")
         ) %>%
-        pull(.data$warning)
+        distinct() %>%
+        pull(.data$warning) %>%
+        paste(collapse = "\n")
 
       warning(warning_messages)
     }

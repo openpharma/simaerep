@@ -14,7 +14,7 @@ df_config <- simaerep::get_config(
   min_sites_per_study = 5
 )
 
-df_portf <- sim_test_data_portfolio(df_config)
+df_portf <- sim_test_data_portfolio(df_config, progress = FALSE)
 
 df_scen <- sim_ur_scenarios(
   df_portf,
@@ -23,7 +23,7 @@ df_scen <- sim_ur_scenarios(
   parallel = FALSE,
   poisson = FALSE,
   prob_lower = TRUE,
-  progress = TRUE,
+  progress = FALSE,
   site_aggr_args = list(method = "med75_adj")
 )
 
