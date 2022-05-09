@@ -98,8 +98,8 @@ test_that("visually inspect plots for under-reporting scenarios", {
     ggsave(
       paste0("./", study, ".png"),
       plot_study(df_visit, df_site, df_eval, study = study),
-      width = 640,
-      height = 480,
+      width = 2400,
+      height = 1400,
       units = "px"
     )
 
