@@ -95,23 +95,11 @@ test_that("under-reporting probability must negatively correlate with low AE per
 test_that("visually inspect plots for under-reporting scenarios", {
 
   for (study in c("study_025", "study_050", "study_075", "study_100")) {
-    ggsave(
-      paste0("./", study, ".png"),
-      plot_study(df_visit, df_site, df_eval, study = study),
-      width = 2400,
-      height = 1400,
-      units = "px"
-    )
-
-    expect_snapshot_file(
-      paste0("./", study, ".png"),
-      cran = FALSE
+    # expect_snapshot_file will return different results on different systems
+    vdiffr::expect_doppelganger(
+      study,
+      plot_study(df_visit, df_site, df_eval, study = study)
     )
   }
 
 })
-
-file.remove("./study_025.png")
-file.remove("./study_050.png")
-file.remove("./study_075.png")
-file.remove("./study_100.png")
