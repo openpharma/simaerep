@@ -2,7 +2,7 @@
 % Please edit documentation in R/simaerep.R
 \name{site_aggr}
 \alias{site_aggr}
-\title{aggregate from visit to site level}
+\title{Aggregate from visit to site level.}
 \usage{
 site_aggr(df_visit, method = "med75_adj", min_pat_pool = 0.2, check = TRUE)
 }
@@ -30,7 +30,7 @@ criterion, site level} \item{\strong{mean_ae_site_med75}}{mean AE at visit_med75
 site level} }
 }
 \description{
-calculates visit_med75, n_pat_with_med75 and mean_ae_site_med75
+Calculates visit_med75, n_pat_with_med75 and mean_ae_site_med75
 }
 \details{
 For determining the visit number at which we are going to evaluate AE

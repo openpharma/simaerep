@@ -2,7 +2,7 @@
 % Please edit documentation in R/simaerep.R
 \name{get_ecd_values}
 \alias{get_ecd_values}
-\title{get empirical cumulative distribution values of pval or prob_lower}
+\title{Get empirical cumulative distribution values of pval or prob_lower}
 \usage{
 get_ecd_values(df_sim_studies, df_sim_sites, val_str)
 }
@@ -26,7 +26,7 @@ dataframe with the following columns:
 }
 }
 \description{
-test function, test applicability of poisson test, by calculating
+Test function, test applicability of poisson test, by calculating
 a the bootstrapped probability of obtaining a specific p-value or lower, use
 in combination with \code{\link[=sim_studies]{sim_studies()}}.
 }

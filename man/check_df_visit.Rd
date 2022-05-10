@@ -2,7 +2,7 @@
 % Please edit documentation in R/simaerep.R
 \name{check_df_visit}
 \alias{check_df_visit}
-\title{integrity check for df_visit}
+\title{Integrity check for df_visit.}
 \usage{
 check_df_visit(df_visit)
 }
@@ -14,8 +14,8 @@ n_ae}
 corrected df_visit
 }
 \description{
-Used by all functions that accept df_visit as a parameter.
-Checks for NA columns, numeric visits and aes, implicitly missing and
+Internal function used by all functions that accept df_visit as a parameter.
+Checks for NA columns, numeric visits and AEs, implicitly missing and
 duplicated visits.
 }
 \examples{

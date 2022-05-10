@@ -1,6 +1,6 @@
 
-#' @title wrapper around lintr::lint_packages
-#' @description throws error when code issues are detected and defines default
+#' @title Wrapper for \code{\link[lintr]{lint_package}}.
+#' @description Throws error when code issues are detected and defines default
 #'   linting rules for this package.
 #' @details lintr::line_length_linter(120), trailing_whitespace_linter = NULL,
 #'   cyclocomp_linter = lintr::cyclocomp_linter(25)

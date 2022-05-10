@@ -1,4 +1,4 @@
-#' @title simulate study test data
+#' @title Simulate study test data
 #' @description evenly distributes a number of given patients across a number of
 #'   given sites. Then simulates ae development of each patient reducing the
 #'   number of reported AEs for patients distributed to AE-under-reporting sites.
@@ -57,14 +57,13 @@ sim_test_data_study <- function(n_pat = 1000,
 
 }
 
-#' @title simulate patient ae reporting test data
-#' @description helper function for [sim_test_data_study()][sim_test_data_study()]
+#' @title Simulate patient AE reporting test data.
+#' @description Internal function used by [sim_test_data_study()][sim_test_data_study()]
 #' @param .f_sample_ae_per_visit function used to sample the aes for each visit,
 #'   Default: function(x) rpois(x, 0.5)
 #' @param .f_sample_max_visit function used to sample the maximum number of aes,
 #'   Default: function() rnorm(1, mean = 20, sd = 4)
 #' @return vector containing cumulative aes
-#' @details ""
 #' @examples
 #' replicate(5, sim_test_data_patient())
 #' replicate(5, sim_test_data_patient(
@@ -86,8 +85,8 @@ sim_test_data_patient <- function(.f_sample_max_visit = function() rnorm(1, mean
   return(cum_aes)
 }
 
-#' @title simulate single scenario
-#' @description internal function called by simulate_scenarios()
+#' @title Simulate single scenario.
+#' @description Internal function called by [sim_ur_scenarios()][sim_ur_scenarios()].
 #' @param n_ae_site integer vector
 #' @param n_ae_study integer vector
 #' @param frac_pat_with_ur double
@@ -128,7 +127,7 @@ sim_scenario <- function(n_ae_site, n_ae_study, frac_pat_with_ur, ur_rate) {
   return(list(n_ae_site = n_ae_site, n_ae_study = n_ae_study))
 }
 
-#' @title Simulate Under-Reporting Scenarios
+#' @title Simulate Under-Reporting Scenarios.
 #' @description Use with simulated portfolio data to generate under-reporting
 #'   stats for specified scenarios.
 #' @param df_portf dataframe as returned by \code{\link{sim_test_data_portfolio}}
@@ -379,7 +378,7 @@ sim_ur_scenarios <- function(df_portf,
 }
 
 
-#' @title Simulate Portfolio Test Data
+#' @title Simulate Portfolio Test Data.
 #' @description Simulate visit level data from a portfolio configuration.
 #' @param df_config dataframe as returned by \code{\link{get_config}}
 #' @param parallel logical activate parallel processing, see details, Default: FALSE
@@ -534,7 +533,7 @@ sim_test_data_portfolio <- function(df_config, parallel = FALSE, progress = TRUE
   return(df_portf)
 }
 
-#'@title Get Portfolio Configuration
+#'@title Get Portfolio Configuration.
 #'@description Get Portfolio configuration from a dataframe aggregated on
 #'  patient level with max_ae and max_visit. Will filter studies with only a few
 #'  sites and patients and will anonymize IDs. Portfolio configuration can be
@@ -656,7 +655,7 @@ get_config <- function(df_site,
   return(df_config)
 }
 
-#' @title Get Portfolio Performance
+#' @title Get Portfolio Performance.
 #' @description Performance as true positive rate (tpr as tp/P) on the basis of
 #'   desired false positive rates (fpr as fp/P).
 #' @param df_scen dataframe as returned by \code{\link{sim_ur_scenarios}}
@@ -665,7 +664,6 @@ get_config <- function(df_site,
 #' @param fpr numeric vector specifying false positive rates, Default: c(0.001,
 #'   0.01, 0.05)
 #' @return dataframe
-#' @details DETAILS
 #' @examples
 #' df_visit1 <- sim_test_data_study(n_pat = 100, n_sites = 10,
 #'                                  frac_site_with_ur = 0.4, ur_rate = 0.6)

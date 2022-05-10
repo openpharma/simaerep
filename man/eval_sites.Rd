@@ -2,7 +2,7 @@
 % Please edit documentation in R/simaerep.R
 \name{eval_sites}
 \alias{eval_sites}
-\title{evaluate sites}
+\title{Evaluate sites.}
 \usage{
 eval_sites(df_sim_sites, method = "BH", ...)
 }
@@ -32,7 +32,7 @@ dataframe with the following columns:
 }
 }
 \description{
-correct under-reporting probabilities using  \code{\link[stats]{p.adjust}}.
+Correct under-reporting probabilities using  \code{\link[stats]{p.adjust}}.
 }
 \examples{
 df_visit <- sim_test_data_study(n_pat = 100, n_sites = 5,

@@ -2,7 +2,7 @@
 % Please edit documentation in R/simaerep.R
 \name{pat_pool}
 \alias{pat_pool}
-\title{create a study specific patient pool for sampling}
+\title{Create a study specific patient pool for sampling}
 \usage{
 pat_pool(df_visit, df_site)
 }
@@ -15,7 +15,7 @@ pat_pool(df_visit, df_site)
 dataframe with nested pat_pool column
 }
 \description{
-helper function for \code{\link[simaerep]{sim_sites}},
+Internal function for \code{\link[simaerep]{sim_sites}},
 filter all visits greater than max_visit_med75_study
 returns dataframe with one column for studies and one column with nested
 patient data.

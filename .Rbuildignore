@@ -11,3 +11,5 @@
 ^Dockerfile$
 ^docker-compose.yml$
 ^.dockerignore$
+^\.git
+^cran-comments\.md$

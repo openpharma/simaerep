@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>simulate studies — sim_studies • simaerep</title>
+<title>Simulate studies. — sim_studies • simaerep</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,8 +46,8 @@
 
 
 
-<meta property="og:title" content="simulate studies — sim_studies" />
-<meta property="og:description" content="test function, test applicability of poisson test, by
+<meta property="og:title" content="Simulate studies. — sim_studies" />
+<meta property="og:description" content="Test function, test applicability of poisson test, by
 calculating a the bootstrapped probability of obtaining a specific p-value
 or lower, use in combination with get_ecd_values()." />
 <meta property="og:image" content="https://openpharma.github.io/simaerep/logo.png" />
@@ -92,7 +92,7 @@ or lower, use in combination with get_ecd_values()." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">simaerep</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.4</span>
       </span>
     </div>
 
@@ -164,13 +164,13 @@ or lower, use in combination with get_ecd_values()." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>simulate studies</h1>
+    <h1>Simulate studies.</h1>
     <small class="dont-index">Source: <a href='https://github.com/openpharma/simaerep/blob/master/R/simaerep.R'><code>R/simaerep.R</code></a></small>
     <div class="hidden name"><code>sim_studies.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>test function, test applicability of poisson test, by
+    <p>Test function, test applicability of poisson test, by
 calculating a the bootstrapped probability of obtaining a specific p-value
 or lower, use in combination with <code><a href='get_ecd_values.html'>get_ecd_values()</a></code>.</p>
     </div>
@@ -271,28 +271,28 @@ mean_ae at visit_med75</p>
 <span class='va'>df_site</span> <span class='op'>&lt;-</span> <span class='fu'><a href='site_aggr.html'>site_aggr</a></span><span class='op'>(</span><span class='va'>df_visit</span><span class='op'>)</span>
 
 <span class='fu'>sim_studies</span><span class='op'>(</span><span class='va'>df_visit</span>, <span class='va'>df_site</span>, r <span class='op'>=</span> <span class='fl'>3</span>, keep_ae <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 24 x 10</span><span>
+</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 24 × 10</span>
 #&gt;        r study_id site_number visit_med75 n_pat_with_med75 n_pat_study n_ae_site
-#&gt;    </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>    </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>             </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>            </span><span style='color: #949494;font-style: italic;'>&lt;int&gt;</span><span>       </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>    
-#&gt; </span><span style='color: #BCBCBC;'> 1</span><span>     1 A        S0001                16               20          68 7,13,7,4…
-#&gt; </span><span style='color: #BCBCBC;'> 2</span><span>     1 A        S0002                18               17          57 1,10,4,4…
-#&gt; </span><span style='color: #BCBCBC;'> 3</span><span>     1 A        S0003                17               18          63 13,11,13…
-#&gt; </span><span style='color: #BCBCBC;'> 4</span><span>     1 A        S0004                14               18          76 3,9,9,9,…
-#&gt; </span><span style='color: #BCBCBC;'> 5</span><span>     1 A        S0005                15               18          72 9,4,7,6,…
-#&gt; </span><span style='color: #BCBCBC;'> 6</span><span>     1 B        S0001                15              297         597 9,8,5,7,…
-#&gt; </span><span style='color: #BCBCBC;'> 7</span><span>     1 B        S0002                15              296         598 14,8,7,1…
-#&gt; </span><span style='color: #BCBCBC;'> 8</span><span>     1 B        S0003                15              301         593 9,5,8,6,…
-#&gt; </span><span style='color: #BCBCBC;'> 9</span><span>     2 A        S0001                16               20          68 10,7,5,3…
-#&gt; </span><span style='color: #BCBCBC;'>10</span><span>     2 A        S0002                18               17          57 12,12,6,…
-#&gt; </span><span style='color: #949494;'># … with 14 more rows, and 3 more variables: n_ae_study </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span style='color: #949494;'>, pval </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #949494;'>,</span><span>
-#&gt; </span><span style='color: #949494;'>#   prob_low </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span></div><div class='input'>
+#&gt;    <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>             <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>            <span style='color: #949494; font-style: italic;'>&lt;int&gt;</span>       <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>    
+#&gt; <span style='color: #BCBCBC;'> 1</span>     1 A        S0001                16               20          68 7,13,7,4…
+#&gt; <span style='color: #BCBCBC;'> 2</span>     1 A        S0002                18               17          57 1,10,4,4…
+#&gt; <span style='color: #BCBCBC;'> 3</span>     1 A        S0003                17               18          63 13,11,13…
+#&gt; <span style='color: #BCBCBC;'> 4</span>     1 A        S0004                14               18          76 3,9,9,9,…
+#&gt; <span style='color: #BCBCBC;'> 5</span>     1 A        S0005                15               18          72 9,4,7,6,…
+#&gt; <span style='color: #BCBCBC;'> 6</span>     1 B        S0001                15              297         597 9,8,5,7,…
+#&gt; <span style='color: #BCBCBC;'> 7</span>     1 B        S0002                15              296         598 14,8,7,1…
+#&gt; <span style='color: #BCBCBC;'> 8</span>     1 B        S0003                15              301         593 9,5,8,6,…
+#&gt; <span style='color: #BCBCBC;'> 9</span>     2 A        S0001                16               20          68 10,7,5,3…
+#&gt; <span style='color: #BCBCBC;'>10</span>     2 A        S0002                18               17          57 12,12,6,…
+#&gt; <span style='color: #949494;'># … with 14 more rows, and 3 more variables: n_ae_study &lt;chr&gt;, pval &lt;dbl&gt;,</span>
+#&gt; <span style='color: #949494;'>#   prob_low &lt;dbl&gt;</span></div><div class='input'>
 <span class='co'># parallel processing -------------------------</span>
 <span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
 <span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://future.futureverse.org'>future</a></span><span class='op'>)</span>
 <span class='fu'>future</span><span class='fu'>::</span><span class='fu'><a href='https://future.futureverse.org/reference/plan.html'>plan</a></span><span class='op'>(</span><span class='va'>multiprocess</span><span class='op'>)</span>
 <span class='fu'>sim_studies</span><span class='op'>(</span><span class='va'>df_visit</span>, <span class='va'>df_site</span>, r <span class='op'>=</span> <span class='fl'>3</span>, keep_ae <span class='op'>=</span> <span class='cn'>TRUE</span>, parallel <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
 <span class='op'>}</span>
-</div></span></pre>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

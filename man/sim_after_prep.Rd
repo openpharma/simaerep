@@ -2,7 +2,7 @@
 % Please edit documentation in R/simaerep.R
 \name{sim_after_prep}
 \alias{sim_after_prep}
-\title{start simulation after preparation}
+\title{Start simulation after preparation.}
 \usage{
 sim_after_prep(
   df_sim_prep,

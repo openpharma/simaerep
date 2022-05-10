@@ -2,12 +2,12 @@
 % Please edit documentation in R/simaerep.R
 \name{get_visit_med75}
 \alias{get_visit_med75}
-\title{get visit_med75}
+\title{Get visit_med75.}
 \usage{
 get_visit_med75(df_pat, method = "med75_adj", min_pat_pool = 0.2)
 }
 \arguments{
-\item{df_pat}{dataframe as returned by pat_aggr()}
+\item{df_pat}{dataframe as returned by \code{\link[=pat_aggr]{pat_aggr()}}}
 
 \item{method}{character, one of c("med75", "med75_adj") defining method for
 defining evaluation point visit_med75 (see details), Default: "med75_adj"}
@@ -19,5 +19,5 @@ sampling. Determines maximum visit_med75 value see Details. Default: 0.2}
 dataframe
 }
 \description{
-used by site_aggr()
+Internal function used by \code{\link[=site_aggr]{site_aggr()}}.
 }

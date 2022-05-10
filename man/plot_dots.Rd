@@ -2,7 +2,7 @@
 % Please edit documentation in R/simaerep_plot.R
 \name{plot_dots}
 \alias{plot_dots}
-\title{plots AE per site as dots}
+\title{Plots AE per site as dots.}
 \usage{
 plot_dots(
   df,
@@ -45,10 +45,7 @@ plot_dots(
 ggplot object
 }
 \description{
-different groupings can be applied
-}
-\details{
-' '
+This plot is meant to supplement the package documentation.
 }
 \examples{
 study <- tibble::tibble(

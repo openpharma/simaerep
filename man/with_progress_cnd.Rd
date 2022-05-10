@@ -2,7 +2,7 @@
 % Please edit documentation in R/progress.R
 \name{with_progress_cnd}
 \alias{with_progress_cnd}
-\title{conditional \code{\link[progressr]{with_progress}}}
+\title{Conditional \code{\link[progressr]{with_progress}}.}
 \usage{
 with_progress_cnd(ex, progress = TRUE)
 }
@@ -12,12 +12,13 @@ with_progress_cnd(ex, progress = TRUE)
 \item{progress}{logical, Default: TRUE}
 }
 \description{
-internal function. Use instead of
+Internal function. Use instead of
 \code{\link[progressr]{with_progress}} within custom functions with progress
 bars.
 }
 \details{
-DETAILS
+This wrapper adds a progress parameter to \code{\link[progressr]{with_progress}}
+so that we can control the progress bar in the user facing functions.
 }
 \examples{
 if (interactive()) {

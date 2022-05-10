@@ -8,8 +8,8 @@ if (getRversion() >= "2.15.1") {
                             "title_add", "visit", "x", "y"))
 }
 
-#' @title plots AE per site as dots
-#' @description different groupings can be applied
+#' @title Plots AE per site as dots.
+#' @description This plot is meant to supplement the package documentation.
 #' @param df dataframe, cols = c('site', 'patients', 'n_ae')
 #' @param nrow integer, number of rows, Default: 10
 #' @param ncols integer, number of columns, Default: 10
@@ -22,7 +22,6 @@ if (getRversion() >= "2.15.1") {
 #' @param color_low character, hex color value, Default: '#25A69A'
 #' @param size_dots integer, Default: 10
 #' @return ggplot object
-#' @details ' '
 #' @examples
 #' study <- tibble::tibble(
 #'   site = LETTERS[1:3],
@@ -133,9 +132,8 @@ plot_dots <- function(df,
 }
 
 
-#' @title plot simulation example
-#' @description uses `plot_dots()` and adds 2 simulation panels, uses made-up site config with
-#' three sites A,B,C simulating site C
+#' @title Plot simulation example.
+#' @description This plots supplements the package documentation.
 #' @param substract_ae_per_pat integer, subtract aes from patients at site C, Default: 0
 #' @param size_dots integer, Default: 10
 #' @param size_raster_label integer, Default: 12
@@ -147,7 +145,8 @@ plot_dots <- function(df,
 #' @param title logical, include title, Default: T
 #' @param legend logical, include legend, Default: T
 #' @return ggplot
-#' @details ' '
+#' @details uses [plot_dots()][plot_dots()] and adds 2 simulation panels, uses made-up 
+#' site config with three sites A,B,C simulating site C
 #' @examples
 #' plot_sim_example(size_dots = 5)
 #' @seealso
@@ -291,12 +290,11 @@ plot_sim_example <- function(substract_ae_per_pat = 0,
   return(p)
 }
 
-#' @title plot multiple simulation examples
-#' @description uses plot_sim_example()
+#' @title Plot multiple simulation examples.
+#' @description This plot is meant to supplement the package documentation.
 #' @param substract_ae_per_pat integer, Default: c(0, 1, 3)
 #' @param ... parameters passed to plot_sim_example()
-#' @return ggplot
-#' @details ' '
+#' @details This function is a wrapper for plot_sim_example()
 #' @examples
 #' plot_sim_examples(size_dot = 3, size_raster_label = 10)
 #' plot_sim_examples()
@@ -386,8 +384,8 @@ plot_sim_examples <- function(substract_ae_per_pat = c(0, 1, 3), ...) {
 
 
 
-#' @title plot ae development of study and sites, highlighting at risk sites
-#' @description " "
+#' @title Plot ae development of study and sites highlighting at risk sites.
+#' @description Most suitable visual representation of the AE under-reporting statistics.
 #' @param df_visit dataframe, created by [sim_sites()][sim_sites()]
 #' @param df_site dataframe created by [site_aggr()][site_aggr()]
 #' @param df_eval dataframe created by [eval_sites()][eval_sites()]
@@ -432,6 +430,10 @@ plot_study <- function(df_visit,
   # TODO: parametrize scores, fix legend
 
   df_visit <- check_df_visit(df_visit)
+
+  stopifnot(study %in% unique(df_visit$study_id))
+  stopifnot(study %in% unique(df_site$study_id))
+  stopifnot(study %in% unique(df_eval$study_id))
 
   # alert level -------------------------------------------------------------
 
@@ -776,16 +778,16 @@ plot_study <- function(df_visit,
 }
 
 
-#' @title plot patient visits against visit_med75
-#' @description plots cumulative AEs against visits for patients at sites of
+#' @title Plot patient visits against visit_med75.
+#' @description Plots cumulative AEs against visits for patients at sites of
 #'   given study and compares against visit_med75.
 #' @param df_visit dataframe
-#' @param df_site dataframe, as returned by site_aggr()
+#' @param df_site dataframe, as returned by [site_aggr()][site_aggr()]
 #' @param study_id_str character, specify study in study_id column
 #' @param n_sites integer, Default: 6
+#' @param verbose logical, Default: TRUE
 #' @inheritParams site_aggr
 #' @return ggplot
-#' @details ""
 #' @examples
 #' df_visit <- sim_test_data_study(n_pat = 120, n_sites = 6,
 #'     frac_site_with_ur = 0.4, ur_rate = 0.6)
@@ -800,7 +802,8 @@ plot_visit_med75 <- function(df_visit,
                              df_site = NULL,
                              study_id_str,
                              n_sites = 6,
-                             min_pat_pool = 0.2) {
+                             min_pat_pool = 0.2,
+                             verbose = TRUE) {
 
   df_visit <- check_df_visit(df_visit)
 
@@ -927,7 +930,10 @@ plot_visit_med75 <- function(df_visit,
 
   ), collapse = "\n")
   # nolint end
-  cat(cap)
+
+  if (verbose) {
+    cat(cap)
+  }
 
   return(p)
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/simaerep.R
 \name{prep_for_sim}
 \alias{prep_for_sim}
-\title{prepare data for simulation}
+\title{Prepare data for simulation.}
 \usage{
 prep_for_sim(df_site, df_visit)
 }

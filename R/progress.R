@@ -1,6 +1,8 @@
-#' @title execute a purrr or furrr function with a progress
-#' bar
-#' @description call still needs to be wrapped in with_progress()
+#' @title Execute a purrr or furrr function with a progress
+#' bar.
+#' @description Internal utility function.
+#' @details Call still needs to be wrapped in \code{\link[progressr]{with_progress}} 
+#' or [with_progress_cnd()][with_progress_cnd()]
 #' @param .purrr purrr or furrr function
 #' @param ... iterable arguments passed to .purrr
 #' @param .f function to be executed over iterables
@@ -107,13 +109,14 @@ purrr_bar <- function(...,
 }
 
 
-#'@title conditional \code{\link[progressr]{with_progress}}
-#'@description internal function. Use instead of
+#'@title Conditional \code{\link[progressr]{with_progress}}.
+#'@description Internal function. Use instead of
 #'  \code{\link[progressr]{with_progress}} within custom functions with progress
 #'  bars.
 #'@param ex expression
 #'@param progress logical, Default: TRUE
-#'@details DETAILS
+#'@details This wrapper adds a progress parameter to \code{\link[progressr]{with_progress}}
+#' so that we can control the progress bar in the user facing functions.
 #' @examples
 #' if (interactive()) {
 #'

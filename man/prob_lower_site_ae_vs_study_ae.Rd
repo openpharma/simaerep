@@ -2,7 +2,7 @@
 % Please edit documentation in R/simaerep.R
 \name{prob_lower_site_ae_vs_study_ae}
 \alias{prob_lower_site_ae_vs_study_ae}
-\title{calculate bootstrapped probability for obtaining a lower mean AE}
+\title{Calculate bootstrapped probability for obtaining a lower site mean AE number.}
 \usage{
 prob_lower_site_ae_vs_study_ae(site_ae, study_ae, r = 1000, parallel = FALSE)
 }
@@ -19,7 +19,7 @@ prob_lower_site_ae_vs_study_ae(site_ae, study_ae, r = 1000, parallel = FALSE)
 pval
 }
 \description{
-helper function used by \code{\link[=sim_sites]{sim_sites()}}
+Internal function used by \code{\link[=sim_sites]{sim_sites()}}
 }
 \details{
 sets pvalue=1 if mean AE site is greater than mean AE study
