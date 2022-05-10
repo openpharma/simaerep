@@ -2,7 +2,7 @@
 % Please edit documentation in R/simaerep_plot.R
 \name{plot_study}
 \alias{plot_study}
-\title{plot ae development of study and sites, highlighting at risk sites}
+\title{Plot ae development of study and sites highlighting at risk sites.}
 \usage{
 plot_study(
   df_visit,
@@ -34,7 +34,7 @@ alert_level_study (optional), Default: NA}
 ggplot
 }
 \description{
-" "
+Most suitable visual representation of the AE under-reporting statistics.
 }
 \details{
 Left panel shows mean AE reporting per site (lightblue and darkblue

@@ -2,7 +2,7 @@
 % Please edit documentation in R/simulate_test_data.R
 \name{get_portf_perf}
 \alias{get_portf_perf}
-\title{Get Portfolio Performance}
+\title{Get Portfolio Performance.}
 \usage{
 get_portf_perf(df_scen, stat = "prob_low_prob_ur", fpr = c(0.001, 0.01, 0.05))
 }
@@ -21,9 +21,6 @@ dataframe
 \description{
 Performance as true positive rate (tpr as tp/P) on the basis of
 desired false positive rates (fpr as fp/P).
-}
-\details{
-DETAILS
 }
 \examples{
 df_visit1 <- sim_test_data_study(n_pat = 100, n_sites = 10,

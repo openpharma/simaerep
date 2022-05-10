@@ -2,8 +2,8 @@
 % Please edit documentation in R/progress.R
 \name{purrr_bar}
 \alias{purrr_bar}
-\title{execute a purrr or furrr function with a progress
-bar}
+\title{Execute a purrr or furrr function with a progress
+bar.}
 \usage{
 purrr_bar(
   ...,
@@ -34,7 +34,11 @@ purrr_bar(
 \item{.progress}{logical, show progress bar, Default: TRUE}
 }
 \description{
-call still needs to be wrapped in with_progress()
+Internal utility function.
+}
+\details{
+Call still needs to be wrapped in \code{\link[progressr]{with_progress}}
+or \code{\link[=with_progress_cnd]{with_progress_cnd()}}
 }
 \examples{
 # purrr::map

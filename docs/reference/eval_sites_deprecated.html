@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>evaluate sites — eval_sites_deprecated • simaerep</title>
+<title>Evaluate sites. — eval_sites_deprecated • simaerep</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,10 +46,10 @@
 
 
 
-<meta property="og:title" content="evaluate sites — eval_sites_deprecated" />
-<meta property="og:description" content="correct under-reporting probabilities by the expected number of
+<meta property="og:title" content="Evaluate sites. — eval_sites_deprecated" />
+<meta property="og:description" content="Correct under-reporting probabilities by the expected number of
 false positives (fp). This has been deprecated in favor of more conventional
-methods available via p.adjust()." />
+methods available via p.adjust." />
 <meta property="og:image" content="https://openpharma.github.io/simaerep/logo.png" />
 
 
@@ -92,7 +92,7 @@ methods available via p.adjust()." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">simaerep</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.4</span>
       </span>
     </div>
 
@@ -164,15 +164,15 @@ methods available via p.adjust()." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>evaluate sites</h1>
+    <h1>Evaluate sites.</h1>
     <small class="dont-index">Source: <a href='https://github.com/openpharma/simaerep/blob/master/R/simaerep.R'><code>R/simaerep.R</code></a></small>
     <div class="hidden name"><code>eval_sites_deprecated.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>correct under-reporting probabilities by the expected number of
+    <p>Correct under-reporting probabilities by the expected number of
 false positives (fp). This has been deprecated in favor of more conventional
-methods available via p.adjust().</p>
+methods available via <code><a href='https://rdrr.io/r/stats/p.adjust.html'>p.adjust</a></code>.</p>
     </div>
 
     <pre class="usage"><span class='fu'>eval_sites_deprecated</span><span class='op'>(</span><span class='va'>df_sim_sites</span>, <span class='va'>r_sim_sites</span><span class='op'>)</span></pre>
@@ -233,19 +233,19 @@ set p_vs_fp_ratio = 1 and prob_ur = 0.</p>
 
 <span class='va'>df_eval</span> <span class='op'>&lt;-</span> <span class='fu'>eval_sites_deprecated</span><span class='op'>(</span><span class='va'>df_sim_sites</span>, r_sim_sites <span class='op'>=</span> <span class='fl'>100</span><span class='op'>)</span>
 <span class='va'>df_eval</span>
-</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 5 x 19</span><span>
-#&gt;   study_id site_number n_pat n_pat_with_med75 visit_med75 mean_ae_site_me…
-#&gt;   </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>    </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>       </span><span style='color: #949494;font-style: italic;'>&lt;int&gt;</span><span>            </span><span style='color: #949494;font-style: italic;'>&lt;int&gt;</span><span>       </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>            </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>
-#&gt; </span><span style='color: #BCBCBC;'>1</span><span> A        S0002          20               17          18             3.94
-#&gt; </span><span style='color: #BCBCBC;'>2</span><span> A        S0001          20               18          16             3.39
-#&gt; </span><span style='color: #BCBCBC;'>3</span><span> A        S0003          20               18          17            10.2 
-#&gt; </span><span style='color: #BCBCBC;'>4</span><span> A        S0004          20               18          14             7.28
-#&gt; </span><span style='color: #BCBCBC;'>5</span><span> A        S0005          20               17          15             7.29
-#&gt; </span><span style='color: #949494;'># … with 13 more variables: mean_ae_study_med75 </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #949494;'>,</span><span>
-#&gt; </span><span style='color: #949494;'>#   n_pat_with_med75_study </span><span style='color: #949494;font-style: italic;'>&lt;int&gt;</span><span style='color: #949494;'>, pval </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #949494;'>, prob_low </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #949494;'>, n_site </span><span style='color: #949494;font-style: italic;'>&lt;int&gt;</span><span style='color: #949494;'>,</span><span>
-#&gt; </span><span style='color: #949494;'>#   pval_n_detected </span><span style='color: #949494;font-style: italic;'>&lt;int&gt;</span><span style='color: #949494;'>, pval_fp </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #949494;'>, pval_p_vs_fp_ratio </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #949494;'>,</span><span>
-#&gt; </span><span style='color: #949494;'>#   pval_prob_ur </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #949494;'>, prob_low_n_detected </span><span style='color: #949494;font-style: italic;'>&lt;int&gt;</span><span style='color: #949494;'>, prob_low_fp </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #949494;'>,</span><span>
-#&gt; </span><span style='color: #949494;'>#   prob_low_p_vs_fp_ratio </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #949494;'>, prob_low_prob_ur </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span></div></span></pre>
+</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 5 × 19</span>
+#&gt;   study_id site_number n_pat n_pat_with_med75 visit_med75 mean_ae_site_med75
+#&gt;   <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>       <span style='color: #949494; font-style: italic;'>&lt;int&gt;</span>            <span style='color: #949494; font-style: italic;'>&lt;int&gt;</span>       <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>              <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>
+#&gt; <span style='color: #BCBCBC;'>1</span> A        S0002          20               17          18               3.94
+#&gt; <span style='color: #BCBCBC;'>2</span> A        S0001          20               18          16               3.39
+#&gt; <span style='color: #BCBCBC;'>3</span> A        S0003          20               18          17              10.2 
+#&gt; <span style='color: #BCBCBC;'>4</span> A        S0004          20               18          14               7.28
+#&gt; <span style='color: #BCBCBC;'>5</span> A        S0005          20               17          15               7.29
+#&gt; <span style='color: #949494;'># … with 13 more variables: mean_ae_study_med75 &lt;dbl&gt;,</span>
+#&gt; <span style='color: #949494;'>#   n_pat_with_med75_study &lt;int&gt;, pval &lt;dbl&gt;, prob_low &lt;dbl&gt;, n_site &lt;int&gt;,</span>
+#&gt; <span style='color: #949494;'>#   pval_n_detected &lt;int&gt;, pval_fp &lt;dbl&gt;, pval_p_vs_fp_ratio &lt;dbl&gt;,</span>
+#&gt; <span style='color: #949494;'>#   pval_prob_ur &lt;dbl&gt;, prob_low_n_detected &lt;int&gt;, prob_low_fp &lt;dbl&gt;,</span>
+#&gt; <span style='color: #949494;'>#   prob_low_p_vs_fp_ratio &lt;dbl&gt;, prob_low_prob_ur &lt;dbl&gt;</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

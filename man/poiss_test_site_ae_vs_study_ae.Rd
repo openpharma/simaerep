@@ -2,7 +2,7 @@
 % Please edit documentation in R/simaerep.R
 \name{poiss_test_site_ae_vs_study_ae}
 \alias{poiss_test_site_ae_vs_study_ae}
-\title{poisson test for vector with site AEs vs vector with study AEs}
+\title{Poisson test for vector with site AEs vs vector with study AEs.}
 \usage{
 poiss_test_site_ae_vs_study_ae(site_ae, study_ae, visit_med75)
 }
@@ -17,7 +17,7 @@ poiss_test_site_ae_vs_study_ae(site_ae, study_ae, visit_med75)
 pval
 }
 \description{
-helper function used by \code{\link[=sim_sites]{sim_sites()}}
+Internal function used by \code{\link[=sim_sites]{sim_sites()}}.
 }
 \details{
 sets pvalue=1 if mean AE site is greater than mean AE study or ttest gives error

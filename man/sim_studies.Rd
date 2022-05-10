@@ -2,7 +2,7 @@
 % Please edit documentation in R/simaerep.R
 \name{sim_studies}
 \alias{sim_studies}
-\title{simulate studies}
+\title{Simulate studies.}
 \usage{
 sim_studies(
   df_visit,
@@ -50,7 +50,7 @@ site to simulate, Default: 1}
 dataframe
 }
 \description{
-test function, test applicability of poisson test, by
+Test function, test applicability of poisson test, by
 calculating a the bootstrapped probability of obtaining a specific p-value
 or lower, use in combination with \code{\link[=get_ecd_values]{get_ecd_values()}}.
 }

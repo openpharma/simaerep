@@ -2,7 +2,7 @@
 % Please edit documentation in R/simaerep.R
 \name{aggr_duplicated_visits}
 \alias{aggr_duplicated_visits}
-\title{aggregate duplicated visits}
+\title{Aggregate duplicated visits.}
 \usage{
 aggr_duplicated_visits(df_visit)
 }
@@ -14,5 +14,5 @@ n_ae}
 df_visit corrected
 }
 \description{
-called by check_df_visit()
+Internal function called by \link[=check_df_visit]{check_df_visit()}.
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/simaerep_plot.R
 \name{plot_sim_example}
 \alias{plot_sim_example}
-\title{plot simulation example}
+\title{Plot simulation example.}
 \usage{
 plot_sim_example(
   substract_ae_per_pat = 0,
@@ -42,11 +42,11 @@ plot_sim_example(
 ggplot
 }
 \description{
-uses \code{plot_dots()} and adds 2 simulation panels, uses made-up site config with
-three sites A,B,C simulating site C
+This plots supplements the package documentation.
 }
 \details{
-' '
+uses \code{\link[=plot_dots]{plot_dots()}} and adds 2 simulation panels, uses made-up
+site config with three sites A,B,C simulating site C
 }
 \examples{
 plot_sim_example(size_dots = 5)

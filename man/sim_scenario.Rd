@@ -2,7 +2,7 @@
 % Please edit documentation in R/simulate_test_data.R
 \name{sim_scenario}
 \alias{sim_scenario}
-\title{simulate single scenario}
+\title{Simulate single scenario.}
 \usage{
 sim_scenario(n_ae_site, n_ae_study, frac_pat_with_ur, ur_rate)
 }
@@ -19,7 +19,7 @@ sim_scenario(n_ae_site, n_ae_study, frac_pat_with_ur, ur_rate)
 list
 }
 \description{
-internal function called by simulate_scenarios()
+Internal function called by \code{\link[=sim_ur_scenarios]{sim_ur_scenarios()}}.
 }
 \examples{
 sim_scenario(c(5,5,5,5), c(8,8,8,8), 0.2, 0.5)

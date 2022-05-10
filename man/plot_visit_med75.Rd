@@ -2,7 +2,7 @@
 % Please edit documentation in R/simaerep_plot.R
 \name{plot_visit_med75}
 \alias{plot_visit_med75}
-\title{plot patient visits against visit_med75}
+\title{Plot patient visits against visit_med75.}
 \usage{
 plot_visit_med75(
   df_visit,
@@ -16,7 +16,7 @@ plot_visit_med75(
 \arguments{
 \item{df_visit}{dataframe}
 
-\item{df_site}{dataframe, as returned by site_aggr()}
+\item{df_site}{dataframe, as returned by \code{\link[=site_aggr]{site_aggr()}}}
 
 \item{study_id_str}{character, specify study in study_id column}
 
@@ -31,11 +31,8 @@ sampling. Determines maximum visit_med75 value see Details. Default: 0.2}
 ggplot
 }
 \description{
-plots cumulative AEs against visits for patients at sites of
+Plots cumulative AEs against visits for patients at sites of
 given study and compares against visit_med75.
-}
-\details{
-""
 }
 \examples{
 df_visit <- sim_test_data_study(n_pat = 120, n_sites = 6,

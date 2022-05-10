@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>prepare data for simulation — prep_for_sim • simaerep</title>
+<title>Prepare data for simulation. — prep_for_sim • simaerep</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,7 +46,7 @@
 
 
 
-<meta property="og:title" content="prepare data for simulation — prep_for_sim" />
+<meta property="og:title" content="Prepare data for simulation. — prep_for_sim" />
 <meta property="og:description" content="Internal function called by sim_sites.
 Collect AEs per patient at visit_med75 for site and study as a vector of
 integers." />
@@ -92,7 +92,7 @@ integers." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">simaerep</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.4</span>
       </span>
     </div>
 
@@ -164,7 +164,7 @@ integers." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>prepare data for simulation</h1>
+    <h1>Prepare data for simulation.</h1>
     <small class="dont-index">Source: <a href='https://github.com/openpharma/simaerep/blob/master/R/simaerep.R'><code>R/simaerep.R</code></a></small>
     <div class="hidden name"><code>prep_for_sim.Rd</code></div>
     </div>
@@ -211,14 +211,14 @@ integers.</p>
 
 <span class='va'>df_prep</span> <span class='op'>&lt;-</span> <span class='fu'>prep_for_sim</span><span class='op'>(</span><span class='va'>df_site</span>, <span class='va'>df_visit</span><span class='op'>)</span>
 <span class='va'>df_prep</span>
-</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 5 x 7</span><span>
+</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 5 × 7</span>
 #&gt;   study_id site_number n_pat n_pat_with_med75 visit_med75 n_ae_site  n_ae_study
-#&gt;   </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>    </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>       </span><span style='color: #949494;font-style: italic;'>&lt;int&gt;</span><span>            </span><span style='color: #949494;font-style: italic;'>&lt;int&gt;</span><span>       </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;list&gt;</span><span>     </span><span style='color: #949494;font-style: italic;'>&lt;list&gt;</span><span>    
-#&gt; </span><span style='color: #BCBCBC;'>1</span><span> A        S0001          20               18          15 </span><span style='color: #949494;'>&lt;int [18]&gt;</span><span> </span><span style='color: #949494;'>&lt;int [71]&gt;</span><span>
-#&gt; </span><span style='color: #BCBCBC;'>2</span><span> A        S0002          20               16          16 </span><span style='color: #949494;'>&lt;int [16]&gt;</span><span> </span><span style='color: #949494;'>&lt;int [64]&gt;</span><span>
-#&gt; </span><span style='color: #BCBCBC;'>3</span><span> A        S0003          20               19          15 </span><span style='color: #949494;'>&lt;int [19]&gt;</span><span> </span><span style='color: #949494;'>&lt;int [70]&gt;</span><span>
-#&gt; </span><span style='color: #BCBCBC;'>4</span><span> A        S0004          20               18          14 </span><span style='color: #949494;'>&lt;int [18]&gt;</span><span> </span><span style='color: #949494;'>&lt;int [73]&gt;</span><span>
-#&gt; </span><span style='color: #BCBCBC;'>5</span><span> A        S0005          20               17          15 </span><span style='color: #949494;'>&lt;int [17]&gt;</span><span> </span><span style='color: #949494;'>&lt;int [72]&gt;</span><span></div></span></pre>
+#&gt;   <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>       <span style='color: #949494; font-style: italic;'>&lt;int&gt;</span>            <span style='color: #949494; font-style: italic;'>&lt;int&gt;</span>       <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;list&gt;</span>     <span style='color: #949494; font-style: italic;'>&lt;list&gt;</span>    
+#&gt; <span style='color: #BCBCBC;'>1</span> A        S0001          20               19          15 <span style='color: #949494;'>&lt;int [19]&gt;</span> <span style='color: #949494;'>&lt;int [75]&gt;</span>
+#&gt; <span style='color: #BCBCBC;'>2</span> A        S0002          20               18          16 <span style='color: #949494;'>&lt;int [18]&gt;</span> <span style='color: #949494;'>&lt;int [70]&gt;</span>
+#&gt; <span style='color: #BCBCBC;'>3</span> A        S0003          20               20          15 <span style='color: #949494;'>&lt;int [20]&gt;</span> <span style='color: #949494;'>&lt;int [74]&gt;</span>
+#&gt; <span style='color: #BCBCBC;'>4</span> A        S0004          20               18          17 <span style='color: #949494;'>&lt;int [18]&gt;</span> <span style='color: #949494;'>&lt;int [63]&gt;</span>
+#&gt; <span style='color: #BCBCBC;'>5</span> A        S0005          20               19          15 <span style='color: #949494;'>&lt;int [19]&gt;</span> <span style='color: #949494;'>&lt;int [75]&gt;</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

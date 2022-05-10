@@ -2,7 +2,7 @@
 % Please edit documentation in R/simaerep.R
 \name{get_site_mean_ae_dev}
 \alias{get_site_mean_ae_dev}
-\title{get site mean ae development}
+\title{Get site mean ae development.}
 \usage{
 get_site_mean_ae_dev(df_visit, df_pat, df_site)
 }
@@ -17,6 +17,6 @@ get_site_mean_ae_dev(df_visit, df_pat, df_site)
 dataframe
 }
 \description{
-used by site_aggr(), plot_visit_med75, returns mean ae
-development from visit 0 to visit_med75
+Internal function used by \code{\link[=site_aggr]{site_aggr()}}, \code{\link[=plot_visit_med75]{plot_visit_med75()}},
+returns mean AE development from visit 0 to visit_med75.
 }

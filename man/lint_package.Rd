@@ -2,7 +2,7 @@
 % Please edit documentation in R/lint.R
 \name{lint_package}
 \alias{lint_package}
-\title{wrapper around lintr::lint_packages}
+\title{Wrapper for \code{\link[lintr]{lint_package}}.}
 \usage{
 lint_package(path = ".", ...)
 }
@@ -16,7 +16,7 @@ lint_package(path = ".", ...)
 " "
 }
 \description{
-throws error when code issues are detected and defines default
+Throws error when code issues are detected and defines default
 linting rules for this package.
 }
 \details{

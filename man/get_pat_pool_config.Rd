@@ -2,7 +2,7 @@
 % Please edit documentation in R/simaerep.R
 \name{get_pat_pool_config}
 \alias{get_pat_pool_config}
-\title{configure study patient pool by site parameters}
+\title{Configure study patient pool by site parameters.}
 \usage{
 get_pat_pool_config(df_visit, df_site, min_n_pat_with_med75 = 1)
 }
@@ -15,14 +15,14 @@ get_pat_pool_config(df_visit, df_site, min_n_pat_with_med75 = 1)
 simulation, Default: 1}
 }
 \value{
-OUTPUT_DESCRIPTION
+dataframe
 }
 \description{
-for simulating a study we need to configure the study patient
-pool to match the configuration of the sites
+Internal Function used by \code{\link[=sim_sites]{sim_sites()}}
 }
 \details{
-DETAILS
+For simulating a study we need to configure the study patient
+pool to match the configuration of the sites
 }
 \examples{
 df_visit1 <- sim_test_data_study(n_pat = 100, n_sites = 5,

@@ -2,7 +2,7 @@
 % Please edit documentation in R/simaerep.R
 \name{eval_sites_deprecated}
 \alias{eval_sites_deprecated}
-\title{evaluate sites}
+\title{Evaluate sites.}
 \usage{
 eval_sites_deprecated(df_sim_sites, r_sim_sites)
 }
@@ -34,9 +34,9 @@ dataframe with the following columns:
 }
 }
 \description{
-correct under-reporting probabilities by the expected number of
+Correct under-reporting probabilities by the expected number of
 false positives (fp). This has been deprecated in favor of more conventional
-methods available via p.adjust().
+methods available via \code{\link[stats]{p.adjust}}.
 }
 \details{
 If by chance expected number of

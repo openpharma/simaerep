@@ -2,16 +2,17 @@
 % Please edit documentation in R/simaerep.R
 \name{exp_implicit_missing_visits}
 \alias{exp_implicit_missing_visits}
-\title{expose implicitly missing visits}
+\title{Expose implicitly missing visits.}
 \usage{
 exp_implicit_missing_visits(df_visit)
 }
 \arguments{
-\item{df_visit}{PARAM_DESCRIPTION}
+\item{df_visit}{dataframe with columns: study_id, site_number, patnum, visit,
+n_ae}
 }
 \value{
 df_visit corrected
 }
 \description{
-called by check_df_visit()
+Internal function called by \link[=check_df_visit]{check_df_visit()}.
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/simaerep.R
 \name{sim_sites}
 \alias{sim_sites}
-\title{calculate prob_lower and poisson.test pvalue for study sites}
+\title{Calculate prob_lower and poisson.test pvalue for study sites.}
 \usage{
 sim_sites(
   df_site,
@@ -47,7 +47,7 @@ dataframe with the following columns:
 }
 }
 \description{
-collects the number of AEs of all eligible patients that
+Collects the number of AEs of all eligible patients that
 meet visit_med75 criteria of site. Then  calculates poisson.test pvalue and
 bootstrapped probability of having a lower mean value.
 }

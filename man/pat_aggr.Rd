@@ -2,7 +2,7 @@
 % Please edit documentation in R/simaerep.R
 \name{pat_aggr}
 \alias{pat_aggr}
-\title{aggregate visit to patient level}
+\title{Aggregate visit to patient level.}
 \usage{
 pat_aggr(df_visit)
 }
@@ -13,5 +13,6 @@ pat_aggr(df_visit)
 dataframe
 }
 \description{
-used by site_aggr(), max_visit_per_pat
+Internal function used by \code{\link[=site_aggr]{site_aggr()}} and
+\code{\link[=plot_visit_med75]{plot_visit_med75()}}, adds the maximum visit for each patient.
 }
