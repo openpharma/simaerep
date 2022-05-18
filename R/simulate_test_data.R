@@ -313,10 +313,11 @@ sim_ur_scenarios <- function(df_portf,
   # generating scenarios
 
   df_scen <- df_scen_prep %>%
-    mutate(scenarios = purrr::pmap(
-      list(.data$n_ae_site, .data$n_ae_study, .data$frac_pat_with_ur, .data$ur_rate),
-      sim_scenario
-    )
+    mutate(
+      scenarios = purrr::pmap(
+        list(.data$n_ae_site, .data$n_ae_study, .data$frac_pat_with_ur, .data$ur_rate),
+        sim_scenario
+      )
     ) %>%
     select(- .data$n_ae_site, - .data$n_ae_study) %>%
     mutate(n_ae_site = map(.data$scenarios, "n_ae_site"),
