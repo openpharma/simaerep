@@ -13,7 +13,7 @@ editor_options:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, cache = FALSE)
+knitr::opts_chunk$set(echo = TRUE, cache = FALSE, message = FALSE)
 ```
 
 # Load
@@ -25,8 +25,8 @@ suppressPackageStartupMessages(library(future))
 suppressPackageStartupMessages(library(simaerep))
 
 # RAM ~26 GB
-# plan 2GB per core
-plan(multisession, workers = 13)
+# plan 4GB per core
+plan(multisession, workers = 6)
 ```
 
 # Introduction
@@ -44,7 +44,7 @@ rmarkdown::render("vignettes/_portfolio_perf.Rmd", knit_root_dir = "/home/konesw
 
 # Portfolio Configuration
 
-The portfolio configuration should give a minimal description of a portfolio without violating data privacy laws or competitive intellectual property. We propose to include the following metrics into the portfolio configuration: 
+The portfolio configuration will be used to generate compliant test data that is similar to a realistic portfolio of studies in which all sites are compliant. We will subsequently remove a percentage of AEs from each study site and calculate AE under-reporting statistics to calculate overall detection thresholds. The portfolio configuration should give a minimal description of the portfolio without violating data privacy laws or competitive intellectual property. We propose to include the following metrics into the portfolio configuration: 
 
 **site parameters:**
 
@@ -91,7 +91,9 @@ df_config <- simaerep::get_config(
   min_sites_per_study = 10
 )
 
-df_config
+df_config %>%
+  head(25) %>%
+  knitr::kable()
 ```
 
 ## Simulate Portfolio from Configuration
@@ -100,7 +102,10 @@ We can now apply sim_test_data_portfolio which uses `sim_test_data_study()` to g
 
 ```{r ex_portf}
 df_portf <- sim_test_data_portfolio(df_config)
-df_portf
+
+df_portf %>%
+  head(25) %>%
+  knitr::kable()
 ```
 
 
@@ -109,21 +114,31 @@ df_portf
 Here we load a realistic portfolio configuration.
 
 ```{r real_config}
+
 df_config <- readr::read_csv("ae_profile.csv")
-df_config
+
+df_config %>%
+  head(25) %>%
+  knitr::kable()
 ```
 
 # Simulate Portfolio
 
-And again simulate artificial visit level data. Using parallel processing.
+And again we simulate artificial visit level data. Using parallel processing. At this stage we have simulated compliant test data of a realistic study portfolio.
 
 ```{r sim_portf}
 
 df_portf <- sim_test_data_portfolio(df_config, parallel = TRUE, progress = TRUE)
-df_portf
+
+df_portf %>%
+  head(25) %>%
+  knitr::kable()
 ```
 
+
 ## Confirm that Portfolio Simulation results in Similar Configuration
+
+We will now use the simulated portfolio data and extract the configuration. We expect that the configuration that we will be extracting is very similar to the configuration that we started out with in the first place.
 
 ```{r check_portf}
 df_site_max_portf <- df_portf %>%
@@ -195,85 +210,267 @@ The performance of detecting AE under-reporting is dependent on three things:
 
 - the higher the mean AE per visit on study level the better
 - the higher the number of patients at an under-reporting site the better
+- the higher the maximum visit number per patient the better
 - the higher the number of under-reporting sites in a study the worse
 
-In our initial usability assessment we have fixed those parameters. Here we are going leave them as they are in the portfolio. The vanilla version of our artificial portfolio data does not contain any under-reporting sites yet. However `simaerep::sim_ur_scenarios()` will apply under-reporting scenarios to each site. Reducing the number of AEs by a given under-reporting rate (ur_rate) for all patients at the site and add the corresponding under-reporting statistics. Since the under-reporting probability is also affected by the number of other sites that are under-reporting we additionally calculate under-reporting statistics in a scenario where additional under reporting sites are present. For this we use the mean number of patients per site at the study to calculate the final number of patients for which we lower the AEs in a given under-reporting scenario. 
+In our initial usability assessment we have fixed those parameters. Here we are going leave them as they are in the portfolio. The vanilla version of our artificial portfolio data does not contain any under-reporting sites yet. However `simaerep::sim_ur_scenarios()` will apply under-reporting scenarios to each site. Reducing the number of AEs by a given under-reporting rate (ur_rate) for all patients at the site and add the corresponding under-reporting statistics.
 
 ```{r sim_ur_scen, eval = TRUE}
 
-df_scen <- sim_ur_scenarios(df_portf,
-                         extra_ur_sites = 5,
-                         ur_rate = c(0.1, 0.25, 0.5, 0.75, 1),
-                         parallel = TRUE,
-                         poisson = TRUE,
-                         prob_lower = TRUE,
-                         progress = TRUE)
+df_scen <- sim_ur_scenarios(
+   df_portf,
+   extra_ur_sites = 0,
+   ur_rate = c(0.1, 0.25, 0.5, 0.75, 1),
+   parallel = TRUE,
+   poisson = TRUE,
+   prob_lower = TRUE,
+   progress = TRUE
+)
 
-df_scen
 
 readr::write_csv(df_scen, file = "scen.csv")
 ```
 
 
-# Portfolio Performance
-
-We can calculate the portfolio performance as the overall true positive rate (tpr as tp/P) on the basis of desired false positive rates (fpr as fp/N).
-We calculate a threshold based on the desired fpr using the vanilla scenario with no under-reporting sites. Then we check how many sites with known under-reporting get flagged to calculate tpr.
-
-```{r portf_scen}
-
+```{r sim_ur_scen_kable}
 df_scen <- readr::read_csv("scen.csv")
 
-df_perf <- get_portf_perf(df_scen)
 
-df_perf %>%
-    pivot_wider(
-    names_from = extra_ur_sites,
-    values_from = tpr,
-    names_prefix = "extra_ur_sites_"
-  ) %>%
-  knitr::kable(digits = 3)
-
+df_scen %>%
+  head(25) %>%
+  knitr::kable()
 ```
 
 
-# Benchmark simaerep Using Portfolio Performance
+# Portfolio Performance
+
+For every site in the portfolio we have now generated the AE under-reporting probability for the following under-reporting rates 0, 0.25, 0.5, 0.75 and 1:
+
+```{r portf_perf_in_kable}
+df_scen %>%
+  select(study_id, site_number, ur_rate, prob_low_prob_ur) %>%
+  head(25) %>%
+  knitr::kable()
+```
+
+We usually recommend a 0.95 threshold to flag sites as under-reporting. We can use this threshold to calculate the ratio of flagged sites per under-reporting rate. The zero under-reporting scenario defines the expected false positive rates (fpr as fp/N), while the other scenarios give us the expected true positive rate (tpr as tp/P) for sites with that under-reporting level. The condition for the tpr and fpr rates for the simulated portfolio is that each site is the only under-reporting site in the respective study.
+
+```{r portf_perf_out_kable}
+df_perf_portf <- df_scen %>%
+  mutate(is_ur = prob_low_prob_ur >= 0.95) %>%
+  group_by(ur_rate, is_ur) %>%
+  count() %>%
+  pivot_wider(
+    names_from = is_ur,
+    values_from = n,
+    names_prefix = "is_ur_"
+  ) %>%
+  mutate(
+    n_sites = is_ur_TRUE + is_ur_FALSE,
+    ratio = is_ur_TRUE / n_sites,
+    ratio_type = ifelse(ur_rate == 0, "fpr", "tpr"),
+    ci95_low = prop.test(is_ur_TRUE, n_sites)$conf.int[1],
+    ci95_high = prop.test(is_ur_TRUE, n_sites)$conf.int[2]
+  ) 
+
+df_perf_portf %>%
+  knitr::kable(digits = 3)
+```
+
+# Benchmark {simaerep} Using Portfolio Performance
+
+## Performance Under Optimal Conditions
+
+True positive rates for sites with with an under-reporting rate of 1 is surprisingly small. We would expect that here we should have true positive ratios of close to 100%. The reason is that within a portfolio we have sites that are just starting up and have not reported any AEs yet. We also have studies with overall low AE rates for example for studies with healthy participants. Altogether this allows uncompliant sites to hide among the compliant sites which makes it more difficult to detect them. Therefore we would also like to demonstrate {simaerep} performance as it can be expected under ideal conditions. 
+
+We generate studies with the following parameters:
+
+- 200 patients
+- 20 sites
+- one under-reporting site
+- 0.5 AEs per visit
+- in average 20 visits per patient with SD of 2
+
+We simulate 500 studies for each under-reporting scenario.
+
+```{r perf_st_in}
+standard_sim <- function(ur_rate, seed) {
+  set.seed(seed)
+  df <- sim_test_data_study(
+    n_pat = 200,
+    n_sites = 20,
+    frac_site_with_ur = 0.05,
+    ur_rate = ur_rate,
+    ae_per_visit_mean = 0.5,
+    max_visit_mean = 20,
+    max_visit_sd = 2
+  )
+  
+  if(ur_rate == 0) {
+    df$is_ur <- FALSE
+  }
+  
+  return(df)
+}
+
+df_data_grid <- tibble(
+    ur_rate = c(0, 0.1, 0.25, 0.5, 0.75, 1),
+    seed = list(seq(1, 500))
+  ) %>%
+ unnest(seed) %>%
+ mutate(
+   data = map2(ur_rate, seed, standard_sim)
+ ) 
+
+df_data_grid
+
+df_visit <- df_data_grid %>%
+  mutate(
+    study_id = paste0(
+      "study-", 
+      str_pad(ur_rate, width= 3, side = "left", pad = "0"),
+      "-",
+      seed
+      )
+  ) %>%
+  unnest(data)
+
+df_visit %>%
+  head(25) %>%
+  knitr::kable()
+```
+
+Next we apply {simaerep}
+
+```{r perf_st_apply}
+df_site <- site_aggr(df_visit)
+
+df_sim_sites <- sim_sites(df_site, df_visit)
+
+df_eval <- eval_sites(df_sim_sites)
+```
+
+We calculate th confusion matrices.
+
+```{r perf_st_mat}
+df_perf <- df_visit %>%
+  select(ur_rate, study_id, site_number, is_ur) %>%
+  distinct() %>%
+  left_join(df_eval, by = c("study_id", "site_number")) %>%
+  mutate(is_ur_detected = prob_low_prob_ur >= 0.95) %>%
+  group_by(ur_rate, is_ur, is_ur_detected) %>%
+  count()
+
+readr::write_csv(df_perf, file = "scen_st.csv")
+remove(df_visit) # free up RAM
+```
+
+
+```{r perf_st_out_mat}
+
+df_perf <- readr::read_csv(file = "scen_st.csv")
+
+df_perf %>%
+  knitr::kable()
+```
+
+We calculate tpr and fpr.
+
+```{r perf_st_out_ratio}
+
+get_prop_test_ci95 <- function(..., ix) {
+  
+  stopifnot(ix %in% c(1, 2))
+  
+  tryCatch(
+    prop.test(...)$conf.int[ix],
+    error = function(cnd) c(NA, NA)[ix]
+  )
+}
+
+df_perf_st <- df_perf %>%
+  group_by(ur_rate) %>%
+  summarize(
+    N = sum(ifelse(! is_ur, n, 0)),
+    P = sum(ifelse(is_ur, n, 0)),
+    TP = sum(ifelse(is_ur & is_ur_detected, n, 0)),
+    FP = sum(ifelse(! is_ur & is_ur_detected, n, 0)),
+    TN = sum(ifelse(! is_ur & ! is_ur_detected, n, 0)),
+    FN = sum(ifelse(is_ur & ! is_ur_detected, n, 0))
+  ) %>%
+  mutate(
+    tpr = TP / P,
+    tpr_ci95_low = map2_dbl(TP, P, get_prop_test_ci95, ix = 1),
+    tpr_ci95_high = map2_dbl(TP, P, get_prop_test_ci95, ix = 2),
+    fpr = FP / N,
+    fpr_ci95_low = map2_dbl(FP, N, get_prop_test_ci95, ix = 1),
+    fpr_ci95_high = map2_dbl(FP, N, get_prop_test_ci95, ix = 2)
+  )
+
+df_perf_st %>%
+  knitr::kable(digit = 4)
+
+```
+
+Under ideal conditions sites with 0.5 under-reporting rate or more will almost all get flagged with a ratio of 0.97 or more with minimal ratio for false positive flags < 0.003.
+
 
 ## Effect of Adjusting visit_med75
 
 One of the latest update to simaerep was an improvement to the visit_med75 calculation. We can check how this has affected portfolio performance. We find that we have most likely slightly increased performance.
 
-```{r scen_old, warning = FALSE, eval = TRUE}
+```{r scen_old_in, warning = FALSE, eval = TRUE}
 
-df_scen_old_visit_med75 <- sim_ur_scenarios(df_portf,
-                                           extra_ur_sites = 5,
-                                           ur_rate = c(0.1, 0.25, 0.5, 0.75, 1),
-                                           parallel = TRUE,
-                                           poisson = TRUE,
-                                           prob_lower = TRUE,
-                                           progress = TRUE,
-                                           site_aggr_args = list(method = "med75")) # default is "med75_adj"
+df_scen_old_visit_med75 <- sim_ur_scenarios(
+   df_portf,
+   extra_ur_sites = 5,
+   ur_rate = c(0.1, 0.25, 0.5, 0.75, 1),
+   parallel = TRUE,
+   poisson = TRUE,
+   prob_lower = TRUE,
+   progress = TRUE,
+   site_aggr_args = list(method = "med75") # default is "med75_adj"
+) 
 
 readr::write_csv(df_scen_old_visit_med75, file = "scen_old.csv")
 
 ```
 
-```{r scen_old_perf}
+```{r scen_old_in_kable}
 df_scen_old_visit_med75 <- readr::read_csv("scen_old.csv")
 
-df_perf_old <- get_portf_perf(df_scen_old_visit_med75)
+df_scen_old_visit_med75 %>%
+  head(25) %>%
+  knitr::kable()
+```
 
-df_perf_old %>%
-    pivot_wider(
-    names_from = extra_ur_sites,
-    values_from = tpr,
-    names_prefix = "extra_ur_sites_"
+
+```{r scen_old_perf}
+df_perf_portf_old_visit_med75 <- df_scen_old_visit_med75 %>%
+  mutate(is_ur = prob_low_prob_ur >= 0.95) %>%
+  group_by(ur_rate, is_ur) %>%
+  count() %>%
+  pivot_wider(
+    names_from = is_ur,
+    values_from = n,
+    names_prefix = "is_ur_"
   ) %>%
+  mutate(
+    n_sites = is_ur_TRUE + is_ur_FALSE,
+    ratio = is_ur_TRUE / n_sites,
+    ratio_type = ifelse(ur_rate == 0, "fpr", "tpr"),
+    ci95_low = prop.test(is_ur_TRUE, n_sites)$conf.int[1],
+    ci95_high = prop.test(is_ur_TRUE, n_sites)$conf.int[2]
+  ) 
+
+df_perf_portf_old_visit_med75 %>%
   knitr::kable(digits = 3)
 
 ```
 
 ## Days vs. Visits
+
+Instead of normalising the AEs per patient by visit an alternative could be to normalise by the number of days that have passed since the patients enrollment. {simaerep} can be used for both types of normalisation which is demonstrated [here](https://openpharma.github.io/simaerep/articles/visits_or_days.html). But normalising by days is a bit more complex as it creates more data points.
 
 The maximum number of days per patient can be up to several years, so > 1000 days. simaerep exposes implicitly missing entries which can lead to single patients having 1000 entries or more, one entry for each day on the study. In order to avoid to generate a huge portfolio data frame we preserve memory by wrapping `sim_test_data_portfolio()` and `sim_ur_scenarios()` into a single call and apply it per study.
 
@@ -324,42 +521,311 @@ readr::write_csv(df_scen_days, file = "scen_days.csv")
 ```{r scen_days_perf}
 df_scen_days <- readr::read_csv("scen_days.csv")
 
-df_perf_days <- get_portf_perf(df_scen_days)
+df_scen_days %>%
+  head(25) %>%
+  knitr::kable()
 
-df_perf_days %>%
-    pivot_wider(
-    names_from = extra_ur_sites,
-    values_from = tpr,
-    names_prefix = "extra_ur_sites_"
+
+df_perf_portf_days <- df_scen_days %>%
+  mutate(is_ur = prob_low_prob_ur >= 0.95) %>%
+  group_by(ur_rate, is_ur) %>%
+  count() %>%
+  pivot_wider(
+    names_from = is_ur,
+    values_from = n,
+    names_prefix = "is_ur_"
   ) %>%
+  mutate(
+    n_sites = is_ur_TRUE + is_ur_FALSE,
+    ratio = is_ur_TRUE / n_sites,
+    ratio_type = ifelse(ur_rate == 0, "fpr", "tpr"),
+    ci95_low = prop.test(is_ur_TRUE, n_sites)$conf.int[1],
+    ci95_high = prop.test(is_ur_TRUE, n_sites)$conf.int[2]
+  ) 
+
+df_perf_portf_days %>%
+  knitr::kable(digits = 3)
+
+```
+
+## Heuristic Rank
+
+Instead of using {simaerep} we can also use a heuristic method based on AE per visit and apply that to the simulated portfolio with different scenarios of under-reporting
+
+- Flag 5% (always round up) of all sites in a study that have the lowest AE per visit rate.
+- Always flag sites with no AEs.
+
+```{r heu_ae_per_vs}
+df_ae_per_vs <-df_portf %>%
+  group_by(study_id, site_number, patnum) %>%
+  filter(visit == max(visit)) %>%
+  group_by(study_id, site_number) %>%
+  summarise(visit = sum(visit),
+            n_ae = sum(n_ae),
+            .groups = "drop") %>%
+  mutate(ae_per_visit = n_ae / visit) %>%
+  group_by(study_id) %>%
+  mutate(
+    ls_study_ae_per_visit = list(ae_per_visit),
+    rwn = row_number(),
+    # we take out site ae_per_visit from study pool
+    ls_study_ae_per_visit = map2(
+        ls_study_ae_per_visit, rwn,
+        function(ls, rwn) ls[- rwn]
+      )
+  ) %>%
+  select(- rwn) %>%
+  ungroup()
+
+df_ae_per_vs
+```
+
+We write a function that:
+- determines how many sites should be flagged in a study
+- pools ae_per_visit rates and ranks sites (using dense_rank())
+- site gets flagged if the specific rank for a site is within the number of sites that should get flagged
+
+```{r heur_rnk_f}
+flag_heuristics_rnk <- function(ae_per_visit, ls_study_ae_per_visit) {
+  
+  n_flags <- ceiling(length(ls_study_ae_per_visit + 1) * 0.05)
+
+  rnk <- tibble(ae_per_visit = ae_per_visit, site = "site") %>%
+    bind_rows(
+      tibble(ae_per_visit = ls_study_ae_per_visit, site = "other")
+    ) %>%
+    # using dense_rank will assign rank 1 to all sites with lowest rate
+    # this is important as there can be many sites with a zero ratio
+    # occasionally this will flag more sites than anticipated
+    arrange(ae_per_visit, site) %>%
+    mutate(rnk = dense_rank(ae_per_visit)) %>%
+    filter(site == "site") %>%
+    pull(rnk)
+  
+  return(rnk <= n_flags)
+}
+
+flag_heuristics_rnk(
+  df_ae_per_vs$ae_per_visit[[1]],
+  df_ae_per_vs$ls_study_ae_per_visit[[1]]
+)
+```
+
+Next we wrap that function with another function simulates under-reporting
+
+```{r heu_sim_f}
+sim_heuristic_ur <- function(ae_per_visit,
+                             ls_study_ae_per_visit,
+                             ur_rates,
+                             .f = flag_heuristics_rnk) {
+  tibble(
+    ur_rate = ur_rates,
+    ae_per_visit = ae_per_visit
+  ) %>%
+  mutate(
+    ae_per_visit = ae_per_visit * (1 - ur_rate),
+    is_ur = map_lgl(ae_per_visit, .f, ls_study_ae_per_visit)
+  )
+}
+
+sim_heuristic_ur(
+  df_ae_per_vs$ae_per_visit[[1]],
+  df_ae_per_vs$ls_study_ae_per_visit[[1]],
+  ur_rates = c(0, 0.1, 0.25, 0.5, 0.75, 1)
+)
+```
+
+We apply.
+
+```{r heu_rnk_apply}
+progressr::with_progress(
+  df_perf_heuristic_rnk <- df_ae_per_vs %>%
+    mutate(
+      sim = simaerep::purrr_bar(
+        ae_per_visit, ls_study_ae_per_visit,
+        .purrr = furrr::future_map2,
+        .f = sim_heuristic_ur,
+        .f_args = list(ur_rates = c(0, 0.1, 0.25, 0.5, 0.75, 1)),
+        .steps = nrow(.)
+      )
+    )
+)
+
+df_perf_heuristic_rnk <- df_perf_heuristic_rnk %>%
+  select(sim) %>%
+  unnest(sim) %>%
+  group_by(ur_rate) %>%
+  summarise(
+    is_ur = sum(is_ur),
+    n_sites = n(),
+    .groups = "drop"
+  ) %>%
+  mutate(
+    ratio = is_ur / n_sites,
+    ratio_type = ifelse(ur_rate == 0, "fpr", "tpr"),
+    ci95_low = map2_dbl(is_ur, n_sites, get_prop_test_ci95, ix = 1),
+    ci95_high = map2_dbl(is_ur, n_sites, get_prop_test_ci95, ix = 2),
+  )
+
+readr::write_csv(df_perf_heuristic_rnk, file = "heuristic_rnk.csv")
+```
+
+We see that this method is generously flagging sites resulting in good tpr at the cost of a high fpr. By default at least one site per study gets flagged.
+
+```{r heu_rnk_kable}
+df_perf_heuristic_rnk <- readr::read_csv(file = "heuristic_rnk.csv")
+
+df_perf_heuristic_rnk %>%
+  knitr::kable(digits = 3)
+
+```
+
+## Heuristic Box Plot Outlier
+
+We can also imagine a heuristic that tries to detect lower boundary outliers on the basis of the ae per visit rate. This should be flagging more conservatively without flagging sites by default. A simple non-parametric method for outlier detection is to calculate box plot statistic and to flag all points that are below the lower whisker boundary.
+
+```{r heu_box_f}
+flag_heuristics_box <- function(ae_per_visit, ls_study_ae_per_visit) {
+  
+  min_whisker <- min(boxplot.stats(c(ae_per_visit, ls_study_ae_per_visit))$stats)
+  return(ae_per_visit < min_whisker)
+  
+}
+
+flag_heuristics_box(
+  df_ae_per_vs$ae_per_visit[[1]],
+  df_ae_per_vs$ls_study_ae_per_visit[[1]]
+)
+
+flag_heuristics_box(
+  0,
+  df_ae_per_vs$ls_study_ae_per_visit[[1]]
+)
+```
+
+We apply.
+
+```{r heu_box_apply}
+progressr::with_progress(
+  df_perf_heuristic_box <- df_ae_per_vs %>%
+    mutate(
+      sim = simaerep::purrr_bar(
+        ae_per_visit, ls_study_ae_per_visit,
+        .purrr = furrr::future_map2,
+        .f = sim_heuristic_ur,
+        .f_args = list(
+          ur_rates = c(0, 0.1, 0.25, 0.5, 0.75, 1),
+          .f = flag_heuristics_box
+          ),
+        .steps = nrow(.)
+      )
+    )
+)
+
+df_perf_heuristic_box <- df_perf_heuristic_box %>%
+  select(sim) %>%
+  unnest(sim) %>%
+  group_by(ur_rate) %>%
+  summarise(
+    is_ur = sum(is_ur),
+    n_sites = n(),
+    .groups = "drop"
+  ) %>%
+  mutate(
+    ratio = is_ur / n_sites,
+    ratio_type = ifelse(ur_rate == 0, "fpr", "tpr"),
+    ci95_low = map2_dbl(is_ur, n_sites, get_prop_test_ci95, ix = 1),
+    ci95_high = map2_dbl(is_ur, n_sites, get_prop_test_ci95, ix = 2),
+  )
+
+readr::write_csv(df_perf_heuristic_box, file = "heuristic_box.csv")
+```
+
+
+```{r heu_box_kable}
+df_perf_heuristic_box <- readr::read_csv(file = "heuristic_box.csv")
+
+df_perf_heuristic_box %>%
   knitr::kable(digits = 3)
 
 ```
 
 
 
-## Plot
+# Plot Performance Metrics
+
+- {simaerep} reduces the false positive rate compared to the heuristics.
+- Rank-based heuristics has higher true positive rates at the cost of higher false positive rates. Similar effects could be achieved by lowering the {simaerep} flagging threshold
+- Using AE per visits over AE per patient days has better performance.
+- Adjusting visit_med75 has also improved performance
+- {simaerep} results are closest to boxplot outlier heuristic but with better overall performance
+- under optimal conditions {simaerep} catches almost all under-reporting sites if under-reporting rate is greater 0.5
+
+```{r, plot, fig.width=6, fig.height = 10}
+
+prep_for_plot <- function(df, type) {
+  df %>%
+    mutate(ur_rate = paste0("under-reporting rate: ",  ur_rate, " - ", ratio_type),
+           ur_rate = ifelse(str_detect(ur_rate, "fpr"), "fpr", ur_rate)) %>%
+    select(ur_rate, ratio_type, ratio, ci95_low, ci95_high) %>%
+    mutate(type = type)
+}
+
+df_perf <- df_perf_st %>%
+  filter(ur_rate == 0) %>%
+  mutate(ratio_type = "fpr") %>%
+  select(ur_rate, ratio_type, ratio = fpr, ci95_low = fpr_ci95_low, ci95_high = fpr_ci95_high) %>%
+  bind_rows(
+    df_perf_st %>%
+      filter(ur_rate > 0) %>%
+      mutate(ratio_type = "tpr") %>%
+      select(ur_rate, ratio_type, ratio = tpr, ci95_low = tpr_ci95_low, ci95_high = tpr_ci95_high)
+  ) %>%
+  prep_for_plot(type = "{simaerep} optimal study conditions") %>%
+  bind_rows(
+    prep_for_plot(df_perf_portf, type = "{simaerep} default"),
+    prep_for_plot(df_perf_portf_days, type = "{simaerep} AE per days on study"),
+    prep_for_plot(df_perf_portf_old_visit_med75, type = "{simaerep} unadjusted visit-med75"),
+    prep_for_plot(df_perf_heuristic_rnk, type = "heuristic - rank"),
+    prep_for_plot(df_perf_heuristic_box, type = "heuristic - boxplot outlier"),
+  ) %>%
+  mutate(
+    type = fct_relevel(type, c(
+      "heuristic - boxplot outlier",
+      "heuristic - rank",
+      "{simaerep} default",
+      "{simaerep} optimal study conditions"
+      )
+    )
+  )
 
 
-```{r, plot, fig.width=12, fig.height = 10}
 df_perf %>%
-  mutate(type = "med75_adj") %>%
-  bind_rows(
-    df_perf_old %>%
-      mutate(type = "med75")
-  ) %>%
-  bind_rows(
-    df_perf_days %>%
-      mutate(type = "days")
-  ) %>%
-  ggplot(aes(x = fpr, y = tpr, color = type)) +
-    geom_line() +
-    geom_point() +
-    facet_grid(ur_rate ~ extra_ur_sites) +
-    theme(legend.position = "bottom")
+  mutate(color = ifelse(type == "{simaerep} default", "violetred2", "darkgrey"),
+         ref = ifelse(type == "{simaerep} default", ratio, 0)) %>%
+  group_by(ur_rate) %>%
+  mutate(ref = max(ref)) %>%
+  ggplot(aes(type, ratio)) +
+    geom_hline(aes(yintercept = ref),
+               linetype = 2,
+               color = "violetred2") +
+    geom_errorbar(aes(ymin = ci95_low, ymax = ci95_high, color = color)) +
+    facet_wrap(~ ur_rate, ncol = 1) +
+    scale_colour_identity() +
+    coord_flip() +
+    labs(
+      x = "",
+      y = "CI95 Performance Ratio", 
+      title = "{simaerep} Performance",
+      subtitle = "Only one under-reporting site per study.\nCut-Off Under-Reporting Probability: 0.95"
+    )
+
+df_perf %>%
+  arrange(ur_rate, desc(type)) %>%
+  select(ur_rate, type, ratio, ci95_low, ci95_high) %>%
+  knitr::kable(digits = 3)
 ```
 
-Using days instead of visits does not provide a clear advantage while the adjusted method for determining the evaluation point visit_med75 seems to be advantageous.
 
 ```{r close}
 plan(sequential)
