@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Simulate Under-Reporting Scenarios. — sim_ur_scenarios • simaerep</title>
+<title>Simulate Under-Reporting Scenarios — sim_ur_scenarios • simaerep</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,7 +46,7 @@
 
 
 
-<meta property="og:title" content="Simulate Under-Reporting Scenarios. — sim_ur_scenarios" />
+<meta property="og:title" content="Simulate Under-Reporting Scenarios — sim_ur_scenarios" />
 <meta property="og:description" content="Use with simulated portfolio data to generate under-reporting
 stats for specified scenarios." />
 <meta property="og:image" content="https://openpharma.github.io/simaerep/logo.png" />
@@ -91,7 +91,7 @@ stats for specified scenarios." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">simaerep</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.3.900</span>
       </span>
     </div>
 
@@ -163,7 +163,7 @@ stats for specified scenarios." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Simulate Under-Reporting Scenarios.</h1>
+    <h1>Simulate Under-Reporting Scenarios</h1>
     <small class="dont-index">Source: <a href='https://github.com/openpharma/simaerep/blob/master/R/simulate_test_data.R'><code>R/simulate_test_data.R</code></a></small>
     <div class="hidden name"><code>sim_ur_scenarios.Rd</code></div>
     </div>
@@ -325,7 +325,20 @@ run, e.g. plan(multisession, workers = 18)</p>
 
 <span class='va'>df_perf</span>
 <span class='op'>}</span>
-</div><div class='output co'>#&gt; <span class='error'>Error in summarise(., max_visit = max(visit), max_ae = max(n_ae), .groups = "drop"): could not find function "summarise"</span></div></pre>
+</div><div class='output co'>#&gt; <span class='message'>aggregating site level</span></div><div class='output co'>#&gt; <span class='message'>prepping for simulation</span></div><div class='output co'>#&gt; <span class='message'>generating scenarios</span></div><div class='output co'>#&gt; <span class='message'>getting under-reporting stats</span></div><div class='output co'>#&gt; <span class='message'>evaluating stats</span></div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 27 × 5</span>
+#&gt;      fpr thresh extra_ur_sites ur_rate   tpr
+#&gt;    <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>  <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>          <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>
+#&gt; <span style='color: #BCBCBC;'> 1</span> 0.001  0.990              0     0    0.05
+#&gt; <span style='color: #BCBCBC;'> 2</span> 0.001  0.990              1     0    0.05
+#&gt; <span style='color: #BCBCBC;'> 3</span> 0.001  0.990              2     0    0.05
+#&gt; <span style='color: #BCBCBC;'> 4</span> 0.001  0.990              0     0.5  1   
+#&gt; <span style='color: #BCBCBC;'> 5</span> 0.001  0.990              1     0.5  0.9 
+#&gt; <span style='color: #BCBCBC;'> 6</span> 0.001  0.990              2     0.5  0.85
+#&gt; <span style='color: #BCBCBC;'> 7</span> 0.001  0.990              0     1    1   
+#&gt; <span style='color: #BCBCBC;'> 8</span> 0.001  0.990              1     1    1   
+#&gt; <span style='color: #BCBCBC;'> 9</span> 0.001  0.990              2     1    1   
+#&gt; <span style='color: #BCBCBC;'>10</span> 0.01   0.961              0     0    0.05
+#&gt; <span style='color: #949494;'># … with 17 more rows</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

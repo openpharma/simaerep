@@ -1,3 +1,8 @@
+# simaerep 1.0.0
+- S3 interface #17
+- better performance specification #26
+- more meaningful unit test names # 24
+
 # simaerep 0.3.3
 - better data checks and error messages #19, #20, # 21
 - data check and repair by check_df_visit() became optionable

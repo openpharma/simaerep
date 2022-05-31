@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Get Portfolio Performance. — get_portf_perf • simaerep</title>
+<title>Get Portfolio Performance — get_portf_perf • simaerep</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,7 +46,7 @@
 
 
 
-<meta property="og:title" content="Get Portfolio Performance. — get_portf_perf" />
+<meta property="og:title" content="Get Portfolio Performance — get_portf_perf" />
 <meta property="og:description" content="Performance as true positive rate (tpr as tp/P) on the basis of
 desired false positive rates (fpr as fp/P)." />
 <meta property="og:image" content="https://openpharma.github.io/simaerep/logo.png" />
@@ -91,7 +91,7 @@ desired false positive rates (fpr as fp/P)." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">simaerep</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.3.900</span>
       </span>
     </div>
 
@@ -163,7 +163,7 @@ desired false positive rates (fpr as fp/P)." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Get Portfolio Performance.</h1>
+    <h1>Get Portfolio Performance</h1>
     <small class="dont-index">Source: <a href='https://github.com/openpharma/simaerep/blob/master/R/simulate_test_data.R'><code>R/simulate_test_data.R</code></a></small>
     <div class="hidden name"><code>get_portf_perf.Rd</code></div>
     </div>
@@ -197,6 +197,9 @@ statistic, Default: 'prob_low_prob_ur'</p></td>
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>dataframe</p>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>DETAILS</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p><code><a href='sim_test_data_study.html'>sim_test_data_study</a></code> <code><a href='get_config.html'>get_config</a></code>
@@ -228,43 +231,43 @@ statistic, Default: 'prob_low_prob_ur'</p></td>
 </div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 20 × 6</span>
 #&gt;    study_id ae_per_visit_mean site_number max_visit_sd max_visit_mean n_pat
 #&gt;    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>                <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>              <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>          <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;int&gt;</span>
-#&gt; <span style='color: #BCBCBC;'> 1</span> 0001                 0.393 0001                2.36           20.3    10
-#&gt; <span style='color: #BCBCBC;'> 2</span> 0001                 0.393 0002                2.87           19.3    10
-#&gt; <span style='color: #BCBCBC;'> 3</span> 0001                 0.393 0003                5.12           19.2    10
-#&gt; <span style='color: #BCBCBC;'> 4</span> 0001                 0.393 0004                3.78           17.4    10
-#&gt; <span style='color: #BCBCBC;'> 5</span> 0001                 0.393 0005                4.20           19.9    10
-#&gt; <span style='color: #BCBCBC;'> 6</span> 0001                 0.393 0006                3.20           18.3    10
-#&gt; <span style='color: #BCBCBC;'> 7</span> 0001                 0.393 0007                2.87           18.7    10
-#&gt; <span style='color: #BCBCBC;'> 8</span> 0001                 0.393 0008                4.58           20.4    10
-#&gt; <span style='color: #BCBCBC;'> 9</span> 0001                 0.393 0009                3.20           18.7    10
-#&gt; <span style='color: #BCBCBC;'>10</span> 0001                 0.393 0010                3.65           19.3    10
-#&gt; <span style='color: #BCBCBC;'>11</span> 0002                 0.490 0001                4.31           18.1    10
-#&gt; <span style='color: #BCBCBC;'>12</span> 0002                 0.490 0002                2.85           18.9    10
-#&gt; <span style='color: #BCBCBC;'>13</span> 0002                 0.490 0003                4.03           19      10
-#&gt; <span style='color: #BCBCBC;'>14</span> 0002                 0.490 0004                4.33           20.1    10
-#&gt; <span style='color: #BCBCBC;'>15</span> 0002                 0.490 0005                3.95           18.3    10
-#&gt; <span style='color: #BCBCBC;'>16</span> 0002                 0.490 0006                2.94           18.2    10
-#&gt; <span style='color: #BCBCBC;'>17</span> 0002                 0.490 0007                4.29           21      10
-#&gt; <span style='color: #BCBCBC;'>18</span> 0002                 0.490 0008                2.74           18.8    10
-#&gt; <span style='color: #BCBCBC;'>19</span> 0002                 0.490 0009                5.14           22.2    10
-#&gt; <span style='color: #BCBCBC;'>20</span> 0002                 0.490 0010                4.58           19.6    10</div><div class='input'>
+#&gt; <span style='color: #BCBCBC;'> 1</span> 0001                 0.373 0001                3.79           19.2    10
+#&gt; <span style='color: #BCBCBC;'> 2</span> 0001                 0.373 0002                3.07           19.9    10
+#&gt; <span style='color: #BCBCBC;'> 3</span> 0001                 0.373 0003                1.91           17.9    10
+#&gt; <span style='color: #BCBCBC;'> 4</span> 0001                 0.373 0004                4.88           20      10
+#&gt; <span style='color: #BCBCBC;'> 5</span> 0001                 0.373 0005                3.43           19      10
+#&gt; <span style='color: #BCBCBC;'> 6</span> 0001                 0.373 0006                3.77           21.3    10
+#&gt; <span style='color: #BCBCBC;'> 7</span> 0001                 0.373 0007                3.45           18.9    10
+#&gt; <span style='color: #BCBCBC;'> 8</span> 0001                 0.373 0008                2.81           17.1    10
+#&gt; <span style='color: #BCBCBC;'> 9</span> 0001                 0.373 0009                5.27           17.4    10
+#&gt; <span style='color: #BCBCBC;'>10</span> 0001                 0.373 0010                3.77           19.3    10
+#&gt; <span style='color: #BCBCBC;'>11</span> 0002                 0.507 0001                3.57           18.5    10
+#&gt; <span style='color: #BCBCBC;'>12</span> 0002                 0.507 0002                5.10           19.6    10
+#&gt; <span style='color: #BCBCBC;'>13</span> 0002                 0.507 0003                4.44           19.8    10
+#&gt; <span style='color: #BCBCBC;'>14</span> 0002                 0.507 0004                3.38           19.1    10
+#&gt; <span style='color: #BCBCBC;'>15</span> 0002                 0.507 0005                2.72           21.4    10
+#&gt; <span style='color: #BCBCBC;'>16</span> 0002                 0.507 0006                2.46           19.4    10
+#&gt; <span style='color: #BCBCBC;'>17</span> 0002                 0.507 0007                5.29           19.3    10
+#&gt; <span style='color: #BCBCBC;'>18</span> 0002                 0.507 0008                4.17           19.5    10
+#&gt; <span style='color: #BCBCBC;'>19</span> 0002                 0.507 0009                3.68           18.2    10
+#&gt; <span style='color: #BCBCBC;'>20</span> 0002                 0.507 0010                2.12           20.5    10</div><div class='input'>
 <span class='va'>df_portf</span> <span class='op'>&lt;-</span> <span class='fu'><a href='sim_test_data_portfolio.html'>sim_test_data_portfolio</a></span><span class='op'>(</span><span class='va'>df_config</span><span class='op'>)</span>
 
 <span class='va'>df_portf</span>
-</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 3,700 × 8</span>
+</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 3,896 × 8</span>
 #&gt;    study_id ae_per_visit_mean site_number max_visit_sd max_visit_mean patnum
 #&gt;    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>                <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>              <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>          <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span> 
-#&gt; <span style='color: #BCBCBC;'> 1</span> 0001                 0.393 0001                2.36           20.3 0001  
-#&gt; <span style='color: #BCBCBC;'> 2</span> 0001                 0.393 0001                2.36           20.3 0001  
-#&gt; <span style='color: #BCBCBC;'> 3</span> 0001                 0.393 0001                2.36           20.3 0001  
-#&gt; <span style='color: #BCBCBC;'> 4</span> 0001                 0.393 0001                2.36           20.3 0001  
-#&gt; <span style='color: #BCBCBC;'> 5</span> 0001                 0.393 0001                2.36           20.3 0001  
-#&gt; <span style='color: #BCBCBC;'> 6</span> 0001                 0.393 0001                2.36           20.3 0001  
-#&gt; <span style='color: #BCBCBC;'> 7</span> 0001                 0.393 0001                2.36           20.3 0001  
-#&gt; <span style='color: #BCBCBC;'> 8</span> 0001                 0.393 0001                2.36           20.3 0001  
-#&gt; <span style='color: #BCBCBC;'> 9</span> 0001                 0.393 0001                2.36           20.3 0001  
-#&gt; <span style='color: #BCBCBC;'>10</span> 0001                 0.393 0001                2.36           20.3 0001  
-#&gt; <span style='color: #949494;'># … with 3,690 more rows, and 2 more variables: visit &lt;int&gt;, n_ae &lt;int&gt;</span></div><div class='input'>
+#&gt; <span style='color: #BCBCBC;'> 1</span> 0001                 0.373 0001                3.79           19.2 0001  
+#&gt; <span style='color: #BCBCBC;'> 2</span> 0001                 0.373 0001                3.79           19.2 0001  
+#&gt; <span style='color: #BCBCBC;'> 3</span> 0001                 0.373 0001                3.79           19.2 0001  
+#&gt; <span style='color: #BCBCBC;'> 4</span> 0001                 0.373 0001                3.79           19.2 0001  
+#&gt; <span style='color: #BCBCBC;'> 5</span> 0001                 0.373 0001                3.79           19.2 0001  
+#&gt; <span style='color: #BCBCBC;'> 6</span> 0001                 0.373 0001                3.79           19.2 0001  
+#&gt; <span style='color: #BCBCBC;'> 7</span> 0001                 0.373 0001                3.79           19.2 0001  
+#&gt; <span style='color: #BCBCBC;'> 8</span> 0001                 0.373 0001                3.79           19.2 0001  
+#&gt; <span style='color: #BCBCBC;'> 9</span> 0001                 0.373 0001                3.79           19.2 0001  
+#&gt; <span style='color: #BCBCBC;'>10</span> 0001                 0.373 0001                3.79           19.2 0001  
+#&gt; <span style='color: #949494;'># … with 3,886 more rows, and 2 more variables: visit &lt;int&gt;, n_ae &lt;int&gt;</span></div><div class='input'>
 <span class='va'>df_scen</span> <span class='op'>&lt;-</span> <span class='fu'><a href='sim_ur_scenarios.html'>sim_ur_scenarios</a></span><span class='op'>(</span><span class='va'>df_portf</span>,
                             extra_ur_sites <span class='op'>=</span> <span class='fl'>2</span>,
                             ur_rate <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0.5</span>, <span class='fl'>1</span><span class='op'>)</span><span class='op'>)</span>
@@ -274,15 +277,15 @@ statistic, Default: 'prob_low_prob_ur'</p></td>
 </div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 140 × 14</span>
 #&gt;    study_id site_number n_pat n_pat_with_med75 visit_med75 mean_ae_site_med75
 #&gt;    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>       <span style='color: #949494; font-style: italic;'>&lt;int&gt;</span>            <span style='color: #949494; font-style: italic;'>&lt;int&gt;</span>       <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>              <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>
-#&gt; <span style='color: #BCBCBC;'> 1</span> 0001     0001           10               10          16               7.1 
-#&gt; <span style='color: #BCBCBC;'> 2</span> 0001     0001           10               10          16               3.55
-#&gt; <span style='color: #BCBCBC;'> 3</span> 0001     0001           10               10          16               0   
-#&gt; <span style='color: #BCBCBC;'> 4</span> 0001     0001           10               10          16               3.55
-#&gt; <span style='color: #BCBCBC;'> 5</span> 0001     0001           10               10          16               0   
-#&gt; <span style='color: #BCBCBC;'> 6</span> 0001     0001           10               10          16               3.55
-#&gt; <span style='color: #BCBCBC;'> 7</span> 0001     0001           10               10          16               0   
-#&gt; <span style='color: #BCBCBC;'> 8</span> 0001     0002           10               10          16               5.1 
-#&gt; <span style='color: #BCBCBC;'> 9</span> 0001     0002           10               10          16               2.55
+#&gt; <span style='color: #BCBCBC;'> 1</span> 0001     0001           10               10          15               5.1 
+#&gt; <span style='color: #BCBCBC;'> 2</span> 0001     0001           10               10          15               2.55
+#&gt; <span style='color: #BCBCBC;'> 3</span> 0001     0001           10               10          15               0   
+#&gt; <span style='color: #BCBCBC;'> 4</span> 0001     0001           10               10          15               2.55
+#&gt; <span style='color: #BCBCBC;'> 5</span> 0001     0001           10               10          15               0   
+#&gt; <span style='color: #BCBCBC;'> 6</span> 0001     0001           10               10          15               2.55
+#&gt; <span style='color: #BCBCBC;'> 7</span> 0001     0001           10               10          15               0   
+#&gt; <span style='color: #BCBCBC;'> 8</span> 0001     0002           10               10          16               6.5 
+#&gt; <span style='color: #BCBCBC;'> 9</span> 0001     0002           10               10          16               3.25
 #&gt; <span style='color: #BCBCBC;'>10</span> 0001     0002           10               10          16               0   
 #&gt; <span style='color: #949494;'># … with 130 more rows, and 8 more variables: mean_ae_study_med75 &lt;dbl&gt;,</span>
 #&gt; <span style='color: #949494;'>#   n_pat_with_med75_study &lt;int&gt;, extra_ur_sites &lt;dbl&gt;, frac_pat_with_ur &lt;dbl&gt;,</span>
@@ -293,16 +296,16 @@ statistic, Default: 'prob_low_prob_ur'</p></td>
 </div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 27 × 5</span>
 #&gt;      fpr thresh extra_ur_sites ur_rate   tpr
 #&gt;    <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>  <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>          <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>
-#&gt; <span style='color: #BCBCBC;'> 1</span> 0.001  0.942              0     0    0.05
-#&gt; <span style='color: #BCBCBC;'> 2</span> 0.001  0.942              1     0    0.05
-#&gt; <span style='color: #BCBCBC;'> 3</span> 0.001  0.942              2     0    0.05
-#&gt; <span style='color: #BCBCBC;'> 4</span> 0.001  0.942              0     0.5  0.95
-#&gt; <span style='color: #BCBCBC;'> 5</span> 0.001  0.942              1     0.5  0.95
-#&gt; <span style='color: #BCBCBC;'> 6</span> 0.001  0.942              2     0.5  0.9 
-#&gt; <span style='color: #BCBCBC;'> 7</span> 0.001  0.942              0     1    1   
-#&gt; <span style='color: #BCBCBC;'> 8</span> 0.001  0.942              1     1    1   
-#&gt; <span style='color: #BCBCBC;'> 9</span> 0.001  0.942              2     1    1   
-#&gt; <span style='color: #BCBCBC;'>10</span> 0.01   0.932              0     0    0.05
+#&gt; <span style='color: #BCBCBC;'> 1</span> 0.001  0.983              0     0    0.05
+#&gt; <span style='color: #BCBCBC;'> 2</span> 0.001  0.983              1     0    0.05
+#&gt; <span style='color: #BCBCBC;'> 3</span> 0.001  0.983              2     0    0.05
+#&gt; <span style='color: #BCBCBC;'> 4</span> 0.001  0.983              0     0.5  0.95
+#&gt; <span style='color: #BCBCBC;'> 5</span> 0.001  0.983              1     0.5  0.95
+#&gt; <span style='color: #BCBCBC;'> 6</span> 0.001  0.983              2     0.5  0.9 
+#&gt; <span style='color: #BCBCBC;'> 7</span> 0.001  0.983              0     1    1   
+#&gt; <span style='color: #BCBCBC;'> 8</span> 0.001  0.983              1     1    1   
+#&gt; <span style='color: #BCBCBC;'> 9</span> 0.001  0.983              2     1    1   
+#&gt; <span style='color: #BCBCBC;'>10</span> 0.01   0.963              0     0    0.05
 #&gt; <span style='color: #949494;'># … with 17 more rows</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

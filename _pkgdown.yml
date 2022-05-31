@@ -29,14 +29,19 @@ articles:
   navbar: ~
   contents:
   - intro
+  - sas_files
+  - portfolio_perf
+  - visit_med75
   - usability_limits
   - check_poisson
-  - sas_files
-  - visit_med75
   - visits_or_days
-  - portfolio_perf
 
 reference:
+- title: S3 Interface
+  desc: ~
+  contents:
+  - simaerep
+  - plot.simaerep
 - title: Main Functions
   desc: ~
   contents:
@@ -76,6 +81,9 @@ reference:
   - purrr_bar
   - with_progress_cnd
   - sim_scenario
+  - orivisit
+  - is_simaerep
+  - is_orivisit
 - title: Deprecated
   contents:
   - eval_sites_deprecated

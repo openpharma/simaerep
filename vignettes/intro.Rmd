@@ -3,7 +3,7 @@ title: "Introduction"
 output:
   html_document:
     toc: true
-    toc_depth: 3
+    toc_depth: 4
     toc_float: true
     number_sections: true
     code_folding: show
@@ -18,9 +18,9 @@ knitr::opts_chunk$set(echo = TRUE, cache = FALSE)
 
 # Load
 ```{r}
-suppressPackageStartupMessages( library(tidyverse) )
-suppressPackageStartupMessages( library(knitr) )
-suppressPackageStartupMessages( library(simaerep) )
+suppressPackageStartupMessages(library(tidyverse))
+suppressPackageStartupMessages(library(knitr))
+suppressPackageStartupMessages(library(simaerep))
 ```
 
 # Introduction
@@ -47,7 +47,6 @@ In a nutshell we will perform the following steps.
 5) Calculate probability of obtaining mean cumulative AE count or lower as obtained in 1) based on results of 4).
 6) Repeat 1-5) for all sites in trial.
 7) Adjust probabilities using the [Benjamin Hochberg Procedure](https://www.statisticshowto.com/benjamini-hochberg-procedure/) in order to correct alpha error.
-
 
 
 ## Sample Data
@@ -87,19 +86,33 @@ df_visit <- sim_test_data_study(
   ae_per_visit_mean = 0.5
 )
 
+df_visit$study_id <- "A"
+
 df_visit %>%
   head(10) %>%
-  kable()
+  knitr::kable()
 
 df_visit %>%
   select(site_number, is_ur) %>%
   distinct() %>%
-  kable()
+  knitr::kable()
 ```
 
 In our sample data 2 sites (S0001 and S0002) are under-reporting AEs
 
-## Specifying the Evaluation Point visit_med75
+## Algorithm Execution
+
+### S3 interface
+
+We will describe the internal details of the algorithm next. However, it is recommended to use the S3 interface, which manages the execution of the internal functions and stores the intermediate results.
+
+```{r}
+aerep <- simaerep(df_visit)
+aerep
+```
+
+
+### Specifying the Evaluation Point visit_med75
 
 In an ongoing trial all patients will have a different number of consecutive visits. To find a cut-off visit to normalize the data we specify a single evaluation point for a given site based on the number of visits of the patient population. 
 
@@ -109,7 +122,6 @@ For this we use `site_aggr` to aggregate the simulated visit level data to site 
 
 ```{r warning= FALSE}
 
-df_visit$study_id <- "A"
 df_site <- site_aggr(df_visit, method = "med75_adj", min_pat_pool = 0.2)
 
 df_site %>%
@@ -120,9 +132,9 @@ plot_visit_med75(df_visit, df_site, study_id_str = "A", n_site = 6)
 
 Using the adjusted visit_med75 will drop a few patients (dashed lines) but will by definition at least include 50% of all patients favoring patients that have higher number of visits. By looking at the mean ae development (purple line) we can already easily spot the two under-reporting sites. The same goes for looking at the `mean_ae_site_med75` column in `df_site`. Next we will use bootstrap simulations to determine the probability for obtaining each mean AE value or lower at visit_med75 by chance.
 
-## Bootstrap Simulations
+### Bootstrap Simulations
 
-### Advantage Over Classic Statistical Tests
+#### Advantage Over Classic Statistical Tests
 
 We could use a classical parametric test and calculate the probability with which we can reject the NULL hypothesis for the AE counts that we observe at the visit_med75.
 
@@ -142,14 +154,14 @@ The true distribution of the AE counts will vary from study to study with the de
 With the non-parametric approach that we propose we do not need to worry about these statistical assumptions. Since the distribution of the AE count from the simulated patient pool we draw from will be very close to the unknown true distribution of the underlying AE generating process.
 
 
-### Disadvantages Over Classic Statistical Tests
+#### Disadvantages Over Classic Statistical Tests
 
 - **Upper Limit for Uncompliant Sites**. We simulate an underlying compliant patient population using the data we are given. If the fraction of uncompliant examples becomes too high, detection rates will decrease. We find that detection rates start decreasing with 30-50% of under-reporting sites and are not usable anymore if a majority > 50% of all sites are under-reporting [see article on usability limits](https://openpharma.github.io/simaerep/articles/usability_limits.html).
 - **Lower Probability Limit** The number of repeats determines the smallest probability greater than zero, for example a for r=1000 the smallest value greater than zero is 0.001
 - **Computationally Expensive**
 
 
-### Methodology
+#### Methodology
 
 *How likely is it to get a mean AE value that is equal or lower to what we observe at site C with the same number of patients?*
 
@@ -164,7 +176,7 @@ To illustrate the effect of under-reporting we repeat the same process after hav
 plot_sim_examples(size_dot = 4, size_raster_label = 10)
 ```
 
-### Application
+#### Application
 
 We can run the above described simulation and as a benchmark also perform a poisson test.
 
@@ -197,5 +209,15 @@ df_eval %>%
 plot_study(df_visit, df_site, df_eval, study = "A")
 ```
 
+# Applying {simaerep}
 
+Instead of executing all previous steps manually we can also use the S3 interface which manages all intermediate results and provides more convenient plotting using the `plot()` generic function.
 
+```{r}
+aerep <- simaerep(df_visit)
+aerep
+str(aerep)
+plot(aerep)
+```
+
+For modifying the default parameters please check out the `simaerep()` documentation.

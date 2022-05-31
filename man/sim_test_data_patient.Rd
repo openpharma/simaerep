@@ -2,7 +2,7 @@
 % Please edit documentation in R/simulate_test_data.R
 \name{sim_test_data_patient}
 \alias{sim_test_data_patient}
-\title{Simulate patient AE reporting test data.}
+\title{simulate patient ae reporting test data}
 \usage{
 sim_test_data_patient(
   .f_sample_max_visit = function() rnorm(1, mean = 20, sd = 4),
@@ -20,7 +20,10 @@ Default: function(x) rpois(x, 0.5)}
 vector containing cumulative aes
 }
 \description{
-Internal function used by \code{\link[=sim_test_data_study]{sim_test_data_study()}}
+helper function for \code{\link[=sim_test_data_study]{sim_test_data_study()}}
+}
+\details{
+""
 }
 \examples{
 replicate(5, sim_test_data_patient())

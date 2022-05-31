@@ -350,7 +350,7 @@ df_sim_sites <- sim_sites(df_site, df_visit)
 df_eval <- eval_sites(df_sim_sites)
 ```
 
-We calculate th confusion matrices.
+We calculate the confusion matrices.
 
 ```{r perf_st_mat}
 df_perf <- df_visit %>%

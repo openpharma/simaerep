@@ -55,7 +55,9 @@ Koneswarakantha, B., Barmaz, Y., Ménard, T. et al. Follow-up on the Use of Adva
 
 ```{r fig.width=10}
 
-suppressPackageStartupMessages(library("simaerep"))
+suppressPackageStartupMessages(library(simaerep))
+suppressPackageStartupMessages(library(tidyverse))
+suppressPackageStartupMessages(library(knitr))
 
 set.seed(1)
 
@@ -69,13 +71,14 @@ df_visit <- sim_test_data_study(
 
 df_visit$study_id <- "A"
 
-df_site <- site_aggr(df_visit)
+df_visit %>%
+  select(study_id, site_number, patnum, visit, n_ae) %>%
+  head(25) %>%
+  knitr::kable()
 
-df_sim_sites <- sim_sites(df_site, df_visit, r = 1000)
+aerep <- simaerep(df_visit)
 
-df_eval <- eval_sites(df_sim_sites)
-
-plot_study(df_visit, df_site, df_eval, study = "A") 
+plot(aerep, study = "A") 
 ```
 
 *Left panel shows mean AE reporting per site (lightblue and darkblue lines) against mean AE reporting of the entire study (golden line). Single sites are plotted in descending order by AE under-reporting probability on the right panel in which grey lines denote cumulative AE count of single patients. Grey dots in the left panel plot indicate sites that were picked for single plotting. AE under-reporting probability of dark blue lines crossed threshold of 95%. Numbers in the upper left corner indicate the ratio of patients that have been used for the analysis against the total number of patients. Patients that have not been on the study long enough to reach the evaluation point (visit_med75, see introduction) will be ignored.*

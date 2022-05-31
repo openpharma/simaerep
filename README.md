@@ -49,14 +49,16 @@ Saf (2020). <https://doi.org/10.1007/s40264-020-01011-5>
 -   [SAS
     Files](https://openpharma.github.io/simaerep/articles/sas_files.html)
 -   [Adjusted Evaluation Point
-    visit\_med75](https://openpharma.github.io/simaerep/articles/visit_med75.html)
+    visit_med75](https://openpharma.github.io/simaerep/articles/visit_med75.html)
 -   [Aggregate AEs by Days or
     Visit?](https://openpharma.github.io/simaerep/articles/visits_or_days.html)
 
 # Application
 
 ``` r
-suppressPackageStartupMessages(library("simaerep"))
+suppressPackageStartupMessages(library(simaerep))
+suppressPackageStartupMessages(library(tidyverse))
+suppressPackageStartupMessages(library(knitr))
 
 set.seed(1)
 
@@ -70,13 +72,44 @@ df_visit <- sim_test_data_study(
 
 df_visit$study_id <- "A"
 
-df_site <- site_aggr(df_visit)
+df_visit %>%
+  select(study_id, site_number, patnum, visit, n_ae) %>%
+  head(25) %>%
+  knitr::kable()
+```
 
-df_sim_sites <- sim_sites(df_site, df_visit, r = 1000)
+| study_id | site_number | patnum  | visit | n_ae |
+|:---------|:------------|:--------|------:|-----:|
+| A        | S0001       | P000001 |     1 |    0 |
+| A        | S0001       | P000001 |     2 |    1 |
+| A        | S0001       | P000001 |     3 |    1 |
+| A        | S0001       | P000001 |     4 |    2 |
+| A        | S0001       | P000001 |     5 |    3 |
+| A        | S0001       | P000001 |     6 |    3 |
+| A        | S0001       | P000001 |     7 |    3 |
+| A        | S0001       | P000001 |     8 |    3 |
+| A        | S0001       | P000001 |     9 |    3 |
+| A        | S0001       | P000001 |    10 |    3 |
+| A        | S0001       | P000001 |    11 |    3 |
+| A        | S0001       | P000001 |    12 |    3 |
+| A        | S0001       | P000001 |    13 |    4 |
+| A        | S0001       | P000001 |    14 |    4 |
+| A        | S0001       | P000001 |    15 |    4 |
+| A        | S0001       | P000001 |    16 |    6 |
+| A        | S0001       | P000001 |    17 |    6 |
+| A        | S0001       | P000002 |     1 |    0 |
+| A        | S0001       | P000002 |     2 |    0 |
+| A        | S0001       | P000002 |     3 |    0 |
+| A        | S0001       | P000002 |     4 |    0 |
+| A        | S0001       | P000002 |     5 |    0 |
+| A        | S0001       | P000002 |     6 |    0 |
+| A        | S0001       | P000002 |     7 |    0 |
+| A        | S0001       | P000002 |     8 |    1 |
 
-df_eval <- eval_sites(df_sim_sites)
+``` r
+aerep <- simaerep(df_visit)
 
-plot_study(df_visit, df_site, df_eval, study = "A") 
+plot(aerep, study = "A") 
 ```
 
 <img src="man/figures/README-unnamed-chunk-2-1.png" width="100%" />
@@ -91,4 +124,4 @@ probability of dark blue lines crossed threshold of 95%. Numbers in the
 upper left corner indicate the ratio of patients that have been used for
 the analysis against the total number of patients. Patients that have
 not been on the study long enough to reach the evaluation point
-(visit\_med75, see introduction) will be ignored.*
+(visit_med75, see introduction) will be ignored.*

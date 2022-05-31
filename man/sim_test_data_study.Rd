@@ -2,7 +2,7 @@
 % Please edit documentation in R/simulate_test_data.R
 \name{sim_test_data_study}
 \alias{sim_test_data_study}
-\title{Simulate study test data}
+\title{simulate study test data}
 \usage{
 sim_test_data_study(
   n_pat = 1000,
