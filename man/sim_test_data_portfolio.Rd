@@ -2,7 +2,7 @@
 % Please edit documentation in R/simulate_test_data.R
 \name{sim_test_data_portfolio}
 \alias{sim_test_data_portfolio}
-\title{Simulate Portfolio Test Data.}
+\title{Simulate Portfolio Test Data}
 \usage{
 sim_test_data_portfolio(df_config, parallel = FALSE, progress = TRUE)
 }

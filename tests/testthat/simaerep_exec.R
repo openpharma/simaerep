@@ -1,7 +1,12 @@
 
 set.seed(1)
-df_visit1 <- sim_test_data_study(n_pat = 100, n_sites = 5,
-                                 frac_site_with_ur = 0.4, ur_rate = 0.6)
+
+df_visit1 <- sim_test_data_study(
+  n_pat = 100,
+  n_sites = 5,
+  frac_site_with_ur = 0.4,
+  ur_rate = 0.6
+)
 
 df_visit1$study_id <- "A"
 

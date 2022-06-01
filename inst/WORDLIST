@@ -12,7 +12,6 @@ Hoffmann
 Lifecycle
 Modelling
 Ménard
-PARAM
 Saf
 TP
 Uncompliant
@@ -51,8 +50,12 @@ lightblue
 linter
 lintr
 multisession
+normalisation
+normalise
+normalising
 openpharma
 optionable
+orivisit
 patnum
 pkgdown
 poisson

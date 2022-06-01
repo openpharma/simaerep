@@ -2,7 +2,7 @@
 % Please edit documentation in R/simulate_test_data.R
 \name{sim_ur_scenarios}
 \alias{sim_ur_scenarios}
-\title{Simulate Under-Reporting Scenarios.}
+\title{Simulate Under-Reporting Scenarios}
 \usage{
 sim_ur_scenarios(
   df_portf,

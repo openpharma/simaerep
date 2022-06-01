@@ -131,7 +131,7 @@ stopifnot(n_aes == n_aes_original)
 
 After renaming some of the columns we can pass the aggregated data from the SAS files to `simaerep`
 
-```{r}
+```{r fig.width = 10}
 df_visit <- df_aevs_aggr %>%
   rename(
     study_id = "STUDYID",
@@ -144,26 +144,9 @@ df_visit <- df_aevs_aggr %>%
 
 df_visit
 
-df_site <- df_visit %>%
-  simaerep::site_aggr()
+aerep <- simaerep(df_visit)
 
-df_site
-```
-
-```{r}
-df_sim_sites <- simaerep::sim_sites(df_site, df_visit, r = 1000, poisson_test = FALSE)
-
-df_sim_sites
-```
-
-```{r}
-df_eval <- simaerep::eval_sites(df_sim_sites)
-
-df_eval
-```
-
-```{r fig.width = 10}
-simaerep::plot_study(df_visit, df_site, df_eval, study = unique(df_visit$study_id))
+plot(aerep)
 ```
 
 *Left panel shows mean AE reporting per site (lightblue and darkblue lines) against mean AE reporting of the entire study (golden line). Single sites are plotted in descending order by AE under-reporting probability on the right panel in which grey lines denote cumulative AE count of single patients. Grey dots in the left panel plot indicate sites that were picked for single plotting. AE under-reporting probability of dark blue lines crossed threshold of 95%. Numbers in the upper left corner indicate the ratio of patients that have been used for the analysis against the total number of patients. Patients that have not been on the study long enough to reach the evaluation point (visit_med75, see introduction) will be ignored.*

@@ -2,7 +2,7 @@
 % Please edit documentation in R/simulate_test_data.R
 \name{get_config}
 \alias{get_config}
-\title{Get Portfolio Configuration.}
+\title{Get Portfolio Configuration}
 \usage{
 get_config(
   df_site,

@@ -145,7 +145,7 @@ plot_dots <- function(df,
 #' @param title logical, include title, Default: T
 #' @param legend logical, include legend, Default: T
 #' @return ggplot
-#' @details uses [plot_dots()][plot_dots()] and adds 2 simulation panels, uses made-up 
+#' @details uses [plot_dots()][plot_dots()] and adds 2 simulation panels, uses made-up
 #' site config with three sites A,B,C simulating site C
 #' @examples
 #' plot_sim_example(size_dots = 5)
@@ -805,7 +805,8 @@ plot_visit_med75 <- function(df_visit,
                              min_pat_pool = 0.2,
                              verbose = TRUE) {
 
-  df_visit <- check_df_visit(df_visit)
+  df_visit <- check_df_visit(df_visit) %>%
+    filter(.data$study_id == study_id_str)
 
   # to suppress warning about unused argument
   df_site_deprecated <- df_site # nolint
@@ -837,7 +838,6 @@ plot_visit_med75 <- function(df_visit,
         "site_number"
       )
     ) %>%
-    filter(.data$study_id == study_id_str) %>%
     mutate(rnk_sites = rank(desc(.data$n_pat), ties.method = "first")) %>%
     filter(.data$rnk_sites <= n_sites) %>%
     left_join(df_visit, by = c("study_id", "site_number")) %>%
