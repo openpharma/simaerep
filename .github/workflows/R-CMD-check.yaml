@@ -25,5 +25,5 @@ jobs:
       - name: Check
         run: |
           rcmdcheck::rcmdcheck(args = "--no-manual", error_on = "note")
-          simaerep::lint_package()
+          simaerep:::lint_package()
         shell: Rscript {0}

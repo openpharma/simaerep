@@ -1,7 +1,7 @@
-# simaerep 1.0.0
+# simaerep 0.4.0
 - S3 interface #17
 - better performance specification #26
-- more meaningful unit test names # 24
+- more meaningful unit test names #24 #30
 
 # simaerep 0.3.3
 - better data checks and error messages #19, #20, # 21

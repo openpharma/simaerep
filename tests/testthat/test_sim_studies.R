@@ -144,3 +144,23 @@ test_that("sim_studies() - sampling must not repeat itself", {
 
   expect_true(max(df_check$rwn) == 1)
 })
+
+test_that("get_ecd_values() - ecd values between 0 - 1", {
+
+
+  df_sim_studies <- sim_studies(
+    df_site = df_site,
+    df_visit = df_visit,
+    r = 3,
+    parallel = FALSE,
+    poisson_test = TRUE,
+    prob_lower = TRUE
+  )
+
+  df_prob_low <- get_ecd_values(df_sim_studies, df_sim_sites, "prob_low")
+  df_pval <- get_ecd_values(df_sim_studies, df_sim_sites, "pval")
+
+  expect_true(all(between(df_prob_low$prob_low_ecd, 0, 1)))
+  expect_true(all(between(df_pval$pval_ecd, 0, 1)))
+
+})

@@ -27,8 +27,10 @@ dataframe with the following columns:
 }
 \description{
 Test function, test applicability of poisson test, by calculating
-a the bootstrapped probability of obtaining a specific p-value or lower, use
+\itemize{
+\item the bootstrapped probability of obtaining a specific p-value or lower, use
 in combination with \code{\link[=sim_studies]{sim_studies()}}.
+}
 }
 \details{
 trains a ecdf function for each studies based on the results

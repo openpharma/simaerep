@@ -7,10 +7,8 @@
 #' @param path character
 #' @inheritParams lintr::lint_package
 #' @return " "
-#' @export
 #' @seealso \code{\link[lintr]{lint_package}}
 #' @rdname lint_package
-#' @export
 lint_package <- function(path = ".", ...) {
 
   lint_results <- lintr::lint_package(path = path,
