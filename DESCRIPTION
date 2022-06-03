@@ -20,7 +20,6 @@ Depends:
     ggplot2
 Imports:
     dplyr (>= 1.0.0),
-    lintr,
     tidyr (>= 1.1.0),
     magrittr,
     purrr,
@@ -39,7 +38,8 @@ Suggests:
     pkgdown,
     spelling,
     haven,
-    vdiffr
+    vdiffr,
+    lintr
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.2
 Language: en-US
