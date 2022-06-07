@@ -1,9 +1,9 @@
+# test data is automatically loaded, check ./data-raw/generate_test_data.R
 
-source("simaerep_exec.R")
 
 test_that("pat_pool() - check column names and datatypes of returnes dataframe", {
 
-  df_pat_pool <- pat_pool(df_visit, df_site)
+  df_pat_pool <- pat_pool(df_visit_test, df_site_test)
 
   expect_equal(names(df_pat_pool), c("study_id", "pat_pool"))
 
@@ -77,21 +77,21 @@ test_that("prob_lower_site_ae_vs_study_ae() - no study AEs, single site scenario
 
 test_that("sim_sites() - returned dataframe must not contain NA", {
 
-  expect_true(all(complete.cases(df_sim_sites)))
+  expect_true(all(complete.cases(df_sim_sites_test)))
 
 })
 
 test_that("sim_sites() - prob_low and pval must be between 0 - 1", {
 
-  expect_true(all(between(df_sim_sites$prob_low, 0, 1)))
-  expect_true(all(between(df_sim_sites$pval, 0, 1)))
+  expect_true(all(between(df_sim_sites_test$prob_low, 0, 1)))
+  expect_true(all(between(df_sim_sites_test$pval, 0, 1)))
 
 })
 
 test_that("sim_sites() - executing only poisson tests must be faster than using bootstrap simulations", {
 
-  t_prob_low <- system.time(sim_sites(df_site, df_visit, poisson_test = FALSE, prob_lower = TRUE))
-  t_ptest <- system.time(sim_sites(df_site, df_visit, prob_lower = FALSE, poisson_test = TRUE))
+  t_prob_low <- system.time(sim_sites(df_site_test, df_visit_test, poisson_test = FALSE, prob_lower = TRUE))
+  t_ptest <- system.time(sim_sites(df_site_test, df_visit_test, prob_lower = FALSE, poisson_test = TRUE))
 
   expect_true(t_prob_low["elapsed"] > t_ptest["elapsed"])
 
@@ -99,7 +99,7 @@ test_that("sim_sites() - executing only poisson tests must be faster than using 
 
 test_that("prep_for_sim() - ae vector for site must match number of patients at site", {
 
-  df_prep <- prep_for_sim(df_site, df_visit)
+  df_prep <- prep_for_sim(df_site_test, df_visit_test)
 
   df_prep %>%
     mutate(check = map2(
