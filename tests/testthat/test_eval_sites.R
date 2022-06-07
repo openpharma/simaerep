@@ -1,9 +1,8 @@
-
-source("simaerep_exec.R")
+# test data is automatically loaded, check ./data-raw/generate_test_data.R
 
 
 test_that("eval_sites() must not return a grouped dataframe", {
-  expect_false(is_grouped_df(df_eval))
+  expect_false(is_grouped_df(df_eval_test))
 })
 
 test_that(
@@ -16,7 +15,7 @@ test_that(
            prob_low = NA)
 
 
-  df_sim_sites <- df_sim_sites %>%
+  df_sim_sites <- df_sim_sites_test %>%
     bind_rows(df_na)
 
   # a new line is created for each site with NA values
@@ -49,7 +48,7 @@ test_that("eval_sites() - check column names of returned data frame", {
       "pval_prob_ur",
       "prob_low_adj",
       "prob_low_prob_ur"
-    ) %in% colnames(df_eval) %>%
+    ) %in% colnames(df_eval_test) %>%
       all()
   )
 })
@@ -63,7 +62,7 @@ test_that(
   ), {
 
   expect_warning({
-    df_eval <- eval_sites(df_sim_sites, method = NULL, r_sim_sites = 100)
+    df_eval <- eval_sites(df_sim_sites_test, method = NULL, r_sim_sites = 100)
   })
 
   expect_true(cor(df_eval$prob_low, df_eval$prob_low_p_vs_fp_ratio) < 0)

@@ -13,3 +13,4 @@
 ^.dockerignore$
 ^\.git
 ^cran-comments\.md$
+^data-raw$
