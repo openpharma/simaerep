@@ -52,58 +52,6 @@ test_that("check standard test data reproducibility", {
 
 })
 
-test_that("check validation test data reproducibility", {
-
-  set.seed(1)
-
-  study_025 <- sim_test_data_study(
-    n_pat = 200,
-    n_sites = 20,
-    frac_site_with_ur = 0.3,
-    ur_rate = 0.25
-  )
-
-  study_025$study_id <- "study_025"
-
-  study_050 <- sim_test_data_study(
-    n_pat = 200,
-    n_sites = 20,
-    frac_site_with_ur = 0.3,
-    ur_rate = 0.5
-  )
-
-  study_050$study_id <- "study_050"
-
-  study_075 <- sim_test_data_study(
-    n_pat = 200,
-    n_sites = 20,
-    frac_site_with_ur = 0.3,
-    ur_rate = 0.75
-  )
-
-  study_075$study_id <- "study_075"
-
-
-  study_100 <- sim_test_data_study(
-    n_pat = 200,
-    n_sites = 20,
-    frac_site_with_ur = 0.3,
-    ur_rate = 1
-  )
-
-  study_100$study_id <- "study_100"
-
-  df_visit_val_check <- bind_rows(
-    study_025,
-    study_050,
-    study_075,
-    study_100
-  )
-
-  expect_equal(df_visit_val, df_visit_val_check)
-
-})
-
 
 test_that("check portfolio performance test data reproducibility", {
 
