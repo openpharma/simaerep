@@ -32,6 +32,8 @@
 </script>
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -44,7 +46,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">simaerep</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.1</span>
       </span>
     </div>
 
@@ -63,7 +65,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -73,32 +75,29 @@
       <a href="../articles/intro.html">Introduction</a>
     </li>
     <li>
+      <a href="../articles/sas_files.html">SAS Files as a Data Source</a>
+    </li>
+    <li>
+      <a href="../articles/portfolio_perf.html">simaerep Portfolio Performance</a>
+    </li>
+    <li>
+      <a href="../articles/visit_med75.html">Adjusted Evaluation Point visit_med75</a>
+    </li>
+    <li>
       <a href="../articles/usability_limits.html">Address Usability Limits of Bootstrap Method</a>
     </li>
     <li>
       <a href="../articles/check_poisson.html">Check Poisson Test Applicability</a>
     </li>
     <li>
-      <a href="../articles/sas_files.html">SAS Files as a Data Source</a>
-    </li>
-    <li>
-      <a href="../articles/visit_med75.html">Adjusted Evaluation Point visit_med75</a>
-    </li>
-    <li>
       <a href="../articles/visits_or_days.html">Aggregate AEs by Days or Visit?</a>
     </li>
-    <li>
-      <a href="../articles/portfolio_perf.html">simaerep Portfolio Performance</a>
-    </li>
   </ul>
-</li>
-<li>
-  <a href="../news/index.html">Changelog</a>
 </li>
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/openpharma/simaerep/">
+  <a href="https://github.com/openpharma/simaerep/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -113,253 +112,275 @@
 
       
 
-      </header><script src="visits_or_days_files/header-attrs-2.6/header-attrs.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Aggregate AEs by Days or Visit?</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/openpharma/simaerep/blob/master/vignettes/visits_or_days.Rmd"><code>vignettes/visits_or_days.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/openpharma/simaerep/blob/HEAD/vignettes/visits_or_days.Rmd" class="external-link"><code>vignettes/visits_or_days.Rmd</code></a></small>
       <div class="hidden name"><code>visits_or_days.Rmd</code></div>
 
     </div>
 
     
     
-<div id="load" class="section level1">
-<h1 class="hasAnchor">
-<a href="#load" class="anchor"></a>Load</h1>
+<div class="section level2">
+<h2 id="load">Load<a class="anchor" aria-label="anchor" href="#load"></a>
+</h2>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/message.html">suppressPackageStartupMessages</a></span><span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://tidyverse.tidyverse.org">tidyverse</a></span><span class="op">)</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/message.html">suppressPackageStartupMessages</a></span><span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://yihui.org/knitr/">knitr</a></span><span class="op">)</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/message.html">suppressPackageStartupMessages</a></span><span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://openpharma.github.io/simaerep/">simaerep</a></span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressPackageStartupMessages</a></span><span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org" class="external-link">tidyverse</a></span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressPackageStartupMessages</a></span><span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://yihui.org/knitr/" class="external-link">knitr</a></span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressPackageStartupMessages</a></span><span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://openpharma.github.io/simaerep/">simaerep</a></span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
-<div id="introduction" class="section level1">
-<h1 class="hasAnchor">
-<a href="#introduction" class="anchor"></a>Introduction</h1>
-<p>We generally aggregate AEs by visit. Each patient follows the same visit schedule and a specified number of days passes between each consecutive visit. As visits are a scheduled contact point between the patient and physicians the day of the visit usually also the day when most AEs get reported. Alternatively we can also choose to use <code>simaerep</code> to a</p>
+<div class="section level2">
+<h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
+</h2>
+<p>We generally aggregate AEs by visit. Each patient follows the same
+visit schedule and a specified number of days passes between each
+consecutive visit. As visits are a scheduled contact point between the
+patient and physicians the day of the visit usually also the day when
+most AEs get reported. Alternatively we can also choose to use
+<code>simaerep</code> to a</p>
 </div>
-<div id="load-data" class="section level1">
-<h1 class="hasAnchor">
-<a href="#load-data" class="anchor"></a>Load Data</h1>
-<p>We load some a public clinical trial data set which only contains data of the control arm <a href="https://openpharma.github.io/simaerep/articles/sas_files.html">see SAS files as a Data Source Article</a></p>
+<div class="section level2">
+<h2 id="load-data">Load Data<a class="anchor" aria-label="anchor" href="#load-data"></a>
+</h2>
+<p>We load some a public clinical trial data set which only contains
+data of the control arm <a href="https://openpharma.github.io/simaerep/articles/sas_files.html">see
+SAS files as a Data Source Article</a></p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">df_ae</span> <span class="op">&lt;-</span> <span class="fu">haven</span><span class="fu">::</span><span class="fu"><a href="https://haven.tidyverse.org/reference/read_sas.html">read_sas</a></span><span class="op">(</span><span class="st">'adae.sas7bdat'</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu">select</span><span class="op">(</span><span class="va">STUDYID</span>, <span class="va">SUBJID</span>, <span class="va">SITEID</span>, <span class="va">AESTDY</span><span class="op">)</span> 
-
-<span class="va">df_vs</span> <span class="op">&lt;-</span> <span class="fu">haven</span><span class="fu">::</span><span class="fu"><a href="https://haven.tidyverse.org/reference/read_sas.html">read_sas</a></span><span class="op">(</span><span class="st">'advs.sas7bdat'</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu">select</span><span class="op">(</span><span class="va">STUDYID</span>, <span class="va">SUBJID</span>, <span class="va">SITEID</span>, <span class="va">ADY</span><span class="op">)</span> 
-
-<span class="va">df_ae</span> <span class="op">&lt;-</span> <span class="va">df_ae</span> <span class="op">%&gt;%</span>
-  <span class="fu">rename</span><span class="op">(</span>DY <span class="op">=</span> <span class="va">AESTDY</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu">mutate</span><span class="op">(</span>EVENT <span class="op">=</span> <span class="st">"AE"</span><span class="op">)</span>
-
-<span class="va">df_vs</span> <span class="op">&lt;-</span> <span class="va">df_vs</span> <span class="op">%&gt;%</span>
-  <span class="fu">rename</span><span class="op">(</span>DY <span class="op">=</span> <span class="va">ADY</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu">mutate</span><span class="op">(</span>EVENT <span class="op">=</span> <span class="st">"VS"</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="co"># we ignore visits that have no date</span>
-  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="op">!</span> <span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">DY</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="co"># we are not interested in same day visits</span>
-  <span class="fu">distinct</span><span class="op">(</span><span class="op">)</span>
-
-<span class="va">df_aevs</span> <span class="op">&lt;-</span> <span class="fu">bind_rows</span><span class="op">(</span><span class="va">df_ae</span>, <span class="va">df_vs</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="co"># NA's get sorted towards the end thus AEs with no date get sorted towards last visit</span>
-  <span class="fu">arrange</span><span class="op">(</span><span class="va">STUDYID</span>, <span class="va">SITEID</span>, <span class="va">SUBJID</span>, <span class="va">DY</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu">group_by</span><span class="op">(</span><span class="va">STUDYID</span>, <span class="va">SITEID</span>, <span class="va">SUBJID</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu">mutate</span><span class="op">(</span>AE_NO <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/cumsum.html">cumsum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">EVENT</span> <span class="op">==</span> <span class="st">"AE"</span>, <span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span>,
-         VS_NO <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/cumsum.html">cumsum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">EVENT</span> <span class="op">==</span> <span class="st">"VS"</span>, <span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="co"># we remove patients with 0 visits</span>
-  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span><span class="op">(</span><span class="va">VS_NO</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="co"># AE's before fist visit should register to visit 1 not zero</span>
-  <span class="fu">mutate</span><span class="op">(</span>VS_NO <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">VS_NO</span> <span class="op">==</span> <span class="fl">0</span>, <span class="fl">1</span>, <span class="va">VS_NO</span><span class="op">)</span><span class="op">)</span>
-
-
-<span class="va">df_aevs_aggr</span> <span class="op">&lt;-</span> <span class="va">df_aevs</span> <span class="op">%&gt;%</span>
-  <span class="fu">group_by</span><span class="op">(</span><span class="va">STUDYID</span>, <span class="va">SITEID</span>, <span class="va">SUBJID</span>, <span class="va">VS_NO</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu">summarise</span><span class="op">(</span>MIN_AE_NO <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">min</a></span><span class="op">(</span><span class="va">AE_NO</span><span class="op">)</span>,
-            MAX_AE_NO <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span><span class="op">(</span><span class="va">AE_NO</span><span class="op">)</span>,
-            .groups <span class="op">=</span> <span class="st">"drop"</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu">group_by</span><span class="op">(</span><span class="va">STUDYID</span>, <span class="va">SITEID</span>, <span class="va">SUBJID</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu">mutate</span><span class="op">(</span>MAX_VS_PAT <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span><span class="op">(</span><span class="va">VS_NO</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu">ungroup</span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="co"># assign AEs that occur after last visit to last AE</span>
-  <span class="fu">mutate</span><span class="op">(</span>
-    CUM_AE <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span>
-      <span class="va">VS_NO</span> <span class="op">==</span> <span class="va">MAX_VS_PAT</span>,
-      <span class="va">MAX_AE_NO</span>,
-      <span class="va">MIN_AE_NO</span><span class="op">)</span>
-    <span class="op">)</span>
-
-<span class="va">df_visit</span> <span class="op">&lt;-</span> <span class="va">df_aevs_aggr</span> <span class="op">%&gt;%</span>
-  <span class="fu">rename</span><span class="op">(</span>
-    study_id <span class="op">=</span> <span class="st">"STUDYID"</span>,
-    site_number <span class="op">=</span> <span class="st">"SITEID"</span>,
-    patnum <span class="op">=</span> <span class="st">"SUBJID"</span>,
-    n_ae <span class="op">=</span> <span class="st">"CUM_AE"</span>,
-    visit <span class="op">=</span> <span class="st">"VS_NO"</span>
-  <span class="op">)</span>  <span class="op">%&gt;%</span>
-  <span class="fu">select</span><span class="op">(</span><span class="va">study_id</span>, <span class="va">site_number</span>, <span class="va">patnum</span>, <span class="va">n_ae</span>, <span class="va">visit</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">df_ae</span> <span class="op">&lt;-</span> <span class="fu">haven</span><span class="fu">::</span><span class="fu"><a href="https://haven.tidyverse.org/reference/read_sas.html" class="external-link">read_sas</a></span><span class="op">(</span><span class="st">'adae.sas7bdat'</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">STUDYID</span>, <span class="va">SUBJID</span>, <span class="va">SITEID</span>, <span class="va">AESTDY</span><span class="op">)</span> </span>
+<span></span>
+<span><span class="va">df_vs</span> <span class="op">&lt;-</span> <span class="fu">haven</span><span class="fu">::</span><span class="fu"><a href="https://haven.tidyverse.org/reference/read_sas.html" class="external-link">read_sas</a></span><span class="op">(</span><span class="st">'advs.sas7bdat'</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">STUDYID</span>, <span class="va">SUBJID</span>, <span class="va">SITEID</span>, <span class="va">ADY</span><span class="op">)</span> </span>
+<span></span>
+<span><span class="va">df_ae</span> <span class="op">&lt;-</span> <span class="va">df_ae</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">rename</a></span><span class="op">(</span>DY <span class="op">=</span> <span class="va">AESTDY</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>EVENT <span class="op">=</span> <span class="st">"AE"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">df_vs</span> <span class="op">&lt;-</span> <span class="va">df_vs</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">rename</a></span><span class="op">(</span>DY <span class="op">=</span> <span class="va">ADY</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>EVENT <span class="op">=</span> <span class="st">"VS"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="co"># we ignore visits that have no date</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="op">!</span> <span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">DY</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="co"># we are not interested in same day visits</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/distinct.html" class="external-link">distinct</a></span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">df_aevs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind.html" class="external-link">bind_rows</a></span><span class="op">(</span><span class="va">df_ae</span>, <span class="va">df_vs</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="co"># NA's get sorted towards the end thus AEs with no date get sorted towards last visit</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="va">STUDYID</span>, <span class="va">SITEID</span>, <span class="va">SUBJID</span>, <span class="va">DY</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">STUDYID</span>, <span class="va">SITEID</span>, <span class="va">SUBJID</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>AE_NO <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/cumsum.html" class="external-link">cumsum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">EVENT</span> <span class="op">==</span> <span class="st">"AE"</span>, <span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>         VS_NO <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/cumsum.html" class="external-link">cumsum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">EVENT</span> <span class="op">==</span> <span class="st">"VS"</span>, <span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="co"># we remove patients with 0 visits</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">VS_NO</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="co"># AE's before fist visit should register to visit 1 not zero</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>VS_NO <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">VS_NO</span> <span class="op">==</span> <span class="fl">0</span>, <span class="fl">1</span>, <span class="va">VS_NO</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span></span>
+<span><span class="va">df_aevs_aggr</span> <span class="op">&lt;-</span> <span class="va">df_aevs</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">STUDYID</span>, <span class="va">SITEID</span>, <span class="va">SUBJID</span>, <span class="va">VS_NO</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span>MIN_AE_NO <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="va">AE_NO</span><span class="op">)</span>,</span>
+<span>            MAX_AE_NO <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">AE_NO</span><span class="op">)</span>,</span>
+<span>            .groups <span class="op">=</span> <span class="st">"drop"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">STUDYID</span>, <span class="va">SITEID</span>, <span class="va">SUBJID</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>MAX_VS_PAT <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">VS_NO</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">ungroup</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="co"># assign AEs that occur after last visit to last AE</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
+<span>    CUM_AE <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span></span>
+<span>      <span class="va">VS_NO</span> <span class="op">==</span> <span class="va">MAX_VS_PAT</span>,</span>
+<span>      <span class="va">MAX_AE_NO</span>,</span>
+<span>      <span class="va">MIN_AE_NO</span><span class="op">)</span></span>
+<span>    <span class="op">)</span></span>
+<span></span>
+<span><span class="va">df_visit</span> <span class="op">&lt;-</span> <span class="va">df_aevs_aggr</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">rename</a></span><span class="op">(</span></span>
+<span>    study_id <span class="op">=</span> <span class="st">"STUDYID"</span>,</span>
+<span>    site_number <span class="op">=</span> <span class="st">"SITEID"</span>,</span>
+<span>    patnum <span class="op">=</span> <span class="st">"SUBJID"</span>,</span>
+<span>    n_ae <span class="op">=</span> <span class="st">"CUM_AE"</span>,</span>
+<span>    visit <span class="op">=</span> <span class="st">"VS_NO"</span></span>
+<span>  <span class="op">)</span>  <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">study_id</span>, <span class="va">site_number</span>, <span class="va">patnum</span>, <span class="va">n_ae</span>, <span class="va">visit</span><span class="op">)</span></span></code></pre></div>
 </div>
-<div id="aggregate-on-days" class="section level1">
-<h1 class="hasAnchor">
-<a href="#aggregate-on-days" class="anchor"></a>Aggregate on Days</h1>
-<p>For aggregating on days we need to align the reference timelines of the single patients.</p>
+<div class="section level2">
+<h2 id="aggregate-on-days">Aggregate on Days<a class="anchor" aria-label="anchor" href="#aggregate-on-days"></a>
+</h2>
+<p>For aggregating on days we need to align the reference timelines of
+the single patients.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">df_vs_min_max</span> <span class="op">&lt;-</span> <span class="va">df_vs</span> <span class="op">%&gt;%</span>
-  <span class="fu">group_by</span><span class="op">(</span><span class="va">STUDYID</span>, <span class="va">SUBJID</span>, <span class="va">SITEID</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu">summarise</span><span class="op">(</span>min_DY <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">min</a></span><span class="op">(</span><span class="va">DY</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,
-            max_DY <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span><span class="op">(</span><span class="va">DY</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,
-            .groups <span class="op">=</span> <span class="st">"drop"</span><span class="op">)</span>
-
-<span class="va">df_vs_min_max</span><span class="op">$</span><span class="va">min_DY</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">25</span><span class="op">]</span></code></pre></div>
-<pre><code>##  [1]  -7 -14 -14  -7  -3 -10 -19 -12  -6  -9  -9 -12  -8  -7  -6  -8  -3 -14  -7
-## [20] -14 -19 -12  -9 -21 -28</code></pre>
+<code class="sourceCode R"><span><span class="va">df_vs_min_max</span> <span class="op">&lt;-</span> <span class="va">df_vs</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">STUDYID</span>, <span class="va">SUBJID</span>, <span class="va">SITEID</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span>min_DY <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="va">DY</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
+<span>            max_DY <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">DY</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
+<span>            .groups <span class="op">=</span> <span class="st">"drop"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">df_vs_min_max</span><span class="op">$</span><span class="va">min_DY</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">25</span><span class="op">]</span></span></code></pre></div>
+<pre><code><span><span class="co">##  [1]  -7 -14 -14  -7  -3 -10 -19 -12  -6  -9  -9 -12  -8  -7  -6  -8  -3 -14  -7</span></span>
+<span><span class="co">## [20] -14 -19 -12  -9 -21 -28</span></span></code></pre>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">df_vs_min_max</span><span class="op">$</span><span class="va">max_DY</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">25</span><span class="op">]</span></code></pre></div>
-<pre><code>##  [1] 309 134  43   1 224 265 100 163  51 103  40  38 125 168  85  92 100 708 119
-## [20]  64  43  51  70   1 225</code></pre>
-<p>The day of the first visit is different for each patient and they start at negative values. First we correct all values to be positive and then normalize the AE date values to the date value of the first visit of each patient</p>
+<code class="sourceCode R"><span><span class="va">df_vs_min_max</span><span class="op">$</span><span class="va">max_DY</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">25</span><span class="op">]</span></span></code></pre></div>
+<pre><code><span><span class="co">##  [1] 309 134  43   1 224 265 100 163  51 103  40  38 125 168  85  92 100 708 119</span></span>
+<span><span class="co">## [20]  64  43  51  70   1 225</span></span></code></pre>
+<p>The day of the first visit is different for each patient and they
+start at negative values. First we correct all values to be positive and
+then normalize the AE date values to the date value of the first visit
+of each patient</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">corr_factor</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">min</a></span><span class="op">(</span><span class="va">df_vs_min_max</span><span class="op">$</span><span class="va">min_DY</span><span class="op">)</span><span class="op">)</span>
-
-<span class="va">df_days</span> <span class="op">&lt;-</span> <span class="va">df_ae</span> <span class="op">%&gt;%</span>
-  <span class="co"># include patients with vs but no AE</span>
-  <span class="fu">right_join</span><span class="op">(</span><span class="va">df_vs_min_max</span>, by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"STUDYID"</span>, <span class="st">"SUBJID"</span>, <span class="st">"SITEID"</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="co"># replace DY NULL with max patient DY </span>
-  <span class="fu">group_by</span><span class="op">(</span><span class="va">STUDYID</span>, <span class="va">SUBJID</span>, <span class="va">SITEID</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu">mutate</span><span class="op">(</span>DY <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">DY</span><span class="op">)</span> <span class="op">&amp;</span> <span class="op">!</span> <span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">EVENT</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span><span class="op">(</span><span class="va">DY</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>, <span class="va">DY</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="co"># replace DY for patients with 0 AE with day of maximum visit</span>
-  <span class="fu">mutate</span><span class="op">(</span>DY <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">DY</span><span class="op">)</span> <span class="op">&amp;</span> <span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">EVENT</span><span class="op">)</span>, <span class="va">max_DY</span>, <span class="va">DY</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="co"># correct timelines</span>
-  <span class="fu">mutate</span><span class="op">(</span>DY <span class="op">=</span> <span class="va">DY</span> <span class="op">+</span> <span class="va">corr_factor</span>,
-         min_DY <span class="op">=</span> <span class="va">min_DY</span> <span class="op">+</span> <span class="va">corr_factor</span>,
-         DY_corr <span class="op">=</span> <span class="va">DY</span> <span class="op">+</span> <span class="va">min_DY</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu">group_by</span><span class="op">(</span><span class="va">STUDYID</span>, <span class="va">SITEID</span>, <span class="va">SUBJID</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu">arrange</span><span class="op">(</span><span class="va">STUDYID</span>, <span class="va">SITEID</span>, <span class="va">SUBJID</span>, <span class="va">DY_corr</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu">mutate</span><span class="op">(</span>n_ae <span class="op">=</span> <span class="fu">row_number</span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu">ungroup</span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="co"># set AE count to 0 for patients with no AEs</span>
-  <span class="fu">mutate</span><span class="op">(</span>n_ae <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">EVENT</span><span class="op">)</span>, <span class="fl">0</span> , <span class="va">n_ae</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu">rename</span><span class="op">(</span>
-    study_id <span class="op">=</span> <span class="va">STUDYID</span>,
-    site_number <span class="op">=</span> <span class="va">SITEID</span>,
-    patnum <span class="op">=</span> <span class="va">SUBJID</span>,
-    visit <span class="op">=</span> <span class="va">DY_corr</span>
-  <span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu">group_by</span><span class="op">(</span><span class="va">study_id</span>, <span class="va">site_number</span>, <span class="va">patnum</span>, <span class="va">visit</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu">summarise</span><span class="op">(</span>n_ae <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span><span class="op">(</span><span class="va">n_ae</span><span class="op">)</span>, .groups <span class="op">=</span> <span class="st">"drop"</span><span class="op">)</span></code></pre></div>
-<p>check if we get the same transformation as for the visit aggregations</p>
+<code class="sourceCode R"><span><span class="va">corr_factor</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="va">df_vs_min_max</span><span class="op">$</span><span class="va">min_DY</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">df_days</span> <span class="op">&lt;-</span> <span class="va">df_ae</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="co"># include patients with vs but no AE</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">right_join</a></span><span class="op">(</span><span class="va">df_vs_min_max</span>, by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"STUDYID"</span>, <span class="st">"SUBJID"</span>, <span class="st">"SITEID"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="co"># replace DY NULL with max patient DY </span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">STUDYID</span>, <span class="va">SUBJID</span>, <span class="va">SITEID</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>DY <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">DY</span><span class="op">)</span> <span class="op">&amp;</span> <span class="op">!</span> <span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">EVENT</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">DY</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>, <span class="va">DY</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="co"># replace DY for patients with 0 AE with day of maximum visit</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>DY <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">DY</span><span class="op">)</span> <span class="op">&amp;</span> <span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">EVENT</span><span class="op">)</span>, <span class="va">max_DY</span>, <span class="va">DY</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="co"># correct timelines</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>DY <span class="op">=</span> <span class="va">DY</span> <span class="op">+</span> <span class="va">corr_factor</span>,</span>
+<span>         min_DY <span class="op">=</span> <span class="va">min_DY</span> <span class="op">+</span> <span class="va">corr_factor</span>,</span>
+<span>         DY_corr <span class="op">=</span> <span class="va">DY</span> <span class="op">+</span> <span class="va">min_DY</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">STUDYID</span>, <span class="va">SITEID</span>, <span class="va">SUBJID</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="va">STUDYID</span>, <span class="va">SITEID</span>, <span class="va">SUBJID</span>, <span class="va">DY_corr</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>n_ae <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/ranking.html" class="external-link">row_number</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">ungroup</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="co"># set AE count to 0 for patients with no AEs</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>n_ae <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">EVENT</span><span class="op">)</span>, <span class="fl">0</span> , <span class="va">n_ae</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">rename</a></span><span class="op">(</span></span>
+<span>    study_id <span class="op">=</span> <span class="va">STUDYID</span>,</span>
+<span>    site_number <span class="op">=</span> <span class="va">SITEID</span>,</span>
+<span>    patnum <span class="op">=</span> <span class="va">SUBJID</span>,</span>
+<span>    visit <span class="op">=</span> <span class="va">DY_corr</span></span>
+<span>  <span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">study_id</span>, <span class="va">site_number</span>, <span class="va">patnum</span>, <span class="va">visit</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span>n_ae <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">n_ae</span><span class="op">)</span>, .groups <span class="op">=</span> <span class="st">"drop"</span><span class="op">)</span></span></code></pre></div>
+<p>check if we get the same transformation as for the visit
+aggregations</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/stopifnot.html">stopifnot</a></span><span class="op">(</span><span class="fu">n_distinct</span><span class="op">(</span><span class="va">df_days</span><span class="op">$</span><span class="va">site_number</span><span class="op">)</span> <span class="op">==</span> <span class="fu">n_distinct</span><span class="op">(</span><span class="va">df_visit</span><span class="op">$</span><span class="va">site_number</span><span class="op">)</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/stopifnot.html">stopifnot</a></span><span class="op">(</span><span class="fu">n_distinct</span><span class="op">(</span><span class="va">df_days</span><span class="op">$</span><span class="va">patnum</span><span class="op">)</span> <span class="op">==</span> <span class="fu">n_distinct</span><span class="op">(</span><span class="va">df_visit</span><span class="op">$</span><span class="va">patnum</span><span class="op">)</span><span class="op">)</span>
-
-<span class="va">pat0_days</span> <span class="op">&lt;-</span> <span class="va">df_days</span> <span class="op">%&gt;%</span>
-  <span class="fu">group_by</span><span class="op">(</span><span class="va">study_id</span>, <span class="va">site_number</span>, <span class="va">patnum</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span><span class="op">(</span><span class="va">n_ae</span><span class="op">)</span> <span class="op">==</span> <span class="fl">0</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu">pull</span><span class="op">(</span><span class="va">patnum</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://rdrr.io/r/base/sort.html">sort</a></span><span class="op">(</span><span class="op">)</span>
-
-<span class="va">pat0_vs</span> <span class="op">&lt;-</span> <span class="va">df_visit</span> <span class="op">%&gt;%</span>
-  <span class="fu">group_by</span><span class="op">(</span><span class="va">study_id</span>, <span class="va">site_number</span>, <span class="va">patnum</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span><span class="op">(</span><span class="va">n_ae</span><span class="op">)</span> <span class="op">==</span> <span class="fl">0</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu">pull</span><span class="op">(</span><span class="va">patnum</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://rdrr.io/r/base/sort.html">sort</a></span><span class="op">(</span><span class="op">)</span>
-
-<span class="fu"><a href="https://rdrr.io/r/base/stopifnot.html">stopifnot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/all.html">all</a></span><span class="op">(</span><span class="va">pat0_days</span> <span class="op">==</span> <span class="va">pat0_vs</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/stopifnot.html" class="external-link">stopifnot</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/n_distinct.html" class="external-link">n_distinct</a></span><span class="op">(</span><span class="va">df_days</span><span class="op">$</span><span class="va">site_number</span><span class="op">)</span> <span class="op">==</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/n_distinct.html" class="external-link">n_distinct</a></span><span class="op">(</span><span class="va">df_visit</span><span class="op">$</span><span class="va">site_number</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/stopifnot.html" class="external-link">stopifnot</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/n_distinct.html" class="external-link">n_distinct</a></span><span class="op">(</span><span class="va">df_days</span><span class="op">$</span><span class="va">patnum</span><span class="op">)</span> <span class="op">==</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/n_distinct.html" class="external-link">n_distinct</a></span><span class="op">(</span><span class="va">df_visit</span><span class="op">$</span><span class="va">patnum</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">pat0_days</span> <span class="op">&lt;-</span> <span class="va">df_days</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">study_id</span>, <span class="va">site_number</span>, <span class="va">patnum</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">n_ae</span><span class="op">)</span> <span class="op">==</span> <span class="fl">0</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html" class="external-link">pull</a></span><span class="op">(</span><span class="va">patnum</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">pat0_vs</span> <span class="op">&lt;-</span> <span class="va">df_visit</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">study_id</span>, <span class="va">site_number</span>, <span class="va">patnum</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">n_ae</span><span class="op">)</span> <span class="op">==</span> <span class="fl">0</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html" class="external-link">pull</a></span><span class="op">(</span><span class="va">patnum</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/stopifnot.html" class="external-link">stopifnot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/all.html" class="external-link">all</a></span><span class="op">(</span><span class="va">pat0_days</span> <span class="op">==</span> <span class="va">pat0_vs</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">df_days</span> </code></pre></div>
-<pre><code>## # A tibble: 3,220 x 5
-##    study_id   site_number patnum   visit  n_ae
-##  * &lt;chr&gt;      &lt;chr&gt;       &lt;chr&gt;    &lt;dbl&gt; &lt;dbl&gt;
-##  1 CO-101-001 001         01001001    43     1
-##  2 CO-101-001 001         01001001    44     2
-##  3 CO-101-001 001         01001001   107     3
-##  4 CO-101-001 001         01001001   124     4
-##  5 CO-101-001 001         01001001   134     5
-##  6 CO-101-001 001         01001001   141     6
-##  7 CO-101-001 001         01001001   156     8
-##  8 CO-101-001 001         01001001   184    10
-##  9 CO-101-001 001         01001001   240    13
-## 10 CO-101-001 001         01001001   241    14
-## # … with 3,210 more rows</code></pre>
-<p>We do have gaps in between the days leading to implicitly missing values. <code>simaerep</code> will correct this automatically and throw a warning.</p>
+<code class="sourceCode R"><span><span class="va">df_days</span> </span></code></pre></div>
+<pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 3,220 × 5</span></span></span>
+<span><span class="co">##    study_id   site_number patnum   visit  n_ae</span></span>
+<span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> CO-101-001 001         01001001    43     1</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> CO-101-001 001         01001001    44     2</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> CO-101-001 001         01001001   107     3</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> CO-101-001 001         01001001   124     4</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> CO-101-001 001         01001001   134     5</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> CO-101-001 001         01001001   141     6</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> CO-101-001 001         01001001   156     8</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> CO-101-001 001         01001001   184    10</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> CO-101-001 001         01001001   240    13</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">10</span> CO-101-001 001         01001001   241    14</span></span>
+<span><span class="co">## <span style="color: #949494;"># … with 3,210 more rows</span></span></span></code></pre>
+<p>We do have gaps in between the days leading to implicitly missing
+values. <code>simaerep</code> will correct this automatically and throw
+a warning.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">df_site</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/site_aggr.html">site_aggr</a></span><span class="op">(</span>df_visit <span class="op">=</span> <span class="va">df_days</span><span class="op">)</span></code></pre></div>
-<pre><code>## Warning in exp_implicit_missing_visits(df_visit): implicitly missing visit
-## numbers detected and corrected</code></pre>
-<p>to silence the warning we can use <code>check df_visit()</code> which is also called internally by all other functions accepting <code>df_visit</code> as an argument.</p>
+<code class="sourceCode R"><span><span class="va">df_site</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/site_aggr.html">site_aggr</a></span><span class="op">(</span>df_visit <span class="op">=</span> <span class="va">df_days</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## Warning in exp_implicit_missing_visits(df_visit): implicitly missing visit</span></span>
+<span><span class="co">## numbers detected and corrected</span></span></code></pre>
+<p>to silence the warning we can use <code>check df_visit()</code> which
+is also called internally by all other functions accepting
+<code>df_visit</code> as an argument.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">df_days</span> <span class="op">&lt;-</span> <span class="fu">simaerep</span><span class="fu">:::</span><span class="fu"><a href="../reference/check_df_visit.html">check_df_visit</a></span><span class="op">(</span><span class="va">df_days</span><span class="op">)</span></code></pre></div>
-<pre><code>## Warning in exp_implicit_missing_visits(df_visit): implicitly missing visit
-## numbers detected and corrected</code></pre>
+<code class="sourceCode R"><span><span class="va">df_days</span> <span class="op">&lt;-</span> <span class="fu">simaerep</span><span class="fu">:::</span><span class="fu"><a href="../reference/check_df_visit.html">check_df_visit</a></span><span class="op">(</span><span class="va">df_days</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## Warning in exp_implicit_missing_visits(df_visit): implicitly missing visit</span></span>
+<span><span class="co">## numbers detected and corrected</span></span></code></pre>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">df_days</span></code></pre></div>
-<pre><code>## # A tibble: 57,873 x 5
-##    study_id   site_number patnum   visit  n_ae
-##  * &lt;chr&gt;      &lt;chr&gt;       &lt;chr&gt;    &lt;dbl&gt; &lt;dbl&gt;
-##  1 CO-101-001 001         01001001     5     0
-##  2 CO-101-001 001         01001001     6     0
-##  3 CO-101-001 001         01001001     7     0
-##  4 CO-101-001 001         01001001     8     0
-##  5 CO-101-001 001         01001001     9     0
-##  6 CO-101-001 001         01001001    10     0
-##  7 CO-101-001 001         01001001    11     0
-##  8 CO-101-001 001         01001001    12     0
-##  9 CO-101-001 001         01001001    13     0
-## 10 CO-101-001 001         01001001    14     0
-## # … with 57,863 more rows</code></pre>
+<code class="sourceCode R"><span><span class="va">df_days</span></span></code></pre></div>
+<pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 57,873 × 5</span></span></span>
+<span><span class="co">##    study_id   site_number patnum   visit  n_ae</span></span>
+<span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> CO-101-001 001         01001001     5     0</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> CO-101-001 001         01001001     6     0</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> CO-101-001 001         01001001     7     0</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> CO-101-001 001         01001001     8     0</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> CO-101-001 001         01001001     9     0</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> CO-101-001 001         01001001    10     0</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> CO-101-001 001         01001001    11     0</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> CO-101-001 001         01001001    12     0</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> CO-101-001 001         01001001    13     0</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">10</span> CO-101-001 001         01001001    14     0</span></span>
+<span><span class="co">## <span style="color: #949494;"># … with 57,863 more rows</span></span></span></code></pre>
 <p>Then we proceed as usual.</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">df_sim_sites</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sim_sites.html">sim_sites</a></span><span class="op">(</span><span class="va">df_site</span>, df_visit <span class="op">=</span> <span class="va">df_days</span><span class="op">)</span>
-
-<span class="va">df_eval_days</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/eval_sites.html">eval_sites</a></span><span class="op">(</span><span class="va">df_sim_sites</span><span class="op">)</span>
-
-<span class="fu">simaerep</span><span class="fu">::</span><span class="fu"><a href="../reference/plot_study.html">plot_study</a></span><span class="op">(</span>df_visit <span class="op">=</span> <span class="va">df_days</span>, df_site <span class="op">=</span> <span class="va">df_site</span>, df_eval <span class="op">=</span> <span class="va">df_eval_days</span>, study <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span><span class="op">(</span><span class="va">df_days</span><span class="op">$</span><span class="va">study_id</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">df_sim_sites</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sim_sites.html">sim_sites</a></span><span class="op">(</span><span class="va">df_site</span>, df_visit <span class="op">=</span> <span class="va">df_days</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">df_eval_days</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/eval_sites.html">eval_sites</a></span><span class="op">(</span><span class="va">df_sim_sites</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">simaerep</span><span class="fu">::</span><span class="fu"><a href="../reference/plot_study.html">plot_study</a></span><span class="op">(</span>df_visit <span class="op">=</span> <span class="va">df_days</span>, df_site <span class="op">=</span> <span class="va">df_site</span>, df_eval <span class="op">=</span> <span class="va">df_eval_days</span>, study <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">df_days</span><span class="op">$</span><span class="va">study_id</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p><img src="visits_or_days_files/figure-html/unnamed-chunk-9-1.png" width="960"></p>
 </div>
-<div id="aggregate-on-visits" class="section level1">
-<h1 class="hasAnchor">
-<a href="#aggregate-on-visits" class="anchor"></a>Aggregate on Visits</h1>
+<div class="section level2">
+<h2 id="aggregate-on-visits">Aggregate on Visits<a class="anchor" aria-label="anchor" href="#aggregate-on-visits"></a>
+</h2>
 <p>How do the results compare to aggregating on visits?</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">df_site</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/site_aggr.html">site_aggr</a></span><span class="op">(</span><span class="va">df_visit</span><span class="op">)</span> 
-
-<span class="va">df_sim_sites</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sim_sites.html">sim_sites</a></span><span class="op">(</span><span class="va">df_site</span>, <span class="va">df_visit</span><span class="op">)</span>
-
-<span class="va">df_eval_vs</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/eval_sites.html">eval_sites</a></span><span class="op">(</span><span class="va">df_sim_sites</span><span class="op">)</span>
-
-<span class="fu">simaerep</span><span class="fu">::</span><span class="fu"><a href="../reference/plot_study.html">plot_study</a></span><span class="op">(</span><span class="va">df_visit</span>, <span class="va">df_site</span>, <span class="va">df_eval_vs</span>, study <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span><span class="op">(</span><span class="va">df_visit</span><span class="op">$</span><span class="va">study_id</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">df_site</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/site_aggr.html">site_aggr</a></span><span class="op">(</span><span class="va">df_visit</span><span class="op">)</span> </span>
+<span></span>
+<span><span class="va">df_sim_sites</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sim_sites.html">sim_sites</a></span><span class="op">(</span><span class="va">df_site</span>, <span class="va">df_visit</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">df_eval_vs</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/eval_sites.html">eval_sites</a></span><span class="op">(</span><span class="va">df_sim_sites</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">simaerep</span><span class="fu">::</span><span class="fu"><a href="../reference/plot_study.html">plot_study</a></span><span class="op">(</span><span class="va">df_visit</span>, <span class="va">df_site</span>, <span class="va">df_eval_vs</span>, study <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">df_visit</span><span class="op">$</span><span class="va">study_id</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p><img src="visits_or_days_files/figure-html/unnamed-chunk-10-1.png" width="960"></p>
 </div>
-<div id="compare" class="section level1">
-<h1 class="hasAnchor">
-<a href="#compare" class="anchor"></a>Compare</h1>
-<p>We observe a difference in the results. Which is largely attributable in the difference in cut-off visit_med75 points that influences the set of patients included. In any case we observe a high rank correlation with a low p-value of all results greater 0.</p>
-<p>As the inclusion/exclusion of patients in the analysis of a site in an ongoing trial can shift results, we recommend to aggregate on actually occurred visits because then all included patients had an equal amount of opportunities to report AEs.</p>
+<div class="section level2">
+<h2 id="compare">Compare<a class="anchor" aria-label="anchor" href="#compare"></a>
+</h2>
+<p>We observe a difference in the results. Which is largely attributable
+in the difference in cut-off visit_med75 points that influences the set
+of patients included. In any case we observe a high rank correlation
+with a low p-value of all results greater 0.</p>
+<p>As the inclusion/exclusion of patients in the analysis of a site in
+an ongoing trial can shift results, we recommend to aggregate on
+actually occurred visits because then all included patients had an equal
+amount of opportunities to report AEs.</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">df_comp</span> <span class="op">&lt;-</span> <span class="va">df_eval_days</span> <span class="op">%&gt;%</span>
-  <span class="fu">select</span><span class="op">(</span>
-    <span class="va">site_number</span>,
-    prob_low_prob_ur_days <span class="op">=</span> <span class="va">prob_low_prob_ur</span>,
-    n_pat_with_med75_days <span class="op">=</span> <span class="va">n_pat_with_med75</span>
-  <span class="op">)</span>  <span class="op">%&gt;%</span>
-  <span class="fu">left_join</span><span class="op">(</span>
-    <span class="fu">select</span><span class="op">(</span>
-      <span class="va">df_eval_vs</span>,
-      <span class="va">site_number</span>,
-      prob_low_prob_ur_vs <span class="op">=</span> <span class="va">prob_low_prob_ur</span>,
-      n_pat_with_med75_vs <span class="op">=</span> <span class="va">n_pat_with_med75</span>
-      <span class="op">)</span>,
-    by <span class="op">=</span> <span class="st">"site_number"</span>
-  <span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">prob_low_prob_ur_days</span> <span class="op">&gt;</span> <span class="fl">0</span> <span class="op">|</span> <span class="va">prob_low_prob_ur_vs</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu">select</span><span class="op">(</span><span class="va">site_number</span>, <span class="fu">starts_with</span><span class="op">(</span><span class="st">"prob"</span><span class="op">)</span>, <span class="fu">starts_with</span><span class="op">(</span><span class="st">"n_pat"</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu">arrange</span><span class="op">(</span><span class="fu">desc</span><span class="op">(</span><span class="va">prob_low_prob_ur_vs</span><span class="op">)</span><span class="op">)</span>
-
-<span class="va">df_comp</span> <span class="op">%&gt;%</span>
-  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">df_comp</span> <span class="op">&lt;-</span> <span class="va">df_eval_days</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span></span>
+<span>    <span class="va">site_number</span>,</span>
+<span>    prob_low_prob_ur_days <span class="op">=</span> <span class="va">prob_low_prob_ur</span>,</span>
+<span>    n_pat_with_med75_days <span class="op">=</span> <span class="va">n_pat_with_med75</span></span>
+<span>  <span class="op">)</span>  <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span></span>
+<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span></span>
+<span>      <span class="va">df_eval_vs</span>,</span>
+<span>      <span class="va">site_number</span>,</span>
+<span>      prob_low_prob_ur_vs <span class="op">=</span> <span class="va">prob_low_prob_ur</span>,</span>
+<span>      n_pat_with_med75_vs <span class="op">=</span> <span class="va">n_pat_with_med75</span></span>
+<span>      <span class="op">)</span>,</span>
+<span>    by <span class="op">=</span> <span class="st">"site_number"</span></span>
+<span>  <span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">prob_low_prob_ur_days</span> <span class="op">&gt;</span> <span class="fl">0</span> <span class="op">|</span> <span class="va">prob_low_prob_ur_vs</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">site_number</span>, <span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">starts_with</a></span><span class="op">(</span><span class="st">"prob"</span><span class="op">)</span>, <span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">starts_with</a></span><span class="op">(</span><span class="st">"n_pat"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html" class="external-link">desc</a></span><span class="op">(</span><span class="va">prob_low_prob_ur_vs</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">df_comp</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <colgroup>
 <col width="12%">
@@ -378,114 +399,114 @@
 <tbody>
 <tr class="odd">
 <td align="left">084</td>
-<td align="right">0.975000</td>
+<td align="right">0.9750000</td>
 <td align="right">0.9625000</td>
 <td align="right">5</td>
 <td align="right">5</td>
 </tr>
 <tr class="even">
 <td align="left">078</td>
-<td align="right">0.975000</td>
+<td align="right">0.9750000</td>
 <td align="right">0.9625000</td>
 <td align="right">5</td>
 <td align="right">5</td>
 </tr>
 <tr class="odd">
 <td align="left">073</td>
-<td align="right">0.409375</td>
+<td align="right">0.4093750</td>
 <td align="right">0.8000000</td>
 <td align="right">6</td>
 <td align="right">5</td>
 </tr>
 <tr class="even">
 <td align="left">067</td>
-<td align="right">1.000000</td>
+<td align="right">1.0000000</td>
 <td align="right">0.7375000</td>
 <td align="right">17</td>
 <td align="right">15</td>
 </tr>
 <tr class="odd">
 <td align="left">079</td>
-<td align="right">0.831250</td>
+<td align="right">0.8312500</td>
 <td align="right">0.6875000</td>
 <td align="right">13</td>
 <td align="right">12</td>
 </tr>
 <tr class="even">
 <td align="left">086</td>
-<td align="right">0.450000</td>
+<td align="right">0.4500000</td>
 <td align="right">0.6875000</td>
 <td align="right">5</td>
 <td align="right">5</td>
 </tr>
 <tr class="odd">
+<td align="left">071</td>
+<td align="right">0.0000000</td>
+<td align="right">0.2071429</td>
+<td align="right">2</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
 <td align="left">066</td>
-<td align="right">0.550000</td>
+<td align="right">0.6100000</td>
 <td align="right">0.1923077</td>
 <td align="right">6</td>
 <td align="right">5</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left">070</td>
-<td align="right">0.409375</td>
+<td align="right">0.4093750</td>
 <td align="right">0.1923077</td>
 <td align="right">15</td>
 <td align="right">17</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left">080</td>
-<td align="right">0.047500</td>
+<td align="right">0.1068182</td>
 <td align="right">0.1923077</td>
 <td align="right">20</td>
 <td align="right">20</td>
+</tr>
+<tr class="odd">
+<td align="left">085</td>
+<td align="right">0.1068182</td>
+<td align="right">0.1923077</td>
+<td align="right">1</td>
+<td align="right">1</td>
 </tr>
 <tr class="even">
-<td align="left">085</td>
-<td align="right">0.047500</td>
-<td align="right">0.1923077</td>
-<td align="right">1</td>
-<td align="right">1</td>
-</tr>
-<tr class="odd">
 <td align="left">069</td>
-<td align="right">0.000000</td>
+<td align="right">0.1068182</td>
 <td align="right">0.1923077</td>
 <td align="right">3</td>
 <td align="right">5</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left">090</td>
-<td align="right">0.000000</td>
+<td align="right">0.0000000</td>
 <td align="right">0.1923077</td>
 <td align="right">3</td>
 <td align="right">4</td>
 </tr>
-<tr class="odd">
-<td align="left">071</td>
-<td align="right">0.000000</td>
-<td align="right">0.1923077</td>
-<td align="right">2</td>
-<td align="right">3</td>
-</tr>
 </tbody>
 </table>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/stats/cor.test.html">cor.test</a></span><span class="op">(</span>
-  <span class="va">df_comp</span><span class="op">$</span><span class="va">prob_low_prob_ur_vs</span>,
-  <span class="va">df_comp</span><span class="op">$</span><span class="va">prob_low_prob_ur_days</span>,
-  method <span class="op">=</span> <span class="st">"spearman"</span>
-<span class="op">)</span></code></pre></div>
-<pre><code>## Warning in cor.test.default(df_comp$prob_low_prob_ur_vs,
-## df_comp$prob_low_prob_ur_days, : Cannot compute exact p-value with ties</code></pre>
-<pre><code>## 
-##  Spearman's rank correlation rho
-## 
-## data:  df_comp$prob_low_prob_ur_vs and df_comp$prob_low_prob_ur_days
-## S = 84.269, p-value = 0.002146
-## alternative hypothesis: true rho is not equal to 0
-## sample estimates:
-##       rho 
-## 0.7684912</code></pre>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/cor.test.html" class="external-link">cor.test</a></span><span class="op">(</span></span>
+<span>  <span class="va">df_comp</span><span class="op">$</span><span class="va">prob_low_prob_ur_vs</span>,</span>
+<span>  <span class="va">df_comp</span><span class="op">$</span><span class="va">prob_low_prob_ur_days</span>,</span>
+<span>  method <span class="op">=</span> <span class="st">"spearman"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## Warning in cor.test.default(df_comp$prob_low_prob_ur_vs,</span></span>
+<span><span class="co">## df_comp$prob_low_prob_ur_days, : Cannot compute exact p-value with ties</span></span></code></pre>
+<pre><code><span><span class="co">## </span></span>
+<span><span class="co">##  Spearman's rank correlation rho</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## data:  df_comp$prob_low_prob_ur_vs and df_comp$prob_low_prob_ur_days</span></span>
+<span><span class="co">## S = 114.71, p-value = 0.009797</span></span>
+<span><span class="co">## alternative hypothesis: true rho is not equal to 0</span></span>
+<span><span class="co">## sample estimates:</span></span>
+<span><span class="co">##       rho </span></span>
+<span><span class="co">## 0.6848696</span></span></code></pre>
 </div>
   </div>
 
@@ -500,11 +521,13 @@
 
 
       <footer><div class="copyright">
-  <p>Developed by Bjoern Koneswarakantha.</p>
+  <p></p>
+<p>Developed by Bjoern Koneswarakantha.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer>
@@ -512,6 +535,8 @@
 
   
 
+
+  
 
   </body>
 </html>

@@ -10,6 +10,8 @@ status](https://github.com/openpharma/simaerep/workflows/R-CMD-check/badge.svg)]
 [![codecov](https://codecov.io/gh/openpharma/simaerep/branch/master/graph/badge.svg)](https://codecov.io/gh/openpharma/simaerep)
 [![Lifecycle:
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
+[![R Package Validation
+report](https://github.com/openpharma/simaerep/actions/workflows/validation.yml/badge.svg)](https://github.com/openpharma/simaerep/actions/workflows/validation.yml)
 <!-- badges: end -->
 
 Simulate adverse event reporting in clinical trials with the goal of
@@ -39,7 +41,7 @@ of Advanced Analytics for Clinical Quality Assurance: Bootstrap
 Resampling to Enhance Detection of Adverse Event Under-Reporting. Drug
 Saf (2020). <https://doi.org/10.1007/s40264-020-01011-5>
 
-# Vignettes/ Articles
+## Vignettes/ Articles
 
 -   [Introduction](https://openpharma.github.io/simaerep/articles/intro.html)
 -   [Usability
@@ -52,10 +54,20 @@ Saf (2020). <https://doi.org/10.1007/s40264-020-01011-5>
     visit_med75](https://openpharma.github.io/simaerep/articles/visit_med75.html)
 -   [Aggregate AEs by Days or
     Visit?](https://openpharma.github.io/simaerep/articles/visits_or_days.html)
+-   [Portfolio
+    Performance](https://openpharma.github.io/simaerep/articles/portfolio_perf.html)
+
+## Validation Report
+
+Download as pdf in the [release
+section](https://github.com/openpharma/simaerep/releases) generated
+using
+[thevalidatoR](https://github.com/insightsengineering/thevalidatoR).
 
 # Application
 
 ``` r
+
 suppressPackageStartupMessages(library(simaerep))
 suppressPackageStartupMessages(library(tidyverse))
 suppressPackageStartupMessages(library(knitr))
@@ -107,6 +119,7 @@ df_visit %>%
 | A        | S0001       | P000002 |     8 |    1 |
 
 ``` r
+
 aerep <- simaerep(df_visit)
 
 plot(aerep, study = "A") 

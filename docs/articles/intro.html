@@ -32,6 +32,8 @@
 </script>
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -44,7 +46,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">simaerep</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.3.900</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.1</span>
       </span>
     </div>
 
@@ -63,7 +65,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -73,32 +75,29 @@
       <a href="../articles/intro.html">Introduction</a>
     </li>
     <li>
+      <a href="../articles/sas_files.html">SAS Files as a Data Source</a>
+    </li>
+    <li>
+      <a href="../articles/portfolio_perf.html">simaerep Portfolio Performance</a>
+    </li>
+    <li>
+      <a href="../articles/visit_med75.html">Adjusted Evaluation Point visit_med75</a>
+    </li>
+    <li>
       <a href="../articles/usability_limits.html">Address Usability Limits of Bootstrap Method</a>
     </li>
     <li>
       <a href="../articles/check_poisson.html">Check Poisson Test Applicability</a>
     </li>
     <li>
-      <a href="../articles/sas_files.html">SAS Files as a Data Source</a>
-    </li>
-    <li>
-      <a href="../articles/visit_med75.html">Adjusted Evaluation Point visit_med75</a>
-    </li>
-    <li>
       <a href="../articles/visits_or_days.html">Aggregate AEs by Days or Visit?</a>
     </li>
-    <li>
-      <a href="../articles/portfolio_perf.html">simaerep Portfolio Performance</a>
-    </li>
   </ul>
-</li>
-<li>
-  <a href="../news/index.html">Changelog</a>
 </li>
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/openpharma/simaerep/">
+  <a href="https://github.com/openpharma/simaerep/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -113,99 +112,129 @@
 
       
 
-      </header><script src="intro_files/header-attrs-2.11/header-attrs.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Introduction</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/openpharma/simaerep/blob/master/vignettes/intro.Rmd"><code>vignettes/intro.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/openpharma/simaerep/blob/HEAD/vignettes/intro.Rmd" class="external-link"><code>vignettes/intro.Rmd</code></a></small>
       <div class="hidden name"><code>intro.Rmd</code></div>
 
     </div>
 
     
     
-<div id="load" class="section level1">
-<h1 class="hasAnchor">
-<a href="#load" class="anchor"></a>Load</h1>
+<div class="section level2">
+<h2 id="load">Load<a class="anchor" aria-label="anchor" href="#load"></a>
+</h2>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/message.html">suppressPackageStartupMessages</a></span><span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org">tidyverse</a></span><span class="op">)</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/message.html">suppressPackageStartupMessages</a></span><span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://yihui.org/knitr/">knitr</a></span><span class="op">)</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/message.html">suppressPackageStartupMessages</a></span><span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://openpharma.github.io/simaerep/">simaerep</a></span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressPackageStartupMessages</a></span><span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org" class="external-link">tidyverse</a></span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressPackageStartupMessages</a></span><span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://yihui.org/knitr/" class="external-link">knitr</a></span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressPackageStartupMessages</a></span><span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://openpharma.github.io/simaerep/">simaerep</a></span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
-<div id="introduction" class="section level1">
-<h1 class="hasAnchor">
-<a href="#introduction" class="anchor"></a>Introduction</h1>
-<p>Simulate adverse event reporting in clinical trials with the goal of detecting under-reporting sites.</p>
-<p>Monitoring of Adverse Event (AE) reporting in clinical trials is important for patient safety. We use bootstrap-based simulation to assign an AE under-reporting probability to each site in a clinical trial. The method is inspired by the ‘infer’ R package and Allen Downey’s blog article: <a href="http://allendowney.blogspot.com/2011/05/there-is-only-one-test.html">“There is only one test!”</a>.</p>
-<div id="adverse-events" class="section level2">
-<h2 class="hasAnchor">
-<a href="#adverse-events" class="anchor"></a>Adverse Events</h2>
-<p>An adverse event (AE) is any untoward medical occurrence in a patient or clinical investigation subject administered a pharmaceutical product and which does not necessarily have a causal relationship with this treatment. It is important for patient safety that AEs are reported back to the sponsor. An important part of quality monitoring is to detect clinical trial sites that are not propagating all of the AEs reported to them by their patients to the sponsor. In a clinical trial patients follow a strict visiting schedule at which times treatments are given and exams are being performed. Typically AEs get reported by a patient when they are at an on-site visit at the clinic. So the total number of AEs reported by a site depends on the number of patients enrolled at the site and the total number of visits.</p>
+<div class="section level2">
+<h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
+</h2>
+<p>Simulate adverse event reporting in clinical trials with the goal of
+detecting under-reporting sites.</p>
+<p>Monitoring of Adverse Event (AE) reporting in clinical trials is
+important for patient safety. We use bootstrap-based simulation to
+assign an AE under-reporting probability to each site in a clinical
+trial. The method is inspired by the ‘infer’ R package and Allen
+Downey’s blog article: <a href="http://allendowney.blogspot.com/2011/05/there-is-only-one-test.html" class="external-link">“There
+is only one test!”</a>.</p>
+<div class="section level3">
+<h3 id="adverse-events">Adverse Events<a class="anchor" aria-label="anchor" href="#adverse-events"></a>
+</h3>
+<p>An adverse event (AE) is any untoward medical occurrence in a patient
+or clinical investigation subject administered a pharmaceutical product
+and which does not necessarily have a causal relationship with this
+treatment. It is important for patient safety that AEs are reported back
+to the sponsor. An important part of quality monitoring is to detect
+clinical trial sites that are not propagating all of the AEs reported to
+them by their patients to the sponsor. In a clinical trial patients
+follow a strict visiting schedule at which times treatments are given
+and exams are being performed. Typically AEs get reported by a patient
+when they are at an on-site visit at the clinic. So the total number of
+AEs reported by a site depends on the number of patients enrolled at the
+site and the total number of visits.</p>
 </div>
-<div id="algorithm" class="section level2">
-<h2 class="hasAnchor">
-<a href="#algorithm" class="anchor"></a>Algorithm</h2>
+<div class="section level3">
+<h3 id="algorithm">Algorithm<a class="anchor" aria-label="anchor" href="#algorithm"></a>
+</h3>
 <p>In a nutshell we will perform the following steps.</p>
 <ol style="list-style-type: decimal">
-<li>Record visit_med75, number of patients that have reached visit_med75, mean cumulative AE count at visit_med75 for a clinical trial site.</li>
-<li>Create patient pool with all patients in study that have reached visit_med75 as determined in 1) and their cumulative AE count at visit_med75.</li>
-<li>Draw with replacement as many patients from 2) as determined in 1) and calculate the mean cumulative AE count of the draw (figure 1b).</li>
+<li>Record visit_med75, number of patients that have reached
+visit_med75, mean cumulative AE count at visit_med75 for a clinical
+trial site.</li>
+<li>Create patient pool with all patients in study that have reached
+visit_med75 as determined in 1) and their cumulative AE count at
+visit_med75.</li>
+<li>Draw with replacement as many patients from 2) as determined in 1)
+and calculate the mean cumulative AE count of the draw (figure 1b).</li>
 <li>Repeat 3) 1000 times.</li>
-<li>Calculate probability of obtaining mean cumulative AE count or lower as obtained in 1) based on results of 4).</li>
+<li>Calculate probability of obtaining mean cumulative AE count or lower
+as obtained in 1) based on results of 4).</li>
 <li>Repeat 1-5) for all sites in trial.</li>
-<li>Adjust probabilities using the <a href="https://www.statisticshowto.com/benjamini-hochberg-procedure/">Benjamin Hochberg Procedure</a> in order to correct alpha error.</li>
+<li>Adjust probabilities using the <a href="https://www.statisticshowto.com/benjamini-hochberg-procedure/" class="external-link">Benjamin
+Hochberg Procedure</a> in order to correct alpha error.</li>
 </ol>
 </div>
-<div id="sample-data" class="section level2">
-<h2 class="hasAnchor">
-<a href="#sample-data" class="anchor"></a>Sample Data</h2>
-<div id="patient" class="section level3">
-<h3 class="hasAnchor">
-<a href="#patient" class="anchor"></a>Patient</h3>
-<p>Patient level AE data is characterized by the number of consecutive visits and the number of AEs that have been reported each time. For the maximum consecutive visit we sample from a normal distribution and for the AEs reported at each visit we sample from a poisson distribution.</p>
+<div class="section level3">
+<h3 id="sample-data">Sample Data<a class="anchor" aria-label="anchor" href="#sample-data"></a>
+</h3>
+<div class="section level4">
+<h4 id="patient">Patient<a class="anchor" aria-label="anchor" href="#patient"></a>
+</h4>
+<p>Patient level AE data is characterized by the number of consecutive
+visits and the number of AEs that have been reported each time. For the
+maximum consecutive visit we sample from a normal distribution and for
+the AEs reported at each visit we sample from a poisson
+distribution.</p>
 <p>Here we simulate the AEs generated by 3 patients</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>
-
-<span class="fu"><a href="https://rdrr.io/r/base/lapply.html">replicate</a></span><span class="op">(</span>
-   <span class="fl">3</span>,
-   <span class="fu"><a href="../reference/sim_test_data_patient.html">sim_test_data_patient</a></span><span class="op">(</span>
-    .f_sample_max_visit <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fl">1</span>, mean <span class="op">=</span> <span class="fl">20</span>, sd <span class="op">=</span> <span class="fl">4</span><span class="op">)</span>,
-    .f_sample_ae_per_visit <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">max_visit</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/stats/Poisson.html">rpois</a></span><span class="op">(</span><span class="va">max_visit</span>, <span class="fl">0.5</span><span class="op">)</span>
-  <span class="op">)</span>
-<span class="op">)</span></code></pre></div>
-<pre><code>## [[1]]
-##  [1]  0  1  1  2  4  5  6  6  6  6  7  7  8  8  9 12 12
-## 
-## [[2]]
-##  [1] 0 1 1 1 1 1 1 2 2 2 2 2 2 3 4 5 5 6 6 7 8 9 9
-## 
-## [[3]]
-##  [1] 0 0 1 2 2 3 3 3 3 3 3 3 4 4 6 6 6 6 7 7</code></pre>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">replicate</a></span><span class="op">(</span></span>
+<span>   <span class="fl">3</span>,</span>
+<span>   <span class="fu"><a href="../reference/sim_test_data_patient.html">sim_test_data_patient</a></span><span class="op">(</span></span>
+<span>    .f_sample_max_visit <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">1</span>, mean <span class="op">=</span> <span class="fl">20</span>, sd <span class="op">=</span> <span class="fl">4</span><span class="op">)</span>,</span>
+<span>    .f_sample_ae_per_visit <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">max_visit</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/stats/Poisson.html" class="external-link">rpois</a></span><span class="op">(</span><span class="va">max_visit</span>, <span class="fl">0.5</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## [[1]]</span></span>
+<span><span class="co">##  [1]  0  1  1  2  4  5  6  6  6  6  7  7  8  8  9 12 12</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## [[2]]</span></span>
+<span><span class="co">##  [1] 0 1 1 1 1 1 1 2 2 2 2 2 2 3 4 5 5 6 6 7 8 9 9</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## [[3]]</span></span>
+<span><span class="co">##  [1] 0 0 1 2 2 3 3 3 3 3 3 3 4 4 6 6 6 6 7 7</span></span></code></pre>
 </div>
-<div id="study" class="section level3">
-<h3 class="hasAnchor">
-<a href="#study" class="anchor"></a>Study</h3>
-<p>In order to simulate patient data for an entire study we assume make the simplification that all sites have the same number of patients. Further we specify a fraction of sites that is under-reporting AEs.</p>
+<div class="section level4">
+<h4 id="study">Study<a class="anchor" aria-label="anchor" href="#study"></a>
+</h4>
+<p>In order to simulate patient data for an entire study we assume make
+the simplification that all sites have the same number of patients.
+Further we specify a fraction of sites that is under-reporting AEs.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">df_visit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sim_test_data_study.html">sim_test_data_study</a></span><span class="op">(</span>
-  n_pat <span class="op">=</span> <span class="fl">120</span>,
-  n_sites <span class="op">=</span> <span class="fl">6</span>,
-  frac_site_with_ur <span class="op">=</span> <span class="fl">0.4</span>,
-  ur_rate <span class="op">=</span> <span class="fl">0.6</span>,
-  max_visit_mean <span class="op">=</span> <span class="fl">20</span>,
-  max_visit_sd <span class="op">=</span> <span class="fl">4</span>,
-  ae_per_visit_mean <span class="op">=</span> <span class="fl">0.5</span>
-<span class="op">)</span>
-
-<span class="va">df_visit</span><span class="op">$</span><span class="va">study_id</span> <span class="op">&lt;-</span> <span class="st">"A"</span>
-
-<span class="va">df_visit</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<table class="table">
+<code class="sourceCode R"><span><span class="va">df_visit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sim_test_data_study.html">sim_test_data_study</a></span><span class="op">(</span></span>
+<span>  n_pat <span class="op">=</span> <span class="fl">120</span>,</span>
+<span>  n_sites <span class="op">=</span> <span class="fl">6</span>,</span>
+<span>  frac_site_with_ur <span class="op">=</span> <span class="fl">0.4</span>,</span>
+<span>  ur_rate <span class="op">=</span> <span class="fl">0.6</span>,</span>
+<span>  max_visit_mean <span class="op">=</span> <span class="fl">20</span>,</span>
+<span>  max_visit_sd <span class="op">=</span> <span class="fl">4</span>,</span>
+<span>  ae_per_visit_mean <span class="op">=</span> <span class="fl">0.5</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">df_visit</span><span class="op">$</span><span class="va">study_id</span> <span class="op">&lt;-</span> <span class="st">"A"</span></span>
+<span></span>
+<span><span class="va">df_visit</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<table style="width:100%;" class="table">
 <colgroup>
 <col width="8%">
 <col width="13%">
@@ -342,10 +371,10 @@
 </tbody>
 </table>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">df_visit</span> <span class="op">%&gt;%</span>
-  <span class="fu">select</span><span class="op">(</span><span class="va">site_number</span>, <span class="va">is_ur</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu">distinct</span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">df_visit</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">site_number</span>, <span class="va">is_ur</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/distinct.html" class="external-link">distinct</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <thead><tr class="header">
 <th align="left">site_number</th>
@@ -378,35 +407,62 @@
 </tr>
 </tbody>
 </table>
-<p>In our sample data 2 sites (S0001 and S0002) are under-reporting AEs</p>
+<p>In our sample data 2 sites (S0001 and S0002) are under-reporting
+AEs</p>
 </div>
 </div>
-<div id="algorithm-execution" class="section level2">
-<h2 class="hasAnchor">
-<a href="#algorithm-execution" class="anchor"></a>Algorithm Execution</h2>
-<div id="s3-interface" class="section level3">
-<h3 class="hasAnchor">
-<a href="#s3-interface" class="anchor"></a>S3 interface</h3>
-<p>We will describe the internal details of the algorithm next. However, it is recommended to use the S3 interface, which manages the execution of the internal functions and stores the intermediate results.</p>
+<div class="section level3">
+<h3 id="algorithm-execution">Algorithm Execution<a class="anchor" aria-label="anchor" href="#algorithm-execution"></a>
+</h3>
+<div class="section level4">
+<h4 id="s3-interface">S3 interface<a class="anchor" aria-label="anchor" href="#s3-interface"></a>
+</h4>
+<p>We will describe the internal details of the algorithm next. However,
+it is recommended to use the S3 interface, which manages the execution
+of the internal functions and stores the intermediate results.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">aerep</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/simaerep.html">simaerep</a></span><span class="op">(</span><span class="va">df_visit</span><span class="op">)</span>
-<span class="va">aerep</span></code></pre></div>
-<pre><code>## simaerep object:
-## Check aerep$df_eval prob_low_prob_ur column for AE under-reporting probabilites.
-## Plot results using plot() generic.</code></pre>
+<code class="sourceCode R"><span><span class="va">aerep</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/simaerep.html">simaerep</a></span><span class="op">(</span><span class="va">df_visit</span><span class="op">)</span></span>
+<span><span class="va">aerep</span></span></code></pre></div>
+<pre><code><span><span class="co">## simaerep object:</span></span>
+<span><span class="co">## Check aerep$df_eval prob_low_prob_ur column for AE under-reporting probabilites.</span></span>
+<span><span class="co">## Plot results using plot() generic.</span></span></code></pre>
 </div>
-<div id="specifying-the-evaluation-point-visit_med75" class="section level3">
-<h3 class="hasAnchor">
-<a href="#specifying-the-evaluation-point-visit_med75" class="anchor"></a>Specifying the Evaluation Point visit_med75</h3>
-<p>In an ongoing trial all patients will have a different number of consecutive visits. To find a cut-off visit to normalize the data we specify a single evaluation point for a given site based on the number of visits of the patient population.</p>
-<p>For determining the visit number at which we are going to evaluate AE reporting we take the maximum visit of each patient at a site and take the median. Then we multiply with 0.75 which will give us a cut-off point determining which patient will be evaluated. Of those patients we will evaluate we take the minimum of all maximum visits hence ensuring that we take the highest visit number possible without excluding more patients from the analysis. In order to ensure that the sampling pool for that visit is large enough we ensure that at least 20% of all patients at the study are available for sampling. We limit visit_med75 to the 80% quantile of all patient maximum visits of the entire study.</p>
-<p>For this we use <code>site_aggr</code> to aggregate the simulated visit level data to site level. Adjusting <code>min_pat_pool</code> will change the minimum ratio of patients available for sampling that determines the maximum values for visit_med75.</p>
+<div class="section level4">
+<h4 id="specifying-the-evaluation-point-visit_med75">Specifying the Evaluation Point visit_med75<a class="anchor" aria-label="anchor" href="#specifying-the-evaluation-point-visit_med75"></a>
+</h4>
+<p>In an ongoing trial all patients will have a different number of
+consecutive visits. To find a cut-off visit to normalize the data we
+specify a single evaluation point for a given site based on the number
+of visits of the patient population.</p>
+<p>For determining the visit number at which we are going to evaluate AE
+reporting we take the maximum visit of each patient at a site and take
+the median. Then we multiply with 0.75 which will give us a cut-off
+point determining which patient will be evaluated. Of those patients we
+will evaluate we take the minimum of all maximum visits hence ensuring
+that we take the highest visit number possible without excluding more
+patients from the analysis. In order to ensure that the sampling pool
+for that visit is large enough we ensure that at least 20% of all
+patients at the study are available for sampling. We limit visit_med75
+to the 80% quantile of all patient maximum visits of the entire
+study.</p>
+<p>For this we use <code>site_aggr</code> to aggregate the simulated
+visit level data to site level. Adjusting <code>min_pat_pool</code> will
+change the minimum ratio of patients available for sampling that
+determines the maximum values for visit_med75.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">df_site</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/site_aggr.html">site_aggr</a></span><span class="op">(</span><span class="va">df_visit</span>, method <span class="op">=</span> <span class="st">"med75_adj"</span>, min_pat_pool <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span>
-
-<span class="va">df_site</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">df_site</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/site_aggr.html">site_aggr</a></span><span class="op">(</span><span class="va">df_visit</span>, method <span class="op">=</span> <span class="st">"med75_adj"</span>, min_pat_pool <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">df_site</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
+<colgroup>
+<col width="12%">
+<col width="16%">
+<col width="8%">
+<col width="22%">
+<col width="16%">
+<col width="25%">
+</colgroup>
 <thead><tr class="header">
 <th align="left">study_id</th>
 <th align="left">site_number</th>
@@ -467,66 +523,103 @@
 </tbody>
 </table>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/plot_visit_med75.html">plot_visit_med75</a></span><span class="op">(</span><span class="va">df_visit</span>, <span class="va">df_site</span>, study_id_str <span class="op">=</span> <span class="st">"A"</span>, n_site <span class="op">=</span> <span class="fl">6</span><span class="op">)</span></code></pre></div>
-<pre><code>## purple line:          mean site ae of patients with visit_med75
-## grey line:            patient included
-## black dashed line:    patient excluded
-## dotted vertical line: visit_med75, 0.75 x median of maximum patient visits of site 
-## solid vertical line:  visit_med75 adjusted, increased to minimum maximum patient visit of included patients
-## dashed vertical line: maximum value for visit_med75 adjusted, 80% quantile of maximum patient visits of study</code></pre>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_visit_med75.html">plot_visit_med75</a></span><span class="op">(</span><span class="va">df_visit</span>, <span class="va">df_site</span>, study_id_str <span class="op">=</span> <span class="st">"A"</span>, n_site <span class="op">=</span> <span class="fl">6</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## purple line:          mean site ae of patients with visit_med75</span></span>
+<span><span class="co">## grey line:            patient included</span></span>
+<span><span class="co">## black dashed line:    patient excluded</span></span>
+<span><span class="co">## dotted vertical line: visit_med75, 0.75 x median of maximum patient visits of site </span></span>
+<span><span class="co">## solid vertical line:  visit_med75 adjusted, increased to minimum maximum patient visit of included patients</span></span>
+<span><span class="co">## dashed vertical line: maximum value for visit_med75 adjusted, 80% quantile of maximum patient visits of study</span></span></code></pre>
 <p><img src="intro_files/figure-html/unnamed-chunk-5-1.png" width="700"></p>
-<p>Using the adjusted visit_med75 will drop a few patients (dashed lines) but will by definition at least include 50% of all patients favoring patients that have higher number of visits. By looking at the mean ae development (purple line) we can already easily spot the two under-reporting sites. The same goes for looking at the <code>mean_ae_site_med75</code> column in <code>df_site</code>. Next we will use bootstrap simulations to determine the probability for obtaining each mean AE value or lower at visit_med75 by chance.</p>
+<p>Using the adjusted visit_med75 will drop a few patients (dashed
+lines) but will by definition at least include 50% of all patients
+favoring patients that have higher number of visits. By looking at the
+mean ae development (purple line) we can already easily spot the two
+under-reporting sites. The same goes for looking at the
+<code>mean_ae_site_med75</code> column in <code>df_site</code>. Next we
+will use bootstrap simulations to determine the probability for
+obtaining each mean AE value or lower at visit_med75 by chance.</p>
 </div>
-<div id="bootstrap-simulations" class="section level3">
-<h3 class="hasAnchor">
-<a href="#bootstrap-simulations" class="anchor"></a>Bootstrap Simulations</h3>
-<div id="advantage-over-classic-statistical-tests" class="section level4">
-<h4 class="hasAnchor">
-<a href="#advantage-over-classic-statistical-tests" class="anchor"></a>Advantage Over Classic Statistical Tests</h4>
-<p>We could use a classical parametric test and calculate the probability with which we can reject the NULL hypothesis for the AE counts that we observe at the visit_med75.</p>
-<p>As we sample the AEs from a poisson distribution the R implementation of the poisson.test would be appropriate.</p>
-<p>But there are four major problems that we often encounter when we try to describe real life count data with the poisson distribution which is only described by a single parameter:</p>
+<div class="section level4">
+<h4 id="bootstrap-simulations">Bootstrap Simulations<a class="anchor" aria-label="anchor" href="#bootstrap-simulations"></a>
+</h4>
+<div class="section level5">
+<h5 id="advantage-over-classic-statistical-tests">Advantage Over Classic Statistical Tests<a class="anchor" aria-label="anchor" href="#advantage-over-classic-statistical-tests"></a>
+</h5>
+<p>We could use a classical parametric test and calculate the
+probability with which we can reject the NULL hypothesis for the AE
+counts that we observe at the visit_med75.</p>
+<p>As we sample the AEs from a poisson distribution the R implementation
+of the poisson.test would be appropriate.</p>
+<p>But there are four major problems that we often encounter when we try
+to describe real life count data with the poisson distribution which is
+only described by a single parameter:</p>
 <ul>
 <li>over and underdispersion</li>
 <li>skewness (long right tail)</li>
 <li>inflated zeros</li>
 <li>variance mean relationship might not be fixed</li>
 </ul>
-<p>(see <a href="https://www.gamlss.com/wp-content/uploads/2018/01/DistributionsForModellingLocationScaleandShape.pdf">Distribution for Modelling Location Scale and Shape 5.1.2</a>)</p>
-<p>The true distribution of the AE counts will vary from study to study with the degree of the influence of these 4 problems being unknown unless thoroughly investigated.</p>
-<p>With the non-parametric approach that we propose we do not need to worry about these statistical assumptions. Since the distribution of the AE count from the simulated patient pool we draw from will be very close to the unknown true distribution of the underlying AE generating process.</p>
+<p>(see <a href="https://www.gamlss.com/wp-content/uploads/2018/01/DistributionsForModellingLocationScaleandShape.pdf" class="external-link">Distribution
+for Modelling Location Scale and Shape 5.1.2</a>)</p>
+<p>The true distribution of the AE counts will vary from study to study
+with the degree of the influence of these 4 problems being unknown
+unless thoroughly investigated.</p>
+<p>With the non-parametric approach that we propose we do not need to
+worry about these statistical assumptions. Since the distribution of the
+AE count from the simulated patient pool we draw from will be very close
+to the unknown true distribution of the underlying AE generating
+process.</p>
 </div>
-<div id="disadvantages-over-classic-statistical-tests" class="section level4">
-<h4 class="hasAnchor">
-<a href="#disadvantages-over-classic-statistical-tests" class="anchor"></a>Disadvantages Over Classic Statistical Tests</h4>
+<div class="section level5">
+<h5 id="disadvantages-over-classic-statistical-tests">Disadvantages Over Classic Statistical Tests<a class="anchor" aria-label="anchor" href="#disadvantages-over-classic-statistical-tests"></a>
+</h5>
 <ul>
 <li>
-<strong>Upper Limit for Uncompliant Sites</strong>. We simulate an underlying compliant patient population using the data we are given. If the fraction of uncompliant examples becomes too high, detection rates will decrease. We find that detection rates start decreasing with 30-50% of under-reporting sites and are not usable anymore if a majority &gt; 50% of all sites are under-reporting <a href="https://openpharma.github.io/simaerep/articles/usability_limits.html">see article on usability limits</a>.</li>
+<strong>Upper Limit for Uncompliant Sites</strong>. We simulate an
+underlying compliant patient population using the data we are given. If
+the fraction of uncompliant examples becomes too high, detection rates
+will decrease. We find that detection rates start decreasing with 30-50%
+of under-reporting sites and are not usable anymore if a majority &gt;
+50% of all sites are under-reporting <a href="https://openpharma.github.io/simaerep/articles/usability_limits.html">see
+article on usability limits</a>.</li>
 <li>
-<strong>Lower Probability Limit</strong> The number of repeats determines the smallest probability greater than zero, for example a for r=1000 the smallest value greater than zero is 0.001</li>
+<strong>Lower Probability Limit</strong> The number of repeats
+determines the smallest probability greater than zero, for example a for
+r=1000 the smallest value greater than zero is 0.001</li>
 <li><strong>Computationally Expensive</strong></li>
 </ul>
 </div>
-<div id="methodology" class="section level4">
-<h4 class="hasAnchor">
-<a href="#methodology" class="anchor"></a>Methodology</h4>
-<p><em>How likely is it to get a mean AE value that is equal or lower to what we observe at site C with the same number of patients?</em></p>
-<p>For illustration purposes we start to simulate 10 hypothetical patient groups for site C by drawing (with replacement) from all patients in the study marking those for which we have obtained an equal or lower mean AE value than initially observed (middle).</p>
-<p>Instead of 10 times we simulate 1000 times and count how many times we have observed an equal or lower mean AE value than initially observed and convert it to a percentage (right).</p>
-<p>To illustrate the effect of under-reporting we repeat the same process after having removed 2 AEs per patient from site C. We see how the probability for obtaining an equal or lower mean AE value than initially observed decreases (bottom).</p>
+<div class="section level5">
+<h5 id="methodology">Methodology<a class="anchor" aria-label="anchor" href="#methodology"></a>
+</h5>
+<p><em>How likely is it to get a mean AE value that is equal or lower to
+what we observe at site C with the same number of patients?</em></p>
+<p>For illustration purposes we start to simulate 10 hypothetical
+patient groups for site C by drawing (with replacement) from all
+patients in the study marking those for which we have obtained an equal
+or lower mean AE value than initially observed (middle).</p>
+<p>Instead of 10 times we simulate 1000 times and count how many times
+we have observed an equal or lower mean AE value than initially observed
+and convert it to a percentage (right).</p>
+<p>To illustrate the effect of under-reporting we repeat the same
+process after having removed 2 AEs per patient from site C. We see how
+the probability for obtaining an equal or lower mean AE value than
+initially observed decreases (bottom).</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/plot_sim_examples.html">plot_sim_examples</a></span><span class="op">(</span>size_dot <span class="op">=</span> <span class="fl">4</span>, size_raster_label <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_sim_examples.html">plot_sim_examples</a></span><span class="op">(</span>size_dot <span class="op">=</span> <span class="fl">4</span>, size_raster_label <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></code></pre></div>
 <p><img src="intro_files/figure-html/unnamed-chunk-6-1.png" width="1056"></p>
 </div>
-<div id="application" class="section level4">
-<h4 class="hasAnchor">
-<a href="#application" class="anchor"></a>Application</h4>
-<p>We can run the above described simulation and as a benchmark also perform a poisson test.</p>
+<div class="section level5">
+<h5 id="application">Application<a class="anchor" aria-label="anchor" href="#application"></a>
+</h5>
+<p>We can run the above described simulation and as a benchmark also
+perform a poisson test.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">df_sim_sites</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sim_sites.html">sim_sites</a></span><span class="op">(</span><span class="va">df_site</span>, <span class="va">df_visit</span>, r <span class="op">=</span> <span class="fl">1000</span>, poisson_test <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-
-<span class="va">df_sim_sites</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">df_sim_sites</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sim_sites.html">sim_sites</a></span><span class="op">(</span><span class="va">df_site</span>, <span class="va">df_visit</span>, r <span class="op">=</span> <span class="fl">1000</span>, poisson_test <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">df_sim_sites</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <colgroup>
 <col width="6%">
@@ -627,19 +720,30 @@
 </tr>
 </tbody>
 </table>
-<p>We find that the probability of getting a mean ae at visit_med75 for sites S0001 and S0002 is 0 or near zero.</p>
+<p>We find that the probability of getting a mean ae at visit_med75 for
+sites S0001 and S0002 is 0 or near zero.</p>
 </div>
 </div>
 </div>
-<div id="alpha-error-correction" class="section level2">
-<h2 class="hasAnchor">
-<a href="#alpha-error-correction" class="anchor"></a>Alpha Error Correction</h2>
-<p>Our simulated test data set consists of just 6 sites. However, it is not uncommon for 100 sites or more to participate in the same clinical trial. This would mean that we need to perform 100 statistical tests, and applying a 5% significance threshold would lead to on average of 5 False Positives (FP). We therefore need to adjust the calculated p-values and bootstrapped probabilities using <code><a href="https://rdrr.io/r/stats/p.adjust.html">stats::p.adjust(p, method = "BH")</a></code>, which applies the <a href="https://www.statisticshowto.com/benjamini-hochberg-procedure/">Benjamin Hochberg Procedure</a>. <code><a href="../reference/eval_sites.html">eval_sites()</a></code> uses the the inverted adjusted values to calculates the final bootstrapped AE under-reporting probability (prob_low_prob_ur) and includes the poisson test derived under-reporting probability as a reference (pval_prob_ur).</p>
+<div class="section level3">
+<h3 id="alpha-error-correction">Alpha Error Correction<a class="anchor" aria-label="anchor" href="#alpha-error-correction"></a>
+</h3>
+<p>Our simulated test data set consists of just 6 sites. However, it is
+not uncommon for 100 sites or more to participate in the same clinical
+trial. This would mean that we need to perform 100 statistical tests,
+and applying a 5% significance threshold would lead to on average of 5
+False Positives (FP). We therefore need to adjust the calculated
+p-values and bootstrapped probabilities using
+<code>stats::p.adjust(p, method = "BH")</code>, which applies the <a href="https://www.statisticshowto.com/benjamini-hochberg-procedure/" class="external-link">Benjamin
+Hochberg Procedure</a>. <code><a href="../reference/eval_sites.html">eval_sites()</a></code> uses the the inverted
+adjusted values to calculates the final bootstrapped AE under-reporting
+probability (prob_low_prob_ur) and includes the poisson test derived
+under-reporting probability as a reference (pval_prob_ur).</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">df_eval</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/eval_sites.html">eval_sites</a></span><span class="op">(</span><span class="va">df_sim_sites</span>, method <span class="op">=</span> <span class="st">"BH"</span><span class="op">)</span>
-
-<span class="va">df_eval</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">df_eval</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/eval_sites.html">eval_sites</a></span><span class="op">(</span><span class="va">df_sim_sites</span>, method <span class="op">=</span> <span class="st">"BH"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">df_eval</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <colgroup>
 <col width="4%">
@@ -773,85 +877,90 @@
 </tbody>
 </table>
 </div>
-<div id="plot-results" class="section level2">
-<h2 class="hasAnchor">
-<a href="#plot-results" class="anchor"></a>Plot Results</h2>
-<p><code>plot_study</code> will plot mean ae development of all sites and visit level data for each flagged site with an AE under-reporting threshold of 95%.</p>
+<div class="section level3">
+<h3 id="plot-results">Plot Results<a class="anchor" aria-label="anchor" href="#plot-results"></a>
+</h3>
+<p><code>plot_study</code> will plot mean ae development of all sites
+and visit level data for each flagged site with an AE under-reporting
+threshold of 95%.</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/plot_study.html">plot_study</a></span><span class="op">(</span><span class="va">df_visit</span>, <span class="va">df_site</span>, <span class="va">df_eval</span>, study <span class="op">=</span> <span class="st">"A"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_study.html">plot_study</a></span><span class="op">(</span><span class="va">df_visit</span>, <span class="va">df_site</span>, <span class="va">df_eval</span>, study <span class="op">=</span> <span class="st">"A"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="intro_files/figure-html/unnamed-chunk-9-1.png" width="960"></p>
 </div>
 </div>
-<div id="applying-simaerep" class="section level1">
-<h1 class="hasAnchor">
-<a href="#applying-simaerep" class="anchor"></a>Applying {simaerep}</h1>
-<p>Instead of executing all previous steps manually we can also use the S3 interface which manages all intermediate results and provides more convenient plotting using the <code><a href="https://rdrr.io/r/graphics/plot.default.html">plot()</a></code> generic function.</p>
+<div class="section level2">
+<h2 id="applying-simaerep">Applying {simaerep}<a class="anchor" aria-label="anchor" href="#applying-simaerep"></a>
+</h2>
+<p>Instead of executing all previous steps manually we can also use the
+S3 interface which manages all intermediate results and provides more
+convenient plotting using the <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> generic function.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">aerep</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/simaerep.html">simaerep</a></span><span class="op">(</span><span class="va">df_visit</span><span class="op">)</span>
-<span class="va">aerep</span></code></pre></div>
-<pre><code>## simaerep object:
-## Check aerep$df_eval prob_low_prob_ur column for AE under-reporting probabilites.
-## Plot results using plot() generic.</code></pre>
+<code class="sourceCode R"><span><span class="va">aerep</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/simaerep.html">simaerep</a></span><span class="op">(</span><span class="va">df_visit</span><span class="op">)</span></span>
+<span><span class="va">aerep</span></span></code></pre></div>
+<pre><code><span><span class="co">## simaerep object:</span></span>
+<span><span class="co">## Check aerep$df_eval prob_low_prob_ur column for AE under-reporting probabilites.</span></span>
+<span><span class="co">## Plot results using plot() generic.</span></span></code></pre>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="va">aerep</span><span class="op">)</span></code></pre></div>
-<pre><code>## List of 7
-##  $ visit           :List of 3
-##   ..$ dim       : int [1:2] 2336 9
-##   ..$ df_summary: tibble [1 × 5] (S3: tbl_df/tbl/data.frame)
-##   .. ..$ n_studies : int 1
-##   .. ..$ n_sites   : int 6
-##   .. ..$ n_patients: int 120
-##   .. ..$ n_visits  : int 2336
-##   .. ..$ n_aes     : int 942
-##   ..$ str_call  : chr "df_visit"
-##   ..- attr(*, "class")= chr "orivisit"
-##  $ df_site         : tibble [6 × 6] (S3: tbl_df/tbl/data.frame)
-##   ..$ study_id          : chr [1:6] "A" "A" "A" "A" ...
-##   ..$ site_number       : chr [1:6] "S0001" "S0002" "S0003" "S0004" ...
-##   ..$ n_pat             : int [1:6] 20 20 20 20 20 20
-##   ..$ n_pat_with_med75  : int [1:6] 17 17 16 17 18 20
-##   ..$ visit_med75       : Named num [1:6] 15 14 17 16 16 15
-##   .. ..- attr(*, "names")= chr [1:6] "80%" "80%" "80%" "80%" ...
-##   ..$ mean_ae_site_med75: num [1:6] 3 3.35 8.5 8.06 7.56 ...
-##  $ df_sim_sites    : tibble [6 × 9] (S3: tbl_df/tbl/data.frame)
-##   ..$ study_id              : chr [1:6] "A" "A" "A" "A" ...
-##   ..$ site_number           : chr [1:6] "S0001" "S0002" "S0003" "S0004" ...
-##   ..$ n_pat                 : int [1:6] 20 20 20 20 20 20
-##   ..$ n_pat_with_med75      : int [1:6] 17 17 16 17 18 20
-##   ..$ visit_med75           : Named num [1:6] 15 14 17 16 16 15
-##   .. ..- attr(*, "names")= chr [1:6] "80%" "80%" "80%" "80%" ...
-##   ..$ mean_ae_site_med75    : num [1:6] 3 3.35 8.5 8.06 7.56 ...
-##   ..$ mean_ae_study_med75   : num [1:6] 6.71 6.02 6.51 6.26 6.35 ...
-##   ..$ n_pat_with_med75_study: int [1:6] 87 92 74 84 83 84
-##   ..$ prob_low              : num [1:6] 0 0 1 1 1 1
-##  $ df_eval         : tibble [6 × 11] (S3: tbl_df/tbl/data.frame)
-##   ..$ study_id              : chr [1:6] "A" "A" "A" "A" ...
-##   ..$ site_number           : chr [1:6] "S0001" "S0002" "S0003" "S0004" ...
-##   ..$ n_pat                 : int [1:6] 20 20 20 20 20 20
-##   ..$ n_pat_with_med75      : int [1:6] 17 17 16 17 18 20
-##   ..$ visit_med75           : Named num [1:6] 15 14 17 16 16 15
-##   .. ..- attr(*, "names")= chr [1:6] "80%" "80%" "80%" "80%" ...
-##   ..$ mean_ae_site_med75    : num [1:6] 3 3.35 8.5 8.06 7.56 ...
-##   ..$ mean_ae_study_med75   : num [1:6] 6.71 6.02 6.51 6.26 6.35 ...
-##   ..$ n_pat_with_med75_study: int [1:6] 87 92 74 84 83 84
-##   ..$ prob_low              : num [1:6] 0 0 1 1 1 1
-##   ..$ prob_low_adj          : num [1:6] 0 0 1 1 1 1
-##   ..$ prob_low_prob_ur      : num [1:6] 1 1 0 0 0 0
-##  $ param_site_aggr :List of 2
-##   ..$ method      : chr "med75_adj"
-##   ..$ min_pat_pool: num 0.2
-##  $ param_sim_sites :List of 3
-##   ..$ r           : num 1000
-##   ..$ poisson_test: logi FALSE
-##   ..$ prob_lower  : logi TRUE
-##  $ param_eval_sites:List of 1
-##   ..$ method: chr "BH"
-##  - attr(*, "class")= chr "simaerep"</code></pre>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">aerep</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## List of 7</span></span>
+<span><span class="co">##  $ visit           :List of 3</span></span>
+<span><span class="co">##   ..$ dim       : int [1:2] 2336 9</span></span>
+<span><span class="co">##   ..$ df_summary: tibble [1 × 5] (S3: tbl_df/tbl/data.frame)</span></span>
+<span><span class="co">##   .. ..$ n_studies : int 1</span></span>
+<span><span class="co">##   .. ..$ n_sites   : int 6</span></span>
+<span><span class="co">##   .. ..$ n_patients: int 120</span></span>
+<span><span class="co">##   .. ..$ n_visits  : int 2336</span></span>
+<span><span class="co">##   .. ..$ n_aes     : int 942</span></span>
+<span><span class="co">##   ..$ str_call  : chr "df_visit"</span></span>
+<span><span class="co">##   ..- attr(*, "class")= chr "orivisit"</span></span>
+<span><span class="co">##  $ df_site         : tibble [6 × 6] (S3: tbl_df/tbl/data.frame)</span></span>
+<span><span class="co">##   ..$ study_id          : chr [1:6] "A" "A" "A" "A" ...</span></span>
+<span><span class="co">##   ..$ site_number       : chr [1:6] "S0001" "S0002" "S0003" "S0004" ...</span></span>
+<span><span class="co">##   ..$ n_pat             : int [1:6] 20 20 20 20 20 20</span></span>
+<span><span class="co">##   ..$ n_pat_with_med75  : int [1:6] 17 17 16 17 18 20</span></span>
+<span><span class="co">##   ..$ visit_med75       : Named num [1:6] 15 14 17 16 16 15</span></span>
+<span><span class="co">##   .. ..- attr(*, "names")= chr [1:6] "80%" "80%" "80%" "80%" ...</span></span>
+<span><span class="co">##   ..$ mean_ae_site_med75: num [1:6] 3 3.35 8.5 8.06 7.56 ...</span></span>
+<span><span class="co">##  $ df_sim_sites    : tibble [6 × 9] (S3: tbl_df/tbl/data.frame)</span></span>
+<span><span class="co">##   ..$ study_id              : chr [1:6] "A" "A" "A" "A" ...</span></span>
+<span><span class="co">##   ..$ site_number           : chr [1:6] "S0001" "S0002" "S0003" "S0004" ...</span></span>
+<span><span class="co">##   ..$ n_pat                 : int [1:6] 20 20 20 20 20 20</span></span>
+<span><span class="co">##   ..$ n_pat_with_med75      : int [1:6] 17 17 16 17 18 20</span></span>
+<span><span class="co">##   ..$ visit_med75           : Named num [1:6] 15 14 17 16 16 15</span></span>
+<span><span class="co">##   .. ..- attr(*, "names")= chr [1:6] "80%" "80%" "80%" "80%" ...</span></span>
+<span><span class="co">##   ..$ mean_ae_site_med75    : num [1:6] 3 3.35 8.5 8.06 7.56 ...</span></span>
+<span><span class="co">##   ..$ mean_ae_study_med75   : num [1:6] 6.71 6.02 6.51 6.26 6.35 ...</span></span>
+<span><span class="co">##   ..$ n_pat_with_med75_study: int [1:6] 87 92 74 84 83 84</span></span>
+<span><span class="co">##   ..$ prob_low              : num [1:6] 0 0 1 1 1 1</span></span>
+<span><span class="co">##  $ df_eval         : tibble [6 × 11] (S3: tbl_df/tbl/data.frame)</span></span>
+<span><span class="co">##   ..$ study_id              : chr [1:6] "A" "A" "A" "A" ...</span></span>
+<span><span class="co">##   ..$ site_number           : chr [1:6] "S0001" "S0002" "S0003" "S0004" ...</span></span>
+<span><span class="co">##   ..$ n_pat                 : int [1:6] 20 20 20 20 20 20</span></span>
+<span><span class="co">##   ..$ n_pat_with_med75      : int [1:6] 17 17 16 17 18 20</span></span>
+<span><span class="co">##   ..$ visit_med75           : Named num [1:6] 15 14 17 16 16 15</span></span>
+<span><span class="co">##   .. ..- attr(*, "names")= chr [1:6] "80%" "80%" "80%" "80%" ...</span></span>
+<span><span class="co">##   ..$ mean_ae_site_med75    : num [1:6] 3 3.35 8.5 8.06 7.56 ...</span></span>
+<span><span class="co">##   ..$ mean_ae_study_med75   : num [1:6] 6.71 6.02 6.51 6.26 6.35 ...</span></span>
+<span><span class="co">##   ..$ n_pat_with_med75_study: int [1:6] 87 92 74 84 83 84</span></span>
+<span><span class="co">##   ..$ prob_low              : num [1:6] 0 0 1 1 1 1</span></span>
+<span><span class="co">##   ..$ prob_low_adj          : num [1:6] 0 0 1 1 1 1</span></span>
+<span><span class="co">##   ..$ prob_low_prob_ur      : num [1:6] 1 1 0 0 0 0</span></span>
+<span><span class="co">##  $ param_site_aggr :List of 2</span></span>
+<span><span class="co">##   ..$ method      : chr "med75_adj"</span></span>
+<span><span class="co">##   ..$ min_pat_pool: num 0.2</span></span>
+<span><span class="co">##  $ param_sim_sites :List of 3</span></span>
+<span><span class="co">##   ..$ r           : num 1000</span></span>
+<span><span class="co">##   ..$ poisson_test: logi FALSE</span></span>
+<span><span class="co">##   ..$ prob_lower  : logi TRUE</span></span>
+<span><span class="co">##  $ param_eval_sites:List of 1</span></span>
+<span><span class="co">##   ..$ method: chr "BH"</span></span>
+<span><span class="co">##  - attr(*, "class")= chr "simaerep"</span></span></code></pre>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">aerep</span><span class="op">)</span></code></pre></div>
-<pre><code>## study = NULL, defaulting to study:A</code></pre>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">aerep</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## study = NULL, defaulting to study:A</span></span></code></pre>
 <p><img src="intro_files/figure-html/unnamed-chunk-10-1.png" width="700"></p>
-<p>For modifying the default parameters please check out the <code><a href="../reference/simaerep.html">simaerep()</a></code> documentation.</p>
+<p>For modifying the default parameters please check out the
+<code><a href="../reference/simaerep.html">simaerep()</a></code> documentation.</p>
 </div>
   </div>
 
@@ -866,11 +975,13 @@
 
 
       <footer><div class="copyright">
-  <p>Developed by Bjoern Koneswarakantha.</p>
+  <p></p>
+<p>Developed by Bjoern Koneswarakantha.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer>
@@ -878,6 +989,8 @@
 
   
 
+
+  
 
   </body>
 </html>

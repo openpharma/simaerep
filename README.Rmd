@@ -20,6 +20,7 @@ knitr::opts_chunk$set(
 [![R build status](https://github.com/openpharma/simaerep/workflows/R-CMD-check/badge.svg)](https://github.com/openpharma/simaerep/actions)
 [![codecov](https://codecov.io/gh/openpharma/simaerep/branch/master/graph/badge.svg)](https://codecov.io/gh/openpharma/simaerep)
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
+[![R Package Validation report](https://github.com/openpharma/simaerep/actions/workflows/validation.yml/badge.svg)](https://github.com/openpharma/simaerep/actions/workflows/validation.yml)
 <!-- badges: end -->
 
 Simulate adverse event reporting in clinical trials with the goal of detecting under-reporting sites.
@@ -42,7 +43,7 @@ devtools::install_github("openpharma/simaerep")
 
 Koneswarakantha, B., Barmaz, Y., Ménard, T. et al. Follow-up on the Use of Advanced Analytics for Clinical Quality Assurance: Bootstrap Resampling to Enhance Detection of Adverse Event Under-Reporting. Drug Saf (2020). [https://doi.org/10.1007/s40264-020-01011-5](https://doi.org/10.1007/s40264-020-01011-5)
 
-# Vignettes/ Articles
+## Vignettes/ Articles
 
 - [Introduction](https://openpharma.github.io/simaerep/articles/intro.html)
 - [Usability Limits](https://openpharma.github.io/simaerep/articles/usability_limits.html)
@@ -50,6 +51,11 @@ Koneswarakantha, B., Barmaz, Y., Ménard, T. et al. Follow-up on the Use of Adva
 - [SAS Files](https://openpharma.github.io/simaerep/articles/sas_files.html)
 - [Adjusted Evaluation Point visit_med75](https://openpharma.github.io/simaerep/articles/visit_med75.html)
 - [Aggregate AEs by Days or Visit?](https://openpharma.github.io/simaerep/articles/visits_or_days.html)
+- [Portfolio Performance](https://openpharma.github.io/simaerep/articles/portfolio_perf.html)
+
+## Validation Report
+
+Download as pdf in the [release section](https://github.com/openpharma/simaerep/releases) generated using [thevalidatoR](https://github.com/insightsengineering/thevalidatoR). 
 
 # Application
 

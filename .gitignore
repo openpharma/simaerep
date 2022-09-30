@@ -20,3 +20,5 @@ run_remote.md
 .vscode
 
 *.csv
+
+.DS_Store
