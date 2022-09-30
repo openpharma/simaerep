@@ -1,3 +1,6 @@
+# simaerep 0.4.1
+- validation report
+
 # simaerep 0.4.0
 - S3 interface #17
 - better performance specification #26
