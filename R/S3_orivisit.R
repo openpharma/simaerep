@@ -51,7 +51,7 @@ get_str_var <- function(call, env) {
   # exists() will search all envs up to global env
   # env_has() will check custom env
 
-  if (! exists(str_call) & ! rlang::env_has(env, str_call)) {
+  if (! exists(str_call) && ! rlang::env_has(env, str_call)) {
     return(NA)
   }
 
@@ -126,7 +126,7 @@ as.data.frame.orivisit <- function(x, ..., env = parent.frame()) {
   return(df)
 }
 
-stop.orivisit <- function(...) {
+stop.orivisit <- function(...) { #nolint
   err <- structure(
     list(
       message = paste(

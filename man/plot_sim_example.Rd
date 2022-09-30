@@ -13,8 +13,8 @@ plot_sim_example(
   color_site_c = "gold3",
   color_high = "#00695C",
   color_low = "#25A69A",
-  title = T,
-  legend = T
+  title = TRUE,
+  legend = TRUE
 )
 }
 \arguments{

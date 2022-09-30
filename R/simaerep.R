@@ -562,7 +562,7 @@ eval_sites_deprecated <- function(df_sim_sites,
 
 get_ecd_values <- function(df_sim_studies, df_sim_sites, val_str) {
 
-  possibly_ecdf <- possibly(ecdf, otherwise = NA)
+  possibly_ecdf <- possibly(ecdf, otherwise = NA) #nolint
 
   apply_ecdf <- function(.f, x) {
       if (suppressWarnings(is.na(.f))) {
@@ -586,7 +586,7 @@ get_ecd_values <- function(df_sim_studies, df_sim_sites, val_str) {
     mutate(ecd_val = map2_dbl(.data$`.ecdf`, .data$val, apply_ecdf)) %>%
     rename(
       !!as.symbol(val_str) := .data$val,
-      !!as.symbol(paste0(val_str, "_ecd")) := .data$ecd_val
+      !!as.symbol(paste0(val_str, "_ecd")) := .data$ecd_val #nolint
     ) %>%
     select(- .data$`.ecdf`)
 
@@ -663,8 +663,8 @@ prob_lower_site_ae_vs_study_ae <- function(site_ae, study_ae, r = 1000, parallel
     return(prob_lower)
   }
 
-  mean_ae_site <- mean(site_ae, na.rm = T)
-  mean_ae_study <- mean(study_ae, na.rm = T)
+  mean_ae_site <- mean(site_ae, na.rm = TRUE)
+  mean_ae_study <- mean(study_ae, na.rm = TRUE)
 
   # we are not interested in cases where site AE is greater study AE
   if (mean_ae_site > mean_ae_study) {
@@ -687,7 +687,7 @@ prob_lower_site_ae_vs_study_ae <- function(site_ae, study_ae, r = 1000, parallel
 
   sim <- function(seed) {
     set.seed(seed)
-    me <- mean(sample(pool, n_pat, replace = T))
+    me <- mean(sample(pool, n_pat, replace = TRUE))
     # '<=' includes all cases where mean_ae_site == 0 and me also == 0
     return(as.integer(ifelse(me <= mean_ae_site, 1, 0)))
   }
@@ -1267,8 +1267,8 @@ poiss_test_site_ae_vs_study_ae <- function(site_ae,
     return(pval)
   }
 
-  mean_ae_site <- mean(site_ae, na.rm = T)
-  mean_ae_study <- mean(study_ae, na.rm = T)
+  mean_ae_site <- mean(site_ae, na.rm = TRUE)
+  mean_ae_study <- mean(study_ae, na.rm = TRUE)
 
   # we are not interested in cases where site AE is greater study AE
   if (mean_ae_site > mean_ae_study) {

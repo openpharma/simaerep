@@ -9,8 +9,7 @@ lint_package(path = ".", ...)
 \arguments{
 \item{path}{character}
 
-\item{...}{additional arguments passed to \code{\link[lintr]{lint}}, e.g.
-\code{cache} or \code{linters}.}
+\item{...}{additional arguments passed to \code{\link[lintr:lint]{lint()}}, e.g. \code{linters} or \code{cache}.}
 }
 \value{
 " "

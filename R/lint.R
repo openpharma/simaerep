@@ -12,12 +12,12 @@
 lint_package <- function(path = ".", ...) {
 
   lint_results <- lintr::lint_package(path = path,
-                                        linters = lintr::with_defaults(
+                                        linters = lintr::linters_with_defaults(
                                           line_length_linter = lintr::line_length_linter(120),
                                           trailing_whitespace_linter = NULL,
                                           cyclocomp_linter = lintr::cyclocomp_linter(25)
                                         ),
-                                      exclusions = list("inst/logo/logo.R", "tests/spelling.R"),
+                                      exclusions = list("inst/logo/logo.R", "tests/spelling.R", "vignettes"),
                                       ...)
 
   if (length(lint_results) > 0) {

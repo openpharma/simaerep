@@ -49,9 +49,13 @@ sim_test_data_study <- function(n_pat = 1000,
            aes = pmap(list(vm = max_visit_mean,
                            vs = max_visit_sd,
                            am = ae_per_visit_mean),
-                      function(vm, vs, am) sim_test_data_patient(
-                        .f_sample_max_visit = function() rnorm(1, mean = vm, sd = vs),
-                        .f_sample_ae_per_visit = function(max_visit) rpois(max_visit, am))),
+                      function(vm, vs, am) {
+                          sim_test_data_patient(
+                          .f_sample_max_visit = function() rnorm(1, mean = vm, sd = vs),
+                          .f_sample_ae_per_visit = function(max_visit) rpois(max_visit, am)
+                          )
+                        }
+                      ),
            aes = map(aes, ~ tibble(visit = seq(1, length(.)), n_ae = .))) %>%
     unnest(aes)
 
@@ -104,7 +108,7 @@ sim_test_data_patient <- function(.f_sample_max_visit = function() rnorm(1, mean
 #' @export
 sim_scenario <- function(n_ae_site, n_ae_study, frac_pat_with_ur, ur_rate) {
 
-  if (frac_pat_with_ur == 0 | ur_rate == 0) {
+  if (frac_pat_with_ur == 0 || ur_rate == 0) {
     return(list(n_ae_site = n_ae_site, n_ae_study = n_ae_study))
   }
 
@@ -376,6 +380,8 @@ sim_ur_scenarios <- function(df_portf,
       .data$frac_pat_with_ur,
       .data$ur_rate
     )
+
+  return(df_eval)
 
 }
 
@@ -735,7 +741,7 @@ get_portf_perf <- function(df_scen, stat = "prob_low_prob_ur", fpr = c(0.001, 0.
 
   }
 
-  stat_at_0 <- df_scen %>%
+  stat_at_0 <- df_scen %>% #nolint
     filter(.data$ur_rate == 0, .data$frac_pat_with_ur == 0) %>%
     pull(.data[[stat]])
 

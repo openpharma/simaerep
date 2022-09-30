@@ -99,7 +99,7 @@ plot_dots <- function(df,
       ymax = max_y + 0.4
     ),
     color = "grey",
-    show.legend = F,
+    show.legend = FALSE,
     alpha = 0
     ) +
     geom_text(aes(x + 1.5,
@@ -107,7 +107,7 @@ plot_dots <- function(df,
       label = label
     ),
     df_label,
-    show.legend = F
+    show.legend = FALSE
     ) +
     theme_minimal() +
     labs(x = "x", y = "y", color = "site") +
@@ -161,8 +161,8 @@ plot_sim_example <- function(substract_ae_per_pat = 0,
                              color_site_c = "gold3",
                              color_high = "#00695C",
                              color_low = "#25A69A",
-                             title = T,
-                             legend = T) {
+                             title = TRUE,
+                             legend = TRUE) {
   set.seed(5)
 
   study <- tibble(
@@ -177,7 +177,7 @@ plot_sim_example <- function(substract_ae_per_pat = 0,
     )
 
   rep10 <- study %>%
-    sample_n(100, replace = T) %>%
+    sample_n(100, replace = TRUE) %>%
     mutate(rep = rep(seq(1, 10, 1), 10)) %>%
     arrange(.data$rep, .data$site)
 
@@ -208,7 +208,7 @@ plot_sim_example <- function(substract_ae_per_pat = 0,
   # plot sim1000 as raster -----------------------------------------------
 
   rep1000 <- study %>%
-    sample_n(10240, replace = T) %>%
+    sample_n(10240, replace = TRUE) %>%
     mutate(rep = rep(seq(1, 1024, 1), 10)) %>%
     arrange(.data$rep, .data$site) %>%
     group_by(.data$rep) %>%
@@ -316,8 +316,8 @@ plot_sim_examples <- function(substract_ae_per_pat = c(0, 1, 3), ...) {
 
   df <- tibble(
     substract_ae_per_pat = substract_ae_per_pat,
-    title = F,
-    legend = F
+    title = FALSE,
+    legend = FALSE
   ) %>%
     mutate(
       legend = FALSE
@@ -622,7 +622,7 @@ plot_study <- function(df_visit,
         .data$alert_level_site == 2 ~ "tomato",
         .data$alert_level_site == 1 ~ "orange",
         .data$alert_level_site == 0 ~ "blue",
-        T ~ "grey"
+        TRUE ~ "grey"
       )
     )
 
@@ -637,7 +637,7 @@ plot_study <- function(df_visit,
     round(alert_level_study, 0) == 2 ~ "tomato",
     round(alert_level_study, 0) == 1 ~ "orange",
     round(alert_level_study, 0) == 0 ~ "blue",
-    T ~ "grey"
+    TRUE ~ "grey"
   )
 
   p_study <- df_mean_ae_dev_site_no_alert %>%
