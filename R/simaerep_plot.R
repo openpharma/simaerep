@@ -51,7 +51,6 @@ plot_dots <- function(df,
     ungroup() %>%
     mutate(
       y = nrow - .data$y
-      # , x = 10 - x
     ) %>%
     group_by_at(vars(one_of(col_group))) %>%
     mutate(
@@ -119,11 +118,6 @@ plot_dots <- function(df,
       aspect.ratio = 0.8,
       legend.position = "top"
     ) +
-    # scale_x_continuous( labels = seq(1,ncols), breaks = seq(1,ncols) ) +
-    # scale_y_continuous( labels = seq(1,nrow)
-    #                     , breaks = seq(0,nrow-1)
-    #                     , position = 'left'
-    # ) +
     scale_color_identity(labels = df$site, breaks = df$color, guide = "legend") +
     coord_cartesian(xlim = c(0, ncols + 2))
 
@@ -321,7 +315,6 @@ plot_sim_examples <- function(substract_ae_per_pat = c(0, 1, 3), ...) {
   ) %>%
     mutate(
       legend = FALSE
-      # , title = ifelse( row_number() == 1, T, F )
       , title_add = map_chr(.data$substract_ae_per_pat, ~ paste(
         "-",
         .,
