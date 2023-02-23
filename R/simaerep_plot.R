@@ -142,7 +142,9 @@ plot_dots <- function(df,
 #' @details uses [plot_dots()][plot_dots()] and adds 2 simulation panels, uses made-up
 #' site config with three sites A,B,C simulating site C
 #' @examples
+#' \dontrun{
 #' plot_sim_example(size_dots = 5)
+#' }
 #' @seealso
 #'  \code{\link[cowplot]{get_legend}},\code{\link[cowplot]{plot_grid}}
 #' @rdname plot_sim_example
@@ -290,8 +292,10 @@ plot_sim_example <- function(substract_ae_per_pat = 0,
 #' @param ... parameters passed to plot_sim_example()
 #' @details This function is a wrapper for plot_sim_example()
 #' @examples
+#' \dontrun{
 #' plot_sim_examples(size_dot = 3, size_raster_label = 10)
 #' plot_sim_examples()
+#' }
 #' @seealso
 #'  \code{\link[cowplot]{ggdraw}},\code{\link[cowplot]{draw_label}},\code{\link[cowplot]{plot_grid}}
 #' @rdname plot_sim_examples
@@ -399,6 +403,7 @@ plot_sim_examples <- function(substract_ae_per_pat = c(0, 1, 3), ...) {
 #'   number of patients. Patients that have not been on the study long enough to
 #'   reach the evaluation point (visit_med75) will be ignored.
 #' @examples
+#' \dontrun{
 #' df_visit <- sim_test_data_study(n_pat = 1000, n_sites = 10,
 #'     frac_site_with_ur = 0.2, ur_rate = 0.15, max_visit_sd = 8)
 #'
@@ -410,6 +415,7 @@ plot_sim_examples <- function(substract_ae_per_pat = c(0, 1, 3), ...) {
 #' df_eval <- eval_sites(df_sim_sites)
 #'
 #' plot_study(df_visit, df_site, df_eval, study = "A")
+#' }
 #' @rdname plot_study
 #' @export
 #' @import ggplot2

@@ -674,6 +674,7 @@ get_config <- function(df_site,
 #' @return dataframe
 #' @details DETAILS
 #' @examples
+#' \dontrun{
 #' df_visit1 <- sim_test_data_study(n_pat = 100, n_sites = 10,
 #'                                  frac_site_with_ur = 0.4, ur_rate = 0.6)
 #'
@@ -710,6 +711,7 @@ get_config <- function(df_site,
 #' df_perf <- get_portf_perf(df_scen)
 #'
 #' df_perf
+#' }
 #' @seealso \code{\link{sim_test_data_study}} \code{\link{get_config}}
 #' \code{\link{sim_test_data_portfolio}} \code{\link{sim_ur_scenarios}}
 #' \code{\link{get_portf_perf}}

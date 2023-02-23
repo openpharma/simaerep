@@ -50,6 +50,8 @@ test_that(paste("validation requirement - visually inspect plotted AE under-repo
                 "and Ae under-reporting probabilities using validation",
                 "test set with 25, 50, 75, 100% simulated AE under-reporting"), {
 
+  skip_on_cran() # graphics engines on CRAN not always compatible
+
   aerep <- simaerep(df_visit_val)
 
   for (study in c("study_025", "study_050", "study_075", "study_100")) {

@@ -49,6 +49,7 @@ number of patients. Patients that have not been on the study long enough to
 reach the evaluation point (visit_med75) will be ignored.
 }
 \examples{
+\dontrun{
 df_visit <- sim_test_data_study(n_pat = 1000, n_sites = 10,
     frac_site_with_ur = 0.2, ur_rate = 0.15, max_visit_sd = 8)
 
@@ -60,4 +61,5 @@ df_sim_sites <- sim_sites(df_site, df_visit, r = 100)
 df_eval <- eval_sites(df_sim_sites)
 
 plot_study(df_visit, df_site, df_eval, study = "A")
+}
 }

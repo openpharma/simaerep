@@ -176,6 +176,7 @@ simaerep <- function(df_visit,
 #' @details see [plot_study()][plot_study] and
 #'   [plot_visit_med75()][plot_visit_med75]
 #' @examples
+#' \dontrun{
 #' df_visit <- sim_test_data_study(
 #'   n_pat = 100,
 #'   n_sites = 5,
@@ -189,6 +190,7 @@ simaerep <- function(df_visit,
 #'
 #' plot(aerep, what = "ur", study = "A")
 #' plot(aerep, what = "med75", study = "A")
+#' }
 #' @rdname plot.simaerep
 #' @export
 plot.simaerep <- function(x,

@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Simulate adverse event reporting in clinical trials with the goal of detecting under-reporting sites • simaerep</title>
+<title>Simulate Adverse Event Reporting in Clinical Trials with the Goal of Detecting under-Reporting Sites • simaerep</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
 <link rel="apple-touch-icon" type="image/png" sizes="180x180" href="apple-touch-icon.png">
@@ -17,11 +17,11 @@
 <script src="bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
-<script src="pkgdown.js"></script><meta property="og:title" content="Simulate adverse event reporting in clinical trials with the goal of detecting under-reporting sites">
-<meta property="og:description" content="Monitoring of Adverse Event (AE) reporting in clinical trials is important for patient safety. We
-  use bootstrap-based simulation to assign an AE under-reporting probability to each site in a clinical trial.
-  The method is inspired by the infer R package and Allen Downey's blog article: &quot;There is only one test!&quot;
-  (http://allendowney.blogspot.com/2011/05/there-is-only-one-test.html).">
+<script src="pkgdown.js"></script><meta property="og:title" content="Simulate Adverse Event Reporting in Clinical Trials with the Goal of Detecting under-Reporting Sites">
+<meta property="og:description" content="This can detect clinical trial sites that are under-reporting adverse events (AE).
+  Bootstrap-based simulations are used to simulate AE reporting and to assign an AE 
+  under-reporting probability to each site in a clinical trial (Koneswarakantha 2021 
+  &lt;doi:10.1007/s40264-020-01011-5&gt;).">
 <meta property="og:image" content="https://openpharma.github.io/simaerep/logo.png">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -49,7 +49,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">simaerep</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.2</span>
       </span>
     </div>
 
@@ -122,7 +122,7 @@
   <div class="contents col-md-9">
 
 <div class="section level1">
-<div class="page-header"><h1 id="simaerep-">simaerep <a href="https://openpharma.github.io/simaerep"><img src="reference/figures/logo.png" align="right" height="139"></a>
+<div class="page-header"><h1 id="simaerep-">simaerep <a href="https://openpharma.github.io/simaerep/"><img src="reference/figures/logo.png" align="right" height="139"></a>
 <a class="anchor" aria-label="anchor" href="#simaerep-"></a>
 </h1></div>
 <!-- badges: start -->
@@ -418,8 +418,8 @@
 <h2 data-toc-skip>Dev status</h2>
 <ul class="list-unstyled">
 <li><a href="https://github.com/openpharma/simaerep/actions" class="external-link"><img src="https://github.com/openpharma/simaerep/workflows/R-CMD-check/badge.svg" alt="R build status"></a></li>
-<li><a href="https://codecov.io/gh/openpharma/simaerep" class="external-link"><img src="https://codecov.io/gh/openpharma/simaerep/branch/master/graph/badge.svg" alt="codecov"></a></li>
-<li><a href="https://www.tidyverse.org/lifecycle/#experimental" class="external-link"><img src="https://img.shields.io/badge/lifecycle-experimental-orange.svg" alt="Lifecycle: experimental"></a></li>
+<li><a href="https://app.codecov.io/gh/openpharma/simaerep" class="external-link"><img src="https://codecov.io/gh/openpharma/simaerep/branch/master/graph/badge.svg" alt="codecov"></a></li>
+<li><a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" class="external-link"><img src="https://img.shields.io/badge/lifecycle-experimental-orange.svg" alt="Lifecycle: experimental"></a></li>
 <li><a href="https://github.com/openpharma/simaerep/actions/workflows/validation.yml" class="external-link"><img src="https://github.com/openpharma/simaerep/actions/workflows/validation.yml/badge.svg" alt="R Package Validation report"></a></li>
 </ul>
 </div>

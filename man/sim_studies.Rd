@@ -64,6 +64,7 @@ adds column with simulated probabilities for equal or lower
 mean_ae at visit_med75
 }
 \examples{
+\dontrun{
 df_visit1 <- sim_test_data_study(n_pat = 100, n_sites = 5,
                                       frac_site_with_ur = 0.4, ur_rate = 0.6)
 
@@ -81,9 +82,9 @@ df_site <- site_aggr(df_visit)
 sim_studies(df_visit, df_site, r = 3, keep_ae = TRUE)
 
 # parallel processing -------------------------
-\dontrun{
 library(future)
 future::plan(multiprocess)
 sim_studies(df_visit, df_site, r = 3, keep_ae = TRUE, parallel = TRUE)
+future::plan(sequential)
 }
 }

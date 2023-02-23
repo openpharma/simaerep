@@ -26,6 +26,7 @@ desired false positive rates (fpr as fp/P).
 DETAILS
 }
 \examples{
+\dontrun{
 df_visit1 <- sim_test_data_study(n_pat = 100, n_sites = 10,
                                  frac_site_with_ur = 0.4, ur_rate = 0.6)
 
@@ -62,6 +63,7 @@ df_scen
 df_perf <- get_portf_perf(df_scen)
 
 df_perf
+}
 }
 \seealso{
 \code{\link{sim_test_data_study}} \code{\link{get_config}}
