@@ -5,7 +5,7 @@ Authors@R:
     person(given = "Bjoern",
            family = "Koneswarakantha",
            role = c("aut", "cre"),
-           email = "datistics@gmail.com",
+           email = "bjoern.koneswarakantha@roche.com",
            comment = c(ORCID = "0000-0003-4585-7799"))
 Description: This can detect clinical trial sites that are under-reporting adverse events (AE).
   Bootstrap-based simulations are used to simulate AE reporting and to assign an AE 
