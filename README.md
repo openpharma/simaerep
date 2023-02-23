@@ -1,15 +1,15 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# simaerep <a href='https://openpharma.github.io/simaerep'><img src='man/figures/logo.png' align="right" height="139" /></a>
+# simaerep <a href='https://openpharma.github.io/simaerep/'><img src='man/figures/logo.png' align="right" height="139" /></a>
 
 <!-- badges: start -->
 
 [![R build
 status](https://github.com/openpharma/simaerep/workflows/R-CMD-check/badge.svg)](https://github.com/openpharma/simaerep/actions)
-[![codecov](https://codecov.io/gh/openpharma/simaerep/branch/master/graph/badge.svg)](https://codecov.io/gh/openpharma/simaerep)
+[![codecov](https://codecov.io/gh/openpharma/simaerep/branch/master/graph/badge.svg)](https://app.codecov.io/gh/openpharma/simaerep)
 [![Lifecycle:
-experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
+experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 [![R Package Validation
 report](https://github.com/openpharma/simaerep/actions/workflows/validation.yml/badge.svg)](https://github.com/openpharma/simaerep/actions/workflows/validation.yml)
 <!-- badges: end -->
@@ -43,19 +43,19 @@ Saf (2020). <https://doi.org/10.1007/s40264-020-01011-5>
 
 ## Vignettes/ Articles
 
--   [Introduction](https://openpharma.github.io/simaerep/articles/intro.html)
--   [Usability
-    Limits](https://openpharma.github.io/simaerep/articles/usability_limits.html)
--   [Check Poisson Test
-    Applicability](https://openpharma.github.io/simaerep/articles/check_poisson.html)
--   [SAS
-    Files](https://openpharma.github.io/simaerep/articles/sas_files.html)
--   [Adjusted Evaluation Point
-    visit_med75](https://openpharma.github.io/simaerep/articles/visit_med75.html)
--   [Aggregate AEs by Days or
-    Visit?](https://openpharma.github.io/simaerep/articles/visits_or_days.html)
--   [Portfolio
-    Performance](https://openpharma.github.io/simaerep/articles/portfolio_perf.html)
+- [Introduction](https://openpharma.github.io/simaerep/articles/intro.html)
+- [Usability
+  Limits](https://openpharma.github.io/simaerep/articles/usability_limits.html)
+- [Check Poisson Test
+  Applicability](https://openpharma.github.io/simaerep/articles/check_poisson.html)
+- [SAS
+  Files](https://openpharma.github.io/simaerep/articles/sas_files.html)
+- [Adjusted Evaluation Point
+  visit_med75](https://openpharma.github.io/simaerep/articles/visit_med75.html)
+- [Aggregate AEs by Days or
+  Visit?](https://openpharma.github.io/simaerep/articles/visits_or_days.html)
+- [Portfolio
+  Performance](https://openpharma.github.io/simaerep/articles/portfolio_perf.html)
 
 ## Validation Report
 

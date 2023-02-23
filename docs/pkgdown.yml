@@ -1,4 +1,4 @@
-pandoc: '2.18'
+pandoc: 3.0.1
 pkgdown: 2.0.5
 pkgdown_sha: ~
 articles:
@@ -9,7 +9,7 @@ articles:
   usability_limits: usability_limits.html
   visit_med75: visit_med75.html
   visits_or_days: visits_or_days.html
-last_built: 2022-09-30T13:24Z
+last_built: 2023-02-23T13:00Z
 urls:
   reference: https://openpharma.github.io/simaerep/reference
   article: https://openpharma.github.io/simaerep/articles

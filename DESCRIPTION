@@ -1,20 +1,19 @@
 Package: simaerep
-Title: Simulate adverse event reporting in clinical trials with the goal of detecting under-reporting sites
-Version: 0.4.1
+Title: Simulate Adverse Event Reporting in Clinical Trials with the Goal of Detecting under-Reporting Sites
+Version: 0.4.2
 Authors@R: 
     person(given = "Bjoern",
            family = "Koneswarakantha",
            role = c("aut", "cre"),
-           email = "datistics@gmail.com",
+           email = "bjoern.koneswarakantha@roche.com",
            comment = c(ORCID = "0000-0003-4585-7799"))
-Description: Monitoring of Adverse Event (AE) reporting in clinical trials is important for patient safety. We
-  use bootstrap-based simulation to assign an AE under-reporting probability to each site in a clinical trial.
-  The method is inspired by the 'infer' R package and Allen Downey's blog article: "There is only one test!"
-  (http://allendowney.blogspot.com/2011/05/there-is-only-one-test.html).
+Description: This can detect clinical trial sites that are under-reporting adverse events (AE).
+  Bootstrap-based simulations are used to simulate AE reporting and to assign an AE 
+  under-reporting probability to each site in a clinical trial (Koneswarakantha 2021 
+  <doi:10.1007/s40264-020-01011-5>).
 URL: https://openpharma.github.io/simaerep/, https://github.com/openpharma/simaerep
 License: MIT + file LICENSE
 Encoding: UTF-8
-LazyData: true
 Depends:
     R (>= 4.0),
     ggplot2

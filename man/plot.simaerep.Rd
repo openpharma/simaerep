@@ -44,6 +44,7 @@ see \link[=plot_study]{plot_study()} and
 \link[=plot_visit_med75]{plot_visit_med75()}
 }
 \examples{
+\dontrun{
 df_visit <- sim_test_data_study(
   n_pat = 100,
   n_sites = 5,
@@ -57,4 +58,5 @@ aerep <- simaerep(df_visit)
 
 plot(aerep, what = "ur", study = "A")
 plot(aerep, what = "med75", study = "A")
+}
 }

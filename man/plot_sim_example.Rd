@@ -49,7 +49,9 @@ uses \code{\link[=plot_dots]{plot_dots()}} and adds 2 simulation panels, uses ma
 site config with three sites A,B,C simulating site C
 }
 \examples{
+\dontrun{
 plot_sim_example(size_dots = 5)
+}
 }
 \seealso{
 \code{\link[cowplot]{get_legend}},\code{\link[cowplot]{plot_grid}}

@@ -1030,6 +1030,7 @@ get_pat_pool_config <- function(df_visit, df_site, min_n_pat_with_med75 = 1) {
 #'   are calculated.
 #' @return dataframe
 #' @examples
+#' \dontrun{
 #' df_visit1 <- sim_test_data_study(n_pat = 100, n_sites = 5,
 #'                                       frac_site_with_ur = 0.4, ur_rate = 0.6)
 #'
@@ -1047,10 +1048,10 @@ get_pat_pool_config <- function(df_visit, df_site, min_n_pat_with_med75 = 1) {
 #' sim_studies(df_visit, df_site, r = 3, keep_ae = TRUE)
 #'
 #' # parallel processing -------------------------
-#' \dontrun{
 #' library(future)
 #' future::plan(multiprocess)
 #' sim_studies(df_visit, df_site, r = 3, keep_ae = TRUE, parallel = TRUE)
+#' future::plan(sequential)
 #'}
 #' @details  adds column with simulated probabilities for equal or lower
 #'   mean_ae at visit_med75

@@ -1,3 +1,6 @@
+# simaerep 0.4.2
+- CRAN submission
+
 # simaerep 0.4.1
 - validation report
 
