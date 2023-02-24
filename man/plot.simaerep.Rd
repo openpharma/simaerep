@@ -44,7 +44,7 @@ see \link[=plot_study]{plot_study()} and
 \link[=plot_visit_med75]{plot_visit_med75()}
 }
 \examples{
-\dontrun{
+\donttest{
 df_visit <- sim_test_data_study(
   n_pat = 100,
   n_sites = 5,

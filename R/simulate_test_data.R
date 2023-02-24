@@ -186,7 +186,7 @@ sim_scenario <- function(n_ae_site, n_ae_study, frac_pat_with_ur, ur_rate) {
 #'   run. For this to work we need to specify the plan for how the code should
 #'   run, e.g. plan(multisession, workers = 18)
 #' @examples
-#' if (interactive()) {
+#' \donttest{
 #' df_visit1 <- sim_test_data_study(n_pat = 100, n_sites = 10,
 #'                                  frac_site_with_ur = 0.4, ur_rate = 0.6)
 #'
@@ -200,8 +200,8 @@ sim_scenario <- function(n_ae_site, n_ae_study, frac_pat_with_ur, ur_rate) {
 #' df_visit <- dplyr::bind_rows(df_visit1, df_visit2)
 #'
 #' df_site_max <- df_visit %>%
-#'   group_by(study_id, site_number, patnum) %>%
-#'   summarise(max_visit = max(visit),
+#'   dplyr::group_by(study_id, site_number, patnum) %>%
+#'   dplyr::summarise(max_visit = max(visit),
 #'             max_ae = max(n_ae),
 #'             .groups = "drop")
 #'
@@ -406,7 +406,7 @@ sim_ur_scenarios <- function(df_portf,
 #'   run. For this to work we need to specify the plan for how the code should
 #'   run, e.g. `plan(multisession, workers = 3)
 #' @examples
-#' if (interactive()) {
+#' \donttest{
 #' df_visit1 <- sim_test_data_study(n_pat = 100, n_sites = 10,
 #'                                  frac_site_with_ur = 0.4, ur_rate = 0.6)
 #'
@@ -420,8 +420,8 @@ sim_ur_scenarios <- function(df_portf,
 #' df_visit <- dplyr::bind_rows(df_visit1, df_visit2)
 #'
 #' df_site_max <- df_visit %>%
-#'   group_by(study_id, site_number, patnum) %>%
-#'   summarise(max_visit = max(visit),
+#'   dplyr::group_by(study_id, site_number, patnum) %>%
+#'   dplyr::summarise(max_visit = max(visit),
 #'             max_ae = max(n_ae),
 #'             .groups = "drop")
 #'
@@ -559,22 +559,22 @@ sim_test_data_portfolio <- function(df_config, parallel = FALSE, progress = TRUE
 #'  site} \item{**max_visit_mean**}{mean of maximum patient visits per site}
 #'  \item{**n_pat**}{number of patients} }
 #' @examples
-#' if (interactive()) {
+#' \donttest{
 #' df_visit1 <- sim_test_data_study(n_pat = 100, n_sites = 10,
 #'                                  frac_site_with_ur = 0.4, ur_rate = 0.6)
-#'.
+#'
 #' df_visit1$study_id <- "A"
-#'.
+#'
 #' df_visit2 <- sim_test_data_study(n_pat = 100, n_sites = 10,
 #'                                  frac_site_with_ur = 0.2, ur_rate = 0.1)
-#'.
+#'
 #' df_visit2$study_id <- "B"
-#'.
+#'
 #' df_visit <- dplyr::bind_rows(df_visit1, df_visit2)
 #'
 #' df_site_max <- df_visit %>%
-#'   group_by(study_id, site_number, patnum) %>%
-#'   summarise(max_visit = max(visit),
+#'   dplyr::group_by(study_id, site_number, patnum) %>%
+#'   dplyr::summarise(max_visit = max(visit),
 #'             max_ae = max(n_ae),
 #'             .groups = "drop")
 #'
@@ -674,7 +674,7 @@ get_config <- function(df_site,
 #' @return dataframe
 #' @details DETAILS
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' df_visit1 <- sim_test_data_study(n_pat = 100, n_sites = 10,
 #'                                  frac_site_with_ur = 0.4, ur_rate = 0.6)
 #'

@@ -1030,7 +1030,7 @@ get_pat_pool_config <- function(df_visit, df_site, min_n_pat_with_med75 = 1) {
 #'   are calculated.
 #' @return dataframe
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' df_visit1 <- sim_test_data_study(n_pat = 100, n_sites = 5,
 #'                                       frac_site_with_ur = 0.4, ur_rate = 0.6)
 #'
@@ -1046,7 +1046,8 @@ get_pat_pool_config <- function(df_visit, df_site, min_n_pat_with_med75 = 1) {
 #' df_site <- site_aggr(df_visit)
 #'
 #' sim_studies(df_visit, df_site, r = 3, keep_ae = TRUE)
-#'
+#'}
+#' \dontrun{
 #' # parallel processing -------------------------
 #' library(future)
 #' future::plan(multiprocess)

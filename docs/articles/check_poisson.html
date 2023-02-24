@@ -198,7 +198,7 @@ all functions we already <a href="https://openpharma.github.io/simaerep/articles
 <span><span class="va">df_sim_sites</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sim_sites.html">sim_sites</a></span><span class="op">(</span><span class="va">df_site</span>, <span class="va">df_visit</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">df_visit</span></span></code></pre></div>
-<pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 58,219 × 9</span></span></span>
+<pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 58,075 × 9</span></span></span>
 <span><span class="co">##    patnum  site_number is_ur max_visit_mean max_visit_sd ae_per_visit_mean visit</span></span>
 <span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
 <span><span class="co">## <span style="color: #BCBCBC;"> 1</span> P000001 S0001       TRUE              20            4              0.25     1</span></span>
@@ -211,38 +211,38 @@ all functions we already <a href="https://openpharma.github.io/simaerep/articles
 <span><span class="co">## <span style="color: #BCBCBC;"> 8</span> P000001 S0001       TRUE              20            4              0.25     8</span></span>
 <span><span class="co">## <span style="color: #BCBCBC;"> 9</span> P000001 S0001       TRUE              20            4              0.25     9</span></span>
 <span><span class="co">## <span style="color: #BCBCBC;">10</span> P000001 S0001       TRUE              20            4              0.25    10</span></span>
-<span><span class="co">## <span style="color: #949494;"># … with 58,209 more rows, and 2 more variables: n_ae &lt;int&gt;, study_id &lt;chr&gt;</span></span></span></code></pre>
+<span><span class="co">## <span style="color: #949494;"># … with 58,065 more rows, and 2 more variables: n_ae &lt;int&gt;, study_id &lt;chr&gt;</span></span></span></code></pre>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">df_site</span></span></code></pre></div>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 300 × 6</span></span></span>
 <span><span class="co">##    study_id      site_number n_pat n_pat_with_med75 visit_med75 mean_ae_site_me…</span></span>
 <span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> ae_per_visit… S0001          10               10          14            0.6  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> ae_per_visit… S0002          10               10          15            0.4  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> ae_per_visit… S0003          10               10          15            0.4  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> ae_per_visit… S0004          10               10          16            0.4  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> ae_per_visit… S0005          10               10          18            0.4  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> ae_per_visit… S0006          10                9          14            0.222</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> ae_per_visit… S0007          10                9          14            0.444</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> ae_per_visit… S0008          10                9          14            0.111</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> ae_per_visit… S0009          10                8          17            0.375</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">10</span> ae_per_visit… S0010          10                9          17            0.333</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> ae_per_visit… S0001          10               10          17            0.6  </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> ae_per_visit… S0002          10                9          17            0.444</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> ae_per_visit… S0003          10                8          18            0.5  </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> ae_per_visit… S0004          10                7          21            0.286</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> ae_per_visit… S0005          10                8          16            0.625</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> ae_per_visit… S0006          10                8          17            0    </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> ae_per_visit… S0007          10               10          15            0.6  </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> ae_per_visit… S0008          10               10          14            0.2  </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> ae_per_visit… S0009          10                8          16            0.5  </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">10</span> ae_per_visit… S0010          10                9          16            0.222</span></span>
 <span><span class="co">## <span style="color: #949494;"># … with 290 more rows</span></span></span></code></pre>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">df_sim_sites</span></span></code></pre></div>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 300 × 10</span></span></span>
 <span><span class="co">##    study_id      site_number n_pat n_pat_with_med75 visit_med75 mean_ae_site_me…</span></span>
 <span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> ae_per_visit… S0001          10               10          14            0.6  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> ae_per_visit… S0002          10               10          15            0.4  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> ae_per_visit… S0003          10               10          15            0.4  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> ae_per_visit… S0004          10               10          16            0.4  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> ae_per_visit… S0005          10               10          18            0.4  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> ae_per_visit… S0006          10                9          14            0.222</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> ae_per_visit… S0007          10                9          14            0.444</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> ae_per_visit… S0008          10                9          14            0.111</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> ae_per_visit… S0009          10                8          17            0.375</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">10</span> ae_per_visit… S0010          10                9          17            0.333</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> ae_per_visit… S0001          10               10          17            0.6  </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> ae_per_visit… S0002          10                9          17            0.444</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> ae_per_visit… S0003          10                8          18            0.5  </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> ae_per_visit… S0004          10                7          21            0.286</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> ae_per_visit… S0005          10                8          16            0.625</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> ae_per_visit… S0006          10                8          17            0    </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> ae_per_visit… S0007          10               10          15            0.6  </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> ae_per_visit… S0008          10               10          14            0.2  </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> ae_per_visit… S0009          10                8          16            0.5  </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">10</span> ae_per_visit… S0010          10                9          16            0.222</span></span>
 <span><span class="co">## <span style="color: #949494;"># … with 290 more rows, and 4 more variables: mean_ae_study_med75 &lt;dbl&gt;,</span></span></span>
 <span><span class="co">## <span style="color: #949494;">#   n_pat_with_med75_study &lt;int&gt;, pval &lt;dbl&gt;, prob_low &lt;dbl&gt;</span></span></span></code></pre>
 </div>
@@ -276,16 +276,16 @@ maintaining the number of patients and the visit_med75 of each site.</p>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 30,000 × 8</span></span></span>
 <span><span class="co">##        r study_id     site_number visit_med75 n_pat_with_med75 n_pat_study  pval</span></span>
 <span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 1</span>     1 ae_per_visi… S0001                14               10         940 1    </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 2</span>     1 ae_per_visi… S0002                15               10         895 0.545</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 3</span>     1 ae_per_visi… S0003                15               10         895 0.850</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 4</span>     1 ae_per_visi… S0004                16               10         847 0.850</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 5</span>     1 ae_per_visi… S0005                18               10         685 0.860</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 6</span>     1 ae_per_visi… S0006                14                9         941 1    </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 7</span>     1 ae_per_visi… S0007                14                9         941 1    </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 8</span>     1 ae_per_visi… S0008                14                9         941 0.394</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 9</span>     1 ae_per_visi… S0009                17                8         777 1    </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">10</span>     1 ae_per_visi… S0010                17                9         776 1    </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 1</span>     1 ae_per_visi… S0001                17               10         736 1    </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 2</span>     1 ae_per_visi… S0002                17                9         737 1    </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 3</span>     1 ae_per_visi… S0003                18                8         656 1    </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 4</span>     1 ae_per_visi… S0004                21                7         372 0.838</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 5</span>     1 ae_per_visi… S0005                16                8         811 0.539</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 6</span>     1 ae_per_visi… S0006                17                8         738 1    </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 7</span>     1 ae_per_visi… S0007                15               10         868 1    </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 8</span>     1 ae_per_visi… S0008                14               10         915 1    </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 9</span>     1 ae_per_visi… S0009                16                8         811 1    </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">10</span>     1 ae_per_visi… S0010                16                9         810 0.839</span></span>
 <span><span class="co">## <span style="color: #949494;"># … with 29,990 more rows, and 1 more variable: prob_low &lt;dbl&gt;</span></span></span></code></pre>
 </div>
 <div class="section level3">
@@ -306,16 +306,16 @@ for the corresponding axis.</p>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 300 × 11</span></span></span>
 <span><span class="co">##    study_id      site_number n_pat n_pat_with_med75 visit_med75 mean_ae_site_me…</span></span>
 <span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> ae_per_visit… S0001          10               10          14            0.6  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> ae_per_visit… S0002          10               10          15            0.4  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> ae_per_visit… S0003          10               10          15            0.4  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> ae_per_visit… S0004          10               10          16            0.4  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> ae_per_visit… S0005          10               10          18            0.4  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> ae_per_visit… S0006          10                9          14            0.222</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> ae_per_visit… S0007          10                9          14            0.444</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> ae_per_visit… S0008          10                9          14            0.111</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> ae_per_visit… S0009          10                8          17            0.375</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">10</span> ae_per_visit… S0010          10                9          17            0.333</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> ae_per_visit… S0001          10               10          17            0.6  </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> ae_per_visit… S0002          10                9          17            0.444</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> ae_per_visit… S0003          10                8          18            0.5  </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> ae_per_visit… S0004          10                7          21            0.286</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> ae_per_visit… S0005          10                8          16            0.625</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> ae_per_visit… S0006          10                8          17            0    </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> ae_per_visit… S0007          10               10          15            0.6  </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> ae_per_visit… S0008          10               10          14            0.2  </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> ae_per_visit… S0009          10                8          16            0.5  </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">10</span> ae_per_visit… S0010          10                9          16            0.222</span></span>
 <span><span class="co">## <span style="color: #949494;"># … with 290 more rows, and 5 more variables: mean_ae_study_med75 &lt;dbl&gt;,</span></span></span>
 <span><span class="co">## <span style="color: #949494;">#   n_pat_with_med75_study &lt;int&gt;, pval &lt;dbl&gt;, prob_low &lt;dbl&gt;, pval_ecd &lt;dbl&gt;</span></span></span></code></pre>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
@@ -344,16 +344,16 @@ the smallest value greater zero we get for prob_low is 0.001 (1e-3).</p>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 300 × 11</span></span></span>
 <span><span class="co">##    study_id      site_number n_pat n_pat_with_med75 visit_med75 mean_ae_site_me…</span></span>
 <span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> ae_per_visit… S0001          10               10          14            0.6  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> ae_per_visit… S0002          10               10          15            0.4  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> ae_per_visit… S0003          10               10          15            0.4  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> ae_per_visit… S0004          10               10          16            0.4  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> ae_per_visit… S0005          10               10          18            0.4  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> ae_per_visit… S0006          10                9          14            0.222</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> ae_per_visit… S0007          10                9          14            0.444</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> ae_per_visit… S0008          10                9          14            0.111</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> ae_per_visit… S0009          10                8          17            0.375</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">10</span> ae_per_visit… S0010          10                9          17            0.333</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> ae_per_visit… S0001          10               10          17            0.6  </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> ae_per_visit… S0002          10                9          17            0.444</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> ae_per_visit… S0003          10                8          18            0.5  </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> ae_per_visit… S0004          10                7          21            0.286</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> ae_per_visit… S0005          10                8          16            0.625</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> ae_per_visit… S0006          10                8          17            0    </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> ae_per_visit… S0007          10               10          15            0.6  </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> ae_per_visit… S0008          10               10          14            0.2  </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> ae_per_visit… S0009          10                8          16            0.5  </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">10</span> ae_per_visit… S0010          10                9          16            0.222</span></span>
 <span><span class="co">## <span style="color: #949494;"># … with 290 more rows, and 5 more variables: mean_ae_study_med75 &lt;dbl&gt;,</span></span></span>
 <span><span class="co">## <span style="color: #949494;">#   n_pat_with_med75_study &lt;int&gt;, pval &lt;dbl&gt;, prob_low &lt;dbl&gt;,</span></span></span>
 <span><span class="co">## <span style="color: #949494;">#   prob_low_ecd &lt;dbl&gt;</span></span></span></code></pre>
