@@ -14,3 +14,4 @@
 ^\.git
 ^cran-comments\.md$
 ^data-raw$
+^CRAN-SUBMISSION$

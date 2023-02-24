@@ -11,6 +11,9 @@ plot_sim_examples(substract_ae_per_pat = c(0, 1, 3), ...)
 
 \item{...}{parameters passed to plot_sim_example()}
 }
+\value{
+ggplot
+}
 \description{
 This plot is meant to supplement the package documentation.
 }
@@ -18,7 +21,7 @@ This plot is meant to supplement the package documentation.
 This function is a wrapper for plot_sim_example()
 }
 \examples{
-\dontrun{
+\donttest{
 plot_sim_examples(size_dot = 3, size_raster_label = 10)
 plot_sim_examples()
 }

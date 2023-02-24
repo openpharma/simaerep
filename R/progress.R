@@ -1,7 +1,7 @@
 #' @title Execute a purrr or furrr function with a progress
 #' bar.
 #' @description Internal utility function.
-#' @details Call still needs to be wrapped in \code{\link[progressr]{with_progress}} 
+#' @details Call still needs to be wrapped in \code{\link[progressr]{with_progress}}
 #' or [with_progress_cnd()][with_progress_cnd()]
 #' @param .purrr purrr or furrr function
 #' @param ... iterable arguments passed to .purrr
@@ -17,7 +17,7 @@
 #'   purrr_bar(rep(0.25, 5), .purrr = purrr::map, .f = Sys.sleep, .steps = 5)
 #' )
 #'
-#'\dontrun{
+#'\donttest{
 #' # purrr::walk
 #' progressr::with_progress(
 #'  purrr_bar(rep(0.25, 5), .purrr = purrr::walk,.f = Sys.sleep, .steps = 5)
@@ -67,10 +67,11 @@
 #'
 #' # with mutate
 #' progressr::with_progress(
-#'  tibble(x = rep(0.25, 5)) %>%
-#'   mutate(x = purrr_bar(x, .purrr = purrr::map, .f = Sys.sleep, .steps = 5))
+#'  tibble::tibble(x = rep(0.25, 5)) %>%
+#'   dplyr::mutate(x = purrr_bar(x, .purrr = purrr::map, .f = Sys.sleep, .steps = 5))
 #' )
 #'}
+#' @return result of function passed to .f
 #' @rdname purrr_bar
 #' @export
 purrr_bar <- function(...,
@@ -116,7 +117,8 @@ purrr_bar <- function(...,
 #'@param ex expression
 #'@param progress logical, Default: TRUE
 #'@details This wrapper adds a progress parameter to \code{\link[progressr]{with_progress}}
-#' so that we can control the progress bar in the user facing functions.
+#' so that we can control the progress bar in the user facing functions. The progressbar
+#' only shows in interactive mode.
 #' @examples
 #' if (interactive()) {
 #'
@@ -155,6 +157,7 @@ purrr_bar <- function(...,
 #'   )
 #' )
 #'}
+#'@return No return value, called for side effects
 #'@seealso \code{\link[progressr]{with_progress}}
 #'@rdname with_progress_cnd
 #'@export

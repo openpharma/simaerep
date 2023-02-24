@@ -185,44 +185,44 @@ facilitated plotting using generic plot(x).</p>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">aerep</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> List of 7</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ visit           :List of 3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ dim       : int [1:2] 1968 9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ dim       : int [1:2] 1969 9</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ df_summary: tibble [1 × 5] (S3: tbl_df/tbl/data.frame)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ n_studies : int 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ n_sites   : int 5</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ n_patients: int 100</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ n_visits  : int 1968</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ n_aes     : int 819</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ n_visits  : int 1969</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ n_aes     : int 703</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ str_call  : chr "df_visit"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..- attr(*, "class")= chr "orivisit"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ df_site         : tibble [5 × 6] (S3: tbl_df/tbl/data.frame)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ study_id          : chr [1:5] "A" "A" "A" "A" ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ site_number       : chr [1:5] "S0001" "S0002" "S0003" "S0004" ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ n_pat             : int [1:5] 20 20 20 20 20</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ n_pat_with_med75  : int [1:5] 18 18 18 18 19</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ visit_med75       : Named num [1:5] 15 15 16 18 17</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ n_pat_with_med75  : int [1:5] 17 18 17 20 16</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ visit_med75       : Named num [1:5] 17 15 16 15 16</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..- attr(*, "names")= chr [1:5] "80%" "80%" "80%" "80%" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ mean_ae_site_med75: num [1:5] 3.44 3.67 8.56 9.83 9.26</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ mean_ae_site_med75: num [1:5] 3.06 2.56 8.53 6.4 8.38</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ df_sim_sites    : tibble [5 × 9] (S3: tbl_df/tbl/data.frame)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ study_id              : chr [1:5] "A" "A" "A" "A" ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ site_number           : chr [1:5] "S0001" "S0002" "S0003" "S0004" ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ n_pat                 : int [1:5] 20 20 20 20 20</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ n_pat_with_med75      : int [1:5] 18 18 18 18 19</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ visit_med75           : Named num [1:5] 15 15 16 18 17</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ n_pat_with_med75      : int [1:5] 17 18 17 20 16</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ visit_med75           : Named num [1:5] 17 15 16 15 16</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..- attr(*, "names")= chr [1:5] "80%" "80%" "80%" "80%" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ mean_ae_site_med75    : num [1:5] 3.44 3.67 8.56 9.83 9.26</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ mean_ae_study_med75   : num [1:5] 6.95 6.89 6.27 7.14 6.89</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ n_pat_with_med75_study: int [1:5] 73 73 71 63 65</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ mean_ae_site_med75    : num [1:5] 3.06 2.56 8.53 6.4 8.38</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ mean_ae_study_med75   : num [1:5] 7.03 6.18 5.23 5.19 5.31</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ n_pat_with_med75_study: int [1:5] 59 72 66 70 67</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ prob_low              : num [1:5] 0 0 1 1 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ df_eval         : tibble [5 × 11] (S3: tbl_df/tbl/data.frame)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ study_id              : chr [1:5] "A" "A" "A" "A" ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ site_number           : chr [1:5] "S0001" "S0002" "S0003" "S0004" ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ n_pat                 : int [1:5] 20 20 20 20 20</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ n_pat_with_med75      : int [1:5] 18 18 18 18 19</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ visit_med75           : Named num [1:5] 15 15 16 18 17</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ n_pat_with_med75      : int [1:5] 17 18 17 20 16</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ visit_med75           : Named num [1:5] 17 15 16 15 16</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..- attr(*, "names")= chr [1:5] "80%" "80%" "80%" "80%" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ mean_ae_site_med75    : num [1:5] 3.44 3.67 8.56 9.83 9.26</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ mean_ae_study_med75   : num [1:5] 6.95 6.89 6.27 7.14 6.89</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ n_pat_with_med75_study: int [1:5] 73 73 71 63 65</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ mean_ae_site_med75    : num [1:5] 3.06 2.56 8.53 6.4 8.38</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ mean_ae_study_med75   : num [1:5] 7.03 6.18 5.23 5.19 5.31</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ n_pat_with_med75_study: int [1:5] 59 72 66 70 67</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ prob_low              : num [1:5] 0 0 1 1 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ prob_low_adj          : num [1:5] 0 0 1 1 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ prob_low_prob_ur      : num [1:5] 1 1 0 0 0</span>

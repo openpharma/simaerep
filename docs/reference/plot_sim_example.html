@@ -106,7 +106,8 @@
 <span>  color_high <span class="op">=</span> <span class="st">"#00695C"</span>,</span>
 <span>  color_low <span class="op">=</span> <span class="st">"#25A69A"</span>,</span>
 <span>  title <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  legend <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  legend <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  seed <span class="op">=</span> <span class="fl">5</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -151,6 +152,10 @@
 <dt>legend</dt>
 <dd><p>logical, include legend, Default: T</p></dd>
 
+
+<dt>seed</dt>
+<dd><p>pass seed for simulations Default: 5</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
@@ -170,7 +175,7 @@ site config with three sites A,B,C simulating site C</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \dontrun{</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="fu">plot_sim_example</span><span class="op">(</span>size_dots <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plot_sim_example-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="co"># }</span></span></span>

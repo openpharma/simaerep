@@ -138,11 +138,12 @@ plot_dots <- function(df,
 #' @param color_low character, hex color value, Default: '#25A69A'
 #' @param title logical, include title, Default: T
 #' @param legend logical, include legend, Default: T
+#' @param seed pass seed for simulations Default: 5
 #' @return ggplot
 #' @details uses [plot_dots()][plot_dots()] and adds 2 simulation panels, uses made-up
 #' site config with three sites A,B,C simulating site C
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' plot_sim_example(size_dots = 5)
 #' }
 #' @seealso
@@ -158,8 +159,9 @@ plot_sim_example <- function(substract_ae_per_pat = 0,
                              color_high = "#00695C",
                              color_low = "#25A69A",
                              title = TRUE,
-                             legend = TRUE) {
-  set.seed(5)
+                             legend = TRUE,
+                             seed = 5) {
+  set.seed(seed)
 
   study <- tibble(
     site = LETTERS[1:3],
@@ -292,13 +294,14 @@ plot_sim_example <- function(substract_ae_per_pat = 0,
 #' @param ... parameters passed to plot_sim_example()
 #' @details This function is a wrapper for plot_sim_example()
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' plot_sim_examples(size_dot = 3, size_raster_label = 10)
 #' plot_sim_examples()
 #' }
 #' @seealso
 #'  \code{\link[cowplot]{ggdraw}},\code{\link[cowplot]{draw_label}},\code{\link[cowplot]{plot_grid}}
 #' @rdname plot_sim_examples
+#' @return ggplot
 #' @export
 
 plot_sim_examples <- function(substract_ae_per_pat = c(0, 1, 3), ...) {
@@ -403,7 +406,7 @@ plot_sim_examples <- function(substract_ae_per_pat = c(0, 1, 3), ...) {
 #'   number of patients. Patients that have not been on the study long enough to
 #'   reach the evaluation point (visit_med75) will be ignored.
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' df_visit <- sim_test_data_study(n_pat = 1000, n_sites = 10,
 #'     frac_site_with_ur = 0.2, ur_rate = 0.15, max_visit_sd = 8)
 #'
@@ -682,7 +685,7 @@ plot_study <- function(df_visit,
     labs(y = "Mean Cumulative AE Count per Site")
 
   if (length(sites_ordered) == 0) {
-    print("no sites with P/FP ratio > 1")
+    message("no sites with P/FP ratio > 1")
     return(p_study)
   }
 

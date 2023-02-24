@@ -95,6 +95,3 @@ reference:
   - plot_sim_examples
   - plot_sim_example
   - plot_dots
-- title: internal
-  contents:
-  - lint_package
