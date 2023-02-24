@@ -33,6 +33,9 @@ purrr_bar(
 
 \item{.progress}{logical, show progress bar, Default: TRUE}
 }
+\value{
+result of function passed to .f
+}
 \description{
 Internal utility function.
 }
@@ -46,7 +49,7 @@ progressr::with_progress(
   purrr_bar(rep(0.25, 5), .purrr = purrr::map, .f = Sys.sleep, .steps = 5)
 )
 
-\dontrun{
+\donttest{
 # purrr::walk
 progressr::with_progress(
  purrr_bar(rep(0.25, 5), .purrr = purrr::walk,.f = Sys.sleep, .steps = 5)
@@ -96,8 +99,8 @@ progressr::with_progress(
 
 # with mutate
 progressr::with_progress(
- tibble(x = rep(0.25, 5)) \%>\%
-  mutate(x = purrr_bar(x, .purrr = purrr::map, .f = Sys.sleep, .steps = 5))
+ tibble::tibble(x = rep(0.25, 5)) \%>\%
+  dplyr::mutate(x = purrr_bar(x, .purrr = purrr::map, .f = Sys.sleep, .steps = 5))
 )
 }
 }

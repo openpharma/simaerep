@@ -14,7 +14,8 @@ plot_sim_example(
   color_high = "#00695C",
   color_low = "#25A69A",
   title = TRUE,
-  legend = TRUE
+  legend = TRUE,
+  seed = 5
 )
 }
 \arguments{
@@ -37,6 +38,8 @@ plot_sim_example(
 \item{title}{logical, include title, Default: T}
 
 \item{legend}{logical, include legend, Default: T}
+
+\item{seed}{pass seed for simulations Default: 5}
 }
 \value{
 ggplot
@@ -49,7 +52,7 @@ uses \code{\link[=plot_dots]{plot_dots()}} and adds 2 simulation panels, uses ma
 site config with three sites A,B,C simulating site C
 }
 \examples{
-\dontrun{
+\donttest{
 plot_sim_example(size_dots = 5)
 }
 }

@@ -26,7 +26,7 @@ desired false positive rates (fpr as fp/P).
 DETAILS
 }
 \examples{
-\dontrun{
+\donttest{
 df_visit1 <- sim_test_data_study(n_pat = 100, n_sites = 10,
                                  frac_site_with_ur = 0.4, ur_rate = 0.6)
 

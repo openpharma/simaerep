@@ -24,7 +24,6 @@ anonymized
 codecov
 config
 csv
-cyclocomp
 darkblue
 df
 doi
@@ -43,10 +42,7 @@ infer’
 iterable
 iterables
 iteratively
-Koneswarakantha
 lightblue
-linter
-lintr
 multisession
 normalisation
 normalise
@@ -57,6 +53,7 @@ orivisit
 patnum
 pkgdown
 poisson
+progressbar
 purrr
 pval
 pvalue

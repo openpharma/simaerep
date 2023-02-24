@@ -11,6 +11,9 @@ with_progress_cnd(ex, progress = TRUE)
 
 \item{progress}{logical, Default: TRUE}
 }
+\value{
+No return value, called for side effects
+}
 \description{
 Internal function. Use instead of
 \code{\link[progressr]{with_progress}} within custom functions with progress
@@ -18,7 +21,8 @@ bars.
 }
 \details{
 This wrapper adds a progress parameter to \code{\link[progressr]{with_progress}}
-so that we can control the progress bar in the user facing functions.
+so that we can control the progress bar in the user facing functions. The progressbar
+only shows in interactive mode.
 }
 \examples{
 if (interactive()) {
