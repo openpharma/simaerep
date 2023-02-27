@@ -1,75 +1,26 @@
-# Resubmission of simaerep
+# simaerep 0.4.3
 
-Thank you for taking the time to review my submission. I have addressed all of your
-comments.
-
-## DESCRIPTION
-
-Please reduce the length of the title to less than 65 characters.
-
-*done*
-
-Please do not start the description with "This package", package name,
-title or similar.
-I would start with: "Detect clinical trial sites..."
-
-*done*
-
-Please always add all authors, contributors and copyright holders in the
-Authors@R field with the appropriate roles.
-
-*I have added Hoffmann La Roche to the Authors@R field and assigned cph*
-*role to the institution and myself. This reflects our internal policy.*
-*as stated in the licence file.*
-*COPYRIGHT HOLDER: F. Hoffmann-La Roche Ltd and simaerep authors*
-*This covers copyright interest of potential future external collaborators.*
-
-## Examples
-
-Please unwrap the examples if they are executable in < 5 sec, or replace
-dontrun{} with \donttest{}.
-*done, with one exception in the sim_studies() example show casing parallel*
-*processing which makes changes to the user's environment.*
-
-Please replace if(interactive()){} with \donttest or unwrap the
-examples.
-*done, with one exception, with_progress_cnd() the progressbar is only visible*
-*in interactive mode*
-
-## Console Messages
-
-R/lint.R
-
-*lint_package() has been declared an internal function, print() calls have been*
-*exchanged for message() calls*
-
-R/simaerep_plot.R
-*print() calls have been exchanged for message() calls that inform user that*
-*certain element of the plot cannot be generated*
-
-## Seed
-R/simaerep_plot.R
-*seed can now be passed as parameter, fixed seed is desired so that the generated*
-*plot always looks the same*
-
-
-
-
-# First Submission of simaerep
+Fix to address issue of failing unit test on CRAN which compared function performance
+when called with different parameters. This test is now skipped on CRAN.
 
 ## Test Results
 
-1 Note
+1 Note:
+Days since last update: 2
 
-* checking CRAN incoming feasibility ... [11s] NOTE
-Maintainer: 'Bjoern Koneswarakantha <bjoern.koneswarakantha@roche.com>'
+This update was requested:
 
-New submission
+Dear maintainer,
 
-Possibly misspelled words in DESCRIPTION:
-  AE (11:92, 12:52, 12:82)
-  Koneswarakantha (13:65)
-  
+Please see the problems shown on
+<https://cran.r-project.org/web/checks/check_results_simaerep.html>.
+
+Please correct before 2023-03-11 to safely retain your package on CRAN.
+
+Do remember to look at the 'Additional issues'.
+
+The CRAN Team
+
 ## Test Environments
 
 - Rhub, Windows Server 2022, R-devel, 64 bit
@@ -78,5 +29,4 @@ Possibly misspelled words in DESCRIPTION:
 - winbuilder devel
 
 
-## Comments
-I confirm that AE and Koneswarakantha in DESCRIPTION are not misspelled.
+

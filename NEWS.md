@@ -1,3 +1,6 @@
+# simaerep 0.4.3
+- skip all performance unit tests on CRAN
+
 # simaerep 0.4.2
 - CRAN submission
 

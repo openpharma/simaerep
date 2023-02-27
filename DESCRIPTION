@@ -1,6 +1,6 @@
 Package: simaerep
 Title: Find Clinical Trial Sites Under-Reporting Adverse Events
-Version: 0.4.2
+Version: 0.4.3
 Authors@R: c(
     person(given = "Bjoern",
            family = "Koneswarakantha",

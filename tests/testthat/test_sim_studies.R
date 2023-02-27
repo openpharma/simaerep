@@ -19,6 +19,7 @@ test_that("sim_studies() - returned dataframe expect no NA and prob_low/pval 0 -
 })
 
 test_that("sim_studies() - executing only poisson tests must be faster than using bootstrap simulations", {
+  skip_on_cran() # performance on ci/cd systems is not predictable
 
   t_ptest <- system.time({
     df_sim_study <- sim_studies(
