@@ -50,7 +50,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">simaerep</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.3</span>
       </span>
     </div>
 
@@ -121,7 +121,6 @@
 
       </header><div class="row">
   <div class="contents col-md-9">
-
 <div class="section level1">
 <div class="page-header"><h1 id="simaerep-">simaerep <a href="https://openpharma.github.io/simaerep/"><img src="reference/figures/logo.png" align="right" height="139"></a>
 <a class="anchor" aria-label="anchor" href="#simaerep-"></a>
@@ -133,10 +132,26 @@
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
-<p>You can install the development version from <a href="https://github.com/" class="external-link">GitHub</a> with:</p>
+<div class="section level3">
+<h3 id="cran">CRAN<a class="anchor" aria-label="anchor" href="#cran"></a>
+</h3>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"simaerep"</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="development-version">Development Version<a class="anchor" aria-label="anchor" href="#development-version"></a>
+</h3>
+<p>You can install the development version from <a href="https://github.com/" class="external-link">GitHub</a> with:</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># install.packages("devtools")</span></span>
 <span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"openpharma/simaerep"</span><span class="op">)</span></span></code></pre></div>
+</div>
+</div>
+<div class="section level2">
+<h2 id="impala">IMPALA<a class="anchor" aria-label="anchor" href="#impala"></a>
+</h2>
+<p><code>simaerep</code> has been published as workproduct of the Inter-Company Quality Analytics (<a href="https://impala-consortium.org/" class="external-link">IMPALA</a>) consortium. IMPALA aims to engage with Health Authorities inspectors on defining guiding principles for the use of advanced analytics to complement, enhance and accelerate current QA practices. <code>simaerep</code> has initially been developed at Roche but is currently evaluated by other companies across the industry to complement their quality assurance activities (<a href="https://impala-consortium.org/clinical-safety-reporting-work-product-stream/" class="external-link">see testimonials</a>).</p>
+<p><a href="https://impala-consortium.org/" class="external-link"><img src="https://impala-consortium.org/wp-content/uploads/IMPALA-logo-x2.png" alt="IMPALA logo"></a></p>
 </div>
 <div class="section level2">
 <h2 id="publication">Publication<a class="anchor" aria-label="anchor" href="#publication"></a>
@@ -144,8 +159,9 @@
 <p>Koneswarakantha, B., Barmaz, Y., Ménard, T. et al. Follow-up on the Use of Advanced Analytics for Clinical Quality Assurance: Bootstrap Resampling to Enhance Detection of Adverse Event Under-Reporting. Drug Saf (2020). <a href="https://doi.org/10.1007/s40264-020-01011-5" class="external-link uri">https://doi.org/10.1007/s40264-020-01011-5</a></p>
 </div>
 <div class="section level2">
-<h2 id="vignettes-articles">Vignettes/ Articles<a class="anchor" aria-label="anchor" href="#vignettes-articles"></a>
+<h2 id="vignettes-articles-tutorials">Vignettes/ Articles/ Tutorials<a class="anchor" aria-label="anchor" href="#vignettes-articles-tutorials"></a>
 </h2>
+<p><a href="https://vimeo.com/776275791?embedded=true&amp;source=vimeo_logo&amp;owner=189858368" class="external-link">video presentation 15 min</a></p>
 <ul>
 <li><a href="https://openpharma.github.io/simaerep/articles/intro.html">Introduction</a></li>
 <li><a href="https://openpharma.github.io/simaerep/articles/usability_limits.html">Usability Limits</a></li>
@@ -161,11 +177,10 @@
 </h2>
 <p>Download as pdf in the <a href="https://github.com/openpharma/simaerep/releases" class="external-link">release section</a> generated using <a href="https://github.com/insightsengineering/thevalidatoR" class="external-link">thevalidatoR</a>.</p>
 </div>
-</div>
-<div class="section level1">
-<h1 id="application">Application<a class="anchor" aria-label="anchor" href="#application"></a>
-</h1>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="section level2">
+<h2 id="application">Application<a class="anchor" aria-label="anchor" href="#application"></a>
+</h2>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressPackageStartupMessages</a></span><span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://openpharma.github.io/simaerep/">simaerep</a></span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressPackageStartupMessages</a></span><span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org" class="external-link">tidyverse</a></span><span class="op">)</span><span class="op">)</span></span>
@@ -373,7 +388,7 @@
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">aerep</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/simaerep.html">simaerep</a></span><span class="op">(</span><span class="va">df_visit</span><span class="op">)</span></span>
 <span></span>
@@ -381,13 +396,14 @@
 <p><img src="reference/figures/README-unnamed-chunk-2-1.png" width="100%"></p>
 <p><em>Left panel shows mean AE reporting per site (lightblue and darkblue lines) against mean AE reporting of the entire study (golden line). Single sites are plotted in descending order by AE under-reporting probability on the right panel in which grey lines denote cumulative AE count of single patients. Grey dots in the left panel plot indicate sites that were picked for single plotting. AE under-reporting probability of dark blue lines crossed threshold of 95%. Numbers in the upper left corner indicate the ratio of patients that have been used for the analysis against the total number of patients. Patients that have not been on the study long enough to reach the evaluation point (visit_med75, see introduction) will be ignored.</em></p>
 </div>
-
+</div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <div class="links">
 <h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
+<li><a href="https://cloud.r-project.org/package=simaerep" class="external-link">View on CRAN</a></li>
 <li><a href="https://github.com/openpharma/simaerep/" class="external-link">Browse source code</a></li>
 </ul>
 </div>
@@ -423,6 +439,7 @@
 <li><a href="https://app.codecov.io/gh/openpharma/simaerep" class="external-link"><img src="https://codecov.io/gh/openpharma/simaerep/branch/master/graph/badge.svg" alt="codecov"></a></li>
 <li><a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" class="external-link"><img src="https://img.shields.io/badge/lifecycle-experimental-orange.svg" alt="Lifecycle: experimental"></a></li>
 <li><a href="https://github.com/openpharma/simaerep/actions/workflows/validation.yml" class="external-link"><img src="https://github.com/openpharma/simaerep/actions/workflows/validation.yml/badge.svg" alt="R Package Validation report"></a></li>
+<li><a href="https://cran.r-project.org/web/packages/simaerep/index.html" class="external-link"><img src="https://www.r-pkg.org/badges/version/simaerep" alt="CRAN release"></a></li>
 </ul>
 </div>
 
