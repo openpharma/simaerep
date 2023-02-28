@@ -206,7 +206,7 @@ configuration, which will automatically apply a few filters:</p>
 <span></span>
 <span><span class="va">df_visit2</span><span class="op">$</span><span class="va">study_id</span> <span class="op">&lt;-</span> <span class="st">"B"</span></span>
 <span></span>
-<span><span class="va">df_visit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind.html" class="external-link">bind_rows</a></span><span class="op">(</span><span class="va">df_visit1</span>, <span class="va">df_visit2</span><span class="op">)</span></span>
+<span><span class="va">df_visit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind_rows.html" class="external-link">bind_rows</a></span><span class="op">(</span><span class="va">df_visit1</span>, <span class="va">df_visit2</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">df_site_max</span> <span class="op">&lt;-</span> <span class="va">df_visit</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">study_id</span>, <span class="va">site_number</span>, <span class="va">patnum</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
@@ -243,162 +243,162 @@ configuration, which will automatically apply a few filters:</p>
 <tbody>
 <tr class="odd">
 <td align="left">0001</td>
-<td align="right">0.3799790</td>
+<td align="right">0.3582915</td>
 <td align="left">0001</td>
-<td align="right">3.620927</td>
-<td align="right">20.0</td>
-<td align="right">10</td>
-</tr>
-<tr class="even">
-<td align="left">0001</td>
-<td align="right">0.3799790</td>
-<td align="left">0002</td>
-<td align="right">2.766868</td>
-<td align="right">17.1</td>
-<td align="right">10</td>
-</tr>
-<tr class="odd">
-<td align="left">0001</td>
-<td align="right">0.3799790</td>
-<td align="left">0003</td>
-<td align="right">5.374839</td>
-<td align="right">19.0</td>
-<td align="right">10</td>
-</tr>
-<tr class="even">
-<td align="left">0001</td>
-<td align="right">0.3799790</td>
-<td align="left">0004</td>
-<td align="right">3.489667</td>
+<td align="right">3.119829</td>
 <td align="right">19.2</td>
 <td align="right">10</td>
 </tr>
-<tr class="odd">
-<td align="left">0001</td>
-<td align="right">0.3799790</td>
-<td align="left">0005</td>
-<td align="right">4.391912</td>
-<td align="right">20.8</td>
-<td align="right">10</td>
-</tr>
 <tr class="even">
 <td align="left">0001</td>
-<td align="right">0.3799790</td>
-<td align="left">0006</td>
-<td align="right">2.581989</td>
-<td align="right">20.0</td>
+<td align="right">0.3582915</td>
+<td align="left">0002</td>
+<td align="right">4.813176</td>
+<td align="right">20.5</td>
 <td align="right">10</td>
 </tr>
 <tr class="odd">
 <td align="left">0001</td>
-<td align="right">0.3799790</td>
-<td align="left">0007</td>
-<td align="right">3.425395</td>
-<td align="right">18.2</td>
-<td align="right">10</td>
-</tr>
-<tr class="even">
-<td align="left">0001</td>
-<td align="right">0.3799790</td>
-<td align="left">0008</td>
-<td align="right">3.813718</td>
-<td align="right">18.9</td>
-<td align="right">10</td>
-</tr>
-<tr class="odd">
-<td align="left">0001</td>
-<td align="right">0.3799790</td>
-<td align="left">0009</td>
-<td align="right">4.857983</td>
-<td align="right">17.4</td>
-<td align="right">10</td>
-</tr>
-<tr class="even">
-<td align="left">0001</td>
-<td align="right">0.3799790</td>
-<td align="left">0010</td>
-<td align="right">4.732864</td>
-<td align="right">20.2</td>
-<td align="right">10</td>
-</tr>
-<tr class="odd">
-<td align="left">0002</td>
-<td align="right">0.5045778</td>
-<td align="left">0001</td>
-<td align="right">7.229569</td>
-<td align="right">20.6</td>
-<td align="right">10</td>
-</tr>
-<tr class="even">
-<td align="left">0002</td>
-<td align="right">0.5045778</td>
-<td align="left">0002</td>
-<td align="right">5.498485</td>
-<td align="right">22.3</td>
-<td align="right">10</td>
-</tr>
-<tr class="odd">
-<td align="left">0002</td>
-<td align="right">0.5045778</td>
+<td align="right">0.3582915</td>
 <td align="left">0003</td>
-<td align="right">4.164666</td>
-<td align="right">18.7</td>
+<td align="right">4.690416</td>
+<td align="right">20.0</td>
 <td align="right">10</td>
 </tr>
 <tr class="even">
-<td align="left">0002</td>
-<td align="right">0.5045778</td>
+<td align="left">0001</td>
+<td align="right">0.3582915</td>
 <td align="left">0004</td>
-<td align="right">4.216370</td>
-<td align="right">20.0</td>
+<td align="right">2.378141</td>
+<td align="right">21.9</td>
+<td align="right">10</td>
+</tr>
+<tr class="odd">
+<td align="left">0001</td>
+<td align="right">0.3582915</td>
+<td align="left">0005</td>
+<td align="right">4.478343</td>
+<td align="right">19.5</td>
+<td align="right">10</td>
+</tr>
+<tr class="even">
+<td align="left">0001</td>
+<td align="right">0.3582915</td>
+<td align="left">0006</td>
+<td align="right">3.198958</td>
+<td align="right">19.3</td>
+<td align="right">10</td>
+</tr>
+<tr class="odd">
+<td align="left">0001</td>
+<td align="right">0.3582915</td>
+<td align="left">0007</td>
+<td align="right">2.503331</td>
+<td align="right">19.6</td>
+<td align="right">10</td>
+</tr>
+<tr class="even">
+<td align="left">0001</td>
+<td align="right">0.3582915</td>
+<td align="left">0008</td>
+<td align="right">2.213594</td>
+<td align="right">20.3</td>
+<td align="right">10</td>
+</tr>
+<tr class="odd">
+<td align="left">0001</td>
+<td align="right">0.3582915</td>
+<td align="left">0009</td>
+<td align="right">5.391351</td>
+<td align="right">18.8</td>
+<td align="right">10</td>
+</tr>
+<tr class="even">
+<td align="left">0001</td>
+<td align="right">0.3582915</td>
+<td align="left">0010</td>
+<td align="right">3.695342</td>
+<td align="right">19.9</td>
 <td align="right">10</td>
 </tr>
 <tr class="odd">
 <td align="left">0002</td>
-<td align="right">0.5045778</td>
-<td align="left">0005</td>
-<td align="right">4.040077</td>
-<td align="right">17.1</td>
+<td align="right">0.4827586</td>
+<td align="left">0001</td>
+<td align="right">3.675746</td>
+<td align="right">18.8</td>
 <td align="right">10</td>
 </tr>
 <tr class="even">
 <td align="left">0002</td>
-<td align="right">0.5045778</td>
+<td align="right">0.4827586</td>
+<td align="left">0002</td>
+<td align="right">6.168018</td>
+<td align="right">19.6</td>
+<td align="right">10</td>
+</tr>
+<tr class="odd">
+<td align="left">0002</td>
+<td align="right">0.4827586</td>
+<td align="left">0003</td>
+<td align="right">3.717825</td>
+<td align="right">19.4</td>
+<td align="right">10</td>
+</tr>
+<tr class="even">
+<td align="left">0002</td>
+<td align="right">0.4827586</td>
+<td align="left">0004</td>
+<td align="right">4.137901</td>
+<td align="right">18.3</td>
+<td align="right">10</td>
+</tr>
+<tr class="odd">
+<td align="left">0002</td>
+<td align="right">0.4827586</td>
+<td align="left">0005</td>
+<td align="right">3.705851</td>
+<td align="right">21.2</td>
+<td align="right">10</td>
+</tr>
+<tr class="even">
+<td align="left">0002</td>
+<td align="right">0.4827586</td>
 <td align="left">0006</td>
-<td align="right">4.249183</td>
+<td align="right">3.178050</td>
+<td align="right">18.1</td>
+<td align="right">10</td>
+</tr>
+<tr class="odd">
+<td align="left">0002</td>
+<td align="right">0.4827586</td>
+<td align="left">0007</td>
+<td align="right">5.103376</td>
+<td align="right">19.4</td>
+<td align="right">10</td>
+</tr>
+<tr class="even">
+<td align="left">0002</td>
+<td align="right">0.4827586</td>
+<td align="left">0008</td>
+<td align="right">3.472111</td>
 <td align="right">19.5</td>
 <td align="right">10</td>
 </tr>
 <tr class="odd">
 <td align="left">0002</td>
-<td align="right">0.5045778</td>
-<td align="left">0007</td>
-<td align="right">4.473378</td>
-<td align="right">19.7</td>
-<td align="right">10</td>
-</tr>
-<tr class="even">
-<td align="left">0002</td>
-<td align="right">0.5045778</td>
-<td align="left">0008</td>
-<td align="right">2.716207</td>
-<td align="right">18.6</td>
-<td align="right">10</td>
-</tr>
-<tr class="odd">
-<td align="left">0002</td>
-<td align="right">0.5045778</td>
+<td align="right">0.4827586</td>
 <td align="left">0009</td>
-<td align="right">3.765339</td>
-<td align="right">20.2</td>
+<td align="right">2.677063</td>
+<td align="right">19.5</td>
 <td align="right">10</td>
 </tr>
 <tr class="even">
 <td align="left">0002</td>
-<td align="right">0.5045778</td>
+<td align="right">0.4827586</td>
 <td align="left">0010</td>
-<td align="right">3.281260</td>
-<td align="right">19.9</td>
+<td align="right">2.460804</td>
+<td align="right">20.5</td>
 <td align="right">10</td>
 </tr>
 </tbody>
@@ -439,253 +439,253 @@ level.</p>
 <tbody>
 <tr class="odd">
 <td align="left">0001</td>
-<td align="right">0.379979</td>
+<td align="right">0.3582915</td>
 <td align="left">0001</td>
-<td align="right">3.620927</td>
-<td align="right">20</td>
+<td align="right">3.119829</td>
+<td align="right">19.2</td>
 <td align="left">0001</td>
 <td align="right">1</td>
-<td align="right">2</td>
+<td align="right">0</td>
 </tr>
 <tr class="even">
 <td align="left">0001</td>
-<td align="right">0.379979</td>
+<td align="right">0.3582915</td>
 <td align="left">0001</td>
-<td align="right">3.620927</td>
-<td align="right">20</td>
+<td align="right">3.119829</td>
+<td align="right">19.2</td>
 <td align="left">0001</td>
 <td align="right">2</td>
-<td align="right">2</td>
+<td align="right">0</td>
 </tr>
 <tr class="odd">
 <td align="left">0001</td>
-<td align="right">0.379979</td>
+<td align="right">0.3582915</td>
 <td align="left">0001</td>
-<td align="right">3.620927</td>
-<td align="right">20</td>
+<td align="right">3.119829</td>
+<td align="right">19.2</td>
 <td align="left">0001</td>
 <td align="right">3</td>
-<td align="right">2</td>
+<td align="right">0</td>
 </tr>
 <tr class="even">
 <td align="left">0001</td>
-<td align="right">0.379979</td>
+<td align="right">0.3582915</td>
 <td align="left">0001</td>
-<td align="right">3.620927</td>
-<td align="right">20</td>
+<td align="right">3.119829</td>
+<td align="right">19.2</td>
 <td align="left">0001</td>
 <td align="right">4</td>
-<td align="right">2</td>
+<td align="right">1</td>
 </tr>
 <tr class="odd">
 <td align="left">0001</td>
-<td align="right">0.379979</td>
+<td align="right">0.3582915</td>
 <td align="left">0001</td>
-<td align="right">3.620927</td>
-<td align="right">20</td>
+<td align="right">3.119829</td>
+<td align="right">19.2</td>
 <td align="left">0001</td>
 <td align="right">5</td>
 <td align="right">2</td>
 </tr>
 <tr class="even">
 <td align="left">0001</td>
-<td align="right">0.379979</td>
+<td align="right">0.3582915</td>
 <td align="left">0001</td>
-<td align="right">3.620927</td>
-<td align="right">20</td>
+<td align="right">3.119829</td>
+<td align="right">19.2</td>
 <td align="left">0001</td>
 <td align="right">6</td>
 <td align="right">3</td>
 </tr>
 <tr class="odd">
 <td align="left">0001</td>
-<td align="right">0.379979</td>
+<td align="right">0.3582915</td>
 <td align="left">0001</td>
-<td align="right">3.620927</td>
-<td align="right">20</td>
+<td align="right">3.119829</td>
+<td align="right">19.2</td>
 <td align="left">0001</td>
 <td align="right">7</td>
-<td align="right">3</td>
+<td align="right">4</td>
 </tr>
 <tr class="even">
 <td align="left">0001</td>
-<td align="right">0.379979</td>
+<td align="right">0.3582915</td>
 <td align="left">0001</td>
-<td align="right">3.620927</td>
-<td align="right">20</td>
+<td align="right">3.119829</td>
+<td align="right">19.2</td>
 <td align="left">0001</td>
 <td align="right">8</td>
-<td align="right">3</td>
-</tr>
-<tr class="odd">
-<td align="left">0001</td>
-<td align="right">0.379979</td>
-<td align="left">0001</td>
-<td align="right">3.620927</td>
-<td align="right">20</td>
-<td align="left">0001</td>
-<td align="right">9</td>
-<td align="right">3</td>
-</tr>
-<tr class="even">
-<td align="left">0001</td>
-<td align="right">0.379979</td>
-<td align="left">0001</td>
-<td align="right">3.620927</td>
-<td align="right">20</td>
-<td align="left">0001</td>
-<td align="right">10</td>
 <td align="right">4</td>
 </tr>
 <tr class="odd">
 <td align="left">0001</td>
-<td align="right">0.379979</td>
+<td align="right">0.3582915</td>
 <td align="left">0001</td>
-<td align="right">3.620927</td>
-<td align="right">20</td>
+<td align="right">3.119829</td>
+<td align="right">19.2</td>
+<td align="left">0001</td>
+<td align="right">9</td>
+<td align="right">5</td>
+</tr>
+<tr class="even">
+<td align="left">0001</td>
+<td align="right">0.3582915</td>
+<td align="left">0001</td>
+<td align="right">3.119829</td>
+<td align="right">19.2</td>
+<td align="left">0001</td>
+<td align="right">10</td>
+<td align="right">5</td>
+</tr>
+<tr class="odd">
+<td align="left">0001</td>
+<td align="right">0.3582915</td>
+<td align="left">0001</td>
+<td align="right">3.119829</td>
+<td align="right">19.2</td>
 <td align="left">0001</td>
 <td align="right">11</td>
 <td align="right">5</td>
 </tr>
 <tr class="even">
 <td align="left">0001</td>
-<td align="right">0.379979</td>
+<td align="right">0.3582915</td>
 <td align="left">0001</td>
-<td align="right">3.620927</td>
-<td align="right">20</td>
+<td align="right">3.119829</td>
+<td align="right">19.2</td>
 <td align="left">0001</td>
 <td align="right">12</td>
-<td align="right">5</td>
+<td align="right">6</td>
 </tr>
 <tr class="odd">
 <td align="left">0001</td>
-<td align="right">0.379979</td>
+<td align="right">0.3582915</td>
 <td align="left">0001</td>
-<td align="right">3.620927</td>
-<td align="right">20</td>
+<td align="right">3.119829</td>
+<td align="right">19.2</td>
 <td align="left">0001</td>
 <td align="right">13</td>
-<td align="right">5</td>
+<td align="right">6</td>
 </tr>
 <tr class="even">
 <td align="left">0001</td>
-<td align="right">0.379979</td>
+<td align="right">0.3582915</td>
 <td align="left">0001</td>
-<td align="right">3.620927</td>
-<td align="right">20</td>
+<td align="right">3.119829</td>
+<td align="right">19.2</td>
 <td align="left">0001</td>
 <td align="right">14</td>
 <td align="right">6</td>
 </tr>
 <tr class="odd">
 <td align="left">0001</td>
-<td align="right">0.379979</td>
+<td align="right">0.3582915</td>
 <td align="left">0001</td>
-<td align="right">3.620927</td>
-<td align="right">20</td>
+<td align="right">3.119829</td>
+<td align="right">19.2</td>
 <td align="left">0001</td>
 <td align="right">15</td>
-<td align="right">7</td>
+<td align="right">6</td>
 </tr>
 <tr class="even">
 <td align="left">0001</td>
-<td align="right">0.379979</td>
+<td align="right">0.3582915</td>
 <td align="left">0001</td>
-<td align="right">3.620927</td>
-<td align="right">20</td>
+<td align="right">3.119829</td>
+<td align="right">19.2</td>
 <td align="left">0001</td>
 <td align="right">16</td>
-<td align="right">7</td>
+<td align="right">6</td>
 </tr>
 <tr class="odd">
 <td align="left">0001</td>
-<td align="right">0.379979</td>
+<td align="right">0.3582915</td>
 <td align="left">0001</td>
-<td align="right">3.620927</td>
-<td align="right">20</td>
-<td align="left">0001</td>
-<td align="right">17</td>
-<td align="right">7</td>
-</tr>
-<tr class="even">
-<td align="left">0001</td>
-<td align="right">0.379979</td>
-<td align="left">0001</td>
-<td align="right">3.620927</td>
-<td align="right">20</td>
-<td align="left">0001</td>
-<td align="right">18</td>
-<td align="right">8</td>
-</tr>
-<tr class="odd">
-<td align="left">0001</td>
-<td align="right">0.379979</td>
-<td align="left">0001</td>
-<td align="right">3.620927</td>
-<td align="right">20</td>
+<td align="right">3.119829</td>
+<td align="right">19.2</td>
 <td align="left">0002</td>
 <td align="right">1</td>
-<td align="right">1</td>
+<td align="right">0</td>
 </tr>
 <tr class="even">
 <td align="left">0001</td>
-<td align="right">0.379979</td>
+<td align="right">0.3582915</td>
 <td align="left">0001</td>
-<td align="right">3.620927</td>
-<td align="right">20</td>
+<td align="right">3.119829</td>
+<td align="right">19.2</td>
 <td align="left">0002</td>
 <td align="right">2</td>
-<td align="right">1</td>
+<td align="right">2</td>
 </tr>
 <tr class="odd">
 <td align="left">0001</td>
-<td align="right">0.379979</td>
+<td align="right">0.3582915</td>
 <td align="left">0001</td>
-<td align="right">3.620927</td>
-<td align="right">20</td>
+<td align="right">3.119829</td>
+<td align="right">19.2</td>
 <td align="left">0002</td>
 <td align="right">3</td>
-<td align="right">1</td>
+<td align="right">4</td>
 </tr>
 <tr class="even">
 <td align="left">0001</td>
-<td align="right">0.379979</td>
+<td align="right">0.3582915</td>
 <td align="left">0001</td>
-<td align="right">3.620927</td>
-<td align="right">20</td>
+<td align="right">3.119829</td>
+<td align="right">19.2</td>
 <td align="left">0002</td>
 <td align="right">4</td>
-<td align="right">1</td>
+<td align="right">4</td>
 </tr>
 <tr class="odd">
 <td align="left">0001</td>
-<td align="right">0.379979</td>
+<td align="right">0.3582915</td>
 <td align="left">0001</td>
-<td align="right">3.620927</td>
-<td align="right">20</td>
+<td align="right">3.119829</td>
+<td align="right">19.2</td>
 <td align="left">0002</td>
 <td align="right">5</td>
-<td align="right">1</td>
+<td align="right">4</td>
 </tr>
 <tr class="even">
 <td align="left">0001</td>
-<td align="right">0.379979</td>
+<td align="right">0.3582915</td>
 <td align="left">0001</td>
-<td align="right">3.620927</td>
-<td align="right">20</td>
+<td align="right">3.119829</td>
+<td align="right">19.2</td>
 <td align="left">0002</td>
 <td align="right">6</td>
-<td align="right">1</td>
+<td align="right">4</td>
 </tr>
 <tr class="odd">
 <td align="left">0001</td>
-<td align="right">0.379979</td>
+<td align="right">0.3582915</td>
 <td align="left">0001</td>
-<td align="right">3.620927</td>
-<td align="right">20</td>
+<td align="right">3.119829</td>
+<td align="right">19.2</td>
 <td align="left">0002</td>
 <td align="right">7</td>
-<td align="right">1</td>
+<td align="right">4</td>
+</tr>
+<tr class="even">
+<td align="left">0001</td>
+<td align="right">0.3582915</td>
+<td align="left">0001</td>
+<td align="right">3.119829</td>
+<td align="right">19.2</td>
+<td align="left">0002</td>
+<td align="right">8</td>
+<td align="right">6</td>
+</tr>
+<tr class="odd">
+<td align="left">0001</td>
+<td align="right">0.3582915</td>
+<td align="left">0001</td>
+<td align="right">3.119829</td>
+<td align="right">19.2</td>
+<td align="left">0002</td>
+<td align="right">9</td>
+<td align="right">6</td>
 </tr>
 </tbody>
 </table>
@@ -1054,7 +1054,7 @@ realistic study portfolio.</p>
 <td align="right">622</td>
 <td align="left">0001</td>
 <td align="right">1</td>
-<td align="right">1</td>
+<td align="right">0</td>
 </tr>
 <tr class="even">
 <td align="left">0001</td>
@@ -1067,7 +1067,7 @@ realistic study portfolio.</p>
 <td align="right">622</td>
 <td align="left">0001</td>
 <td align="right">2</td>
-<td align="right">1</td>
+<td align="right">0</td>
 </tr>
 <tr class="odd">
 <td align="left">0001</td>
@@ -1080,7 +1080,7 @@ realistic study portfolio.</p>
 <td align="right">622</td>
 <td align="left">0001</td>
 <td align="right">3</td>
-<td align="right">1</td>
+<td align="right">0</td>
 </tr>
 <tr class="even">
 <td align="left">0001</td>
@@ -1119,7 +1119,7 @@ realistic study portfolio.</p>
 <td align="right">622</td>
 <td align="left">0001</td>
 <td align="right">6</td>
-<td align="right">2</td>
+<td align="right">1</td>
 </tr>
 <tr class="odd">
 <td align="left">0001</td>
@@ -1132,7 +1132,7 @@ realistic study portfolio.</p>
 <td align="right">622</td>
 <td align="left">0001</td>
 <td align="right">7</td>
-<td align="right">2</td>
+<td align="right">1</td>
 </tr>
 <tr class="even">
 <td align="left">0001</td>
@@ -1145,7 +1145,7 @@ realistic study portfolio.</p>
 <td align="right">622</td>
 <td align="left">0001</td>
 <td align="right">8</td>
-<td align="right">2</td>
+<td align="right">3</td>
 </tr>
 <tr class="odd">
 <td align="left">0001</td>
@@ -1158,7 +1158,7 @@ realistic study portfolio.</p>
 <td align="right">622</td>
 <td align="left">0001</td>
 <td align="right">9</td>
-<td align="right">2</td>
+<td align="right">3</td>
 </tr>
 <tr class="even">
 <td align="left">0001</td>
@@ -1171,7 +1171,7 @@ realistic study portfolio.</p>
 <td align="right">622</td>
 <td align="left">0001</td>
 <td align="right">10</td>
-<td align="right">2</td>
+<td align="right">3</td>
 </tr>
 <tr class="odd">
 <td align="left">0001</td>
@@ -1184,7 +1184,7 @@ realistic study portfolio.</p>
 <td align="right">622</td>
 <td align="left">0001</td>
 <td align="right">11</td>
-<td align="right">2</td>
+<td align="right">3</td>
 </tr>
 <tr class="even">
 <td align="left">0001</td>
@@ -1197,7 +1197,7 @@ realistic study portfolio.</p>
 <td align="right">622</td>
 <td align="left">0001</td>
 <td align="right">12</td>
-<td align="right">2</td>
+<td align="right">3</td>
 </tr>
 <tr class="odd">
 <td align="left">0001</td>
@@ -1210,7 +1210,7 @@ realistic study portfolio.</p>
 <td align="right">622</td>
 <td align="left">0001</td>
 <td align="right">13</td>
-<td align="right">2</td>
+<td align="right">3</td>
 </tr>
 <tr class="even">
 <td align="left">0001</td>
@@ -1223,7 +1223,7 @@ realistic study portfolio.</p>
 <td align="right">622</td>
 <td align="left">0001</td>
 <td align="right">14</td>
-<td align="right">2</td>
+<td align="right">3</td>
 </tr>
 <tr class="odd">
 <td align="left">0001</td>
@@ -1236,7 +1236,7 @@ realistic study portfolio.</p>
 <td align="right">622</td>
 <td align="left">0001</td>
 <td align="right">15</td>
-<td align="right">2</td>
+<td align="right">3</td>
 </tr>
 <tr class="even">
 <td align="left">0001</td>
@@ -1249,7 +1249,7 @@ realistic study portfolio.</p>
 <td align="right">622</td>
 <td align="left">0001</td>
 <td align="right">16</td>
-<td align="right">2</td>
+<td align="right">3</td>
 </tr>
 <tr class="odd">
 <td align="left">0001</td>
@@ -1262,7 +1262,7 @@ realistic study portfolio.</p>
 <td align="right">622</td>
 <td align="left">0001</td>
 <td align="right">17</td>
-<td align="right">2</td>
+<td align="right">3</td>
 </tr>
 <tr class="even">
 <td align="left">0001</td>
@@ -1275,7 +1275,7 @@ realistic study portfolio.</p>
 <td align="right">622</td>
 <td align="left">0001</td>
 <td align="right">18</td>
-<td align="right">4</td>
+<td align="right">3</td>
 </tr>
 <tr class="odd">
 <td align="left">0001</td>
@@ -1288,7 +1288,7 @@ realistic study portfolio.</p>
 <td align="right">622</td>
 <td align="left">0001</td>
 <td align="right">19</td>
-<td align="right">4</td>
+<td align="right">3</td>
 </tr>
 <tr class="even">
 <td align="left">0001</td>
@@ -1301,7 +1301,7 @@ realistic study portfolio.</p>
 <td align="right">622</td>
 <td align="left">0001</td>
 <td align="right">20</td>
-<td align="right">4</td>
+<td align="right">3</td>
 </tr>
 <tr class="odd">
 <td align="left">0001</td>
@@ -1314,22 +1314,9 @@ realistic study portfolio.</p>
 <td align="right">622</td>
 <td align="left">0001</td>
 <td align="right">21</td>
-<td align="right">5</td>
+<td align="right">3</td>
 </tr>
 <tr class="even">
-<td align="left">0001</td>
-<td align="right">0.2687087</td>
-<td align="right">0.0072492</td>
-<td align="left">0001</td>
-<td align="right">0.7071068</td>
-<td align="right">22.5</td>
-<td align="right">622</td>
-<td align="right">622</td>
-<td align="left">0001</td>
-<td align="right">22</td>
-<td align="right">5</td>
-</tr>
-<tr class="odd">
 <td align="left">0001</td>
 <td align="right">0.2687087</td>
 <td align="right">0.0072492</td>
@@ -1340,20 +1327,7 @@ realistic study portfolio.</p>
 <td align="right">622</td>
 <td align="left">0002</td>
 <td align="right">1</td>
-<td align="right">0</td>
-</tr>
-<tr class="even">
-<td align="left">0001</td>
-<td align="right">0.2687087</td>
-<td align="right">0.0072492</td>
-<td align="left">0001</td>
-<td align="right">0.7071068</td>
-<td align="right">22.5</td>
-<td align="right">622</td>
-<td align="right">622</td>
-<td align="left">0002</td>
-<td align="right">2</td>
-<td align="right">0</td>
+<td align="right">1</td>
 </tr>
 <tr class="odd">
 <td align="left">0001</td>
@@ -1365,7 +1339,33 @@ realistic study portfolio.</p>
 <td align="right">622</td>
 <td align="right">622</td>
 <td align="left">0002</td>
+<td align="right">2</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">0001</td>
+<td align="right">0.2687087</td>
+<td align="right">0.0072492</td>
+<td align="left">0001</td>
+<td align="right">0.7071068</td>
+<td align="right">22.5</td>
+<td align="right">622</td>
+<td align="right">622</td>
+<td align="left">0002</td>
 <td align="right">3</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">0001</td>
+<td align="right">0.2687087</td>
+<td align="right">0.0072492</td>
+<td align="left">0001</td>
+<td align="right">0.7071068</td>
+<td align="right">22.5</td>
+<td align="right">622</td>
+<td align="right">622</td>
+<td align="left">0002</td>
+<td align="right">4</td>
 <td align="right">1</td>
 </tr>
 </tbody>
@@ -2338,7 +2338,7 @@ performance as it can be expected under ideal conditions.</p>
 <span>    ur_rate <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.1</span>, <span class="fl">0.25</span>, <span class="fl">0.5</span>, <span class="fl">0.75</span>, <span class="fl">1</span><span class="op">)</span>,</span>
 <span>    seed <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">500</span><span class="op">)</span><span class="op">)</span></span>
 <span>  <span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span> <span class="fu"><a href="https://tidyr.tidyverse.org/reference/nest.html" class="external-link">unnest</a></span><span class="op">(</span><span class="va">seed</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span> <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest.html" class="external-link">unnest</a></span><span class="op">(</span><span class="va">seed</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
 <span>   data <span class="op">=</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/map2.html" class="external-link">map2</a></span><span class="op">(</span><span class="va">ur_rate</span>, <span class="va">seed</span>, <span class="va">standard_sim</span><span class="op">)</span></span>
 <span> <span class="op">)</span> </span>
@@ -2368,7 +2368,7 @@ performance as it can be expected under ideal conditions.</p>
 <span>      <span class="va">seed</span></span>
 <span>      <span class="op">)</span></span>
 <span>  <span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/nest.html" class="external-link">unnest</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest.html" class="external-link">unnest</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">df_visit</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">25</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
@@ -3738,7 +3738,7 @@ study.</p>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">df_scen_days</span> <span class="op">&lt;-</span> <span class="va">df_scen_days</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/nest.html" class="external-link">unnest</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest.html" class="external-link">unnest</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="op">-</span> <span class="va">study_id_gr</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">readr</span><span class="fu">::</span><span class="fu"><a href="https://readr.tidyverse.org/reference/write_delim.html" class="external-link">write_csv</a></span><span class="op">(</span><span class="va">df_scen_days</span>, file <span class="op">=</span> <span class="st">"scen_days.csv"</span><span class="op">)</span></span></code></pre></div>
@@ -4393,7 +4393,7 @@ lowest AE per visit rate.</li>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">study_id</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
 <span>    ls_study_ae_per_visit <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">ae_per_visit</span><span class="op">)</span>,</span>
-<span>    rwn <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/ranking.html" class="external-link">row_number</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>    rwn <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/row_number.html" class="external-link">row_number</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>    <span class="co"># we take out site ae_per_visit from study pool</span></span>
 <span>    ls_study_ae_per_visit <span class="op">=</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/map2.html" class="external-link">map2</a></span><span class="op">(</span></span>
 <span>        <span class="va">ls_study_ae_per_visit</span>, <span class="va">rwn</span>,</span>
@@ -4407,16 +4407,16 @@ lowest AE per visit rate.</li>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 15,674 × 6</span></span></span>
 <span><span class="co">##    study_id site_number visit  n_ae ae_per_visit ls_study_ae_per_visit</span></span>
 <span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>               </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> 0001     0001           43     8        0.186 <span style="color: #949494;">&lt;dbl [43]&gt;</span>           </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> 0001     0002           56    16        0.286 <span style="color: #949494;">&lt;dbl [43]&gt;</span>           </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> 0001     0003           76    14        0.184 <span style="color: #949494;">&lt;dbl [43]&gt;</span>           </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> 0001     0004          197    65        0.330 <span style="color: #949494;">&lt;dbl [43]&gt;</span>           </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> 0001     0005           30    10        0.333 <span style="color: #949494;">&lt;dbl [43]&gt;</span>           </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> 0001     0006           35    11        0.314 <span style="color: #949494;">&lt;dbl [43]&gt;</span>           </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> 0001     0007           36     7        0.194 <span style="color: #949494;">&lt;dbl [43]&gt;</span>           </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> 0001     0008          197    48        0.244 <span style="color: #949494;">&lt;dbl [43]&gt;</span>           </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> 0001     0009           40    16        0.4   <span style="color: #949494;">&lt;dbl [43]&gt;</span>           </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">10</span> 0001     0010          139    44        0.317 <span style="color: #949494;">&lt;dbl [43]&gt;</span>           </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> 0001     0001           44     8        0.182 <span style="color: #949494;">&lt;dbl [43]&gt;</span>           </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> 0001     0002           49    18        0.367 <span style="color: #949494;">&lt;dbl [43]&gt;</span>           </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> 0001     0003           74    17        0.230 <span style="color: #949494;">&lt;dbl [43]&gt;</span>           </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> 0001     0004          191    49        0.257 <span style="color: #949494;">&lt;dbl [43]&gt;</span>           </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> 0001     0005           30     9        0.3   <span style="color: #949494;">&lt;dbl [43]&gt;</span>           </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> 0001     0006           35    17        0.486 <span style="color: #949494;">&lt;dbl [43]&gt;</span>           </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> 0001     0007           36     9        0.25  <span style="color: #949494;">&lt;dbl [43]&gt;</span>           </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> 0001     0008          166    48        0.289 <span style="color: #949494;">&lt;dbl [43]&gt;</span>           </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> 0001     0009           40    14        0.35  <span style="color: #949494;">&lt;dbl [43]&gt;</span>           </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">10</span> 0001     0010          138    33        0.239 <span style="color: #949494;">&lt;dbl [43]&gt;</span>           </span></span>
 <span><span class="co">## <span style="color: #949494;"># … with 15,664 more rows</span></span></span></code></pre>
 <p>We write a function that: - determines how many sites should be
 flagged in a study - pools ae_per_visit rates and ranks sites (using
@@ -4428,14 +4428,14 @@ within the number of sites that should get flagged</p>
 <span>  <span class="va">n_flags</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">ceiling</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">ls_study_ae_per_visit</span> <span class="op">+</span> <span class="fl">1</span><span class="op">)</span> <span class="op">*</span> <span class="fl">0.05</span><span class="op">)</span></span>
 <span></span>
 <span>  <span class="va">rnk</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>ae_per_visit <span class="op">=</span> <span class="va">ae_per_visit</span>, site <span class="op">=</span> <span class="st">"site"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind.html" class="external-link">bind_rows</a></span><span class="op">(</span></span>
+<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind_rows.html" class="external-link">bind_rows</a></span><span class="op">(</span></span>
 <span>      <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>ae_per_visit <span class="op">=</span> <span class="va">ls_study_ae_per_visit</span>, site <span class="op">=</span> <span class="st">"other"</span><span class="op">)</span></span>
 <span>    <span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>    <span class="co"># using dense_rank will assign rank 1 to all sites with lowest rate</span></span>
 <span>    <span class="co"># this is important as there can be many sites with a zero ratio</span></span>
 <span>    <span class="co"># occasionally this will flag more sites than anticipated</span></span>
 <span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="va">ae_per_visit</span>, <span class="va">site</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>rnk <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/ranking.html" class="external-link">dense_rank</a></span><span class="op">(</span><span class="va">ae_per_visit</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>rnk <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/row_number.html" class="external-link">dense_rank</a></span><span class="op">(</span><span class="va">ae_per_visit</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">site</span> <span class="op">==</span> <span class="st">"site"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html" class="external-link">pull</a></span><span class="op">(</span><span class="va">rnk</span><span class="op">)</span></span>
 <span>  </span>
@@ -4472,11 +4472,11 @@ under-reporting</p>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 6 × 3</span></span></span>
 <span><span class="co">##   ur_rate ae_per_visit is_ur</span></span>
 <span><span class="co">##     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span></span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">1</span>    0          0.186  FALSE</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">2</span>    0.1        0.167  FALSE</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">3</span>    0.25       0.140  FALSE</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">4</span>    0.5        0.093<span style="text-decoration: underline;">0</span> TRUE </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">5</span>    0.75       0.046<span style="text-decoration: underline;">5</span> TRUE </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">1</span>    0          0.182  FALSE</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">2</span>    0.1        0.164  FALSE</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">3</span>    0.25       0.136  TRUE </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">4</span>    0.5        0.090<span style="text-decoration: underline;">9</span> TRUE </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">5</span>    0.75       0.045<span style="text-decoration: underline;">5</span> TRUE </span></span>
 <span><span class="co">## <span style="color: #BCBCBC;">6</span>    1          0      TRUE</span></span></code></pre>
 <p>We apply.</p>
 <div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
@@ -4495,7 +4495,7 @@ under-reporting</p>
 <span></span>
 <span><span class="va">df_perf_heuristic_rnk</span> <span class="op">&lt;-</span> <span class="va">df_perf_heuristic_rnk</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">sim</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/nest.html" class="external-link">unnest</a></span><span class="op">(</span><span class="va">sim</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest.html" class="external-link">unnest</a></span><span class="op">(</span><span class="va">sim</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">ur_rate</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span></span>
 <span>    is_ur <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">is_ur</span><span class="op">)</span>,</span>
@@ -4634,7 +4634,7 @@ boundary.</p>
 <span></span>
 <span><span class="va">df_perf_heuristic_box</span> <span class="op">&lt;-</span> <span class="va">df_perf_heuristic_box</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">sim</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/nest.html" class="external-link">unnest</a></span><span class="op">(</span><span class="va">sim</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest.html" class="external-link">unnest</a></span><span class="op">(</span><span class="va">sim</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">ur_rate</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span></span>
 <span>    is_ur <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">is_ur</span><span class="op">)</span>,</span>
@@ -4753,14 +4753,14 @@ under-reporting sites if under-reporting rate is greater 0.5</li>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">ur_rate</span> <span class="op">==</span> <span class="fl">0</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>ratio_type <span class="op">=</span> <span class="st">"fpr"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">ur_rate</span>, <span class="va">ratio_type</span>, ratio <span class="op">=</span> <span class="va">fpr</span>, ci95_low <span class="op">=</span> <span class="va">fpr_ci95_low</span>, ci95_high <span class="op">=</span> <span class="va">fpr_ci95_high</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind.html" class="external-link">bind_rows</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind_rows.html" class="external-link">bind_rows</a></span><span class="op">(</span></span>
 <span>    <span class="va">df_perf_st</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>      <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">ur_rate</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>      <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>ratio_type <span class="op">=</span> <span class="st">"tpr"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>      <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">ur_rate</span>, <span class="va">ratio_type</span>, ratio <span class="op">=</span> <span class="va">tpr</span>, ci95_low <span class="op">=</span> <span class="va">tpr_ci95_low</span>, ci95_high <span class="op">=</span> <span class="va">tpr_ci95_high</span><span class="op">)</span></span>
 <span>  <span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">prep_for_plot</span><span class="op">(</span>type <span class="op">=</span> <span class="st">"{simaerep} optimal study conditions"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind.html" class="external-link">bind_rows</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind_rows.html" class="external-link">bind_rows</a></span><span class="op">(</span></span>
 <span>    <span class="fu">prep_for_plot</span><span class="op">(</span><span class="va">df_perf_portf</span>, type <span class="op">=</span> <span class="st">"{simaerep} default"</span><span class="op">)</span>,</span>
 <span>    <span class="fu">prep_for_plot</span><span class="op">(</span><span class="va">df_perf_portf_days</span>, type <span class="op">=</span> <span class="st">"{simaerep} AE per days on study"</span><span class="op">)</span>,</span>
 <span>    <span class="fu">prep_for_plot</span><span class="op">(</span><span class="va">df_perf_portf_old_visit_med75</span>, type <span class="op">=</span> <span class="st">"{simaerep} unadjusted visit-med75"</span><span class="op">)</span>,</span>

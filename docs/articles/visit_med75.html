@@ -228,7 +228,7 @@ quantile of all maximum patient visits at a study.</p>
 <span><span class="va">df_visit2</span><span class="op">$</span><span class="va">patnum</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"B"</span>, <span class="va">df_visit2</span><span class="op">$</span><span class="va">patnum</span><span class="op">)</span></span>
 <span></span>
 <span></span>
-<span><span class="va">df_visit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind.html" class="external-link">bind_rows</a></span><span class="op">(</span><span class="va">df_visit1</span>, <span class="va">df_visit2</span><span class="op">)</span></span>
+<span><span class="va">df_visit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind_rows.html" class="external-link">bind_rows</a></span><span class="op">(</span><span class="va">df_visit1</span>, <span class="va">df_visit2</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">df_visit</span><span class="op">$</span><span class="va">study_id</span> <span class="op">&lt;-</span> <span class="st">"A"</span></span>
 <span></span>

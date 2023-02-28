@@ -195,26 +195,27 @@ mean_ae at visit_med75</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">df_visit2</span><span class="op">$</span><span class="va">study_id</span> <span class="op">&lt;-</span> <span class="st">"B"</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">df_visit</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind.html" class="external-link">bind_rows</a></span><span class="op">(</span><span class="va">df_visit1</span>, <span class="va">df_visit2</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">df_visit</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind_rows.html" class="external-link">bind_rows</a></span><span class="op">(</span><span class="va">df_visit1</span>, <span class="va">df_visit2</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">df_site</span> <span class="op">&lt;-</span> <span class="fu"><a href="site_aggr.html">site_aggr</a></span><span class="op">(</span><span class="va">df_visit</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">sim_studies</span><span class="op">(</span><span class="va">df_visit</span>, <span class="va">df_site</span>, r <span class="op">=</span> <span class="fl">3</span>, keep_ae <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 24 × 10</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>        r study_id site_number visit_med75 n_pat_with_med75 n_pat_study n_ae_site</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span>     1 A        S0001                16               20          68 7,13,7,4…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span>     1 A        S0002                18               17          57 1,10,4,4…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span>     1 A        S0003                17               18          63 13,11,13…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span>     1 A        S0004                14               18          76 3,9,9,9,…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span>     1 A        S0005                15               18          72 9,4,7,6,…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span>     1 B        S0001                15              297         597 9,8,5,7,…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span>     1 B        S0002                15              296         598 14,8,7,1…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span>     1 B        S0003                15              301         593 9,5,8,6,…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span>     2 A        S0001                16               20          68 10,7,5,3…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span>     2 A        S0002                18               17          57 12,12,6,…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with 14 more rows, and 3 more variables: n_ae_study &lt;chr&gt;, pval &lt;dbl&gt;,</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   prob_low &lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        r study_id site_n…¹ visit…² n_pat…³ n_pat…⁴ n_ae_…⁵ n_ae_…⁶  pval prob_…⁷</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span>     1 A        S0001         16      20      68 7,13,7… 5,4,1,… 1       1    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span>     1 A        S0002         18      17      57 1,10,4… 6,16,7… 1       1    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span>     1 A        S0003         17      18      63 13,11,… 10,6,4… 1       1    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span>     1 A        S0004         14      18      76 3,9,9,… 5,4,7,… 0.201   0.179</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span>     1 A        S0005         15      18      72 9,4,7,… 9,13,4… 1       1    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span>     1 B        S0001         15     297     597 9,8,5,… 6,11,4… 1       1    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span>     1 B        S0002         15     296     598 14,8,7… 5,6,9,… 1       1    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span>     1 B        S0003         15     301     593 9,5,8,… 9,7,7,… 1       0.526</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span>     2 A        S0001         16      20      68 10,7,5… 2,6,3,… 1       1    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span>     2 A        S0002         18      17      57 12,12,… 5,5,13… 1       1    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with 14 more rows, and abbreviated variable names ¹​site_number,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   ²​visit_med75, ³​n_pat_with_med75, ⁴​n_pat_study, ⁵​n_ae_site, ⁶​n_ae_study,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   ⁷​prob_low</span></span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
 <span class="r-in"><span><span class="co"># parallel processing -------------------------</span></span></span>
