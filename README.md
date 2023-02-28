@@ -13,7 +13,7 @@ experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](h
 [![R Package Validation
 report](https://github.com/openpharma/simaerep/actions/workflows/validation.yml/badge.svg)](https://github.com/openpharma/simaerep/actions/workflows/validation.yml)
 [![CRAN
-release](https://www.r-pkg.org/badges/version/simaerep)](https://cran.r-project.org/web/packages/simaerep/index.html)
+release](https://www.r-pkg.org/badges/version/simaerep)](https://CRAN.R-project.org/package=simaerep)
 <!-- badges: end -->
 
 Simulate adverse event reporting in clinical trials with the goal of
@@ -151,6 +151,11 @@ df_visit %>%
 aerep <- simaerep(df_visit)
 
 plot(aerep, study = "A") 
+#> Warning: `all_equal()` was deprecated in dplyr 1.1.0.
+#> ℹ Please use `all.equal()` instead.
+#> ℹ And manually order the rows/cols as needed
+#> ℹ The deprecated feature was likely used in the simaerep package.
+#>   Please report the issue to the authors.
 ```
 
 <img src="man/figures/README-unnamed-chunk-2-1.png" width="100%" />
