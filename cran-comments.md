@@ -1,14 +1,8 @@
-# simaerep 0.4.3
+# resubmission simaerep 0.4.3
 
-Fix to address issue of failing unit test on CRAN which compared function performance
-when called with different parameters. This test is now skipped on CRAN.
+- fix CRAN url in README
 
-## Test Results
-
-1 Note:
-Days since last update: 2
-
-This update was requested:
+- Fix to address issue of failing unit test on CRAN which compared function performance when called with different parameters. This test is now skipped on CRAN. 
 
 Dear maintainer,
 
@@ -21,12 +15,16 @@ Do remember to look at the 'Additional issues'.
 
 The CRAN Team
 
+## Test Results
+
+No notes, warnings or errors
+
+
 ## Test Environments
 
-- Rhub, Windows Server 2022, R-devel, 64 bit
+- Rhub, debian
 - GitHub CI/CD macOS-latest
-- winbuilder release
-- winbuilder devel
+
 
 
 
