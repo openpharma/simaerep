@@ -1,4 +1,16 @@
-# resubmission simaerep 0.4.3
+# resubmission 2 simaerep 0.4.3
+- deleted unit tests which compared function performance when called with different parameters as requested.
+
+Thanks, we see you added
+
+   skip_on_cran() # performance on ci/cd systems is not predictable
+
+but it should not be doing the test anywhere, as WRE explains.
+
+Best,
+Uwe Ligges
+
+# resubmission 1 simaerep 0.4.3
 
 - fix CRAN url in README
 
