@@ -1,5 +1,5 @@
 # simaerep 0.4.3
-- skip all performance unit tests on CRAN
+- delete performance unit tests (poisson faster than bootstrap) to accommodate CRAN request
 
 # simaerep 0.4.2
 - CRAN submission

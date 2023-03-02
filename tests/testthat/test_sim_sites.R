@@ -88,16 +88,6 @@ test_that("sim_sites() - prob_low and pval must be between 0 - 1", {
 
 })
 
-test_that("sim_sites() - executing only poisson tests must be faster than using bootstrap simulations", {
-  skip_on_cran() # performance on ci/cd systems is not predictable
-  skip_on_ci()
-
-  t_prob_low <- system.time(sim_sites(df_site_test, df_visit_test, poisson_test = FALSE, prob_lower = TRUE))
-  t_ptest <- system.time(sim_sites(df_site_test, df_visit_test, prob_lower = FALSE, poisson_test = TRUE))
-
-  expect_true(t_prob_low["elapsed"] > t_ptest["elapsed"])
-
-})
 
 test_that("prep_for_sim() - ae vector for site must match number of patients at site", {
 
