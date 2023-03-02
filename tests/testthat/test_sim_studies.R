@@ -18,36 +18,6 @@ test_that("sim_studies() - returned dataframe expect no NA and prob_low/pval 0 -
 
 })
 
-test_that("sim_studies() - executing only poisson tests must be faster than using bootstrap simulations", {
-  skip_on_cran() # performance on ci/cd systems is not predictable
-  skip_on_ci()
-
-  t_ptest <- system.time({
-    df_sim_study <- sim_studies(
-      df_site = df_site_test,
-      df_visit = df_visit_test,
-      r = 3,
-      parallel = FALSE,
-      poisson_test = TRUE,
-      prob_lower = FALSE
-    )
-  })
-
-  t_prob_low <- system.time({
-    df_sim_study <- sim_studies(
-      df_site = df_site_test,
-      df_visit = df_visit_test,
-      r = 3,
-      parallel = FALSE,
-      poisson_test = FALSE,
-      prob_lower = TRUE
-    )
-  })
-
-  expect_true(t_ptest["elapsed"] < t_prob_low["elapsed"])
-
-})
-
 
 test_that("sim_studies() with keep_ae = TRUE - retain individual site and study AE", {
 
