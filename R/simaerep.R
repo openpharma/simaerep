@@ -656,7 +656,7 @@ pat_pool <- function(df_visit, df_site) {
 #' @seealso \code{\link[purrr]{safely}}
 #' @rdname prob_lower_site_ae_vs_study_ae
 #' @export
-prob_lower_site_ae_vs_study_ae <- function(site_ae, study_ae, r = 1000, parallel = FALSE, under_only = FALSE) {
+prob_lower_site_ae_vs_study_ae <- function(site_ae, study_ae, r = 1000, parallel = FALSE, under_only = TRUE) {
   # if there is only one site
   if (is.null(study_ae)) {
     prob_lower <- 1
@@ -666,14 +666,14 @@ prob_lower_site_ae_vs_study_ae <- function(site_ae, study_ae, r = 1000, parallel
   mean_ae_site <- mean(site_ae, na.rm = TRUE)
   mean_ae_study <- mean(study_ae, na.rm = TRUE)
 
-  if (under_only == TRUE) {
+  if (under_only) {
     # we are not interested in cases where site AE is greater study AE
     if (mean_ae_site > mean_ae_study) {
       prob_lower <- 1
       return(prob_lower)
     }
   }
-  
+
 
   # set-up multiprocessing
   # multiprocessing currently not used by sim_sites()

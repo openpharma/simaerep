@@ -11,7 +11,8 @@ sim_sites(
   poisson_test = TRUE,
   prob_lower = TRUE,
   progress = TRUE,
-  check = TRUE
+  check = TRUE,
+  under_only = TRUE
 )
 }
 \arguments{
@@ -27,7 +28,9 @@ sim_sites(
 
 \item{progress}{logical, display progress bar, Default = TRUE}
 
-\item{check, }{logical, perform data check and attempt repair with
+\item{check, }{logical, perform data check and attempt repair with}
+
+\item{under_only}{compute under-reporting probabilities only, default = TRUE
 \link[=check_df_visit]{check_df_visit()}, computationally expensive on large data
 sets. Default: TRUE}
 }

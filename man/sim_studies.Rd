@@ -11,6 +11,7 @@ sim_studies(
   poisson_test = TRUE,
   prob_lower = TRUE,
   r_prob_lower = 1000,
+  under_only = TRUE,
   parallel = FALSE,
   keep_ae = FALSE,
   min_n_pat_with_med75 = 1,
@@ -32,6 +33,8 @@ Default: FALSE}
 
 \item{r_prob_lower}{integer, denotes number of simulations for prob_lower
 value calculation,, Default: 1000}
+
+\item{under_only}{compute under-reporting probabilities only, default = TRUE}
 
 \item{parallel}{logical, see examples for registering parallel processing framework
 , Default: FALSE}

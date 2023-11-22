@@ -7,7 +7,8 @@
 simaerep(
   df_visit,
   param_site_aggr = list(method = "med75_adj", min_pat_pool = 0.2),
-  param_sim_sites = list(r = 1000, poisson_test = FALSE, prob_lower = TRUE),
+  param_sim_sites = list(r = 1000, poisson_test = FALSE, prob_lower = TRUE, under_only
+    = TRUE),
   param_eval_sites = list(method = "BH"),
   progress = TRUE,
   check = TRUE,
@@ -35,6 +36,8 @@ sets. Default: TRUE}
 
 \item{env}{optional, provide environment of original visit data, Default:
 parent.frame()}
+
+\item{under_only}{compute under-reporting probabilities only, default = TRUE}
 }
 \value{
 simaerep object
