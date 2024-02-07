@@ -282,18 +282,20 @@ plot_perf(df_perf)
 - false positive flagging for {simaerep} is similarly distributed as true positive flagging
 - false positive flagging for {gsm} evenly covers the whole distribution range
 
-```{r}
+```{r fig.width=10, fig.height = 10}
+
 df_qu <- df_portf %>%
   summarize(n_pat = n_distinct(patnum), .by = c("study_id", "site_number", "ae_per_visit_mean")) %>%
-  left_join(
+  inner_join(
     df_sim %>%
       select(study_id, site_number = siteid, ur_rate, score)
   ) %>%
-  left_join(
+  inner_join(
     df_sim_simaerep %>%
       select(study_id, site_number, ur_rate, prob_low_prob_ur)
   ) %>%
   mutate(
+    score = ifelse(is.na(score), 0 , score),
     flag = case_when(
       score <= -2 & prob_low_prob_ur >= 0.95 ~ "double",
       score <= -2 ~ "gsm only",
@@ -309,7 +311,7 @@ plot_flags <- function(df, ur_rate) {
     ggplot(aes(log(n_pat), ae_per_visit_mean, colour = flag)) +
     geom_point(alpha = 0.25) +
     theme(legend.position = "bottom", aspect.ratio = 1) +
-    labs(x = "Log Number of Patiends per Site", y = "AE per Visit Study Average", title = paste("Under Rporting Rate:", ur_rate))
+    labs(x = "Log Number of Patiends per Site", y = "AE per Visit Study Average", title = paste("Under Reporting Rate:", ur_rate))
   
   ggExtra::ggMarginal(p, groupColour = TRUE, groupFill = TRUE)
   
@@ -325,7 +327,7 @@ p_fpr <-  df_qu %>%
   ggplot(aes(log(n_pat), ae_per_visit_mean, colour = flag)) +
   geom_point(alpha = 0.25) +
     theme(legend.position = "bottom", aspect.ratio = 1) +
-    labs(x = "Log Number of Patiends per Site", y = "AE per Visit Study Average", title = paste("Fals Positive Flags"))
+    labs(x = "Log Number of Patiends per Site", y = "AE per Visit Study Average", title = paste("False Positive Flags"))
 
 p_fpr <- ggExtra::ggMarginal(p_fpr, groupColour = TRUE, groupFill = TRUE)
 
@@ -336,28 +338,26 @@ gridExtra::grid.arrange(p_p5, p_p75, p_1, p_fpr, ncol = 2)
 
 - clear performance increase only for studies with > 1 ae per visit rate, which is very rare.
 
-```{r}
-
-cut_off <- 1
+```{r, fig.width=6, fig.height = 10}
 
 df_comb1 <- df_qu %>%
   mutate(
     type = "comb. ae/visit thresh: 1",
-    is_ur = (ae_per_visit_mean <= 1 & score <= -2) | ae_per_visit_mean > 1 & prob_low_prob_ur >= 0.95
+    is_ur = (ae_per_visit_mean <= 1 & score <= -2) | (ae_per_visit_mean > 1 & prob_low_prob_ur >= 0.95)
   ) %>%
   select(type, study_id, site_number, ur_rate, is_ur)
 
 df_combp25 <- df_qu %>%
   mutate(
     type = "comb. ae/visit thresh: 0.25",
-    is_ur = (ae_per_visit_mean <= 0.25 & score <= -2) | ae_per_visit_mean > 0.25 & prob_low_prob_ur >= 0.95
+    is_ur = (ae_per_visit_mean <= 0.25 & score <= -2) | (ae_per_visit_mean > 0.25 & prob_low_prob_ur >= 0.95)
   ) %>%
   select(type, study_id, site_number, ur_rate, is_ur)
 
 df_combp5 <- df_qu %>%
   mutate(
     type = "comb. ae/visit thresh: 0.5",
-    is_ur = (ae_per_visit_mean <= 0.5 & score <= -2) | ae_per_visit_mean > 0.5 & prob_low_prob_ur >= 0.95
+    is_ur = (ae_per_visit_mean <= 0.5 & score <= -2) | (ae_per_visit_mean > 0.5 & prob_low_prob_ur >= 0.95)
   ) %>%
   select(type, study_id, site_number, ur_rate, is_ur)
 
