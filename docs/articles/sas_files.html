@@ -92,6 +92,9 @@
     <li>
       <a href="../articles/visits_or_days.html">Aggregate AEs by Days or Visit?</a>
     </li>
+    <li>
+      <a href="../articles/gsm_perf.html">Comparing {simaerep} and {gsm} Performance</a>
+    </li>
   </ul>
 </li>
 <li>
@@ -165,7 +168,7 @@ can proceed in a similar way</p>
 <span><span class="co">## <span style="color: #BCBCBC;"> 8</span> CO-101-001 01001001 001        99</span></span>
 <span><span class="co">## <span style="color: #BCBCBC;"> 9</span> CO-101-001 01001001 001       127</span></span>
 <span><span class="co">## <span style="color: #BCBCBC;">10</span> CO-101-001 01001001 001       127</span></span>
-<span><span class="co">## <span style="color: #949494;"># … with 4,692 more rows</span></span></span></code></pre>
+<span><span class="co">## <span style="color: #949494;"># ℹ 4,692 more rows</span></span></span></code></pre>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">df_vs</span> <span class="op">&lt;-</span> <span class="fu">haven</span><span class="fu">::</span><span class="fu"><a href="https://haven.tidyverse.org/reference/read_sas.html" class="external-link">read_sas</a></span><span class="op">(</span><span class="st">'advs.sas7bdat'</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">STUDYID</span>, <span class="va">SUBJID</span>, <span class="va">SITEID</span>, <span class="va">ADY</span><span class="op">)</span> </span>
@@ -184,7 +187,7 @@ can proceed in a similar way</p>
 <span><span class="co">## <span style="color: #BCBCBC;"> 8</span> CO-101-001 01001001 001       29</span></span>
 <span><span class="co">## <span style="color: #BCBCBC;"> 9</span> CO-101-001 01001001 001       29</span></span>
 <span><span class="co">## <span style="color: #BCBCBC;">10</span> CO-101-001 01001001 001       38</span></span>
-<span><span class="co">## <span style="color: #949494;"># … with 45,166 more rows</span></span></span></code></pre>
+<span><span class="co">## <span style="color: #949494;"># ℹ 45,166 more rows</span></span></span></code></pre>
 <p>In order to assign each AE to a visit we union both event tables and
 sort by date.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
@@ -797,7 +800,7 @@ from the SAS files to <code>simaerep</code></p>
 <span><span class="co">## <span style="color: #BCBCBC;"> 8</span> CO-101-001 001         01001001     3     8</span></span>
 <span><span class="co">## <span style="color: #BCBCBC;"> 9</span> CO-101-001 001         01001001     3     9</span></span>
 <span><span class="co">## <span style="color: #BCBCBC;">10</span> CO-101-001 001         01001001     6    10</span></span>
-<span><span class="co">## <span style="color: #949494;"># … with 5,422 more rows</span></span></span></code></pre>
+<span><span class="co">## <span style="color: #949494;"># ℹ 5,422 more rows</span></span></span></code></pre>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">aerep</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/simaerep.html">simaerep</a></span><span class="op">(</span><span class="va">df_visit</span><span class="op">)</span></span>
 <span></span>
@@ -835,7 +838,7 @@ ignored.</em></p>
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer>
