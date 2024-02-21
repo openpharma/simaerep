@@ -12,6 +12,7 @@
 #' @param max_visit_sd standard deviation of maximum number of visits of each
 #'   patient, Default: 4
 #' @param ae_per_visit_mean mean ae per visit per patient, Default: 0.5
+#' @param ae_rates vector with visit-specific ae rates, Default: Null
 #' @return tibble with columns site_number, patnum, is_ur, max_visit_mean,
 #'   max_visit_sd, ae_per_visit_mean, visit, n_ae
 #' @details maximum visit number will be sampled from normal distribution with
@@ -25,6 +26,8 @@
 #' df_visit <- sim_test_data_study(n_pat = 100, n_sites = 5,
 #'     frac_site_with_ur = 0.2, ur_rate = 0.5)
 #' df_visit[which(df_visit$patnum == "P000001"),]
+#' ae_rates <- c(0.7, rep(0.5, 8), rep(0.3, 5))
+#' sim_test_data_study(n_pat = 100, n_sites = 5, ae_rates = ae_rates)
 #' @rdname sim_test_data_study
 #' @export
 sim_test_data_study <- function(n_pat = 1000,
@@ -33,8 +36,71 @@ sim_test_data_study <- function(n_pat = 1000,
                                 ur_rate = 0,
                                 max_visit_mean = 20,
                                 max_visit_sd = 4,
-                                ae_per_visit_mean = 0.5
+                                ae_per_visit_mean = 0.5,
+                                ae_rates = NULL
 ) {
+
+  # construct patient ae sample function
+  # supports constant and non-constant ae rates
+
+  f_sim_pat <- function(vs_max, vs_sd, is_ur) {
+
+    if (! any(c(is.null(ae_rates), is.na(ae_rates)))) {
+
+      if (is_ur) {
+        ae_rates <- ae_rates * (1-ur_rate)
+      }
+
+      f_sample_ae <- function(max_visit) {
+
+        # extrapolate missing ae rates by extending last rate
+        fill <- rep(ae_rates[length(ae_rates)], max_visit)
+        fill[1: length(ae_rates)] <- ae_rates
+        ae_rates <- fill
+
+        aes <- integer(0)
+
+        for (i in seq(1, max_visit)) {
+          ae <- rpois(1, ae_rates[i])
+          aes <- c(aes, ae)
+        }
+
+        return(aes)
+
+      }
+
+      ae_per_visit_mean <- mean(ae_rates)
+
+    } else {
+
+      if (is_ur) {
+        ae_per_visit_mean <- ae_per_visit_mean * (1-ur_rate)
+      }
+
+      f_sample_ae <- function(max_visit) {
+
+        rpois(max_visit, ae_per_visit_mean)
+
+      }
+
+    }
+
+    aes <- sim_test_data_patient(
+      .f_sample_max_visit = function(x) rnorm(1, mean = vs_max, sd = vs_sd),
+      .f_sample_ae_per_visit = f_sample_ae
+    )
+
+    tibble(
+      visit = seq(1, length(aes)),
+      n_ae = aes,
+      ae_per_visit_mean = ae_per_visit_mean
+    )
+
+  }
+
+
+
+
   tibble(patnum = seq(1, n_pat)) %>%
     mutate(patnum = str_pad(patnum, width = 6, side = "left", pad = "0"),
            patnum = paste0("P", patnum),
@@ -45,18 +111,12 @@ sim_test_data_study <- function(n_pat = 1000,
            site_number = paste0("S", .data$site_number),
            max_visit_mean = max_visit_mean,
            max_visit_sd = max_visit_sd,
-           ae_per_visit_mean = ifelse(.data$is_ur, ae_per_visit_mean * (1 - ur_rate), ae_per_visit_mean),
-           aes = pmap(list(vm = max_visit_mean,
-                           vs = max_visit_sd,
-                           am = ae_per_visit_mean),
-                      function(vm, vs, am) {
-                          sim_test_data_patient(
-                          .f_sample_max_visit = function() rnorm(1, mean = vm, sd = vs),
-                          .f_sample_ae_per_visit = function(max_visit) rpois(max_visit, am)
-                          )
-                        }
-                      ),
-           aes = map(aes, ~ tibble(visit = seq(1, length(.)), n_ae = .))) %>%
+           aes = pmap(list(max_visit_mean,
+                           max_visit_sd,
+                           is_ur),
+                      f_sim_pat
+                      )
+           ) %>%
     unnest(aes)
 
 }
@@ -389,6 +449,7 @@ sim_ur_scenarios <- function(df_portf,
 #' @title Simulate Portfolio Test Data
 #' @description Simulate visit level data from a portfolio configuration.
 #' @param df_config dataframe as returned by \code{\link{get_config}}
+#' @param df_ae_rates dataframe with ae rates. Default: NULL
 #' @param parallel logical activate parallel processing, see details, Default: FALSE
 #' @param progress logical, Default: TRUE
 #'@return dataframe with the following columns: \describe{
@@ -452,7 +513,7 @@ sim_ur_scenarios <- function(df_portf,
 #'  \code{\link{get_portf_perf}}
 #' @rdname sim_test_data_portfolio
 #' @export
-sim_test_data_portfolio <- function(df_config, parallel = FALSE, progress = TRUE) {
+sim_test_data_portfolio <- function(df_config, df_ae_rates = NULL, parallel = FALSE, progress = TRUE) {
 
   # checks --------------------------
   df_config <- ungroup(df_config)
@@ -478,6 +539,24 @@ sim_test_data_portfolio <- function(df_config, parallel = FALSE, progress = TRUE
     )
   )
 
+  # prep ae_rates -----------------
+
+  if (is.null(df_ae_rates)) {
+    df_config$ae_rates <- NA
+  } else {
+    df_ae_rates <- df_ae_rates %>%
+      select(study_id, ae_rate) %>%
+      group_by(study_id) %>%
+      nest() %>%
+      mutate(
+        ae_rates = map(data, "ae_rate")
+      ) %>%
+      select(- data)
+
+    df_config <- df_config %>%
+      inner_join(df_ae_rates, by = "study_id")
+  }
+
   # exec --------------------------
 
   if (parallel) {
@@ -496,19 +575,22 @@ sim_test_data_portfolio <- function(df_config, parallel = FALSE, progress = TRUE
             .data$ae_per_visit_mean,
             .data$max_visit_sd,
             .data$max_visit_mean,
-            .data$n_pat
+            .data$n_pat,
+            .data$ae_rates
           ),
           .purrr = .purrr,
           .f = function(ae_per_visit_mean,
                         max_visit_sd,
                         max_visit_mean,
-                        n_pat) {
+                        n_pat,
+                        ae_rates) {
             sim_test_data_study(
               n_pat = n_pat,
               n_sites = 1,
               max_visit_mean = max_visit_mean,
               max_visit_sd = max_visit_sd,
-              ae_per_visit_mean = ae_per_visit_mean
+              ae_per_visit_mean = ae_per_visit_mean,
+              ae_rates = ae_rates
             ) %>%
               select(
                 # using rlang::.data here causes error with furrr
@@ -525,7 +607,7 @@ sim_test_data_portfolio <- function(df_config, parallel = FALSE, progress = TRUE
 
   df_portf <- df_config_sim %>%
     unnest(.data$sim) %>%
-    select(- .data$n_pat) %>%
+    select(- c("n_pat" ,"ae_rates")) %>%
     group_by(.data$study_id) %>%
     mutate(
       # patnums need to be made site exclusive

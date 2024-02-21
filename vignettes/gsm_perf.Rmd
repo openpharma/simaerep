@@ -23,8 +23,6 @@ suppressPackageStartupMessages(library(knitr))
 suppressPackageStartupMessages(library(furrr))
 suppressPackageStartupMessages(library(future))
 suppressPackageStartupMessages(library(simaerep))
-suppressPackageStartupMessages(library(ggExtra))
-suppressPackageStartupMessages(library(gridExtra))
 
 plan(multisession, workers = 6)
 ```
@@ -36,60 +34,127 @@ devtools::install_github("Gilead-BioStats/gsm", ref = "main")
 ```
 
 
+
 # Introduction
 
 The [{gsm}](https://github.com/Gilead-BioStats/gsm/) R package provides a standardized Risk Based Quality Monitoring (RBQM) framework for clinical trials that pairs a flexible data pipeline with robust reports. It also uses Funnel Plots to flag outliers which provide broader tolerance limits for sites with low exposure and narrower limits for sites with higher exposure. This method is different to the event rate based limits we have used in previous heuristics to measure {simaerep} performance. Funnel plots are discussed in greater detail by [Zink et al. 2018](https://doi.org/10.1177/2168479017738981)
 
+One of the draw backs of using funnel plots for flagging is that they assume that the AE rate remains constant over the course of the study.
+
 # Prepare Data
 
 ## Load Portfolio Configurations
+
+We have prepared a snapshot of the AE reporting configuration of our current portfolio. For each study we have also measured a visit-specific AE rate which allows us to generate a synthetic portfolio with flexible AE rates across a study.
+
 ```{r real_config}
 
-df_config <- readr::read_csv("ae_profile.csv")
+df_config <- readr::read_csv("ae_conf_20240220.csv")
+df_ae_rates <- readr::read_csv("ae_rates_20240220.csv")
 
 df_config %>%
   head(25) %>%
   knitr::kable()
+
+df_ae_rates %>%
+  head(25) %>%
+  knitr::kable()
+
 ```
 
 ## Simulate Portfolio
 
-And again we simulate artificial visit level data. Using parallel processing. At this stage we have simulated compliant test data of a realistic study portfolio.
+We generate two synthetic portfolios with no AE under-reporting sites. One portfolio with a fixed AE rate for all visits and another one with a flexible visit-specific AE rate.
 
 ```{r sim_portf}
 
-df_portf <- sim_test_data_portfolio(df_config, parallel = TRUE, progress = TRUE)
+df_portf_fix <- sim_test_data_portfolio(df_config, parallel = TRUE, progress = TRUE)
 
-df_portf %>%
+df_portf_fix %>%
   head(25) %>%
   knitr::kable()
+
+
+df_portf_flex <- sim_test_data_portfolio(df_config, df_ae_rates = df_ae_rates, parallel = TRUE, progress = TRUE)
 ```
+
+## Compare AE rates
+
+Next we confirm the different AE rates in our two synthetic portfolios.
+
+```{r}
+df_rate_fix <- df_portf_fix %>%
+  mutate(ae_rate = coalesce(n_ae - lag(n_ae), n_ae), .by = c("study_id", "patnum")) %>%
+  summarise(ae_rate = mean(ae_rate), .by = c("study_id", "visit")) %>%
+  mutate(rate = "fix")
+
+
+df_rate_flex <- df_portf_flex %>%
+  mutate(ae_rate = coalesce(n_ae - lag(n_ae), n_ae), .by = c("study_id", "patnum")) %>%
+  summarise(ae_rate = mean(ae_rate), .by = c("study_id", "visit")) %>%
+  mutate(rate = "flex")
+```
+
+```{r fig.width=10, fig.height = 7}
+bind_rows(df_rate_flex, df_rate_fix) %>%
+  ggplot(aes(visit, ae_rate)) +
+    geom_line(aes(group = study_id), alpha = 0.2) +
+    geom_smooth() +
+    facet_wrap(~ rate) +
+    labs(title = "Average AE rates per Study")
+```
+
+
+```{r fig.width=10, fig.height = 7}
+bind_rows(df_rate_flex, df_rate_fix) %>%
+  filter(dense_rank(study_id) <= 16) %>%
+  ggplot(aes(visit, ae_rate)) +
+    geom_line(aes(group = rate, color = rate)) +
+    facet_wrap(~ study_id, scales = "free") +
+    labs(title = "Average AE rates for Selected Studies")
+
+```
+
+We can confirm that the AE rates in the "flexible" portfolio are not constant. Moreover
+we see that the AE rate profile is very unique for each study.
 
 
 # Apply {gsm}
 
 ## Example
 
-```{r}
-dfSUBJ <- df_portf %>%
-  select(study_id, siteid = site_number, subjid = patnum, timeonstudy = visit) %>%
-  summarise(timeonstudy = max(timeonstudy), .by = c(study_id, siteid, subjid)) %>%
-  group_by(study_id) %>%
-  nest()
+Here we demonstrate how to use the {gsm} package on our simulated portfolios.
 
-dfAE <- df_portf %>%
-  select(study_id, subjid = patnum, n_ae) %>%
-  summarise(n_ae = max(n_ae), .by = c(study_id, subjid)) %>%
-  filter(n_ae > 0) %>%
-  mutate(n_ae = map(n_ae, ~ tibble(n = seq(1, .)), .progress = TRUE)) %>%
-  unnest(n_ae) %>%
-  select(- n) %>%
-  group_by(study_id) %>%
-  nest()
+```{r}
+
+get_SUBJ <- function(df_portf) {
+  df_portf %>%
+    select(study_id, siteid = site_number, subjid = patnum, timeonstudy = visit) %>%
+    summarise(timeonstudy = max(timeonstudy), .by = c(study_id, siteid, subjid)) %>%
+    group_by(study_id) %>%
+    nest()
+}
+
+
+get_AE <- function(df_portf) {
+  df_portf_fix %>%
+    select(study_id, subjid = patnum, n_ae) %>%
+    summarise(n_ae = max(n_ae), .by = c(study_id, subjid)) %>%
+    filter(n_ae > 0) %>%
+    mutate(n_ae = map(n_ae, ~ tibble(n = seq(1, .)), .progress = TRUE)) %>%
+    unnest(n_ae) %>%
+    select(- n) %>%
+    group_by(study_id) %>%
+    nest()
+}
+
+dfSUBJ_fix <- get_SUBJ(df_portf_fix)
+dfAE_fix <- get_AE(df_portf_fix)
+
 ```
 
 ```{r}
-dfInput <- gsm::AE_Map_Raw(list(dfSUBJ = dfSUBJ$data[[1]], dfAE = dfAE$data[[1]]))
+dfInput <- gsm::AE_Map_Raw(list(dfSUBJ = dfSUBJ_fix$data[[1]], dfAE = dfAE_fix$data[[1]]))
 dfInput
 
 dfTransformed <- gsm::Transform_Rate(
@@ -117,8 +182,10 @@ chart
 
 ## Simulate UR
 
+We write a function that removes a given ratio of AEs from one site in the data set and returns its z-score.
+
 ```{r}
-sim_gsm_ur <- function(site, ur_rate, dfTransformed) {
+sim_site_ur_gsm <- function(site, ur_rate, dfTransformed) {
   dfTransformed <- dfTransformed %>%
     mutate(
       Numerator = ifelse(GroupID == site, Numerator * (1 - ur_rate), Numerator),
@@ -130,36 +197,69 @@ sim_gsm_ur <- function(site, ur_rate, dfTransformed) {
     pull(Score)
 }
 
-sim_gsm_ur("0001", ur_rate = 0.75, dfTransformed)
+sim_site_ur_gsm("4747", ur_rate = 0.75, dfTransformed)
 ```
 
+We write another function that systematically applies this `sim_site_ur_gsm` across all sites in all studies across a range of under-reporting ratios.
 
 ```{r}
-df_sim <- dfSUBJ %>%
-  inner_join(dfAE, by = "study_id") %>%
-  ungroup() %>%
-  mutate(
-    trans = map2(data.x, data.y, ~ gsm::AE_Map_Raw(list(dfSUBJ = .x, dfAE = .y))),
-    trans = map(trans, ~ gsm::Transform_Rate(., strNumeratorCol = "Count", strDenominatorCol = "Exposure")),
-    sites = map(data.x, ~ distinct(., siteid))
-  ) %>%
-  select(- starts_with("data.")) %>%
-  unnest(sites) %>%
-  mutate(ur = list(tibble(ur_rate = c(0, 0.1, 0.25, 0.5, 0.75, 1)))) %>%
-  unnest(ur) %>%
-  mutate(
-    score = pmap_dbl(list(siteid, ur_rate, trans), sim_gsm_ur, .progress = TRUE)
-  )
-  
 
-df_sim
+sim_ur_gsm <- function(dfSUBJ, dfAE) {
+  dfSUBJ %>%
+    inner_join(dfAE, by = "study_id") %>%
+    ungroup() %>%
+    mutate(
+      trans = map2(data.x, data.y, ~ gsm::AE_Map_Raw(list(dfSUBJ = .x, dfAE = .y))),
+      trans = map(trans, ~ gsm::Transform_Rate(., strNumeratorCol = "Count", strDenominatorCol = "Exposure")),
+      sites = map(data.x, ~ distinct(., siteid))
+    ) %>%
+    select(- starts_with("data.")) %>%
+    unnest(sites) %>%
+    mutate(ur = list(tibble(ur_rate = c(0, 0.1, 0.25, 0.5, 0.75, 1)))) %>%
+    unnest(ur) %>%
+    mutate(
+      score = pmap_dbl(list(siteid, ur_rate, trans), sim_site_ur_gsm, .progress = TRUE)
+    )
+}
+
+df_sim_gsm_fix <- sim_ur_gsm(dfSUBJ_fix, dfAE_fix)
 ```
+
+```{r}
+df_sim_gsm_fix
+```
+
+We repeat the same steps for the portfolio with the flexible AE rates.
+
+```{r}
+
+dfSUBJ_flex <- get_SUBJ(df_portf_flex)
+dfAE_flex<- get_AE(df_portf_flex)
+
+
+df_sim_gsm_flex <- sim_ur_gsm(dfSUBJ_flex, dfAE_flex)
+```
+
 
 # UR {simaerep}
 
-```{r sim_ur_scen_kable}
-df_sim_simaerep <- sim_ur_scenarios(
-   df_portf,
+We simulate under-reporting for both portfolios using {simaerep}
+
+```{r}
+df_sim_simaerep_fix <- sim_ur_scenarios(
+   df_portf_fix,
+   extra_ur_sites = 0,
+   ur_rate = c(0, 0.1, 0.25, 0.5, 0.75, 1),
+   parallel = TRUE,
+   poisson = TRUE,
+   prob_lower = TRUE,
+   progress = TRUE
+)
+```
+
+```{r}
+df_sim_simaerep_flex <- sim_ur_scenarios(
+   df_portf_flex,
    extra_ur_sites = 0,
    ur_rate = c(0, 0.1, 0.25, 0.5, 0.75, 1),
    parallel = TRUE,
@@ -175,21 +275,26 @@ df_sim_simaerep <- sim_ur_scenarios(
 
 ```{r}
 
-df_sim_thresh2 <- df_sim %>%
+df_sim_gsm_fix$ae_rate <- "AE rate: fix"
+df_sim_gsm_flex$ae_rate <- "AE rate: flexible"
+df_sim_simaerep_fix$ae_rate <- "AE rate: fix"
+df_sim_simaerep_flex$ae_rate <- "AE rate: flexible"
+
+df_sim_thresh2 <- bind_rows(df_sim_gsm_fix, df_sim_gsm_flex) %>%
   mutate(
     is_ur = score <= -2,
     type = "{gsm} - thresh: -2",
     site_number = siteid
   ) %>%
-  select(type, study_id, site_number, ur_rate, is_ur, score)
+  select(type, ae_rate, study_id, site_number, ur_rate, is_ur, score)
 
 
-df_sim_simaerep_threshp95 <- df_sim_simaerep %>%
+df_sim_simaerep_threshp95 <-  bind_rows(df_sim_simaerep_fix, df_sim_simaerep_flex) %>%
   mutate(
     is_ur = prob_low_prob_ur >= 0.95,
     type = "{simaerep} - thresh: 0.95"
   ) %>%
-  select(type, study_id, site_number, ur_rate, is_ur, score = prob_low_prob_ur)
+  select(type, ae_rate, study_id, site_number, ur_rate, is_ur, score = prob_low_prob_ur)
 
 
 df_eval <- bind_rows(
@@ -217,7 +322,7 @@ aggr_results <- function(df_eval) {
 df_perf <- df_eval %>%
   summarise(
     n = n(),
-    .by = c(type, ur_rate, is_ur)
+    .by = c(type, ae_rate, ur_rate, is_ur)
   ) %>%
   pivot_wider(
     names_from = is_ur,
@@ -237,6 +342,8 @@ df_perf <- df_eval %>%
 df_perf <- aggr_results(df_eval)
 ```
 
+# Results
+
 ## Table
 
 ```{r}
@@ -249,9 +356,9 @@ df_perf %>%
 
 ## Plot Performance Metrics
 
-- {gsm} has better performance than {simaerep}
+- {gsm} has better performance than {simaerep} whent the AE rate is fixed, while {simaerep} greatly outperforms {gsm} when the AE rate is flexible and mimics the AE rates encountered in real study data sets.
 
-```{r, plot, fig.width=6, fig.height = 10}
+```{r, plot, fig.width=10, fig.height = 12}
 
 plot_perf <- function(df_perf) {
 
@@ -260,130 +367,20 @@ plot_perf <- function(df_perf) {
            ur_rate = ifelse(str_detect(ur_rate, "fpr"), "fpr", ur_rate)) %>%
     group_by(ur_rate) %>%
     ggplot(aes(type, ratio)) +
-      geom_errorbar(aes(ymin = ci95_low, ymax = ci95_high), color = "violetred2") +
-      facet_wrap(~ ur_rate, ncol = 1) +
+      geom_errorbar(aes(ymin = ci95_low, ymax = ci95_high, color = type), linewidth = 1) +
+      facet_grid(ur_rate ~ ae_rate) +
       coord_flip() +
+      theme(legend.position = "bottom") +
       labs(
         x = "",
         y = "CI95 Performance Ratio", 
-        title = "{simaerep} vs {gsm} Performance",
-        subtitle = "Only one under-reporting site per study."
-      )
+        title = "{simaerep} vs {gsm} Performance"
+      ) +
+      scale_color_manual(values = c("#5491CC", "#F46626"))
 }
 
 plot_perf(df_perf)
 ```
-
-
-## Analysis
-
-- {gsm} correctly flags more sites in studies with <= 0.25 AE per Visit with higher number of patients per site
-- {simarep} correctly flags more sites in studies with 0.25 - 0.5 AE per visit with smaller number of patients per site
-- false positive flagging for {simaerep} is similarly distributed as true positive flagging
-- false positive flagging for {gsm} evenly covers the whole distribution range
-
-```{r fig.width=10, fig.height = 10}
-
-df_qu <- df_portf %>%
-  summarize(n_pat = n_distinct(patnum), .by = c("study_id", "site_number", "ae_per_visit_mean")) %>%
-  inner_join(
-    df_sim %>%
-      select(study_id, site_number = siteid, ur_rate, score)
-  ) %>%
-  inner_join(
-    df_sim_simaerep %>%
-      select(study_id, site_number, ur_rate, prob_low_prob_ur)
-  ) %>%
-  mutate(
-    score = ifelse(is.na(score), 0 , score),
-    flag = case_when(
-      score <= -2 & prob_low_prob_ur >= 0.95 ~ "double",
-      score <= -2 ~ "gsm only",
-      prob_low_prob_ur >= 0.95 ~ "simaerep only",
-      TRUE ~ "miss"),
-    flag = fct_relevel(flag,"simaerep only", "gsm only", "double", "miss")
-  )
-
-plot_flags <- function(df, ur_rate) {
-  
-  p <- df %>%
-    filter(ur_rate == ur_rate) %>%
-    ggplot(aes(log(n_pat), ae_per_visit_mean, colour = flag)) +
-    geom_point(alpha = 0.25) +
-    theme(legend.position = "bottom", aspect.ratio = 1) +
-    labs(x = "Log Number of Patiends per Site", y = "AE per Visit Study Average", title = paste("Under Reporting Rate:", ur_rate))
-  
-  ggExtra::ggMarginal(p, groupColour = TRUE, groupFill = TRUE)
-  
-}
-
-p_p5 <- plot_flags(df_qu, 0.5)
-
-p_p75 <- plot_flags(df_qu, 0.75)
-p_1 <- plot_flags(df_qu, 1)
-
-p_fpr <-  df_qu %>%
-  filter(ur_rate == 0, flag != "miss") %>%
-  ggplot(aes(log(n_pat), ae_per_visit_mean, colour = flag)) +
-  geom_point(alpha = 0.25) +
-    theme(legend.position = "bottom", aspect.ratio = 1) +
-    labs(x = "Log Number of Patiends per Site", y = "AE per Visit Study Average", title = paste("False Positive Flags"))
-
-p_fpr <- ggExtra::ggMarginal(p_fpr, groupColour = TRUE, groupFill = TRUE)
-
-gridExtra::grid.arrange(p_p5, p_p75, p_1, p_fpr, ncol = 2)
-```
-
-## Combine both approaches
-
-- clear performance increase only for studies with > 1 ae per visit rate, which is very rare.
-
-```{r, fig.width=6, fig.height = 10}
-
-df_comb1 <- df_qu %>%
-  mutate(
-    type = "comb. ae/visit thresh: 1",
-    is_ur = (ae_per_visit_mean <= 1 & score <= -2) | (ae_per_visit_mean > 1 & prob_low_prob_ur >= 0.95)
-  ) %>%
-  select(type, study_id, site_number, ur_rate, is_ur)
-
-df_combp25 <- df_qu %>%
-  mutate(
-    type = "comb. ae/visit thresh: 0.25",
-    is_ur = (ae_per_visit_mean <= 0.25 & score <= -2) | (ae_per_visit_mean > 0.25 & prob_low_prob_ur >= 0.95)
-  ) %>%
-  select(type, study_id, site_number, ur_rate, is_ur)
-
-df_combp5 <- df_qu %>%
-  mutate(
-    type = "comb. ae/visit thresh: 0.5",
-    is_ur = (ae_per_visit_mean <= 0.5 & score <= -2) | (ae_per_visit_mean > 0.5 & prob_low_prob_ur >= 0.95)
-  ) %>%
-  select(type, study_id, site_number, ur_rate, is_ur)
-
-
-df_comb <- bind_rows(
-  df_eval,
-  df_comb1,
-  df_combp25,
-  df_combp5
-)
-
-df_comb_perf <- aggr_results(df_comb)
-
-plot_perf(df_comb_perf) +
-  labs(title = "Combined Performance with Differect ")
-```
-
-
-# Conclusion
-
-- Across the portfolio {gsm} flagging performs better than {simaerep} flagging.
-- A robust population of studies for which {simaerep} flagging is preferable cannot be identified.
-
-The simulation assumes a constant AE rate during the the study. This is not true specifically during follow-up periods. By design {simaerep} should be able to handle those cases better than {gsm}. A more complex simulation is needed in order to proof this hypothesis.
-
-[Zink et al. 2018](https://doi.org/10.1177/2168479017738981) addressees the limitation of funnel plots for changing event rates in different phases of the study and suggests to stratify the data by relative time windows and present the results as a heatmap.
 
 
 
