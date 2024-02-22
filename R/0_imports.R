@@ -1,12 +1,3 @@
-# satisfy lintr
-# lintr falsely flags possibly_ecdf as unused variable
-# using rlang::.data here causes error with furrr in sim_test_data_portfolio
-# patnum, n_ae, visit
-
-if (getRversion() >= "2.15.1") {
-  utils::globalVariables(c("possibly_ecdf", "patnum", "n_ae", "visit"))
-}
-
 #' @importFrom progressr progressor
 #' @importFrom cowplot get_legend plot_grid ggdraw draw_label plot_grid plot_grid
 #' @importFrom cowplot ggdraw draw_label
