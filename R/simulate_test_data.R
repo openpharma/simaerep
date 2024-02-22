@@ -74,7 +74,7 @@ sim_test_data_study <- function(n_pat = 1000,
     } else {
 
       if (is_ur) {
-        ae_per_visit_mean <- ae_per_visit_mean * (1-ur_rate)
+        ae_per_visit_mean <- ae_per_visit_mean * (1-ur_rate) # nolint
       }
 
       f_sample_ae <- function(max_visit) {
@@ -824,7 +824,7 @@ get_portf_perf <- function(df_scen, stat = "prob_low_prob_ur", fpr = c(0.001, 0.
 
   }
 
-  stat_at_0 <- df_scen %>% #nolint
+  stat_at_0 <- df_scen %>% # nolint
     filter(.data$ur_rate == 0, .data$frac_pat_with_ur == 0) %>%
     pull(.data[[stat]])
 
