@@ -95,7 +95,7 @@ df_sim_sites
 
 set.seed(1)
 
-future::plan(multiprocess)
+plan(multisession, workers = 6)
 
 df_sim_studies <- sim_studies(df_visit, df_site,
                               r = 100,
@@ -155,3 +155,7 @@ Here we see that the probabilities from the site simulations (x-axis) perfectly 
 ## Conclusion
 
 We see that the bootstrap method gives us more accurate probabilities than the p-values derived from poisson.test even though the AE generation in the sample data follows a strict poisson process. For real clinical trial data with different types of studies for which it is not clear whether AE generation is truly based on a pure poisson process we recommend to use the bootstrap method. If poisson.test shall be used we recommend checking the applicability as we just demonstrated on clinical data set.
+
+```{r close}
+plan(sequential)
+```

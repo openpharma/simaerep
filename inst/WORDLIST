@@ -12,9 +12,11 @@ Hoffmann
 Lifecycle
 Modelling
 Ménard
+RBQM
 Saf
 TP
 Uncompliant
+Zink
 ae
 aes
 aggr
@@ -28,6 +30,7 @@ csv
 darkblue
 df
 doi
+dplyr
 ecd
 ecdf
 et
@@ -38,7 +41,7 @@ frac
 furrr
 ggplot
 grey
-https
+gsm
 infer’
 iterable
 iterables
