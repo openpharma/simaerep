@@ -48,14 +48,14 @@ sim_test_data_study <- function(n_pat = 1000,
     if (! any(c(is.null(ae_rates), is.na(ae_rates)))) {
 
       if (is_ur) {
-        ae_rates <- ae_rates * (1-ur_rate)
+        ae_rates <- ae_rates * (1-ur_rate) # nolint
       }
 
       f_sample_ae <- function(max_visit) {
 
         # extrapolate missing ae rates by extending last rate
         fill <- rep(ae_rates[length(ae_rates)], max_visit)
-        fill[1: length(ae_rates)] <- ae_rates
+        fill[seq_along(ae_rates)] <- ae_rates
         ae_rates <- fill
 
         aes <- integer(0)
@@ -606,7 +606,7 @@ sim_test_data_portfolio <- function(df_config, df_ae_rates = NULL, parallel = FA
 
   df_portf <- df_config_sim %>%
     unnest("sim") %>%
-    select(- c("n_pat" ,"ae_rates")) %>%
+    select(- c("n_pat", "ae_rates")) %>%
     group_by(.data$study_id) %>%
     mutate(
       # patnums need to be made site exclusive

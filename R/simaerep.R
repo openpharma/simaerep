@@ -975,7 +975,7 @@ sim_after_prep <- function(df_sim_prep,
 get_pat_pool_config <- function(df_visit, df_site, min_n_pat_with_med75 = 1) {
 
   # site_config are the number of sites with their individual visit_med75 and n_pat_with_med75
-  df_site_config <- select(df_site,c(
+  df_site_config <- select(df_site, c(
                            "study_id",
                            "site_number",
                            "visit_med75",
