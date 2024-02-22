@@ -1,3 +1,8 @@
+# simaerep 0.4.4
+- allow flexible AE rates in data simulations
+- add vignette comparing simaerep to gsm performance
+- fix dplyr warnings
+
 # simaerep 0.4.3
 - delete performance unit tests (poisson faster than bootstrap) to accommodate CRAN request
 

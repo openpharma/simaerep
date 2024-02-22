@@ -43,13 +43,13 @@ check_df_visit <- function(df_visit) {
 
   cols_na <- df_visit %>%
     summarise_at(
-        vars(
-          .data$study_id,
-          .data$site_number,
-          .data$patnum,
-          .data$n_ae,
-          .data$visit
-        ),
+        vars(c(
+          "study_id",
+          "site_number",
+          "patnum",
+          "n_ae",
+          "visit"
+        )),
         anyNA
       ) %>%
     unlist()
@@ -60,10 +60,10 @@ check_df_visit <- function(df_visit) {
 
     df_visit %>%
       summarise_at(
-        vars(
-          .data$n_ae,
-          .data$visit
-        ),
+        vars(c(
+          "n_ae",
+          "visit"
+        )),
         ~ is.numeric(.)
       ) %>%
       unlist() %>%
@@ -129,13 +129,13 @@ exp_implicit_missing_visits <- function(df_visit) {
     group_by(.data$study_id) %>%
     mutate(min_study_visit = min(.data$visit),
               max_study_visit = max(.data$visit)) %>%
-    select(
-      .data$study_id,
-      .data$site_number,
-      .data$patnum,
-      .data$min_study_visit,
-      .data$max_study_visit
-    ) %>%
+    select(c(
+      "study_id",
+      "site_number",
+      "patnum",
+      "min_study_visit",
+      "max_study_visit"
+    )) %>%
     distinct() %>%
     mutate(
       visit = map2(
@@ -144,14 +144,14 @@ exp_implicit_missing_visits <- function(df_visit) {
         function(x, y) seq(x, y, 1)
       )
     ) %>%
-    unnest(.data$visit) %>%
-    select(
-      .data$study_id,
-      .data$site_number,
-      .data$patnum,
-      .data$min_study_visit,
-      .data$visit
-    )
+    unnest("visit") %>%
+    select(c(
+      "study_id",
+      "site_number",
+      "patnum",
+      "min_study_visit",
+      "visit"
+    ))
 
   df_visit_out <- df_visit %>%
     group_by(.data$study_id, .data$site_number, .data$patnum) %>%
@@ -164,7 +164,7 @@ exp_implicit_missing_visits <- function(df_visit) {
     ) %>%
     group_by(.data$study_id, .data$site_number, .data$patnum) %>%
     arrange(.data$visit) %>%
-    fill(.data$n_ae, .direction = "down") %>%
+    fill("n_ae", .direction = "down") %>%
     mutate(
       min_visit_pat = min(.data$min_visit_pat, na.rm = TRUE),
       max_visit_pat = max(.data$max_visit_pat, na.rm = TRUE)
@@ -177,13 +177,13 @@ exp_implicit_missing_visits <- function(df_visit) {
       .data$visit <= .data$max_visit_pat
     ) %>%
     mutate(n_ae = ifelse(is.na(.data$n_ae), 0, .data$n_ae)) %>%
-    select(
-      .data$study_id,
-      .data$site_number,
-      .data$patnum,
-      .data$n_ae,
-      .data$visit
-    ) %>%
+    select(c(
+      "study_id",
+      "site_number",
+      "patnum",
+      "n_ae",
+      "visit"
+    )) %>%
     arrange(.data$study_id, .data$site_number, .data$patnum, .data$visit)
 
   if (nrow(df_visit_out) > nrow(df_visit)) {
@@ -291,15 +291,15 @@ get_visit_med75 <- function(df_pat,
           .data$visit_med75
         )
       ) %>%
-      select(- .data$study_qup8_max_visit)
+      select(- "study_qup8_max_visit")
   }
 
   df_site <- df_site %>%
-    select(.data$study_id,
-           .data$site_number,
-           .data$n_pat,
-           .data$n_pat_with_med75,
-           .data$visit_med75)
+    select(c("study_id",
+             "site_number",
+             "n_pat",
+             "n_pat_with_med75",
+             "visit_med75"))
 
   return(df_site)
 }
@@ -486,7 +486,7 @@ eval_sites_deprecated <- function(df_sim_sites,
         pval_p_vs_fp_ratio = ifelse(.data$pval_p_vs_fp_ratio < 1, 1, .data$pval_p_vs_fp_ratio),
         pval_prob_ur = 1 - 1 / .data$pval_p_vs_fp_ratio
       ) %>%
-      select(- .data$min_pval)
+      select(- "min_pval")
   }
 
   if ("prob_low" %in% names(df_out)) {
@@ -575,20 +575,20 @@ get_ecd_values <- function(df_sim_studies, df_sim_sites, val_str) {
 
   df_ecd <- df_sim_studies %>%
     rename(val = !!as.symbol(val_str)) %>%
-    select(.data$study_id, .data$val) %>%
-    nest(data = c(.data$val)) %>%
+    select("study_id", "val") %>%
+    nest(data = "val") %>%
     mutate(.ecdf = map(.data$data, ~ possibly_ecdf(.$val))) %>%
-    select(- .data$data)
+    select(- "data")
 
   df_out <- df_sim_sites %>%
     rename(val = !!as.symbol(val_str)) %>%
     left_join(df_ecd, "study_id") %>%
     mutate(ecd_val = map2_dbl(.data$`.ecdf`, .data$val, apply_ecdf)) %>%
     rename(
-      !!as.symbol(val_str) := .data$val,
-      !!as.symbol(paste0(val_str, "_ecd")) := .data$ecd_val #nolint
+      !!as.symbol(val_str) := "val",
+      !!as.symbol(paste0(val_str, "_ecd")) := "ecd_val" #nolint
     ) %>%
-    select(- .data$`.ecdf`)
+    select(- ".ecdf")
 
   return(ungroup(df_out))
 }
@@ -628,11 +628,11 @@ pat_pool <- function(df_visit, df_site) {
   df_visit %>%
     left_join(df_site, by = c("study_id", "site_number")) %>%
     filter(.data$visit <= .data$max_visit_med75_study) %>%
-    select(.data$study_id,
-           .data$patnum,
-           .data$visit,
-           .data$n_ae) %>%
-    nest(pat_pool = c(.data$patnum, .data$visit, .data$n_ae))
+    select(c("study_id",
+           "patnum",
+           "visit",
+           "n_ae")) %>%
+    nest(pat_pool = c("patnum", "visit", "n_ae"))
 }
 
 
@@ -829,8 +829,7 @@ prep_for_sim <- function(df_site, df_visit) {
       n_ae_site = map(.data$n_ae_site, "n_ae"),
       n_ae_study = map(.data$n_ae_study, "n_ae")
     ) %>%
-    select(- .data$patients,
-           - .data$pat_pool)
+    select(- c("patients", "pat_pool"))
 
   return(df_sim_prep)
 
@@ -908,15 +907,15 @@ sim_after_prep <- function(df_sim_prep,
           ~ ifelse(.data$n_pat_with_med75_study == 0, NA, .)
         )
     ) %>%
-    select(- .data$n_ae_site, - .data$n_ae_study) %>%
-    select(.data$study_id,
-           .data$site_number,
-           .data$n_pat,
-           .data$n_pat_with_med75,
-           .data$visit_med75,
-           .data$mean_ae_site_med75,
-           .data$mean_ae_study_med75,
-           .data$n_pat_with_med75_study,
+    select(- c("n_ae_site", "n_ae_study")) %>%
+    select(c("study_id",
+           "site_number",
+           "n_pat",
+           "n_pat_with_med75",
+           "visit_med75",
+           "mean_ae_site_med75",
+           "mean_ae_study_med75",
+           "n_pat_with_med75_study"),
            dplyr::everything()) %>%
     ungroup()
 
@@ -976,11 +975,11 @@ sim_after_prep <- function(df_sim_prep,
 get_pat_pool_config <- function(df_visit, df_site, min_n_pat_with_med75 = 1) {
 
   # site_config are the number of sites with their individual visit_med75 and n_pat_with_med75
-  df_site_config <- select(df_site,
-                           .data$study_id,
-                           .data$site_number,
-                           .data$visit_med75,
-                           .data$n_pat_with_med75) %>%
+  df_site_config <- select(df_site,c(
+                           "study_id",
+                           "site_number",
+                           "visit_med75",
+                           "n_pat_with_med75")) %>%
     filter(.data$n_pat_with_med75 >= min_n_pat_with_med75)
 
   # pat_pool gives the patient pool for study from which we sample
@@ -994,12 +993,12 @@ get_pat_pool_config <- function(df_visit, df_site, min_n_pat_with_med75 = 1) {
       pat_pool = map2(.data$pat_pool, .data$visit_med75, function(x, y) filter(x, visit == y)),
       n_pat_study = map2_dbl(.data$pat_pool, .data$n_pat_with_med75, function(x, y) nrow(x) - y)
     ) %>%
-    select(.data$study_id,
-           .data$site_number,
-           .data$visit_med75,
-           .data$n_pat_with_med75,
-           .data$n_pat_study,
-           .data$pat_pool)
+    select(c("study_id",
+           "site_number",
+           "visit_med75",
+           "n_pat_with_med75",
+           "n_pat_study",
+           "pat_pool"))
 
   return(ungroup(df_site_config))
 }
@@ -1113,7 +1112,7 @@ sim_studies <- function(df_visit,
                           function(x, y) sample_n(x, y, replace = TRUE)),
         n_ae_study = map(.data$n_ae_study, "n_ae")
       ) %>%
-      select(- .data$pat_pool)
+      select(- "pat_pool")
 
     if (poisson_test) {
       df_config <- df_config %>%
@@ -1132,10 +1131,10 @@ sim_studies <- function(df_visit,
 
     if (!keep_ae) {
       df_config <- df_config %>%
-        select(- .data$n_ae_site, - .data$n_ae_study)
+        select(- c("n_ae_site", "n_ae_study"))
     } else {
       df_config <- df_config %>%
-        mutate_at(vars(n_ae_site, n_ae_study), ~ map_chr(., paste, collapse = ","))
+        mutate_at(vars(c("n_ae_site", "n_ae_study")), ~ map_chr(., paste, collapse = ","))
     }
 
     return(ungroup(df_config))
@@ -1143,7 +1142,7 @@ sim_studies <- function(df_visit,
 
   df_sim <- tibble(r = seq.int(1, r, 1)) %>%
     mutate(n_ae_set = .f_map(.data$r, sim)) %>%
-    unnest(.data$n_ae_set)
+    unnest("n_ae_set")
 
   return(ungroup(df_sim))
 }
@@ -1220,10 +1219,10 @@ site_aggr <- function(df_visit,
 
   df_mean_ae_med75 <- df_mean_ae_dev %>%
     filter(.data$visit == .data$visit_med75) %>%
-    rename(mean_ae_site_med75 = .data$mean_ae_site) %>%
-    select(.data$study_id,
-           .data$site_number,
-           .data$mean_ae_site_med75)
+    rename(mean_ae_site_med75 = "mean_ae_site") %>%
+    select(c("study_id",
+           "site_number",
+           "mean_ae_site_med75"))
 
   # Add mean cumulative AE to site aggregate ----------------------
 

@@ -356,7 +356,7 @@ df_perf %>%
 
 ## Plot Performance Metrics
 
-- {gsm} has better performance than {simaerep} whent the AE rate is fixed, while {simaerep} greatly outperforms {gsm} when the AE rate is flexible and mimics the AE rates encountered in real study data sets.
+- {gsm} has better performance than {simaerep} when the AE rate is fixed, while {simaerep} greatly outperforms {gsm} when the AE rate is flexible and mimics the AE rates encountered in real study data sets.
 
 ```{r, plot, fig.width=10, fig.height = 12}
 

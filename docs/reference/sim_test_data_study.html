@@ -25,7 +25,7 @@ number of reported AEs for patients distributed to AE-under-reporting sites."><m
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">simaerep</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.4</span>
       </span>
     </div>
 
@@ -110,7 +110,8 @@ number of reported AEs for patients distributed to AE-under-reporting sites.</p>
 <span>  ur_rate <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  max_visit_mean <span class="op">=</span> <span class="fl">20</span>,</span>
 <span>  max_visit_sd <span class="op">=</span> <span class="fl">4</span>,</span>
-<span>  ae_per_visit_mean <span class="op">=</span> <span class="fl">0.5</span></span>
+<span>  ae_per_visit_mean <span class="op">=</span> <span class="fl">0.5</span>,</span>
+<span>  ae_rates <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -145,6 +146,10 @@ patient, Default: 4</p></dd>
 
 <dt>ae_per_visit_mean</dt>
 <dd><p>mean ae per visit per patient, Default: 0.5</p></dd>
+
+
+<dt>ae_rates</dt>
+<dd><p>vector with visit-specific ae rates, Default: Null</p></dd>
 
 </dl></div>
     <div id="value">
@@ -205,6 +210,23 @@ ae_per_visit_mean.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> P000001 S0001       TRUE              20            4              0.25     9</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> P000001 S0001       TRUE              20            4              0.25    10</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 13 more rows</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 1 more variable: n_ae &lt;int&gt;</span></span>
+<span class="r-in"><span><span class="va">ae_rates</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.7</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0.5</span>, <span class="fl">8</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0.3</span>, <span class="fl">5</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">sim_test_data_study</span><span class="op">(</span>n_pat <span class="op">=</span> <span class="fl">100</span>, n_sites <span class="op">=</span> <span class="fl">5</span>, ae_rates <span class="op">=</span> <span class="va">ae_rates</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1,968 × 8</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    patnum  site_number is_ur max_visit_mean max_visit_sd ae_per_visit_mean visit</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> P000001 S0001       FALSE             20            4             0.443     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> P000001 S0001       FALSE             20            4             0.443     2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> P000001 S0001       FALSE             20            4             0.443     3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> P000001 S0001       FALSE             20            4             0.443     4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> P000001 S0001       FALSE             20            4             0.443     5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> P000001 S0001       FALSE             20            4             0.443     6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> P000001 S0001       FALSE             20            4             0.443     7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> P000001 S0001       FALSE             20            4             0.443     8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> P000001 S0001       FALSE             20            4             0.443     9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> P000001 S0001       FALSE             20            4             0.443    10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 1,958 more rows</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 1 more variable: n_ae &lt;int&gt;</span></span>
 </code></pre></div>
     </div>

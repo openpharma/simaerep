@@ -23,7 +23,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">simaerep</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.4</span>
       </span>
     </div>
 
@@ -99,13 +99,22 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">sim_test_data_portfolio</span><span class="op">(</span><span class="va">df_config</span>, parallel <span class="op">=</span> <span class="cn">FALSE</span>, progress <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">sim_test_data_portfolio</span><span class="op">(</span></span>
+<span>  <span class="va">df_config</span>,</span>
+<span>  df_ae_rates <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  parallel <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  progress <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>df_config</dt>
 <dd><p>dataframe as returned by <code><a href="get_config.html">get_config</a></code></p></dd>
+
+
+<dt>df_ae_rates</dt>
+<dd><p>dataframe with ae rates. Default: NULL</p></dd>
 
 
 <dt>parallel</dt>
