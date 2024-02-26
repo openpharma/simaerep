@@ -266,7 +266,7 @@ plot_sim_example <- function(substract_ae_per_pat = 0,
 
   # rearange legend ----------------------------
 
-  leg <- cowplot::get_legend(p_sites)
+  leg <- get_legend(p_sites)
 
   p_sites <- p_sites +
     theme(legend.position = "none")
@@ -354,7 +354,7 @@ plot_sim_examples <- function(substract_ae_per_pat = c(0, 1, 3), ...) {
   p_legend <- plot_dots(study) +
     guides(color = guide_legend(override.aes = list(size = 2)))
 
-  p_legend <- cowplot::get_legend(p_legend)
+  p_legend <- get_legend(p_legend)
 
   p_empty <- ggplot() + theme_void()
 
@@ -382,6 +382,18 @@ plot_sim_examples <- function(substract_ae_per_pat = c(0, 1, 3), ...) {
   return(p)
 }
 
+#' replace cowplot::get_legend, to silence warning
+#' Multiple components found; returning the first one. To return all, use `return_all = TRUE
+#' @keywords internal
+get_legend <- function(p) {
+  leg <- cowplot::get_plot_component(p, pattern = "guide-box", return_all = TRUE)
+
+  if (is.list(leg)) {
+    leg <- leg[[1]]
+  }
+
+  return(leg)
+}
 
 
 #' @title Plot ae development of study and sites highlighting at risk sites.

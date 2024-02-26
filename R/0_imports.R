@@ -1,6 +1,6 @@
 #' @importFrom progressr progressor
-#' @importFrom cowplot get_legend plot_grid ggdraw draw_label plot_grid plot_grid
-#' @importFrom cowplot ggdraw draw_label
+#' @importFrom cowplot plot_grid ggdraw draw_label plot_grid plot_grid
+#' @importFrom cowplot ggdraw draw_label get_plot_component
 #' @importFrom forcats fct_relevel
 #' @importFrom RColorBrewer brewer.pal
 #' @importFrom utils head
