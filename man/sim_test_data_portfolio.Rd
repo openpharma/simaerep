@@ -4,10 +4,17 @@
 \alias{sim_test_data_portfolio}
 \title{Simulate Portfolio Test Data}
 \usage{
-sim_test_data_portfolio(df_config, parallel = FALSE, progress = TRUE)
+sim_test_data_portfolio(
+  df_config,
+  df_ae_rates = NULL,
+  parallel = FALSE,
+  progress = TRUE
+)
 }
 \arguments{
 \item{df_config}{dataframe as returned by \code{\link{get_config}}}
+
+\item{df_ae_rates}{dataframe with ae rates. Default: NULL}
 
 \item{parallel}{logical activate parallel processing, see details, Default: FALSE}
 

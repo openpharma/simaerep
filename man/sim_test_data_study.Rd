@@ -11,7 +11,8 @@ sim_test_data_study(
   ur_rate = 0,
   max_visit_mean = 20,
   max_visit_sd = 4,
-  ae_per_visit_mean = 0.5
+  ae_per_visit_mean = 0.5,
+  ae_rates = NULL
 )
 }
 \arguments{
@@ -31,6 +32,8 @@ Default: 20}
 patient, Default: 4}
 
 \item{ae_per_visit_mean}{mean ae per visit per patient, Default: 0.5}
+
+\item{ae_rates}{vector with visit-specific ae rates, Default: Null}
 }
 \value{
 tibble with columns site_number, patnum, is_ur, max_visit_mean,
@@ -54,4 +57,6 @@ df_visit[which(df_visit$patnum == "P000001"),]
 df_visit <- sim_test_data_study(n_pat = 100, n_sites = 5,
     frac_site_with_ur = 0.2, ur_rate = 0.5)
 df_visit[which(df_visit$patnum == "P000001"),]
+ae_rates <- c(0.7, rep(0.5, 8), rep(0.3, 5))
+sim_test_data_study(n_pat = 100, n_sites = 5, ae_rates = ae_rates)
 }

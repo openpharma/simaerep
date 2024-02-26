@@ -12,6 +12,7 @@
 #' @param max_visit_sd standard deviation of maximum number of visits of each
 #'   patient, Default: 4
 #' @param ae_per_visit_mean mean ae per visit per patient, Default: 0.5
+#' @param ae_rates vector with visit-specific ae rates, Default: Null
 #' @return tibble with columns site_number, patnum, is_ur, max_visit_mean,
 #'   max_visit_sd, ae_per_visit_mean, visit, n_ae
 #' @details maximum visit number will be sampled from normal distribution with
@@ -25,6 +26,8 @@
 #' df_visit <- sim_test_data_study(n_pat = 100, n_sites = 5,
 #'     frac_site_with_ur = 0.2, ur_rate = 0.5)
 #' df_visit[which(df_visit$patnum == "P000001"),]
+#' ae_rates <- c(0.7, rep(0.5, 8), rep(0.3, 5))
+#' sim_test_data_study(n_pat = 100, n_sites = 5, ae_rates = ae_rates)
 #' @rdname sim_test_data_study
 #' @export
 sim_test_data_study <- function(n_pat = 1000,
@@ -33,8 +36,71 @@ sim_test_data_study <- function(n_pat = 1000,
                                 ur_rate = 0,
                                 max_visit_mean = 20,
                                 max_visit_sd = 4,
-                                ae_per_visit_mean = 0.5
+                                ae_per_visit_mean = 0.5,
+                                ae_rates = NULL
 ) {
+
+  # construct patient ae sample function
+  # supports constant and non-constant ae rates
+
+  f_sim_pat <- function(vs_max, vs_sd, is_ur) {
+
+    if (! any(c(is.null(ae_rates), is.na(ae_rates)))) {
+
+      if (is_ur) {
+        ae_rates <- ae_rates * (1-ur_rate) # nolint
+      }
+
+      f_sample_ae <- function(max_visit) {
+
+        # extrapolate missing ae rates by extending last rate
+        fill <- rep(ae_rates[length(ae_rates)], max_visit)
+        fill[seq_along(ae_rates)] <- ae_rates
+        ae_rates <- fill
+
+        aes <- integer(0)
+
+        for (i in seq(1, max_visit)) {
+          ae <- rpois(1, ae_rates[i])
+          aes <- c(aes, ae)
+        }
+
+        return(aes)
+
+      }
+
+      ae_per_visit_mean <- mean(ae_rates)
+
+    } else {
+
+      if (is_ur) {
+        ae_per_visit_mean <- ae_per_visit_mean * (1-ur_rate) # nolint
+      }
+
+      f_sample_ae <- function(max_visit) {
+
+        rpois(max_visit, ae_per_visit_mean)
+
+      }
+
+    }
+
+    aes <- sim_test_data_patient(
+      .f_sample_max_visit = function(x) rnorm(1, mean = vs_max, sd = vs_sd),
+      .f_sample_ae_per_visit = f_sample_ae
+    )
+
+    tibble(
+      ae_per_visit_mean = ae_per_visit_mean,
+      visit = seq(1, length(aes)),
+      n_ae = aes,
+    )
+
+  }
+
+
+
+
   tibble(patnum = seq(1, n_pat)) %>%
     mutate(patnum = str_pad(patnum, width = 6, side = "left", pad = "0"),
            patnum = paste0("P", patnum),
@@ -45,19 +111,13 @@ sim_test_data_study <- function(n_pat = 1000,
            site_number = paste0("S", .data$site_number),
            max_visit_mean = max_visit_mean,
            max_visit_sd = max_visit_sd,
-           ae_per_visit_mean = ifelse(.data$is_ur, ae_per_visit_mean * (1 - ur_rate), ae_per_visit_mean),
-           aes = pmap(list(vm = max_visit_mean,
-                           vs = max_visit_sd,
-                           am = ae_per_visit_mean),
-                      function(vm, vs, am) {
-                          sim_test_data_patient(
-                          .f_sample_max_visit = function() rnorm(1, mean = vm, sd = vs),
-                          .f_sample_ae_per_visit = function(max_visit) rpois(max_visit, am)
-                          )
-                        }
-                      ),
-           aes = map(aes, ~ tibble(visit = seq(1, length(.)), n_ae = .))) %>%
-    unnest(aes)
+           aes = pmap(list(.data$max_visit_mean,
+                           .data$max_visit_sd,
+                           .data$is_ur),
+                      f_sim_pat
+                      )
+           ) %>%
+    unnest("aes")
 
 }
 
@@ -284,26 +344,26 @@ sim_ur_scenarios <- function(df_portf,
   ur_rate <- ur_rate[ur_rate > 0]
 
   df_grid_gr0 <- df_site %>%
-    select(.data$study_id, .data$site_number, .data$n_pat_with_med75, .data$visit_med75) %>%
+    select(c("study_id", "site_number", "n_pat_with_med75", "visit_med75")) %>%
     left_join(df_mean_pat, by = c(study_id = "study_id", visit_med75 = "visit")) %>%
     mutate(extra_ur_sites = list(0:extra_ur_sites)) %>%
-    unnest(.data$extra_ur_sites) %>%
+    unnest("extra_ur_sites") %>%
     mutate(
       frac_pat_with_ur = (.data$n_pat_with_med75 + .data$extra_ur_sites * .data$mean_n_pat) /
                          .data$sum_n_pat,
       ur_rate = list(ur_rate)
     ) %>%
-    unnest(.data$ur_rate) %>%
-    select(
-      .data$study_id,
-      .data$site_number,
-      .data$extra_ur_sites,
-      .data$frac_pat_with_ur,
-      .data$ur_rate
-    )
+    unnest("ur_rate") %>%
+    select(c(
+      "study_id",
+      "site_number",
+      "extra_ur_sites",
+      "frac_pat_with_ur",
+      "ur_rate"
+    ))
 
   df_grid_0 <- df_grid_gr0 %>%
-    select(.data$study_id, .data$site_number) %>%
+    select(c("study_id", "site_number")) %>%
     distinct() %>%
     mutate(extra_ur_sites = 0,
            frac_pat_with_ur = 0,
@@ -323,10 +383,10 @@ sim_ur_scenarios <- function(df_portf,
         sim_scenario
       )
     ) %>%
-    select(- .data$n_ae_site, - .data$n_ae_study) %>%
+    select(- c("n_ae_site", "n_ae_study")) %>%
     mutate(n_ae_site = map(.data$scenarios, "n_ae_site"),
            n_ae_study = map(.data$scenarios, "n_ae_study")) %>%
-    select(- .data$scenarios)
+    select(- "scenarios")
 
   if (progress) {
     message("getting under-reporting stats")
@@ -346,7 +406,7 @@ sim_ur_scenarios <- function(df_portf,
     group_by(.data$study_id_gr, .data$site_number_gr) %>%
     nest() %>%
     ungroup() %>%
-    select(- .data$study_id_gr, - .data$site_number_gr)
+    select(- c("study_id_gr", "site_number_gr"))
 
   with_progress_cnd(
     ls_df_sim_sites <- purrr_bar(
@@ -389,6 +449,7 @@ sim_ur_scenarios <- function(df_portf,
 #' @title Simulate Portfolio Test Data
 #' @description Simulate visit level data from a portfolio configuration.
 #' @param df_config dataframe as returned by \code{\link{get_config}}
+#' @param df_ae_rates dataframe with ae rates. Default: NULL
 #' @param parallel logical activate parallel processing, see details, Default: FALSE
 #' @param progress logical, Default: TRUE
 #'@return dataframe with the following columns: \describe{
@@ -452,7 +513,7 @@ sim_ur_scenarios <- function(df_portf,
 #'  \code{\link{get_portf_perf}}
 #' @rdname sim_test_data_portfolio
 #' @export
-sim_test_data_portfolio <- function(df_config, parallel = FALSE, progress = TRUE) {
+sim_test_data_portfolio <- function(df_config, df_ae_rates = NULL, parallel = FALSE, progress = TRUE) {
 
   # checks --------------------------
   df_config <- ungroup(df_config)
@@ -478,6 +539,24 @@ sim_test_data_portfolio <- function(df_config, parallel = FALSE, progress = TRUE
     )
   )
 
+  # prep ae_rates -----------------
+
+  if (is.null(df_ae_rates)) {
+    df_config$ae_rates <- NA
+  } else {
+    df_ae_rates <- df_ae_rates %>%
+      select(c("study_id", "ae_rate")) %>%
+      group_by(.data$study_id) %>%
+      nest() %>%
+      mutate(
+        ae_rates = map(.data$data, "ae_rate")
+      ) %>%
+      select(- "data")
+
+    df_config <- df_config %>%
+      inner_join(df_ae_rates, by = "study_id")
+  }
+
   # exec --------------------------
 
   if (parallel) {
@@ -496,24 +575,26 @@ sim_test_data_portfolio <- function(df_config, parallel = FALSE, progress = TRUE
             .data$ae_per_visit_mean,
             .data$max_visit_sd,
             .data$max_visit_mean,
-            .data$n_pat
+            .data$n_pat,
+            .data$ae_rates
           ),
           .purrr = .purrr,
           .f = function(ae_per_visit_mean,
                         max_visit_sd,
                         max_visit_mean,
-                        n_pat) {
+                        n_pat,
+                        ae_rates) {
             sim_test_data_study(
               n_pat = n_pat,
               n_sites = 1,
               max_visit_mean = max_visit_mean,
               max_visit_sd = max_visit_sd,
-              ae_per_visit_mean = ae_per_visit_mean
+              ae_per_visit_mean = ae_per_visit_mean,
+              ae_rates = ae_rates
             ) %>%
-              select(
-                # using rlang::.data here causes error with furrr
-                patnum, visit, n_ae
-              )
+              select(c(
+                "patnum", "visit", "n_ae"
+              ))
           },
           .progress = progress,
           .purrr_args = .purrr_args,
@@ -524,8 +605,8 @@ sim_test_data_portfolio <- function(df_config, parallel = FALSE, progress = TRUE
   )
 
   df_portf <- df_config_sim %>%
-    unnest(.data$sim) %>%
-    select(- .data$n_pat) %>%
+    unnest("sim") %>%
+    select(- c("n_pat", "ae_rates")) %>%
     group_by(.data$study_id) %>%
     mutate(
       # patnums need to be made site exclusive
@@ -612,7 +693,7 @@ get_config <- function(df_site,
                        pad_width = 4) {
 
   stopifnot(c("study_id", "site_number", "patnum", "max_visit", "max_ae") %in% colnames(df_site))
-  stopifnot(nrow(df_site) == nrow(distinct(select(df_site, .data$study_id, .data$site_number, .data$patnum))))
+  stopifnot(nrow(df_site) == nrow(distinct(select(df_site, c("study_id", "site_number", "patnum")))))
 
   df_site %>%
     summarise_all(~ ! anyNA(.)) %>%
@@ -734,7 +815,7 @@ get_portf_perf <- function(df_scen, stat = "prob_low_prob_ur", fpr = c(0.001, 0.
                                      0,
                                      .data$n_sites_total)
         ) %>%
-      select(.data$extra_ur_sites, .data$ur_rate, .data$ratio_sites_with_na) %>%
+      select(c("extra_ur_sites", "ur_rate", "ratio_sites_with_na")) %>%
       knitr::kable() %>%
       paste(collapse = "\n")
 
@@ -743,7 +824,7 @@ get_portf_perf <- function(df_scen, stat = "prob_low_prob_ur", fpr = c(0.001, 0.
 
   }
 
-  stat_at_0 <- df_scen %>% #nolint
+  stat_at_0 <- df_scen %>% # nolint
     filter(.data$ur_rate == 0, .data$frac_pat_with_ur == 0) %>%
     pull(.data[[stat]])
 
@@ -760,7 +841,7 @@ get_portf_perf <- function(df_scen, stat = "prob_low_prob_ur", fpr = c(0.001, 0.
 
   df_prep <- df_scen %>%
     mutate(data = list(df_thresh)) %>%
-    unnest(.data$data) %>%
+    unnest("data") %>%
     mutate(stat = .data[[stat]]) %>%
     group_by(.data$fpr, .data$thresh, .data$extra_ur_sites, .data$ur_rate) %>%
     summarise(
@@ -771,7 +852,7 @@ get_portf_perf <- function(df_scen, stat = "prob_low_prob_ur", fpr = c(0.001, 0.
   df_prep_0 <- df_prep %>%
     filter(.data$ur_rate == 0) %>%
     mutate(extra_ur_sites = list(unique(df_prep$extra_ur_sites))) %>%
-    unnest(.data$extra_ur_sites)
+    unnest("extra_ur_sites")
 
   df_prep_gr0 <- df_prep %>%
     filter(.data$ur_rate > 0)

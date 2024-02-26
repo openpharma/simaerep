@@ -86,9 +86,9 @@ plot_dots <- function(df,
   }
 
   p <- df %>%
-    ggplot(aes_string("x", "y", color = "color")) +
+    ggplot(aes(x, y, color = .data$color)) +
     geom_point(size = size_dots) +
-    geom_text(aes_string(label = "n_ae"),
+    geom_text(aes(label = n_ae),
       color = "black"
     ) +
     geom_rect(aes(
@@ -167,10 +167,10 @@ plot_sim_example <- function(substract_ae_per_pat = 0,
     site = LETTERS[1:3],
     patients = c(list(seq(1, 50, 1)), list(seq(1, 40, 1)), list(seq(1, 10, 1)))
   ) %>%
-    tidyr::unnest(.data$patients) %>%
+    tidyr::unnest("patients") %>%
     mutate(n_ae = as.integer(runif(min = 0, max = 10, n = nrow(.)))) %>%
     mutate(
-      n_ae = ifelse(.data$site == "C", .data$n_ae - substract_ae_per_pat, .data$n_ae),
+      n_ae = ifelse(.data$site == "C", .data$n_ae - .env$substract_ae_per_pat, .data$n_ae),
       n_ae = ifelse(.data$n_ae < 0, 0, .data$n_ae)
     )
 
@@ -226,7 +226,7 @@ plot_sim_example <- function(substract_ae_per_pat = 0,
     group_by(.data$x) %>%
     mutate(y = row_number()) %>%
     filter(.data$rep <= 1000) %>%
-    ggplot(aes_string("x", "y", fill = "color")) +
+    ggplot(aes(x, y, fill = .data$color)) +
     geom_raster() +
     scale_fill_identity() +
     theme_minimal() +
@@ -331,7 +331,7 @@ plot_sim_examples <- function(substract_ae_per_pat = c(0, 1, 3), ...) {
       title_add = map(.data$title_add, make_title, angle = 90),
       p = pmap(
         list(
-          substract_ae_per_pat = .data$substract_ae_per_pat,
+          substract_ae_per_pat = substract_ae_per_pat,
           title = .data$title,
           legend = .data$legend
         ),
@@ -348,7 +348,7 @@ plot_sim_examples <- function(substract_ae_per_pat = c(0, 1, 3), ...) {
       site = LETTERS[1:3],
       patients = c(list(seq(1, 50, 1)), list(seq(1, 40, 1)), list(seq(1, 10, 1)))
     ) %>%
-    tidyr::unnest(.data$patients) %>%
+    tidyr::unnest("patients") %>%
     mutate(n_ae = as.integer(runif(min = 0, max = 10, n = nrow(.))))
 
   p_legend <- plot_dots(study) +
@@ -445,11 +445,11 @@ plot_study <- function(df_visit,
              alert_level_study = NA)
   } else {
     df_visit <- df_visit %>%
-      left_join(select(df_al,
-                       .data$study_id,
-                       .data$site_number,
-                       .data$alert_level_site,
-                       .data$alert_level_study))
+      left_join(select(df_al, c(
+                       "study_id",
+                       "site_number",
+                       "alert_level_site",
+                       "alert_level_study")))
   }
 
   # fill in pvalues when missing --------------------------------------------
@@ -462,13 +462,13 @@ plot_study <- function(df_visit,
   # make sure ids are character columns
 
   df_visit <- df_visit %>%
-    mutate_at(vars(.data$study_id, .data$patnum, .data$site_number), as.character)
+    mutate_at(vars(c("study_id", "patnum", "site_number")), as.character)
 
   df_eval <- df_eval %>%
-    mutate_at(vars(.data$study_id, .data$site_number), as.character)
+    mutate_at(vars(c("study_id", "site_number")), as.character)
 
   df_site <- df_site %>%
-    mutate_at(vars(.data$study_id, .data$site_number), as.character)
+    mutate_at(vars(c("study_id", "site_number")), as.character)
 
   # filter studies -----------------------------------------------------------
 
@@ -539,11 +539,11 @@ plot_study <- function(df_visit,
     ungroup()
 
   df_ae_dev_patient <- df_visit %>%
-    select(.data$study_id,
-           .data$site_number,
-           .data$patnum,
-           .data$visit,
-           .data$n_ae) %>%
+    select(c("study_id",
+           "site_number",
+           "patnum",
+           "visit",
+           "n_ae")) %>%
     mutate(max_visit_per_pat = max(.data$visit)) %>%
     filter(.data$site_number %in% sites_ordered) %>%
     ungroup() %>%
@@ -566,7 +566,7 @@ plot_study <- function(df_visit,
     )
 
   df_mean_ae_dev_site <- df_mean_ae_dev_site %>%
-    select(- .data$visit_med75) %>%
+    select(- "visit_med75") %>%
     left_join(df_eval, by = c("study_id", "site_number"))
 
   # we have to split site ae dev up because alert sites get plotted
@@ -579,45 +579,45 @@ plot_study <- function(df_visit,
     filter(.data$prob_cut != levels(.data$prob_cut)[1])
 
   df_alert <- df_visit %>%
-    select(.data$study_id,
-           .data$site_number,
-           .data$alert_level_site,
-           .data$alert_level_study) %>%
+    select(c("study_id",
+           "site_number",
+           "alert_level_site",
+           "alert_level_study")) %>%
     distinct()
 
   df_label <- df_mean_ae_dev_site %>%
     filter(.data$visit == .data$visit_med75, .data$site_number %in% sites_ordered) %>%
-    select(.data$study_id,
-           .data$site_number,
-           .data$visit,
-           .data$mean_ae) %>%
+    select(c("study_id",
+           "site_number",
+           "visit",
+           "mean_ae")) %>%
     left_join(df_site, by = c("study_id", "site_number")) %>%
-    select(.data$study_id,
-           .data$site_number,
-           .data$visit,
-           .data$mean_ae,
-           .data$n_pat,
-           .data$n_pat_with_med75) %>%
+    select(c("study_id",
+           "site_number",
+           "visit",
+           "mean_ae",
+           "n_pat",
+           "n_pat_with_med75")) %>%
     left_join(
-      select(df_eval,
-              - .data$n_pat,
-              - .data$n_pat_with_med75)
+      select(df_eval, - c(
+              "n_pat",
+              "n_pat_with_med75"))
       , by = c("study_id", "site_number")
     ) %>%
     left_join(df_alert, by = c("study_id", "site_number")) %>%
-    select(
-      .data$study_id,
-      .data$site_number,
-      .data$visit,
-      .data$mean_ae,
-      .data$n_pat,
-      .data$n_pat_with_med75,
-      .data$prob_low_prob_ur,
-      .data$prob_cut,
-      .data$color_prob_cut,
-      .data$pval_prob_ur,
-      .data$alert_level_site
-    ) %>%
+    select(c(
+      "study_id",
+      "site_number",
+      "visit",
+      "mean_ae",
+      "n_pat",
+      "n_pat_with_med75",
+      "prob_low_prob_ur",
+      "prob_cut",
+      "color_prob_cut",
+      "pval_prob_ur",
+      "alert_level_site"
+    )) %>%
     mutate(
       site_number = fct_relevel(.data$site_number, sites_ordered),
       color_alert_level = case_when(
@@ -643,22 +643,22 @@ plot_study <- function(df_visit,
   )
 
   p_study <- df_mean_ae_dev_site_no_alert %>%
-    ggplot(aes_string("visit", "mean_ae"), na.rm = TRUE) +
-    geom_line(aes_string(
-      group = "site_number",
-      color = "color_prob_cut"
+    ggplot(aes(visit, mean_ae), na.rm = TRUE) +
+    geom_line(aes(
+      group = .data$site_number,
+      color = color_prob_cut
     )) +
-    geom_line(aes_string(
-      group = "site_number",
-      color = "color_prob_cut"
-    ),
-    data = df_mean_ae_dev_site_alert,
-    size = 1
+    geom_line(aes(
+        group = .data$site_number,
+        color = color_prob_cut
+      ),
+      data = df_mean_ae_dev_site_alert,
+      linewidth = 1
     ) +
-    geom_line(aes_string(group = "study_id"),
+    geom_line(aes(group = .data$study_id),
       data = df_mean_ae_dev_study,
       color = "gold3",
-      size = 1,
+      linewidth = 1,
       alpha = 0.5
     ) +
     geom_point(
@@ -704,23 +704,23 @@ plot_study <- function(df_visit,
   )
 
   p_site <- df_ae_dev_patient %>%
-    ggplot(aes_string("visit", "n_ae"), na.rm = TRUE) +
-    geom_line(aes_string(group = "patnum"),
+    ggplot(aes(visit, n_ae), na.rm = TRUE) +
+    geom_line(aes(group = patnum),
       color = "grey",
       alpha = 0.5
     ) +
-    geom_line(aes_string(
-      y = "mean_ae",
-      color = "color_prob_cut",
-      alpha = 0.5
-    ),
-    data = df_mean_ae_dev_site,
-    size = 1
+    geom_line(aes(
+        y = mean_ae,
+        color = color_prob_cut,
+        alpha = 0.5
+      ),
+      data = df_mean_ae_dev_site,
+      linewidth = 1
     ) +
     geom_line(aes(y = mean_ae),
               data = df_mean_ae_dev_study,
               color = "gold3",
-              size = 1,
+              linewidth = 1,
               alpha = 0.5) +
     geom_text(aes(label = paste0(n_pat_with_med75, "/", n_pat)),
               data = df_label,
@@ -733,8 +733,8 @@ plot_study <- function(df_visit,
               x = 0.8 * max_visit,
               y = 0.9 * max_ae,
               na.rm = TRUE) +
-    geom_label(aes_string(label = "alert_level_site",
-                          color = "color_alert_level"),
+    geom_label(aes(label = .data$alert_level_site,
+                   color = .data$color_alert_level),
               data = df_label,
               x = 0.5 * max_visit,
               y = 0.9 * max_ae,
@@ -827,14 +827,14 @@ plot_visit_med75 <- function(df_visit,
   df_mean_ae_dev <- get_site_mean_ae_dev(df_visit, df_pat, df_site_max_med75)
 
   df_plot <- df_site_min_med75 %>%
-    rename(visit_med75_min = .data$visit_med75) %>%
+    rename(visit_med75_min = "visit_med75") %>%
     left_join(
       select(
-        df_site_max_med75,
-        .data$study_id,
-        .data$site_number,
-        visit_med75_max = .data$visit_med75
-        ),
+        df_site_max_med75, c(
+        "study_id",
+        "site_number",
+        visit_med75_max = "visit_med75"
+        )),
       by = c(
         "study_id",
         "site_number"
@@ -843,7 +843,7 @@ plot_visit_med75 <- function(df_visit,
     mutate(rnk_sites = rank(desc(.data$n_pat), ties.method = "first")) %>%
     filter(.data$rnk_sites <= n_sites) %>%
     left_join(df_visit, by = c("study_id", "site_number")) %>%
-    left_join(select(df_mean_ae_dev, - .data$visit_med75),
+    left_join(select(df_mean_ae_dev, - "visit_med75"),
       by = c("study_id", "site_number", "visit")
     ) %>%
     group_by(.data$study_id, .data$site_number, .data$patnum) %>%
@@ -854,12 +854,12 @@ plot_visit_med75 <- function(df_visit,
     ungroup()
 
   df_label <- df_plot %>%
-    select(
-      .data$study_id,
-      .data$site_number,
-      .data$n_pat,
-      .data$n_pat_with_med75
-    ) %>%
+    select(c(
+      "study_id",
+      "site_number",
+      "n_pat",
+      "n_pat_with_med75"
+    )) %>%
     distinct() %>%
     mutate(label = paste0(.data$n_pat_with_med75, "/", .data$n_pat))
 
@@ -875,30 +875,30 @@ plot_visit_med75 <- function(df_visit,
     filter(.data$site_number %in% unique(df_plot$site_number))
 
   p <- df_plot %>%
-    ggplot(aes_string("visit", "n_ae")) +
+    ggplot(aes(visit, n_ae)) +
     geom_line(
-      aes_string(group = "patnum"),
+      aes(group = patnum),
       data = filter(df_plot, .data$has_med75 == "yes"),
       color = "grey"
     ) +
     geom_line(
-      aes_string(y = "mean_ae_site", group = "site_number"),
+      aes(y = .data$mean_ae_site, group = .data$site_number),
       data = df_mean_ae_dev,
       color = "slateblue3",
       alpha = 0.5,
-      size = 2
+      linewidth = 2
     ) +
-    geom_line(aes_string(group = "patnum"),
+    geom_line(aes(group = patnum),
       filter(df_plot, .data$has_med75 == "no"),
       color = "black",
       linetype = 2
     ) +
-    geom_vline(aes_string(xintercept = "visit_med75_max"),
+    geom_vline(aes(xintercept = .data$visit_med75_max),
                linetype = 1,
                color = "slateblue3"
     ) +
     geom_vline(
-      aes_string(xintercept = "visit_med75_min"),
+      aes(xintercept = .data$visit_med75_min),
       linetype = 3,
       color = "slateblue3"
     ) +
@@ -907,7 +907,7 @@ plot_visit_med75 <- function(df_visit,
       linetype = 2,
       color = "slateblue3"
     ) +
-    geom_text(aes_string(label = "label"),
+    geom_text(aes(label = label),
       df_label,
       x = 0.15 * visit_max,
       y = 0.75 * ae_max,

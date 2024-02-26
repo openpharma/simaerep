@@ -2,11 +2,13 @@
 
     Code
       df_eval <- eval_sites(df_sim_sites, r_sim_sites = 100)
-    Warning <simpleWarning>
+    Condition
+      Warning in `eval_sites()`:
       
       study_id: C, site_number: a. pval == NA
       study_id: C, site_number: b. pval == NA
       study_id: C, site_number: c. pval == NA
+      Warning in `eval_sites()`:
       
       study_id: C, site_number: a, prob_low == NA
       
