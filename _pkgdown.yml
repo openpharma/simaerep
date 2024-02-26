@@ -36,6 +36,7 @@ articles:
   - usability_limits
   - check_poisson
   - visits_or_days
+  - gsm_perf
 
 reference:
 - title: S3 Interface

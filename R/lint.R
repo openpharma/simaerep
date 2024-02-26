@@ -16,7 +16,8 @@ lint_package <- function(path = ".", ...) {
                                         linters = lintr::linters_with_defaults(
                                           line_length_linter = lintr::line_length_linter(120),
                                           trailing_whitespace_linter = NULL,
-                                          cyclocomp_linter = lintr::cyclocomp_linter(25)
+                                          cyclocomp_linter = lintr::cyclocomp_linter(25),
+                                          indentation_linter = NULL
                                         ),
                                       exclusions = list("inst/logo/logo.R", "tests/spelling.R", "vignettes"),
                                       ...)
