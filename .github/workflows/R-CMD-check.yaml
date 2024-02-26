@@ -16,8 +16,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: r-lib/actions/setup-r@v2
-      - if: runner.os == 'macOS'
-        run: brew install --cask xquartz
       - name: Install dependencies
         run: |
           install.packages(c("remotes", "rcmdcheck", "downlit"))
@@ -29,5 +27,3 @@ jobs:
           rcmdcheck::rcmdcheck(args = "--no-manual", error_on = "note")
           simaerep:::lint_package()
         shell: Rscript {0}
-
-
