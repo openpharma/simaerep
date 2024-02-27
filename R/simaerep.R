@@ -644,6 +644,7 @@ pat_pool <- function(df_visit, df_site) {
 #' @param study_ae vector with AE numbers
 #' @param r integer, denotes number of simulations, default = 1000
 #' @param parallel logical, toggles parallel processing on and of, default = F
+#' @param under_only compute under-reporting probabilities only, default = TRUE
 #' @return pval
 #' @details sets pvalue=1 if mean AE site is greater than mean AE study
 #' @examples
@@ -655,8 +656,7 @@ pat_pool <- function(df_visit, df_site) {
 #' @seealso \code{\link[purrr]{safely}}
 #' @rdname prob_lower_site_ae_vs_study_ae
 #' @export
-prob_lower_site_ae_vs_study_ae <- function(site_ae, study_ae, r = 1000, parallel = FALSE) {
-
+prob_lower_site_ae_vs_study_ae <- function(site_ae, study_ae, r = 1000, parallel = FALSE, under_only = TRUE) {
   # if there is only one site
   if (is.null(study_ae)) {
     prob_lower <- 1
@@ -666,11 +666,14 @@ prob_lower_site_ae_vs_study_ae <- function(site_ae, study_ae, r = 1000, parallel
   mean_ae_site <- mean(site_ae, na.rm = TRUE)
   mean_ae_study <- mean(study_ae, na.rm = TRUE)
 
-  # we are not interested in cases where site AE is greater study AE
-  if (mean_ae_site > mean_ae_study) {
-    prob_lower <- 1
-    return(prob_lower)
+  if (under_only) {
+    # we are not interested in cases where site AE is greater study AE
+    if (mean_ae_site > mean_ae_study) {
+      prob_lower <- 1
+      return(prob_lower)
+    }
   }
+
 
   # set-up multiprocessing
   # multiprocessing currently not used by sim_sites()
@@ -711,6 +714,7 @@ prob_lower_site_ae_vs_study_ae <- function(site_ae, study_ae, r = 1000, parallel
 #' @param prob_lower logical, calculates probability for getting a lower value
 #' @param progress logical, display progress bar, Default = TRUE
 #' @param check, logical, perform data check and attempt repair with
+#' @param under_only compute under-reporting probabilities only, default = TRUE
 #'  [check_df_visit()][check_df_visit], computationally expensive on large data
 #'  sets. Default: TRUE
 #' @return dataframe with the following columns:
@@ -757,7 +761,8 @@ sim_sites <- function(df_site,
                       poisson_test = TRUE,
                       prob_lower = TRUE,
                       progress = TRUE,
-                      check = TRUE) {
+                      check = TRUE,
+                      under_only = TRUE) {
   if (check) {
     df_visit <- check_df_visit(df_visit)
   }
@@ -768,7 +773,8 @@ sim_sites <- function(df_site,
                            r = r,
                            poisson_test = poisson_test,
                            prob_lower = prob_lower,
-                           progress = progress)
+                           progress = progress,
+                           under_only = under_only)
 
   return(df_sim)
 }
@@ -867,8 +873,8 @@ sim_after_prep <- function(df_sim_prep,
                            r = 1000,
                            poisson_test = FALSE,
                            prob_lower = TRUE,
-                           progress = FALSE) {
-
+                           progress = FALSE,
+                           under_only = TRUE) {
   df_sim <- df_sim_prep
 
   if (poisson_test) {
@@ -885,7 +891,7 @@ sim_after_prep <- function(df_sim_prep,
             .data$n_ae_site, .data$n_ae_study,
             .purrr = map2_dbl,
             .f = prob_lower_site_ae_vs_study_ae,
-            .f_args = list(r = r),
+            .f_args = list(r = r, under_only = under_only),
             .steps = nrow(df_sim),
             .progress = progress
           )
@@ -1018,6 +1024,8 @@ get_pat_pool_config <- function(df_visit, df_site, min_n_pat_with_med75 = 1) {
 #' @param r integer, denotes number of simulations, Default: 1000
 #' @param r_prob_lower integer, denotes number of simulations for prob_lower
 #'   value calculation,, Default: 1000
+#' @param under_only compute under-reporting probabilities only, default = TRUE
+#' @param under_only compute under-reporting probabilities only, default = TRUE
 #' @param poisson_test logical, calculates poisson.test pvalue, Default: TRUE
 #' @param prob_lower logical, calculates probability for getting a lower value,
 #'   Default: FALSE
@@ -1063,6 +1071,7 @@ sim_studies <- function(df_visit,
                         poisson_test = TRUE,
                         prob_lower = TRUE,
                         r_prob_lower = 1000,
+                        under_only = TRUE,
                         parallel = FALSE,
                         keep_ae = FALSE,
                         min_n_pat_with_med75 = 1,
@@ -1126,7 +1135,8 @@ sim_studies <- function(df_visit,
       df_config <- df_config %>%
         mutate(prob_low = map2_dbl(.data$n_ae_site, .data$n_ae_study,
                                    prob_lower_site_ae_vs_study_ae,
-                                   r = r_prob_lower))
+                                   r = r_prob_lower,
+                                   under_only = under_only))
     }
 
     if (!keep_ae) {

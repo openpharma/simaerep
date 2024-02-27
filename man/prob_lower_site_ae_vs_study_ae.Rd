@@ -4,7 +4,13 @@
 \alias{prob_lower_site_ae_vs_study_ae}
 \title{Calculate bootstrapped probability for obtaining a lower site mean AE number.}
 \usage{
-prob_lower_site_ae_vs_study_ae(site_ae, study_ae, r = 1000, parallel = FALSE)
+prob_lower_site_ae_vs_study_ae(
+  site_ae,
+  study_ae,
+  r = 1000,
+  parallel = FALSE,
+  under_only = TRUE
+)
 }
 \arguments{
 \item{site_ae}{vector with AE numbers}
@@ -14,6 +20,8 @@ prob_lower_site_ae_vs_study_ae(site_ae, study_ae, r = 1000, parallel = FALSE)
 \item{r}{integer, denotes number of simulations, default = 1000}
 
 \item{parallel}{logical, toggles parallel processing on and of, default = F}
+
+\item{under_only}{compute under-reporting probabilities only, default = TRUE}
 }
 \value{
 pval

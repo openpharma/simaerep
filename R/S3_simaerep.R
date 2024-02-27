@@ -58,6 +58,7 @@ validate_simaerep <- function(x) {
 #'  Default: list(method = "med75_adj", min_pat_pool = 0.2)
 #'@param param_sim_sites list of parameters passed to [sim_sites()][sim_sites],
 #'  Default: list(r = 1000, poisson_test = FALSE, prob_lower = TRUE)
+#'@param under_only compute under-reporting probabilities only, default = TRUE
 #'@param param_eval_sites list of parameters passed to
 #'  [eval_sites()][eval_sites], Default: list(method = "BH")
 #'@param progress logical, display progress bar, Default = TRUE
@@ -100,7 +101,8 @@ simaerep <- function(df_visit,
                      param_sim_sites = list(
                        r = 1000,
                        poisson_test = FALSE,
-                       prob_lower = TRUE
+                       prob_lower = TRUE,
+                       under_only = TRUE
                      ),
                      param_eval_sites = list(
                        method = "BH"
