@@ -347,6 +347,7 @@ get_visit_med75 <- function(df_pat,
 #' @export
 eval_sites <- function(df_sim_sites,
                         method = "BH",
+                        under_only = TRUE,
                         ...) {
 
 
@@ -406,6 +407,17 @@ eval_sites <- function(df_sim_sites,
         prob_low_adj = p.adjust(.data$prob_low, method = method),
         prob_low_prob_ur = 1 - .data$prob_low_adj
       )
+
+    if (! under_only) {
+      df_out <- df_out %>%
+        mutate(prob_high = 1 - prob_low) %>%
+        arrange(.data$study_id, .data$prob_high) %>%
+        mutate(
+          prob_high_adj = p.adjust(.data$prob_high, method = method),
+          prob_high_prob_or = 1 - .data$prob_high_adj
+        )
+    }
+
   }
 
   return(ungroup(df_out))
