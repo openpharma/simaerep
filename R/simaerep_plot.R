@@ -504,13 +504,13 @@ plot_study <- function(df_visit,
 
   if (n_site_ur_gr_0p5 > 0) {
     sites_ordered <- df_eval %>%
-      arrange(.data$study_id, desc(.data[[prob_col]])) %>%
+      arrange(.data$study_id, desc(.data[[prob_col]]), .data$mean_ae_site_med75) %>%
       filter(.data[[prob_col]] > 0.5) %>%
       head(n_sites) %>%
       .$site_number
   } else {
     sites_ordered <- df_eval %>%
-      arrange(.data$study_id, desc(.data[[prob_col]])) %>%
+      arrange(.data$study_id, desc(.data[[prob_col]]), .data$mean_ae_site_med75) %>%
       head(6) %>%
       .$site_number
   }

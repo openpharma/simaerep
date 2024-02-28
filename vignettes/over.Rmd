@@ -33,6 +33,9 @@ suppressPackageStartupMessages(library(ggExtra))
 We simulate a standard data set with a high number of sites, patients, visits and events to ensure that most of our dimensions will be normally distributed. We do not add any over- or under-reporting sites at this point.
 
 ```{r}
+
+set.seed(1)
+
 df_visit <- sim_test_data_study(
  n_pat = 10000,
  n_sites = 1000,
@@ -187,6 +190,9 @@ ggExtra::ggMarginal(p, groupColour = TRUE, type = "density")
 We can simulate under-reporting by supplying a negative ratio for `ur_rate`
 
 ```{r}
+
+set.seed(1)
+
 df_visit <- sim_test_data_study(
  frac_site_with_ur = 0.05,
  ur_rate = - 0.5,

@@ -162,7 +162,9 @@ patients, visits and events to ensure that most of our dimensions will
 be normally distributed. We do not add any over- or under-reporting
 sites at this point.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">df_visit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sim_test_data_study.html">sim_test_data_study</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">df_visit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sim_test_data_study.html">sim_test_data_study</a></span><span class="op">(</span></span>
 <span> n_pat <span class="op">=</span> <span class="fl">10000</span>,</span>
 <span> n_sites <span class="op">=</span> <span class="fl">1000</span>,</span>
 <span> frac_site_with_ur <span class="op">=</span> <span class="fl">0</span>,</span>
@@ -183,7 +185,7 @@ the parameter <code>under_only = FALSE</code>.</p>
 <span>  <span class="va">aerep_def</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/simaerep.html">simaerep</a></span><span class="op">(</span><span class="va">df_visit</span>, under_only <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##    user  system elapsed </span></span>
-<span><span class="co">##  21.024   1.327  22.945</span></span></code></pre>
+<span><span class="co">##  20.232   1.124  21.502</span></span></code></pre>
 <p>The original setting skips the simulation for all sites that do have
 more AEs than the study average.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
@@ -191,7 +193,7 @@ more AEs than the study average.</p>
 <span>  <span class="va">aerep_ovr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/simaerep.html">simaerep</a></span><span class="op">(</span><span class="va">df_visit</span>, under_only <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##    user  system elapsed </span></span>
-<span><span class="co">##  26.391   1.377  28.577</span></span></code></pre>
+<span><span class="co">##  24.707   1.256  26.044</span></span></code></pre>
 <p>The new parameter calculates the probability of a site getting
 <code>a lower or equal</code> average AE count for the site visit_med75
 for every site, regardless of how its initial value compares to the
@@ -323,7 +325,9 @@ positives that are the result of chance.</p>
 <p>We can simulate under-reporting by supplying a negative ratio for
 <code>ur_rate</code></p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">df_visit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sim_test_data_study.html">sim_test_data_study</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">df_visit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sim_test_data_study.html">sim_test_data_study</a></span><span class="op">(</span></span>
 <span> frac_site_with_ur <span class="op">=</span> <span class="fl">0.05</span>,</span>
 <span> ur_rate <span class="op">=</span> <span class="op">-</span> <span class="fl">0.5</span>,</span>
 <span><span class="op">)</span></span>
@@ -363,26 +367,26 @@ positives that are the result of chance.</p>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 20 × 5</span></span></span>
 <span><span class="co">##    site_number mean_ae_site_med75 mean_ae_study_med75 prob_low_prob_ur</span></span>
 <span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> S0001                    12.1                 8.01          0      </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> S0014                     8.32                7.60          0.009<span style="text-decoration: underline;">47</span></span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> S0013                     7.77                7.63          0.287  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> S0018                     7.64                7.64          0.379  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> S0017                     7.57                7.64          0.442  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> S0020                     7.56                7.64          0.442  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> S0004                     7.58                7.64          0.442  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> S0008                     7.49                7.65          0.442  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> S0010                     8.04                8.22          0.442  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">10</span> S0003                     7.45                7.65          0.442  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">11</span> S0006                     7.39                7.65          0.442  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">12</span> S0015                     7.40                7.65          0.442  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">13</span> S0019                     7.38                7.65          0.442  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">14</span> S0009                     7.31                7.65          0.442  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">15</span> S0012                     7.29                7.66          0.442  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">16</span> S0011                     7.30                7.66          0.442  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">17</span> S0005                     7.25                7.66          0.442  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">18</span> S0002                     7.22                7.66          0.442  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">19</span> S0007                     7.05                7.67          0.442  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">20</span> S0016                     6.93                7.68          0.442  </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> S0001                    11.7                 7.48            0    </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> S0006                     8.67                8.22            0.118</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> S0013                     7.6                 7.19            0.118</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> S0005                     7.98                7.66            0.118</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> S0015                     7.98                7.66            0.118</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> S0018                     7.91                7.67            0.118</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> S0012                     7.9                 7.67            0.118</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> S0009                     7.78                7.67            0.118</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> S0010                     7.59                7.68            0.248</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">10</span> S0007                     7.58                7.68            0.276</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">11</span> S0019                     7.46                7.69            0.364</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">12</span> S0004                     7.40                7.69            0.364</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">13</span> S0017                     7.36                7.69            0.445</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">14</span> S0002                     7.72                8.27            0.58 </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">15</span> S0011                     7.17                7.71            0.587</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">16</span> S0014                     7.05                7.71            0.644</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">17</span> S0020                     7.09                7.71            0.644</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">18</span> S0003                     6.93                7.72            0.687</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">19</span> S0016                     6.96                7.72            0.687</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">20</span> S0008                     6.85                7.72            0.687</span></span>
 <span><span class="co">## <span style="color: #949494;"># ℹ 1 more variable: prob_high_prob_or &lt;dbl&gt;</span></span></span></code></pre>
 <p>We can plot over-reporting by changing setting
 <code>prob_col = "prob_high_prob_or"</code>.</p>
