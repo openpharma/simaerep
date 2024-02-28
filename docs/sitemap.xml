@@ -25,6 +25,9 @@
     <loc>https://openpharma.github.io/simaerep/articles/intro.html</loc>
   </url>
   <url>
+    <loc>https://openpharma.github.io/simaerep/articles/over.html</loc>
+  </url>
+  <url>
     <loc>https://openpharma.github.io/simaerep/articles/portfolio_perf.html</loc>
   </url>
   <url>
@@ -74,6 +77,9 @@
   </url>
   <url>
     <loc>https://openpharma.github.io/simaerep/reference/get_ecd_values.html</loc>
+  </url>
+  <url>
+    <loc>https://openpharma.github.io/simaerep/reference/get_legend.html</loc>
   </url>
   <url>
     <loc>https://openpharma.github.io/simaerep/reference/get_pat_pool_config.html</loc>

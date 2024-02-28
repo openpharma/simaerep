@@ -46,7 +46,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">simaerep</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.3.900</span>
       </span>
     </div>
 
@@ -94,6 +94,9 @@
     </li>
     <li>
       <a href="../articles/gsm_perf.html">Comparing {simaerep} and {gsm} Performance</a>
+    </li>
+    <li>
+      <a href="../articles/over.html">Over-Reporting Probability</a>
     </li>
   </ul>
 </li>
@@ -954,12 +957,14 @@ convenient plotting using the <code><a href="https://rdrr.io/r/graphics/plot.def
 <span><span class="co">##  $ param_site_aggr :List of 2</span></span>
 <span><span class="co">##   ..$ method      : chr "med75_adj"</span></span>
 <span><span class="co">##   ..$ min_pat_pool: num 0.2</span></span>
-<span><span class="co">##  $ param_sim_sites :List of 3</span></span>
+<span><span class="co">##  $ param_sim_sites :List of 4</span></span>
 <span><span class="co">##   ..$ r           : num 1000</span></span>
 <span><span class="co">##   ..$ poisson_test: logi FALSE</span></span>
 <span><span class="co">##   ..$ prob_lower  : logi TRUE</span></span>
-<span><span class="co">##  $ param_eval_sites:List of 1</span></span>
-<span><span class="co">##   ..$ method: chr "BH"</span></span>
+<span><span class="co">##   ..$ under_only  : logi TRUE</span></span>
+<span><span class="co">##  $ param_eval_sites:List of 2</span></span>
+<span><span class="co">##   ..$ method    : chr "BH"</span></span>
+<span><span class="co">##   ..$ under_only: logi TRUE</span></span>
 <span><span class="co">##  - attr(*, "class")= chr "simaerep"</span></span></code></pre>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">aerep</span><span class="op">)</span></span></code></pre></div>

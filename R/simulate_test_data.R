@@ -1,12 +1,14 @@
 #' @title simulate study test data
 #' @description evenly distributes a number of given patients across a number of
 #'   given sites. Then simulates ae development of each patient reducing the
-#'   number of reported AEs for patients distributed to AE-under-reporting sites.
+#'   number of reported AEs for patients distributed to AE-under-reporting
+#'   sites.
 #' @param n_pat integer, number of patients, Default: 1000
 #' @param n_sites integer, number of sites, Default: 20
 #' @param frac_site_with_ur fraction of AE under-reporting sites, Default: 0
 #' @param ur_rate AE under-reporting rate, will lower mean ae per visit used to
-#'   simulate patients at sites flagged as AE-under-reporting., Default: 0
+#'   simulate patients at sites flagged as AE-under-reporting. Negative Values
+#'   will simulate over-reporting., Default: 0
 #' @param max_visit_mean mean of the maximum number of visits of each patient,
 #'   Default: 20
 #' @param max_visit_sd standard deviation of maximum number of visits of each

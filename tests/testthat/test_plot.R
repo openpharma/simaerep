@@ -1,4 +1,4 @@
-# test data is automatically loaded, check ./data-raw/generate_test_data.R
+# test data is automatically loaded from R/sysdata.rda, check ./data-raw/generate_test_data.R
 
 
 test_that("plot_sim_demo() must return ggplot object", {

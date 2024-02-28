@@ -51,11 +51,7 @@ in order to add the over-reporting probability score we need to set the paramete
 
 ```{r}
 system.time(
-  aerep_def <- simaerep(
-    df_visit,
-    param_sim_sites = list(under_only = TRUE),
-    param_eval_sites = list(under_only = TRUE)
-  )
+  aerep_def <- simaerep(df_visit, under_only = TRUE)
 )
 ```
 
@@ -63,11 +59,7 @@ The original setting skips the simulation for all sites that do have more AEs th
 
 ```{r}
 system.time(
-  aerep_ovr <- simaerep(
-    df_visit,
-    param_sim_sites = list(under_only = FALSE),
-    param_eval_sites = list(under_only = FALSE)
-  )
+  aerep_ovr <- simaerep(df_visit, under_only = FALSE)
 )
 ```
 
@@ -208,11 +200,7 @@ distinct(df_visit, site_number, is_ur, ae_per_visit_mean)
 
 
 ```{r}
-aerep <- simaerep(
-    df_visit,
-    param_sim_sites = list(under_only = FALSE),
-    param_eval_sites = list(under_only = FALSE)
-  )
+aerep <- simaerep(df_visit, under_only = FALSE)
 ```
 
 ```{r}
@@ -225,7 +213,6 @@ We can plot over-reporting by changing setting `prob_col = "prob_high_prob_or"`.
 ```{r}
 plot(aerep, prob_col = "prob_high_prob_or")
 
-plot(aerep, prob_col = "prob_low_prob_ur")
-
+plot(aerep, prob_col = "prob_low_prob_ur") # Default
 ```
 

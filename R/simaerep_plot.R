@@ -406,6 +406,7 @@ get_legend <- function(p) {
 #' @param study study
 #' @param n_sites integer number of most at risk sites, Default: 16
 #' @param pval logical show p-value, Default:FALSE
+#' @param prob_col character, denotes probability column, Default: "prob_low_prob_ur"
 #' @return ggplot
 #' @details Left panel shows mean AE reporting per site (lightblue and darkblue
 #'   lines) against mean AE reporting of the entire study (golden line). Single
