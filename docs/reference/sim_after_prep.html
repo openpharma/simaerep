@@ -24,7 +24,7 @@ after prep_for_sim"><meta property="og:image" content="https://openpharma.github
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">simaerep</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.3.900</span>
       </span>
     </div>
 
@@ -71,6 +71,9 @@ after prep_for_sim"><meta property="og:image" content="https://openpharma.github
     <li>
       <a href="../articles/gsm_perf.html">Comparing {simaerep} and {gsm} Performance</a>
     </li>
+    <li>
+      <a href="../articles/over.html">Over-Reporting Probability</a>
+    </li>
   </ul></li>
 <li>
   <a href="../news/index.html">Changelog</a>
@@ -106,7 +109,8 @@ after <code><a href="prep_for_sim.html">prep_for_sim</a></code></p>
 <span>  r <span class="op">=</span> <span class="fl">1000</span>,</span>
 <span>  poisson_test <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  prob_lower <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  progress <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  progress <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  under_only <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -131,6 +135,12 @@ after <code><a href="prep_for_sim.html">prep_for_sim</a></code></p>
 
 <dt>progress</dt>
 <dd><p>logical, display progress bar, Default = TRUE</p></dd>
+
+
+<dt>under_only</dt>
+<dd><p>compute under-reporting probabilities only, default = TRUE
+<a href="check_df_visit.html">check_df_visit()</a>, computationally expensive on large data
+sets. Default: TRUE</p></dd>
 
 </dl></div>
     <div id="value">

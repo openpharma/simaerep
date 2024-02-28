@@ -1,0 +1,218 @@
+---
+title: "Over-Reporting Probability"
+output:
+  html_document:
+    toc: true
+    toc_depth: 3
+    toc_float: true
+    number_sections: true
+    code_folding: show
+    collapse: false
+editor_options:
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, cache = FALSE, fig.width = 10)
+```
+
+# Load
+```{r}
+suppressPackageStartupMessages(library(dplyr))
+suppressPackageStartupMessages(library(tidyr))
+suppressPackageStartupMessages(library(simaerep))
+suppressPackageStartupMessages(library(ggExtra))
+```
+
+# Introduction
+
+{siamerep} was originally created to detect under-reporting of AEs and therefore no over-reporting probability was calculated. Nevertheless {simaerep} can theoretically be used to simulate all kinds of subject-based clinical events, for some such as issues over-reporting can represent a quality issue.  With the recent release `0.5.0` we have added the option to calculate an over-reporting probability score.
+
+# Data Set
+
+We simulate a standard data set with a high number of sites, patients, visits and events to ensure that most of our dimensions will be normally distributed. We do not add any over- or under-reporting sites at this point.
+
+```{r}
+df_visit <- sim_test_data_study(
+ n_pat = 10000,
+ n_sites = 1000,
+ frac_site_with_ur = 0,
+ max_visit_mean = 100,
+ max_visit_sd = 1,
+ ae_per_visit_mean = 5
+)
+
+df_visit$study_id <- "A"
+```
+
+# Run {simaerep}
+
+in order to add the over-reporting probability score we need to set the parameter `under_only = FALSE`.
+
+```{r}
+system.time(
+  aerep_def <- simaerep(df_visit, under_only = TRUE)
+)
+```
+
+The original setting skips the simulation for all sites that do have more AEs than the study average.
+
+```{r}
+system.time(
+  aerep_ovr <- simaerep(df_visit, under_only = FALSE)
+)
+```
+
+The new parameter calculates the probability of a site getting `a lower or equal` average AE count for the site visit_med75 for every site, regardless of how its initial value compares to the study average. The calculation only takes a few seconds longer than the default setting.
+
+In the evaluation data frame we have three more columns available now.
+
+```{r}
+setdiff(colnames(aerep_ovr$df_eval), colnames(aerep_def$df_eval))
+```
+
+# Analyze
+
+## Probability getting a lower or equal AE count
+
+
+```{r}
+
+cols <- c("study_id", "site_number", "mean_ae_site_med75", "mean_ae_study_med75", "prob_low")
+
+p <- bind_rows(
+  select(
+      aerep_ovr$df_eval,
+      all_of(cols)
+    ) %>%
+    mutate(type = "with over-reporting"),
+    select(
+      aerep_def$df_eval,
+      all_of(cols)
+    ) %>%
+    mutate(type = "default")
+  ) %>%
+  ggplot(aes(x = mean_ae_site_med75 - mean_ae_study_med75, y = prob_low, color = type)) +
+    geom_point(alpha = 0.5) +
+    theme(legend.position = "bottom") +
+    scale_color_manual(values = c("gold", "blue")) +
+    labs(y = "Probability of getting a lower or equal mean site AE in a 1000x simulation")
+
+ggExtra::ggMarginal(p, groupColour = TRUE, type = "density")
+```
+
+
+We can see that we have a gap for the default setting in the generated probabilities. The values filling the gap can be interpreted as the probability of having a `higher` site average than originally observed.
+
+We need to be aware that values in the simulation `equal` to the site mean will count towards the under-reporting probability. This can potentially lead to artifacts with low AE counts.
+
+## Over-Reporting
+
+We can add the over-reporting probability as (1- under-reporting probability)
+
+```{r}
+
+cols <- c("study_id", "site_number", "mean_ae_site_med75", "mean_ae_study_med75")
+
+
+p <- bind_rows(
+  select(
+      aerep_ovr$df_eval,
+      all_of(cols),
+      value = "prob_low"
+    ) %>%
+    mutate(type = "new under-reporting"),
+  select(
+      aerep_ovr$df_eval,
+      all_of(cols),
+      value = "prob_high"
+    ) %>%
+    mutate(type = "new over-reporting"),
+    select(
+      aerep_def$df_eval,
+      all_of(cols),
+      value = "prob_low"
+    ) %>%
+    mutate(type = "default under-reporting")
+  ) %>%
+  ggplot(aes(x = mean_ae_site_med75 - mean_ae_study_med75, y = value, color = type)) +
+    geom_point(alpha = 0.25) +
+    theme(legend.position = "bottom") +
+    scale_color_manual(values = c("gold", "purple", "blue")) +
+    labs(y = "Probability of getting a lower or equal mean site AE in a 1000x simulation")
+
+ggExtra::ggMarginal(p, groupColour = TRUE, type = "density")
+```
+
+## Multiplicity Correction
+
+The multiplicity correction dampens the signal, avoiding false positives that are the result of chance.
+
+```{r}
+
+cols <- c("study_id", "site_number", "mean_ae_site_med75", "mean_ae_study_med75")
+
+
+p <- bind_rows(
+  select(
+      aerep_ovr$df_eval,
+      all_of(cols),
+      value = "prob_low_prob_ur"
+    ) %>%
+    mutate(type = "new under-reporting"),
+  select(
+      aerep_ovr$df_eval,
+      all_of(cols),
+      value = "prob_high_prob_or"
+    ) %>%
+    mutate(type = "new over-reporting"),
+    select(
+      aerep_def$df_eval,
+      all_of(cols),
+      value = "prob_low_prob_ur"
+    ) %>%
+    mutate(type = "default under-reporting")
+  ) %>%
+  ggplot(aes(x = mean_ae_site_med75 - mean_ae_study_med75, y = value, color = type)) +
+    geom_point(alpha = 0.25) +
+    theme(legend.position = "bottom") +
+    scale_color_manual(values = c("gold", "purple", "blue")) +
+    labs(y = "Probability of getting a lower or equal mean site AE in a 1000x simulation")
+
+ggExtra::ggMarginal(p, groupColour = TRUE, type = "density")
+```
+
+# Simulating Over-Reporting
+
+We can simulate under-reporting by supplying a negative ratio for `ur_rate`
+
+```{r}
+df_visit <- sim_test_data_study(
+ frac_site_with_ur = 0.05,
+ ur_rate = - 0.5,
+)
+
+df_visit$study_id <- "A"
+
+
+distinct(df_visit, site_number, is_ur, ae_per_visit_mean)
+```
+
+
+```{r}
+aerep <- simaerep(df_visit, under_only = FALSE)
+```
+
+```{r}
+aerep$df_eval %>%
+  select(site_number, mean_ae_site_med75, mean_ae_study_med75, prob_low_prob_ur, prob_high_prob_or)
+```
+
+We can plot over-reporting by changing setting `prob_col = "prob_high_prob_or"`.
+
+```{r}
+plot(aerep, prob_col = "prob_high_prob_or")
+
+plot(aerep, prob_col = "prob_low_prob_ur") # Default
+```
+

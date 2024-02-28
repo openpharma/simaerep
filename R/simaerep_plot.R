@@ -406,6 +406,7 @@ get_legend <- function(p) {
 #' @param study study
 #' @param n_sites integer number of most at risk sites, Default: 16
 #' @param pval logical show p-value, Default:FALSE
+#' @param prob_col character, denotes probability column, Default: "prob_low_prob_ur"
 #' @return ggplot
 #' @details Left panel shows mean AE reporting per site (lightblue and darkblue
 #'   lines) against mean AE reporting of the entire study (golden line). Single
@@ -440,7 +441,9 @@ plot_study <- function(df_visit,
                        study,
                        df_al = NULL,
                        n_sites = 16,
-                       pval = FALSE) {
+                       pval = FALSE,
+                       prob_col = "prob_low_prob_ur") {
+
   # TODO: parametrize scores, fix legend
 
   df_visit <- check_df_visit(df_visit)
@@ -496,18 +499,18 @@ plot_study <- function(df_visit,
   # ordered sites -------------------------------------------------------------
 
   n_site_ur_gr_0p5 <- df_eval %>%
-    filter(.data$prob_low_prob_ur > 0.5) %>%
+    filter(.data[[prob_col]] > 0.5) %>%
     nrow()
 
   if (n_site_ur_gr_0p5 > 0) {
     sites_ordered <- df_eval %>%
-      arrange(.data$study_id, desc(.data$prob_low_prob_ur)) %>%
-      filter(.data$prob_low_prob_ur > 0.5) %>%
+      arrange(.data$study_id, desc(.data[[prob_col]])) %>%
+      filter(.data[[prob_col]] > 0.5) %>%
       head(n_sites) %>%
       .$site_number
   } else {
     sites_ordered <- df_eval %>%
-      arrange(.data$study_id, desc(.data$prob_low_prob_ur)) %>%
+      arrange(.data$study_id, desc(.data[[prob_col]])) %>%
       head(6) %>%
       .$site_number
   }
@@ -564,8 +567,8 @@ plot_study <- function(df_visit,
   # define score cut-offs + labels----------------------------------------------
 
   palette <- RColorBrewer::brewer.pal(9, "Blues")[c(3, 5, 7, 9)]
-  breaks <- c(0, 0.5, 0.75, 0.95, ifelse(max(df_eval$prob_low_prob_ur, na.rm = TRUE) > 0.95,
-                                    max(df_eval$prob_low_prob_ur, na.rm = TRUE) + 0.1,
+  breaks <- c(0, 0.5, 0.75, 0.95, ifelse(max(df_eval[[prob_col]], na.rm = TRUE) > 0.95,
+                                    max(df_eval[[prob_col]], na.rm = TRUE) + 0.1,
                                     NA)
               )
 
@@ -573,7 +576,7 @@ plot_study <- function(df_visit,
 
   df_eval <- df_eval %>%
     mutate(
-      prob_cut = cut(.data$prob_low_prob_ur, breaks = breaks, include.lowest = TRUE),
+      prob_cut = cut(.data[[prob_col]], breaks = breaks, include.lowest = TRUE),
       color_prob_cut = palette[as.numeric(.data$prob_cut)]
     )
 
@@ -617,19 +620,19 @@ plot_study <- function(df_visit,
       , by = c("study_id", "site_number")
     ) %>%
     left_join(df_alert, by = c("study_id", "site_number")) %>%
-    select(c(
+    select(any_of(c(
       "study_id",
       "site_number",
       "visit",
       "mean_ae",
       "n_pat",
       "n_pat_with_med75",
-      "prob_low_prob_ur",
+      prob_col,
       "prob_cut",
       "color_prob_cut",
       "pval_prob_ur",
       "alert_level_site"
-    )) %>%
+    ))) %>%
     mutate(
       site_number = fct_relevel(.data$site_number, sites_ordered),
       color_alert_level = case_when(
@@ -739,7 +742,7 @@ plot_study <- function(df_visit,
               x = 0.2 * max_visit,
               y = 0.9 * max_ae,
               na.rm = TRUE) +
-    geom_label(aes(label = paste(round(prob_low_prob_ur, 3) * 100, "%"),
+    geom_label(aes(label = paste(round(.data[[prob_col]], 3) * 100, "%"),
                    color = color_prob_cut),
               data = df_label,
               x = 0.8 * max_visit,

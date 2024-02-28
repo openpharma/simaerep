@@ -25,7 +25,7 @@ or lower, use in combination with get_ecd_values()."><meta property="og:image" c
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">simaerep</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.3.900</span>
       </span>
     </div>
 
@@ -72,6 +72,9 @@ or lower, use in combination with get_ecd_values()."><meta property="og:image" c
     <li>
       <a href="../articles/gsm_perf.html">Comparing {simaerep} and {gsm} Performance</a>
     </li>
+    <li>
+      <a href="../articles/over.html">Over-Reporting Probability</a>
+    </li>
   </ul></li>
 <li>
   <a href="../news/index.html">Changelog</a>
@@ -110,6 +113,7 @@ or lower, use in combination with <code><a href="get_ecd_values.html">get_ecd_va
 <span>  poisson_test <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  prob_lower <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  r_prob_lower <span class="op">=</span> <span class="fl">1000</span>,</span>
+<span>  under_only <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  parallel <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  keep_ae <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  min_n_pat_with_med75 <span class="op">=</span> <span class="fl">1</span>,</span>
@@ -144,6 +148,10 @@ Default: FALSE</p></dd>
 <dt>r_prob_lower</dt>
 <dd><p>integer, denotes number of simulations for prob_lower
 value calculation,, Default: 1000</p></dd>
+
+
+<dt>under_only</dt>
+<dd><p>compute under-reporting probabilities only, default = TRUE</p></dd>
 
 
 <dt>parallel</dt>

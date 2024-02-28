@@ -11,7 +11,8 @@ plot_study(
   study,
   df_al = NULL,
   n_sites = 16,
-  pval = FALSE
+  pval = FALSE,
+  prob_col = "prob_low_prob_ur"
 )
 }
 \arguments{
@@ -29,6 +30,8 @@ alert_level_study (optional), Default: NA}
 \item{n_sites}{integer number of most at risk sites, Default: 16}
 
 \item{pval}{logical show p-value, Default:FALSE}
+
+\item{prob_col}{character, denotes probability column, Default: "prob_low_prob_ur"}
 }
 \value{
 ggplot

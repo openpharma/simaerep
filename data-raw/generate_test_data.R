@@ -25,7 +25,7 @@ df_visit_test <- dplyr::bind_rows(df_visit1, df_visit2)
 
 df_site_test <- site_aggr(df_visit_test)
 
-df_sim_sites_test <- sim_sites(df_site_test, df_visit, r = 100)
+df_sim_sites_test <- sim_sites(df_site_test, df_visit_test, r = 100)
 
 df_eval_test <- eval_sites(df_sim_sites_test)
 
@@ -35,7 +35,7 @@ visit_test <- orivisit(df_visit_test)
 
 # portfolio performance
 
-df_site_max_test <- df_visit %>%
+df_site_max_test <- df_visit_test %>%
   group_by(study_id, site_number, patnum) %>%
   summarise(max_visit = max(visit),
             max_ae = max(n_ae),

@@ -23,7 +23,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">simaerep</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.3.900</span>
       </span>
     </div>
 
@@ -70,6 +70,9 @@
     <li>
       <a href="../articles/gsm_perf.html">Comparing {simaerep} and {gsm} Performance</a>
     </li>
+    <li>
+      <a href="../articles/over.html">Over-Reporting Probability</a>
+    </li>
   </ul></li>
 <li>
   <a href="../news/index.html">Changelog</a>
@@ -99,7 +102,13 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">prob_lower_site_ae_vs_study_ae</span><span class="op">(</span><span class="va">site_ae</span>, <span class="va">study_ae</span>, r <span class="op">=</span> <span class="fl">1000</span>, parallel <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">prob_lower_site_ae_vs_study_ae</span><span class="op">(</span></span>
+<span>  <span class="va">site_ae</span>,</span>
+<span>  <span class="va">study_ae</span>,</span>
+<span>  r <span class="op">=</span> <span class="fl">1000</span>,</span>
+<span>  parallel <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  under_only <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -118,6 +127,10 @@
 
 <dt>parallel</dt>
 <dd><p>logical, toggles parallel processing on and of, default = F</p></dd>
+
+
+<dt>under_only</dt>
+<dd><p>compute under-reporting probabilities only, default = TRUE</p></dd>
 
 </dl></div>
     <div id="value">

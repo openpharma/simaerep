@@ -23,7 +23,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">simaerep</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.3.900</span>
       </span>
     </div>
 
@@ -70,6 +70,9 @@
     <li>
       <a href="../articles/gsm_perf.html">Comparing {simaerep} and {gsm} Performance</a>
     </li>
+    <li>
+      <a href="../articles/over.html">Over-Reporting Probability</a>
+    </li>
   </ul></li>
 <li>
   <a href="../news/index.html">Changelog</a>
@@ -106,7 +109,8 @@
 <span>  param_eval_sites <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>method <span class="op">=</span> <span class="st">"BH"</span><span class="op">)</span>,</span>
 <span>  progress <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  check <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  env <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sys.parent.html" class="external-link">parent.frame</a></span><span class="op">(</span><span class="op">)</span></span>
+<span>  env <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sys.parent.html" class="external-link">parent.frame</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  under_only <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -146,6 +150,12 @@ sets. Default: TRUE</p></dd>
 <dd><p>optional, provide environment of original visit data, Default:
 parent.frame()</p></dd>
 
+
+<dt>under_only, </dt>
+<dd><p>logical compute under-reporting probabilities only,
+superseeds under_only parameter passed to <a href="eval_sites.html">eval_sites()</a> and
+<a href="sim_sites.html">sim_sites()</a>, Default: TRUE</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
@@ -163,7 +173,8 @@ facilitated plotting using generic plot(x).</p>
     <div id="see-also">
     <h2>See also</h2>
     <div class="dont-index"><p><a href="site_aggr.html">site_aggr()</a>, <a href="sim_sites.html">sim_sites()</a>,
-<a href="eval_sites.html">eval_sites()</a>, <a href="orivisit.html">orivisit()</a>, <a href="plot.simaerep.html">plot.simaerep()</a></p></div>
+<a href="eval_sites.html">eval_sites()</a>, <a href="orivisit.html">orivisit()</a>,
+<a href="plot.simaerep.html">plot.simaerep()</a></p></div>
     </div>
 
     <div id="ref-examples">
@@ -232,12 +243,14 @@ facilitated plotting using generic plot(x).</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ param_site_aggr :List of 2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ method      : chr "med75_adj"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ min_pat_pool: num 0.2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ param_sim_sites :List of 3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ param_sim_sites :List of 4</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ r           : num 1000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ poisson_test: logi FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ prob_lower  : logi TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ param_eval_sites:List of 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ method: chr "BH"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ under_only  : logi TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ param_eval_sites:List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ method    : chr "BH"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ under_only: logi TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - attr(*, "class")= chr "simaerep"</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>

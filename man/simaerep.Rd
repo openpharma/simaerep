@@ -7,12 +7,12 @@
 simaerep(
   df_visit,
   param_site_aggr = list(method = "med75_adj", min_pat_pool = 0.2),
-  param_sim_sites = list(r = 1000, poisson_test = FALSE, prob_lower = TRUE, under_only
-    = TRUE),
+  param_sim_sites = list(r = 1000, poisson_test = FALSE, prob_lower = TRUE),
   param_eval_sites = list(method = "BH"),
   progress = TRUE,
   check = TRUE,
-  env = parent.frame()
+  env = parent.frame(),
+  under_only = TRUE
 )
 }
 \arguments{
@@ -37,7 +37,9 @@ sets. Default: TRUE}
 \item{env}{optional, provide environment of original visit data, Default:
 parent.frame()}
 
-\item{under_only}{compute under-reporting probabilities only, default = TRUE}
+\item{under_only, }{logical compute under-reporting probabilities only,
+superseeds under_only parameter passed to \link[=eval_sites]{eval_sites()} and
+\link[=sim_sites]{sim_sites()}, Default: TRUE}
 }
 \value{
 simaerep object
@@ -71,5 +73,6 @@ str(aerep)
 }
 \seealso{
 \link[=site_aggr]{site_aggr()}, \link[=sim_sites]{sim_sites()},
-\link[=eval_sites]{eval_sites()}, \link[=orivisit]{orivisit()}, \link[=plot.simaerep]{plot.simaerep()}
+\link[=eval_sites]{eval_sites()}, \link[=orivisit]{orivisit()},
+\link[=plot.simaerep]{plot.simaerep()}
 }
