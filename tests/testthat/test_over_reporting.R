@@ -43,3 +43,23 @@ test_that("simaerep() - under_only = FALSE return over-reporting statistics", {
   ))
 
 })
+
+test_that(paste("simaerep() - under_only = FALSE - over-reporting must be zero when",
+                "mean_ae_site_med75 == mean_ae_study_med75"), {
+
+  df_visit <- sim_test_data_study(
+    ae_per_visit_mean = 0
+  ) %>%
+  mutate(study_id = "A")
+
+  aerep <- simaerep(df_visit, under_only = FALSE)
+
+  zeros <- aerep$df_eval %>%
+    filter(mean_ae_study_med75 == mean_ae_site_med75) %>%
+    summarise(across(c(prob_low_prob_ur, prob_high_prob_or), sum)) %>%
+    summarise(across(c(prob_low_prob_ur, prob_high_prob_or), ~ . == 0)) %>%
+    unlist()
+
+  expect_true(all(zeros))
+
+})
