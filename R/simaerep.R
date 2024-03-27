@@ -411,7 +411,14 @@ eval_sites <- function(df_sim_sites,
 
     if (! under_only) {
       df_out <- df_out %>%
-        mutate(prob_high = 1 - .data$prob_low) %>%
+        mutate(
+          prob_high = 1 - .data$prob_low,
+          prob_high = ifelse(
+            .data$mean_ae_site_med75 == .data$mean_ae_study_med75,
+            1,
+            .data$prob_high
+          )
+        ) %>%
         arrange(.data$study_id, .data$prob_high) %>%
         mutate(
           prob_high_adj = p.adjust(.data$prob_high, method = method),

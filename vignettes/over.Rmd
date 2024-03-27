@@ -76,7 +76,7 @@ setdiff(colnames(aerep_ovr$df_eval), colnames(aerep_def$df_eval))
 
 # Analyze
 
-## Probability getting a lower or equal AE count
+## Probability getting a lower AE count
 
 
 ```{r}
@@ -107,11 +107,10 @@ ggExtra::ggMarginal(p, groupColour = TRUE, type = "density")
 
 We can see that we have a gap for the default setting in the generated probabilities. The values filling the gap can be interpreted as the probability of having a `higher` site average than originally observed.
 
-We need to be aware that values in the simulation `equal` to the site mean will count towards the under-reporting probability. This can potentially lead to artifacts with low AE counts.
 
 ## Over-Reporting
 
-We can add the over-reporting probability as (1- under-reporting probability)
+We can add the over-reporting probability as (1- under-reporting probability), for cases when mean_ae_site_med75 is equal to mean_ae_study_med75 over-reporting probability will always be zero.
 
 ```{r}
 
