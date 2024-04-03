@@ -142,6 +142,7 @@ simaerep <- function(df_visit,
         df_visit = df_visit
       ),
       check = FALSE,
+      progress = progress,
       param_sim_sites
     )
   )
