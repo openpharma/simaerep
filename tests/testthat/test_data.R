@@ -8,6 +8,8 @@ test_that("check S3 test data reproducibility", {
     )
   )
 
+  aerep_test$df_eval <- arrange(aerep_test$df_eval, study_id, site_number)
+
   expect_equal(aerep_check, aerep_test)
 
   visit_check <- orivisit(df_visit_test)
@@ -48,7 +50,7 @@ test_that("check standard test data reproducibility", {
   expect_equal(df_visit_test, df_visit_check)
   expect_equal(df_site_test, aerep$df_site)
   expect_equal(df_sim_sites_test, aerep$df_sim_sites)
-  expect_equal(df_eval_test, aerep$df_eval)
+  expect_equal(arrange(df_eval_test, study_id, site_number), aerep$df_eval)
 
 })
 

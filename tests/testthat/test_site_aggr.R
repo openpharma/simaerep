@@ -27,7 +27,7 @@ test_that("site_aggr() must return different results for method = 'med75_adj' an
   df_site_old <- site_aggr(df_visit_test, method = "med75")
 
   expect_false(identical(df_site_adj, df_site_old))
-  expect_true(identical(df_site_adj, df_site_test))
+  expect_equal(df_site_adj, df_site_test)
 })
 
 

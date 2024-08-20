@@ -43,6 +43,7 @@ furrr
 ggplot
 grey
 gsm
+hochberg
 infer’
 iterable
 iterables
@@ -68,6 +69,7 @@ rpois
 sd
 siamerep
 superseeds
+tbl
 thevalidatoR
 tibble
 tp

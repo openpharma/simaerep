@@ -1,0 +1,69 @@
+---
+title: "Comparing {simaerep} and {gsm} Performance"
+output:
+  html_document:
+    toc: true
+    toc_depth: 3
+    toc_float: true
+    number_sections: true
+    code_folding: show
+    collapse: false
+editor_options:
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, cache = FALSE, message = FALSE)
+```
+
+# Load
+```{r load}
+suppressPackageStartupMessages(library(dplyr))
+suppressPackageStartupMessages(library(tibble))
+suppressPackageStartupMessages(library(simaerep))
+```
+
+# Performance
+
+```{r}
+df_visit <- sim_test_data_study(
+  n_pat = 1000, # number of patients in study
+  n_sites = 100, # number of sites in study
+  frac_site_with_ur = 0.05, # fraction of sites under-reporting
+  ur_rate = 0.4, # rate of under-reporting
+  ae_per_visit_mean = 0.5 # mean AE per patient visit
+)
+
+df_visit$study_id <- "A"
+
+system.time(aerep <- simaerep(df_visit, under_only = FALSE, param_sim_sites = list(r = 1000, poisson_test = FALSE)))
+
+aerep$df_eval
+
+system.time(df_eval <- simaerep_inframe(df_visit, r = 1000, under_only = FALSE, method_visit_med75 = "med75_adj"))
+
+df_eval
+
+system.time(df_eval <- simaerep_inframe(df_visit, r = 1000, under_only = FALSE, method_visit_med75 = NULL))
+
+df_eval
+```
+
+# DB
+
+```{r}
+con <- DBI::dbConnect(duckdb::duckdb(), dbdir = ":memory:")
+df_r <- tibble(rep = seq(1, 1000))
+
+dplyr::copy_to(con, df_visit, "visit")
+dplyr::copy_to(con, df_r, "r")
+
+tbl_visit <- tbl(con, "visit")
+tbl_r <- tbl(con, "r")
+
+system.time(simaerep_inframe(tbl_visit, df_r = tbl_r))
+
+system.time(simaerep_inframe(tbl_visit, df_r = tbl_r, method_visit_med75 = "med75_adj"))
+```
+
+
