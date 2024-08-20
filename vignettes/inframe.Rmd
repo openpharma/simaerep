@@ -23,7 +23,7 @@ suppressPackageStartupMessages(library(tibble))
 suppressPackageStartupMessages(library(simaerep))
 ```
 
-# Performance
+# Performance (Time)
 
 ```{r}
 df_visit <- sim_test_data_study(
@@ -64,6 +64,93 @@ tbl_r <- tbl(con, "r")
 system.time(simaerep_inframe(tbl_visit, df_r = tbl_r))
 
 system.time(simaerep_inframe(tbl_visit, df_r = tbl_r, method_visit_med75 = "med75_adj"))
+```
+
+# Performance (Statistical)
+
+```{r}
+suppressPackageStartupMessages(library(furrr))
+suppressPackageStartupMessages(library(future))
+
+plan(multisession, workers = 6)
+```
+
+
+## Load Portfolio
+
+```{r}
+df_config <- readr::read_csv("ae_conf_20240220.csv")
+df_ae_rates <- readr::read_csv("ae_rates_20240220.csv")
+
+df_portf_flex <- sim_test_data_portfolio(df_config, df_ae_rates = df_ae_rates, parallel = TRUE, progress = TRUE)
+```
+
+## Functions
+
+### inframe
+
+```{r}
+perf_inframe <- function(df_visit, study_id, site_number, ur_rate) {
+  df_visit %>%
+    sim_ur(study_id, site_number, ur_rate) %>%
+    simaerep_inframe(under_only = TRUE) %>%
+    filter(.data$site_number == .env$site_number) %>%
+    pull(prob_low_prob_ur)
+}
+
+perf_inframe(df_portf_flex, study_id = "0001", site_number = "4746", ur_rate = 0.5)
+perf_inframe(df_portf_flex, study_id = "0001", site_number = "4746", ur_rate = 0.75)
+perf_inframe(df_portf_flex, study_id = "0001", site_number = "4746", ur_rate = 1)
+```
+
+### visitmed75
+
+```{r}
+perf_visitmed75 <- function(df_visit, study_id, site_number, ur_rate) {
+  df_visit %>%
+    sim_ur(study_id, site_number, ur_rate) %>%
+    simaerep(under_only = TRUE, progress = FALSE) %>%
+    .$df_eval %>%
+    filter(.data$site_number == .env$site_number) %>%
+    pull(prob_low_prob_ur)
+}
+
+perf_visitmed75(df_portf_flex, study_id = "0001", site_number = "4746", ur_rate = 0.5)
+perf_visitmed75(df_portf_flex, study_id = "0001", site_number = "4746", ur_rate = 0.75)
+perf_visitmed75(df_portf_flex, study_id = "0001", site_number = "4746", ur_rate = 1)
+```
+
+## Grid
+
+```{r}
+df_grid <- df_portf_flex %>%
+  distinct(study_id, site_number) %>%
+  mutate(ur_rate = list(c(0, 0.1, 0.25, 0.5, 0.75, 1))) %>%
+  unnest(ur_rate)
+
+df_grid
+```
+
+## Apply
+
+### inframe
+
+```{r}
+system.time(
+with_progress_cnd(
+  df_perf_inframe <- df_grid %>%
+    head(1000) %>%
+    mutate(
+      prob_low_prob_ur_inframe = purrr_bar(
+        list(study_id, site_number, ur_rate),
+        .purrr = furrr::future_pmap_dbl,
+        .f = function(x, y, z) perf_inframe(df_portf_flex, x, y, z),
+        .purrr_args = list(.options = furrr_options(seed = TRUE)),
+        .steps = nrow(.)
+      )
+    )
+)
+)
 ```
 
 

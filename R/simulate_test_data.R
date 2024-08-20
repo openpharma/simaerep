@@ -862,3 +862,45 @@ get_portf_perf <- function(df_scen, stat = "prob_low_prob_ur", fpr = c(0.001, 0.
   bind_rows(df_prep_0, df_prep_gr0) %>%
     arrange(.data$fpr, .data$ur_rate)
 }
+#' simulate under-reporting
+#'@param df_visit, dataframe
+#'@param study_id, character
+#'@param site_number, character
+#'@param ur_rate, double
+#'@description we remove a fraction of AEs from a specific site
+#'@details we determine the absolute number of AEs per patient to remove.
+#'Then them remove them at the first visit.
+#'We intentionally allow fractions
+#'@export
+sim_ur <- function(df_visit, study_id, site_number, ur_rate) {
+  df_visit_study <- df_visit %>%
+    filter(study_id == .env$study_id, site_number != .env$site_number)
+
+  df_visit_site <- df_visit %>%
+    filter(study_id == .env$study_id, site_number == .env$site_number)
+
+  # determine total AE per patient
+  # convert cumulative counts to single increments
+  # first value needs to be AE start value
+  # from start value substract ae count * ur_rate
+  # convert back to cumulative count
+  df_visit_site_rem <- df_visit_site %>%
+    mutate(
+      n_ae_pat = max(ifelse(visit == max(visit), n_ae, 0)),
+      n_ae_rem = .data$n_ae - lag(.data$n_ae),
+      n_ae_rem = ifelse(
+        .data$visit == 1,
+        .data$n_ae - (.data$n_ae_pat * .env$ur_rate),
+        .data$n_ae_rem),
+      n_ae = cumsum(n_ae_rem),
+      .by = "patnum"
+    ) %>%
+    mutate(
+      n_ae = ifelse(n_ae < 0, 0, n_ae)
+    ) %>%
+    select(- "n_ae_rem", - "n_ae_pat")
+
+  bind_rows(df_visit_study, df_visit_site_rem)
+
+}
+
