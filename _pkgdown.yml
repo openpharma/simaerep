@@ -50,7 +50,9 @@ reference:
   contents:
   - site_aggr
   - sim_sites
+  - sim_inframe
   - eval_sites
+  - prune_to_visit_med75_inframe
   - plot_study
   - check_df_visit
 - title: Simulate Data
@@ -64,6 +66,7 @@ reference:
   contents:
   - sim_studies
   - sim_ur_scenarios
+  - sim_ur
   - get_portf_perf
 - title: Helper Functions
   desc: These functions are intended to be called by other functions.
@@ -87,6 +90,7 @@ reference:
   - orivisit
   - is_simaerep
   - is_orivisit
+  - max_rank
 - title: Deprecated
   contents:
   - eval_sites_deprecated

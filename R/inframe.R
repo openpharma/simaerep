@@ -1,80 +1,63 @@
-#' simulate in dataframe
-#' @inheritParams simaerep
-#' @param df_r table with one column containing sequence of repetitions, provide
-#' for in database mode
-#' @keywords internal
-#' @export
-#' @examples
+
+
+
+#' prune visits to visit_med75 using table operations
+#'@export
+#'@inheritParams simaerep
+#'@param df_site dataframe, as returned by [site_aggr()]
+#'@examples
 #' df_visit <- sim_test_data_study(
-#'  n_pat = 100,
-#'  n_sites = 5,
-#'  frac_site_with_ur = 0.4,
-#'  ur_rate = 0.6
+#'   n_pat = 100,
+#'   n_sites = 5,
+#'   frac_site_with_ur = 0.4,
+#'   ur_rate = 0.6
 #' )
 #' df_visit$study_id <- "A"
 #'
-#' simaerep_inframe(df_visit)
-#' simaerep_inframe(df_visit, method_visit_med75 = "med75_adj")
-#'\donttest{
-#'# Database
-#'con <- DBI::dbConnect(duckdb::duckdb(), dbdir = ":memory:")
-#'df_r <- tibble::tibble(rep = seq(1, 1000))
-#'
-#'dplyr::copy_to(con, df_visit, "visit")
-#'dplyr::copy_to(con, df_r, "r")
-#'
-#'tbl_visit <- dplyr::tbl(con, "visit")
-#'tbl_r <- dplyr::tbl(con, "r")
-#'
-#'simaerep_inframe(tbl_visit, df_r = tbl_r)
-#'simaerep_inframe(tbl_visit, df_r = tbl_r, method_visit_med75 = "med75_adj")
-#'
-#'DBI::dbDisconnect(con)
-#'}
-simaerep_inframe <- function(df_visit, r = 1000, df_r = NULL, under_only = FALSE, method_visit_med75 = NULL) {
+#' df_site <- site_aggr(df_visit)
+#' df_visit_prune <- prune_to_visit_med75_inframe(df_visit, df_site)
+#' df_sim <- sim_inframe(df_visit_prune)
+#' df_eval <- eval_sites(df_sim)
+#' df_eval
+prune_to_visit_med75_inframe <- function(df_visit, df_site) {
+  df_pat_aggr <- pat_aggr(df_visit)
 
-  if (! is.null(method_visit_med75)) {
-    df_pat_aggr <- pat_aggr(df_visit)
-    df_visit_med75 <- get_visit_med75(df_pat_aggr, method = method_visit_med75)
+  # drop patients that did not reach visit_med75
+  df_pat <- df_pat_aggr %>%
+    left_join(
+      df_site,
+      by = c("study_id", "site_number")
+    ) %>%
+    filter(.data$max_visit_per_pat >= .data$visit_med75) %>%
+    select(c("study_id", "site_number", "patnum", "visit_med75"))
 
-    df_visit <- df_visit %>%
-      left_join(
-        df_pat_aggr,
-        by = c("study_id", "site_number", "patnum")
-      ) %>%
-      inner_join(
-        df_visit_med75 %>%
-          select(c("study_id", "site_number", "visit_med75")),
-        by = join_by(
-          "study_id",
-          "site_number",
-          "max_visit_per_pat" >= "visit_med75"
-        )
-      ) %>%
-      filter(.data$visit <= .data$visit_med75) %>%
-      select(- c("max_visit_per_pat", "visit_med75"))
-  }
-
-  df_sim <- sim_inframe(df_visit, r = r, df_r = df_r)
-
-  # evaluate
-  df_eval <- eval_sites(df_sim, under_only = under_only)
-
-  if (! is.null(method_visit_med75)) {
-    df_eval <- df_eval %>%
-      left_join(
-        df_visit_med75,
-        by = c("study_id", "site_number")
-      )
-  }
-
-  return(df_eval)
-
+  # filter patients and drop excess visits
+  df_visit <- df_visit %>%
+    inner_join(
+      df_pat,
+      by = c("study_id", "site_number", "patnum")
+    ) %>%
+    filter(.data$visit <= .data$visit_med75) %>%
+    select(- c("visit_med75"))
 }
 
 
-#'@keywords internal
-sim_inframe <- function(df_visit, r = 1000, df_r = NULL) {
+#' Calculate prob_lower for study sites using table operations
+#'@export
+#'@inheritParams simaerep
+#'@examples
+#' df_visit <- sim_test_data_study(
+#'   n_pat = 100,
+#'   n_sites = 5,
+#'   frac_site_with_ur = 0.4,
+#'   ur_rate = 0.6
+#' )
+#' df_visit$study_id <- "A"
+#'
+#' df_sim <- sim_inframe(df_visit)
+#' df_eval <- eval_sites(df_sim)
+#' df_eval
+sim_inframe <- function(df_visit, r = 1000) {
 
   # db back-end, to not form ratios from integers
   df_visit <- df_visit %>%
@@ -83,14 +66,14 @@ sim_inframe <- function(df_visit, r = 1000, df_r = NULL) {
       visit = as.double(.data$visit)
     )
 
-  if (is.null(df_r)) {
+  if (! inherits(r, "tbl")) {
     df_r <- tibble(rep = seq(1, r))
   } else {
-    df_r <- df_r %>%
+    df_r <- r %>%
       rename(rep = 1)
   }
 
-  # aggregate per pattient to get max visit per patient
+  # aggregate per patient to get max visits
   df_pat_aggr <- pat_aggr(df_visit)
 
   # for every max visit in the data add all eligible patients
@@ -121,7 +104,8 @@ sim_inframe <- function(df_visit, r = 1000, df_r = NULL) {
     cross_join(df_r) %>%
     left_join(
       df_pat_aggr,
-      by = c("study_id", "site_number")
+      by = c("study_id", "site_number"),
+      relationship = "many-to-many"
     ) %>%
   # add number of eligible patients from pool
     left_join(
@@ -133,7 +117,8 @@ sim_inframe <- function(df_visit, r = 1000, df_r = NULL) {
       # we generate a random number between 1 and the maximum number
       # of eligible patients
       rnd = runif(n()),
-      rnd_rwn = round(.data$rnd * .data$max_rwn, 0)
+      # transform to values between 1 and max number of patients
+      rnd_rwn = floor(.data$rnd * .data$max_rwn) + 1
     )
 
   df_sim <- df_sim_prep %>%
@@ -154,49 +139,47 @@ sim_inframe <- function(df_visit, r = 1000, df_r = NULL) {
     ) %>%
     # calculate site level event rates for every repetition
     summarise(
-      events_per_visit_site = sum(.data$n_ae, na.rm = TRUE) / sum(.data$visit, na.rm = TRUE),
+      events_per_visit_site_rep = sum(.data$n_ae, na.rm = TRUE) / sum(.data$visit, na.rm = TRUE),
       .by = c("study_id", "rep", "site_number")
-    ) %>%
-    mutate(
-      type = "sim",
-      events = NA,
-      visits = NA,
-      n_pat = NA
-    ) %>%
-    select(c("study_id", "rep", "site_number", "events", "visits", "n_pat", "events_per_visit_site", "type")) %>%
-    # add original site event rates
-    union_all(
-      df_visit %>%
-        filter(visit == max(.data$visit, na.rm = TRUE), .by = "patnum") %>%
-        summarise(
-          events = sum(.data$n_ae),
-          visits = sum(.data$visit),
-          n_pat = n_distinct(.data$patnum),
-          events_per_visit_site = sum(.data$n_ae, na.rm = TRUE) / sum(.data$visit, na.rm = TRUE),
-          .by = c("study_id", "site_number")
-        ) %>%
-        mutate(
-          rep = 0,
-          type  = "ori"
-        ) %>%
-        select(c("study_id", "rep", "site_number", "events", "visits", "n_pat", "events_per_visit_site", "type"))
-    ) %>%
-    # calculate probabilities for all event rates simulated and original using cumulative distribution
-    mutate(
-      prob_low = cume_dist(.data$events_per_visit_site)
-    ) %>%
-    # add study event rate based on simulations with patients that have same site patient config
-    mutate(
-      events_per_visit_study = mean(.data$events_per_visit_site, na.rm = TRUE),
-      .by = c("study_id", "site_number")
-    ) %>%
-    # discard simulations
-    filter(.data$type == "ori") %>%
-    select(c("study_id", "site_number", "events", "visits", "events_per_visit_site", "events_per_visit_study", "prob_low"))
+    )
 
-  return(df_calc)
+  # get original site event stats
+  df_calc_ori <- df_visit %>%
+    filter(visit == max(.data$visit, na.rm = TRUE), .by = c("patnum", "study_id")) %>%
+    summarise(
+      events = sum(.data$n_ae),
+      visits = sum(.data$visit),
+      n_pat = n_distinct(.data$patnum),
+      events_per_visit_site_ori = sum(.data$n_ae, na.rm = TRUE) / sum(.data$visit, na.rm = TRUE),
+      .by = c("study_id", "site_number")
+    )
+
+  # join original with simulations
+  df_calc_aggr <- df_calc %>%
+    left_join(
+      df_calc_ori,
+      by = c("study_id", "site_number")
+    ) %>%
+    summarise(
+      # calculate probability by comparing original stats with simulated stats
+      # how many times simulated value below original value
+      prob_low = sum(
+        ifelse(
+          .data$events_per_visit_site_rep <= .data$events_per_visit_site_ori,
+          1, 0
+          ),
+        na.rm = TRUE
+      ) / n(),
+      events_per_visit_study = mean(.data$events_per_visit_site_rep, na.rm = TRUE),
+      .by = c("study_id", "site_number", "events_per_visit_site_ori", "events",
+              "visits", "n_pat")
+    ) %>%
+    rename(events_per_visit_site = "events_per_visit_site_ori")
+
+  return(df_calc_aggr)
 }
 
+#' benjamini hochberg p value correction using table operations
 #'@keywords internal
 p_adjust_bh_inframe <- function(df_eval, col, suffix) {
 

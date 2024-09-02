@@ -1,5 +1,5 @@
 ---
-title: "Comparing {simaerep} and {gsm} Performance"
+title: "Inframe Simulation Using Table Operations"
 output:
   html_document:
     toc: true
@@ -20,6 +20,7 @@ knitr::opts_chunk$set(echo = TRUE, cache = FALSE, message = FALSE)
 ```{r load}
 suppressPackageStartupMessages(library(dplyr))
 suppressPackageStartupMessages(library(tibble))
+suppressPackageStartupMessages(library(tidyr))
 suppressPackageStartupMessages(library(simaerep))
 ```
 
@@ -36,17 +37,20 @@ df_visit <- sim_test_data_study(
 
 df_visit$study_id <- "A"
 
-system.time(aerep <- simaerep(df_visit, under_only = FALSE, param_sim_sites = list(r = 1000, poisson_test = FALSE)))
+# original settings visit_med75 always in memory, no over-reporting
+system.time({simaerep(df_visit, inframe = FALSE, visit_med75 = TRUE, under_only = TRUE, progress = FALSE)})
 
-aerep$df_eval
+# inframe with and without visit_med75
+system.time({simaerep(df_visit, inframe = TRUE, visit_med75 = FALSE, under_only = TRUE)})
+system.time({simaerep(df_visit, inframe = TRUE, visit_med75 = TRUE, under_only = TRUE)})
 
-system.time(df_eval <- simaerep_inframe(df_visit, r = 1000, under_only = FALSE, method_visit_med75 = "med75_adj"))
+# original settings visit_med75 in memory, with over-reporting
+system.time({simaerep(df_visit, inframe = FALSE, visit_med75 = TRUE, under_only = FALSE, progress = FALSE)})
 
-df_eval
+# inframe with and without visit_med75 with over-reporting
+system.time({simaerep(df_visit, inframe = TRUE, visit_med75 = FALSE, under_only = FALSE)})
+system.time({simaerep(df_visit, inframe = TRUE, visit_med75 = TRUE, under_only = FALSE)})
 
-system.time(df_eval <- simaerep_inframe(df_visit, r = 1000, under_only = FALSE, method_visit_med75 = NULL))
-
-df_eval
 ```
 
 # DB
@@ -61,9 +65,9 @@ dplyr::copy_to(con, df_r, "r")
 tbl_visit <- tbl(con, "visit")
 tbl_r <- tbl(con, "r")
 
-system.time(simaerep_inframe(tbl_visit, df_r = tbl_r))
+system.time(simaerep(tbl_visit, r = tbl_r, check = TRUE))
+system.time(simaerep(tbl_visit, r = tbl_r, check = FALSE))
 
-system.time(simaerep_inframe(tbl_visit, df_r = tbl_r, method_visit_med75 = "med75_adj"))
 ```
 
 # Performance (Statistical)
@@ -87,44 +91,49 @@ df_portf_flex <- sim_test_data_portfolio(df_config, df_ae_rates = df_ae_rates, p
 
 ## Functions
 
-### inframe
 
 ```{r}
-perf_inframe <- function(df_visit, study_id, site_number, ur_rate) {
-  df_visit %>%
-    sim_ur(study_id, site_number, ur_rate) %>%
-    simaerep_inframe(under_only = TRUE) %>%
-    filter(.data$site_number == .env$site_number) %>%
-    pull(prob_low_prob_ur)
-}
-
-perf_inframe(df_portf_flex, study_id = "0001", site_number = "4746", ur_rate = 0.5)
-perf_inframe(df_portf_flex, study_id = "0001", site_number = "4746", ur_rate = 0.75)
-perf_inframe(df_portf_flex, study_id = "0001", site_number = "4746", ur_rate = 1)
-```
-
-### visitmed75
-
-```{r}
-perf_visitmed75 <- function(df_visit, study_id, site_number, ur_rate) {
-  df_visit %>%
-    sim_ur(study_id, site_number, ur_rate) %>%
+perf <- function(df_visit, study_id, site_number, ur_rate) {
+  df_vs_study <- df_visit %>%
+    sim_ur(study_id, site_number, ur_rate)
+  
+  prob_low_prob_ur_visit_med75 <- df_vs_study %>%
     simaerep(under_only = TRUE, progress = FALSE) %>%
     .$df_eval %>%
     filter(.data$site_number == .env$site_number) %>%
     pull(prob_low_prob_ur)
+  
+  prob_low_prob_ur_inframe <- df_vs_study %>%
+    simaerep_inframe(under_only = TRUE) %>%
+    filter(.data$site_number == .env$site_number) %>%
+    pull(prob_low_prob_ur)
+  
+  prob_low_prob_ur_inframe_visit_med75 <- df_vs_study %>%
+    simaerep_inframe(under_only = TRUE, method_visit_med75 = "med75_adj") %>%
+    filter(.data$site_number == .env$site_number) %>%
+    pull(prob_low_prob_ur)
+
+  tibble(
+    visit_med75 = prob_low_prob_ur_visit_med75,
+    inframe = prob_low_prob_ur_inframe,
+    inframe_visit_med75 = prob_low_prob_ur_inframe_visit_med75
+  )
 }
 
-perf_visitmed75(df_portf_flex, study_id = "0001", site_number = "4746", ur_rate = 0.5)
-perf_visitmed75(df_portf_flex, study_id = "0001", site_number = "4746", ur_rate = 0.75)
-perf_visitmed75(df_portf_flex, study_id = "0001", site_number = "4746", ur_rate = 1)
+#perf(df_portf_flex, study_id = "0010", site_number = "15148", ur_rate = 1)
+#perf(df_portf_flex, study_id = "0001", site_number = "4746", ur_rate = 0.75)
+perf(df_portf_flex, study_id = "0010", site_number = "15148", ur_rate = 1)
+
 ```
+
 
 ## Grid
 
 ```{r}
 df_grid <- df_portf_flex %>%
   distinct(study_id, site_number) %>%
+  # to reduce calculation time we only take every xth study
+  filter(dense_rank(study_id)%%50 == 0) %>%
   mutate(ur_rate = list(c(0, 0.1, 0.25, 0.5, 0.75, 1))) %>%
   unnest(ur_rate)
 
@@ -135,22 +144,40 @@ df_grid
 
 ### inframe
 
-```{r}
-system.time(
+```{r eval = FALSE}
 with_progress_cnd(
-  df_perf_inframe <- df_grid %>%
-    head(1000) %>%
+  df_perf <- df_grid %>%
     mutate(
-      prob_low_prob_ur_inframe = purrr_bar(
+      perf = purrr_bar(
         list(study_id, site_number, ur_rate),
-        .purrr = furrr::future_pmap_dbl,
-        .f = function(x, y, z) perf_inframe(df_portf_flex, x, y, z),
+        .purrr = furrr::future_pmap,
+        .f = function(x, y, z) list(perf(df_portf_flex, x, y, z)),
         .purrr_args = list(.options = furrr_options(seed = TRUE)),
         .steps = nrow(.)
       )
     )
 )
-)
+
+df_perf %>%
+  unnest(perf) %>%
+  unnest(perf) %>%
+  readr::write_csv("inframe.csv")
 ```
 
+```{r}
+df_perf <- readr::read_csv("inframe.csv")
+```
+
+# Evaluation
+
+```{r}
+df_perf %>%
+  pivot_longer(c(visit_med75, inframe, inframe_visit_med75)) %>%
+  summarise(
+    n_ur = sum(value >= 0.95),
+    n_sites = n_distinct(site_number),
+    mean_ur_rate = mean(value),
+    .by = c(ur_rate, name)
+  )
+```
 

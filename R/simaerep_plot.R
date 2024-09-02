@@ -446,11 +446,22 @@ plot_study <- function(df_visit,
 
   # TODO: parametrize scores, fix legend
 
-  df_visit <- check_df_visit(df_visit)
-
   stopifnot(study %in% unique(df_visit$study_id))
   stopifnot(study %in% unique(df_site$study_id))
   stopifnot(study %in% unique(df_eval$study_id))
+
+  # filter studies -----------------------------------------------------------
+
+  df_visit <- df_visit %>%
+    filter(.data$study_id %in% study)
+
+  df_visit <- check_df_visit(df_visit)
+
+  df_site <- df_site %>%
+    filter(.data$study_id %in% study)
+
+  df_eval <- df_eval %>%
+    filter(.data$study_id %in% study)
 
   # alert level -------------------------------------------------------------
 
@@ -466,6 +477,7 @@ plot_study <- function(df_visit,
                        "alert_level_site",
                        "alert_level_study")))
   }
+
 
   # fill in pvalues when missing --------------------------------------------
 
@@ -485,16 +497,22 @@ plot_study <- function(df_visit,
   df_site <- df_site %>%
     mutate_at(vars(c("study_id", "site_number")), as.character)
 
-  # filter studies -----------------------------------------------------------
 
-  df_visit <- df_visit %>%
-    filter(.data$study_id %in% study)
+  # adjust to visit_med75 or alternative ---------------------------------------
 
-  df_site <- df_site %>%
-    filter(.data$study_id %in% study)
+  if(all(c("events_per_visit_study", "events_per_visit_site") %in% colnames(df_eval))) {
+    col_mean_site <- "events_per_visit_site"
+    col_mean_study <- "events_per_visit_study"
+  } else {
+    col_mean_site <- "mean_ae_site_med75"
+    col_mean_study <- "mean_ae_study_med75"
+  }
 
-  df_eval <- df_eval %>%
-    filter(.data$study_id %in% study)
+  if ("visit_med75" %in% colnames(df_site)) {
+    col_visit <- "visit_med75"
+  } else {
+    col_visit <- "max_visit"
+  }
 
   # ordered sites -------------------------------------------------------------
 
@@ -504,13 +522,13 @@ plot_study <- function(df_visit,
 
   if (n_site_ur_gr_0p5 > 0) {
     sites_ordered <- df_eval %>%
-      arrange(.data$study_id, desc(.data[[prob_col]]), .data$mean_ae_site_med75) %>%
+      arrange(.data$study_id, desc(.data[[prob_col]]), .data[[col_mean_site]]) %>%
       filter(.data[[prob_col]] > 0.5) %>%
       head(n_sites) %>%
       .$site_number
   } else {
     sites_ordered <- df_eval %>%
-      arrange(.data$study_id, desc(.data[[prob_col]]), .data$mean_ae_site_med75) %>%
+      arrange(.data$study_id, desc(.data[[prob_col]]), .data[[col_mean_site]]) %>%
       head(6) %>%
       .$site_number
   }
@@ -522,10 +540,10 @@ plot_study <- function(df_visit,
     mutate(max_visit_per_pat = max(.data$visit)) %>%
     ungroup() %>%
     left_join(df_site, by = c("study_id", "site_number")) %>%
-    filter(.data$visit <= .data$visit_med75, .data$max_visit_per_pat >= .data$visit_med75) %>%
+    filter(.data$visit <= .data[[col_visit]], .data$max_visit_per_pat >= .data[[col_visit]]) %>%
     group_by(.data$study_id,
              .data$site_number,
-             .data$visit_med75,
+             .data[[col_visit]],
              .data$n_pat,
              .data$visit,
              .data$alert_level_site) %>%
@@ -533,17 +551,21 @@ plot_study <- function(df_visit,
     ungroup()
 
   df_mean_ae_dev_study <- df_visit %>%
+    left_join(
+      df_site,
+      by = c("study_id", "site_number")
+    ) %>%
     group_by(.data$study_id,
              .data$site_number,
              .data$patnum) %>%
     mutate(max_visit_per_pat = max(.data$visit)) %>%
     group_by(.data$study_id) %>%
     mutate(
-      visit_med75 = ceiling(median(.data$max_visit_per_pat) * 0.75),
+      visit_max = median(.data[[col_visit]]),
       n_pat = n_distinct(.data$patnum)
     ) %>%
     ungroup() %>%
-    filter(.data$visit <= .data$visit_med75, .data$max_visit_per_pat >= .data$visit_med75) %>%
+    filter(.data$visit <= .data$visit_max, .data$max_visit_per_pat >= .data$visit_max) %>%
     group_by(.data$study_id) %>%
     mutate(n_pat_with_med75 = n_distinct(.data$patnum)) %>%
     group_by(.data$study_id,
@@ -581,8 +603,11 @@ plot_study <- function(df_visit,
     )
 
   df_mean_ae_dev_site <- df_mean_ae_dev_site %>%
-    select(- "visit_med75") %>%
-    left_join(df_eval, by = c("study_id", "site_number"))
+    left_join(
+      df_eval %>%
+        select(- any_of(col_visit)),
+      by = c("study_id", "site_number")
+    )
 
   # we have to split site ae dev up because alert sites get plotted
   # over if there are many sites
@@ -600,8 +625,12 @@ plot_study <- function(df_visit,
            "alert_level_study")) %>%
     distinct()
 
+  if (! "n_pat_with_med75" %in% colnames(df_site)) {
+    df_site$n_pat_with_med75 <- df_site$n_pat
+  }
+
   df_label <- df_mean_ae_dev_site %>%
-    filter(.data$visit == .data$visit_med75, .data$site_number %in% sites_ordered) %>%
+    filter(.data$visit == .data[[col_visit]], .data$site_number %in% sites_ordered) %>%
     select(c("study_id",
            "site_number",
            "visit",
@@ -614,9 +643,9 @@ plot_study <- function(df_visit,
            "n_pat",
            "n_pat_with_med75")) %>%
     left_join(
-      select(df_eval, - c(
+      select(df_eval, - any_of(c(
               "n_pat",
-              "n_pat_with_med75"))
+              "n_pat_with_med75")))
       , by = c("study_id", "site_number")
     ) %>%
     left_join(df_alert, by = c("study_id", "site_number")) %>%
@@ -679,12 +708,6 @@ plot_study <- function(df_visit,
     geom_point(
       data = df_label,
       color = "grey"
-    ) +
-    annotate("text",
-      x = 0.2 * max_visit_study,
-      y = 0.9 * max_ae_study,
-      label = paste0(n_pat_with_med75, "/", n_pat),
-      na.rm = TRUE
     ) +
     annotate("label",
       x = 0.5 * max_visit_study,
@@ -869,6 +892,9 @@ plot_visit_med75 <- function(df_visit,
     ungroup()
 
   df_label <- df_plot %>%
+    mutate(
+      n_pat_with_med75 = ifelse(is.na(.data$n_pat_with_med75), .data$n_pat, .data)
+    ) %>%
     select(c(
       "study_id",
       "site_number",

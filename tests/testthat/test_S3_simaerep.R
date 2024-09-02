@@ -10,16 +10,66 @@ test_that("is_simaerep returns TRUE", {
 })
 
 test_that("simaerep must retrieve original visit data from parent environment", {
-  df_vs_env <- as.data.frame(aerep_test$visit)
+  aerep_new <- simaerep(df_visit_test, inframe = FALSE, visit_med75 = TRUE)
+  df_vs_env <- as.data.frame(aerep_new$visit)
+  expect_equal(df_vs_env, df_visit_test)
+
+  aerep_new <- simaerep(df_visit_test, inframe = TRUE, visit_med75 = TRUE)
+  df_vs_env <- as.data.frame(aerep_new$visit)
+  expect_equal(df_vs_env, df_visit_test)
+
+  aerep_new <- simaerep(df_visit_test, inframe = TRUE, visit_med75 = FALSE)
+  df_vs_env <- as.data.frame(aerep_new$visit)
   expect_equal(df_vs_env, df_visit_test)
 })
 
+test_that("simaerep - original dataframe unretrievable when called with slice", {
+  aerep_new <- simaerep(
+    df_visit_test[df_visit_test$site_number != "S0001", ],
+    inframe = FALSE,
+    visit_med75 = TRUE
+  )
+
+  expect_error(as.data.frame(aerep_new$visit), "Could not find original visit data")
+
+  aerep_new <- simaerep(
+    df_visit_test[df_visit_test$site_number != "S0001", ],
+    inframe = TRUE,
+    visit_med75 = TRUE
+  )
+
+  expect_error(as.data.frame(aerep_new$visit), "Could not find original visit data")
+
+  aerep_new <- simaerep(
+    df_visit_test[df_visit_test$site_number != "S0001", ],
+    inframe = TRUE,
+    visit_med75 = FALSE
+  )
+
+  expect_error(as.data.frame(aerep_new$visit), "Could not find original visit data")
+})
+
+
 test_that("plot.simaerep with what='ur'", {
-  expect_s3_class(plot(aerep_test, what = "ur", study = "A"), "ggplot")
+  aerep_new <- simaerep(df_visit_test, inframe = FALSE, visit_med75 = TRUE)
+  expect_s3_class(plot(aerep_new, what = "ur", study = "A"), "ggplot")
+
+  aerep_new <- simaerep(df_visit_test, inframe = TRUE, visit_med75 = TRUE)
+  expect_s3_class(plot(aerep_new, what = "ur", study = "A"), "ggplot")
+
+  aerep_new <- simaerep(df_visit_test, inframe = TRUE, visit_med75 = FALSE)
+  expect_s3_class(plot(aerep_new, what = "ur", study = "A"), "ggplot")
 })
 
 test_that("plot.simaerep with what='med75'", {
-  expect_s3_class(plot(aerep_test, what = "med75", study = "A", verbose = FALSE), "ggplot")
+  aerep_new <- simaerep(df_visit_test, inframe = FALSE, visit_med75 = TRUE)
+  expect_s3_class(plot(aerep_new, what = "med75", study = "A", verbose = FALSE), "ggplot")
+
+  aerep_new <- simaerep(df_visit_test, inframe = TRUE, visit_med75 = TRUE)
+  expect_s3_class(plot(aerep_new, what = "med75", study = "A", verbose = FALSE), "ggplot")
+
+  aerep_new <- simaerep(df_visit_test, inframe = TRUE, visit_med75 = FALSE)
+  expect_s3_class(plot(aerep_new, what = "med75", study = "A", verbose = FALSE), "ggplot")
 })
 
 

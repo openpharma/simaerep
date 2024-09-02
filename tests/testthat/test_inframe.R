@@ -1,9 +1,9 @@
 # test data is automatically loaded, check ./data-raw/generate_test_data.R
 
-test_that("simaerep_inframe and simaerep must have similar results", {
+test_that("simaerep_inframe and simaerep_visit_med75 must have similar results", {
 
-  df_eval_med75 <- simaerep_inframe(df_visit_test, method_visit_med75 = "med75_adj")
-  df_eval <- simaerep_inframe(df_visit_test)
+  df_eval_med75 <- simaerep(df_visit_test, inframe = TRUE, visit_med75 = TRUE)$df_eval
+  df_eval <- simaerep(df_visit_test, inframe = TRUE, visit_med75 = FALSE)$df_eval
 
   expect_equal(
     arrange(df_eval_test, study_id, site_number)$visit_med75,
@@ -39,8 +39,8 @@ test_that("simaerep_inframe and simaerep must have similar results", {
 
 test_that("simaerep_inframe must have identical counts and flags with duckdb backend", {
 
-  df_eval_med75 <- simaerep_inframe(df_visit_test, method_visit_med75 = "med75_adj")
-  df_eval <- simaerep_inframe(df_visit_test)
+  df_eval_med75 <- simaerep(df_visit_test, inframe = TRUE, visit_med75 = TRUE)$df_eval
+  df_eval <- simaerep(df_visit_test, inframe = TRUE, visit_med75 = FALSE)$df_eval
 
   con <- DBI::dbConnect(duckdb::duckdb(), dbdir = ":memory:")
   df_r <- tibble(rep = seq(1, 1000))
@@ -51,8 +51,8 @@ test_that("simaerep_inframe must have identical counts and flags with duckdb bac
   tbl_visit <- tbl(con, "visit")
   tbl_r <- tbl(con, "r")
 
-  tbl_eval <- simaerep_inframe(tbl_visit, df_r = tbl_r)
-  tbl_eval_med75 <- simaerep_inframe(tbl_visit, df_r = tbl_r, method_visit_med75 = "med75_adj")
+  tbl_eval <- simaerep(tbl_visit, r = tbl_r, visit_med75 = FALSE)$df_eval
+  tbl_eval_med75 <- simaerep(tbl_visit, r = tbl_r, visit_med75 = TRUE)$df_eval
 
   cols_identical <- c("study_id", "site_number", "events", "visits", "events_per_visit_site")
 
@@ -61,7 +61,7 @@ test_that("simaerep_inframe must have identical counts and flags with duckdb bac
       select(all_of(cols_identical)),
     tbl_eval %>%
       dplyr::collect() %>%
-      arrange( study_id, site_number) %>%
+      arrange(study_id, site_number) %>%
       select(all_of(cols_identical))
   )
 
@@ -70,7 +70,7 @@ test_that("simaerep_inframe must have identical counts and flags with duckdb bac
       select(all_of(cols_identical)),
     tbl_eval_med75 %>%
       dplyr::collect() %>%
-      arrange( study_id, site_number) %>%
+      arrange(study_id, site_number) %>%
       select(all_of(cols_identical))
   )
 

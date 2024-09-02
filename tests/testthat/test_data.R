@@ -2,6 +2,7 @@
 
 test_that("check S3 test data reproducibility", {
   aerep_check <- simaerep(
+    r = 100,
     df_visit_test,
     param_sim_sites = list(
       r = 100
@@ -10,7 +11,8 @@ test_that("check S3 test data reproducibility", {
 
   aerep_test$df_eval <- arrange(aerep_test$df_eval, study_id, site_number)
 
-  expect_equal(aerep_check, aerep_test)
+  expect_equal(aerep_check$df_sim_sites, aerep_test$df_sim_sites)
+  expect_equal(aerep_check$df_eval, aerep_test$df_eval)
 
   visit_check <- orivisit(df_visit_test)
 
@@ -40,6 +42,7 @@ test_that("check standard test data reproducibility", {
   df_visit_check <- dplyr::bind_rows(df_visit1, df_visit2)
 
   aerep <- simaerep(
+    r = 100,
     df_visit_check,
     param_sim_sites = list(
       poisson_test = TRUE,

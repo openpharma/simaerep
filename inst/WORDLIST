@@ -9,6 +9,7 @@ Downey’s
 FP
 Hochberg
 Hoffmann
+Inframe
 Lifecycle
 Modelling
 Ménard
@@ -24,11 +25,13 @@ al
 analytics
 anonymize
 anonymized
+benjamini
 codecov
 config
 cowplot
 csv
 darkblue
+dbplyr
 df
 doi
 dplyr
@@ -45,6 +48,7 @@ grey
 gsm
 hochberg
 infer’
+inframe
 iterable
 iterables
 iteratively
@@ -68,7 +72,6 @@ rnorm
 rpois
 sd
 siamerep
-superseeds
 tbl
 thevalidatoR
 tibble

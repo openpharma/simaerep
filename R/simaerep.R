@@ -38,37 +38,23 @@ check_df_visit <- function(df_visit) {
   df_visit <- ungroup(df_visit)
 
   stopifnot(
-    all(c("study_id", "site_number", "patnum", "n_ae", "visit") %in% names(df_visit))
+    all(c("study_id", "site_number", "patnum", "n_ae", "visit") %in% colnames(df_visit))
   )
 
-  cols_na <- df_visit %>%
-    summarise_at(
-        vars(c(
-          "study_id",
-          "site_number",
-          "patnum",
-          "n_ae",
-          "visit"
-        )),
-        anyNA
-      ) %>%
+  no_na_cols <- c(
+    "study_id",
+    "site_number",
+    "patnum",
+    "n_ae",
+    "visit"
+  )
+
+  cols_na <- purrr::map(no_na_cols, ~ get_any_na(df_visit, .)) %>%
     unlist()
 
   if (any(cols_na)) {
-    stop(paste("NA detected in columns:", paste(names(cols_na)[cols_na], collapse = ",")))
+    stop(paste("NA detected in columns:", paste(no_na_cols[cols_na], collapse = ",")))
   }
-
-    df_visit %>%
-      summarise_at(
-        vars(c(
-          "n_ae",
-          "visit"
-        )),
-        ~ is.numeric(.)
-      ) %>%
-      unlist() %>%
-      all() %>%
-      stopifnot("n_ae and vist columns must be numeric" = .)
 
   df_visit %>%
     group_by(.data$study_id, .data$patnum) %>%
@@ -86,9 +72,22 @@ check_df_visit <- function(df_visit) {
     all() %>%
     stopifnot("visit numbering should start at 1" = .)
 
-  df_visit <- exp_implicit_missing_visits(df_visit)
+  if (inherits(df_visit, "data.frame")) {
+    df_visit %>%
+      summarise_at(
+        vars(c(
+          "n_ae",
+          "visit"
+        )),
+        ~ is.numeric(.)
+      ) %>%
+      unlist() %>%
+      all() %>%
+      stopifnot("n_ae and visit columns must be numeric" = .)
 
-  df_visit <- aggr_duplicated_visits(df_visit)
+    df_visit <- exp_implicit_missing_visits(df_visit)
+    df_visit <- aggr_duplicated_visits(df_visit)
+  }
 
   return(df_visit)
 }
@@ -500,11 +499,20 @@ warning_na <- function(df, col) {
 }
 
 get_any_na <- function(df, col) {
-  df %>%
-    summarise(
-      any_na = sum(ifelse(is.na(.data[[col]]), 1, 0)) > 0
-    ) %>%
-    pull(.data$any_na)
+  # dbplyr throws a warning for not using na.rm = TRUE
+  suppressWarnings({
+    df %>%
+      mutate(
+        any_na = ifelse(is.na(.data[[col]]), 1, 0)
+      ) %>%
+      summarise(
+        any_na = sum(.data$any_na, na.rm = TRUE)
+      ) %>%
+      mutate(
+        any_na = .data$any_na > 0
+      ) %>%
+      pull(.data$any_na)
+  })
 }
 
 #' @title Evaluate sites.
@@ -1306,8 +1314,26 @@ site_aggr <- function(df_visit,
 
   # Checks ----------------------------------------------------------
   stopifnot(
-    method %in% c("med75", "med75_adj")
+    method %in% c("med75", "med75_adj", "max")
   )
+
+  if (method == "max") {
+
+    df_site <- df_visit %>%
+      mutate(
+        max_visit = max(.data$visit, na.rm = TRUE),
+        pat_has_max_visit = ifelse(visit == .data$max_visit, patnum, NA),
+        .by = c("study_id", "site_number")
+      ) %>%
+      summarise(
+        n_pat = n_distinct(.data$patnum),
+        n_pat_with_max_visit = n_distinct(.data$pat_has_max_visit),
+        .by = c("study_id", "site_number", "max_visit")
+      )
+
+    return(df_site)
+  }
+
   if (check) {
     df_visit <- check_df_visit(df_visit)
   }

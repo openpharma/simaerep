@@ -27,7 +27,7 @@ test_that("check_df_visit() must thrown an error when n_ae and visit columns are
       mutate_at(vars(n_ae, visit), as.character) %>%
       check_df_visit()
   },
-  regexp = "n_ae and vist columns must be numeric"
+  regexp = "n_ae and visit columns must be numeric"
   )
 })
 

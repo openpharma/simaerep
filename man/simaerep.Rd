@@ -2,76 +2,91 @@
 % Please edit documentation in R/S3_simaerep.R
 \name{simaerep}
 \alias{simaerep}
-\title{create simaerep object}
+\title{Create simaerep object}
 \usage{
 simaerep(
   df_visit,
+  r = 1000,
+  check = TRUE,
+  under_only = TRUE,
+  visit_med75 = TRUE,
+  inframe = FALSE,
+  progress = TRUE,
   param_site_aggr = list(method = "med75_adj", min_pat_pool = 0.2),
   param_sim_sites = list(r = 1000, poisson_test = FALSE, prob_lower = TRUE),
   param_eval_sites = list(method = "BH"),
-  progress = TRUE,
-  check = TRUE,
-  env = parent.frame(),
-  under_only = TRUE
+  env = parent.frame()
 )
 }
 \arguments{
-\item{df_visit}{data frame with columns: study_id, site_number, patnum, visit,
-n_ae}
+\item{df_visit}{Data frame with columns: study_id, site_number, patnum, visit, n_ae.}
 
-\item{param_site_aggr}{list of parameters passed to \link[=site_aggr]{site_aggr()},
-Default: list(method = "med75_adj", min_pat_pool = 0.2)}
+\item{r}{Integer or tbl_object, number of repetitions for bootstrap simulation.
+Pass a tbl object referring to a table with one column and as many rows as
+desired repetitions. Default: 1000.}
 
-\item{param_sim_sites}{list of parameters passed to \link[=sim_sites]{sim_sites()},
-Default: list(r = 1000, poisson_test = FALSE, prob_lower = TRUE)}
+\item{check}{Logical, perform data check and attempt repair with
+\code{\link[=check_df_visit]{check_df_visit()}}. Computationally expensive on large data sets. Default: TRUE.}
 
-\item{param_eval_sites}{list of parameters passed to
-\link[=eval_sites]{eval_sites()}, Default: list(method = "BH")}
+\item{under_only}{Logical, compute under-reporting probabilities only. Supersedes under_only parameter passed to \code{\link[=eval_sites]{eval_sites()}} and \code{\link[=sim_sites]{sim_sites()}}. Default: TRUE.}
 
-\item{progress}{logical, display progress bar, Default = TRUE}
+\item{visit_med75}{Logical, should evaluation point visit_med75 be used. Default: TRUE.}
 
-\item{check}{logical, perform data check and attempt repair with
-\link[=check_df_visit]{check_df_visit()}, computationally expensive on large data
-sets. Default: TRUE}
+\item{inframe}{Logical, only table operations to be used; does not require visit_med75.
+Compatible with dbplyr supported database backends.}
 
-\item{env}{optional, provide environment of original visit data, Default:
-parent.frame()}
+\item{progress}{Logical, display progress bar. Default: TRUE.}
 
-\item{under_only, }{logical compute under-reporting probabilities only,
-superseeds under_only parameter passed to \link[=eval_sites]{eval_sites()} and
-\link[=sim_sites]{sim_sites()}, Default: TRUE}
+\item{param_site_aggr}{List of parameters passed to \code{\link[=site_aggr]{site_aggr()}}.
+Default: list(method = "med75_adj", min_pat_pool = 0.2).}
+
+\item{param_sim_sites}{List of parameters passed to \code{\link[=sim_sites]{sim_sites()}}.
+Default: list(r = 1000, poisson_test = FALSE, prob_lower = TRUE).}
+
+\item{param_eval_sites}{List of parameters passed to \code{\link[=eval_sites]{eval_sites()}}.
+Default: list(method = "BH").}
+
+\item{env}{Optional, provide environment of original visit data. Default: parent.frame().}
 }
 \value{
-simaerep object
+A simaerep object.
 }
 \description{
-simulate AE under-reporting probabilities
+Simulate AE under-reporting probabilities.
 }
 \details{
-executes \link[=site_aggr]{site_aggr()}, \link[=sim_sites]{sim_sites()} and
-\link[=eval_sites]{eval_sites()} on original visit data and stores all
-intermediate results. Stores lazy reference to original visit data for
-facilitated plotting using generic plot(x).
+Executes \code{\link[=site_aggr]{site_aggr()}}, \code{\link[=sim_sites]{sim_sites()}}, and \code{\link[=eval_sites]{eval_sites()}} on original visit data and stores all intermediate results. Stores lazy reference to original visit data for facilitated plotting using generic plot(x).
 }
 \examples{
-
 df_visit <- sim_test_data_study(
   n_pat = 100,
   n_sites = 5,
   frac_site_with_ur = 0.4,
   ur_rate = 0.6
 )
-
 df_visit$study_id <- "A"
-
 aerep <- simaerep(df_visit)
-
 aerep
-
 str(aerep)
-
+\donttest{
+  # In-frame table operations
+  simaerep(df_visit, inframe = TRUE, visit_med75 = FALSE, under_only = FALSE)$df_eval
+  simaerep(df_visit, inframe = TRUE, visit_med75 = TRUE, under_only = FALSE)$df_eval
+  # Database example
+  con <- DBI::dbConnect(duckdb::duckdb(), dbdir = ":memory:")
+  df_r <- tibble::tibble(rep = seq(1, 1000))
+  dplyr::copy_to(con, df_visit, "visit")
+  dplyr::copy_to(con, df_r, "r")
+  tbl_visit <- dplyr::tbl(con, "visit")
+  tbl_r <- dplyr::tbl(con, "r")
+  simaerep(tbl_visit, r = tbl_r, inframe = TRUE, visit_med75 = FALSE, under_only = FALSE)$df_eval
+  simaerep(tbl_visit, r = tbl_r, inframe = TRUE, visit_med75 = TRUE, under_only = FALSE)$df_eval
+  DBI::dbDisconnect(con)
+}
 }
 \seealso{
+\code{\link[=site_aggr]{site_aggr()}}, \code{\link[=sim_sites]{sim_sites()}}, \code{\link[=eval_sites]{eval_sites()}}, \code{\link[=orivisit]{orivisit()}}, \code{\link[=plot.simaerep]{plot.simaerep()}}
+
 \link[=site_aggr]{site_aggr()}, \link[=sim_sites]{sim_sites()},
 \link[=eval_sites]{eval_sites()}, \link[=orivisit]{orivisit()},
 \link[=plot.simaerep]{plot.simaerep()}
