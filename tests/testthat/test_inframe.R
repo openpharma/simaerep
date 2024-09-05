@@ -100,5 +100,44 @@ test_that("simaerep_inframe must have identical counts and flags with duckdb bac
 
 })
 
+test_that('p.adjust result near p_adjust_bh_inframe', {
+  x <- rnorm(50, mean = c(rep(0, 500), rep(3, 500)))
+  p <- 2*pnorm(sort(-abs(x)))
 
+  df <- tibble(
+      study_id = "A",
+      p = p
+    ) %>%
+    mutate(
+      pbase = p.adjust(p, method = "BH")
+    ) %>%
+    p_adjust_bh_inframe("p", "_simaerep")
 
+  expect_true(all(near(df$pbase, df$p_adj, 5)))
+
+})
+
+test_that('p.adjust result near p_adjust_bh_inframe with duckdb', {
+  x <- rnorm(50, mean = c(rep(0, 500), rep(3, 500)))
+  p <- 2*pnorm(sort(-abs(x)))
+
+  df <- tibble(
+    study_id = "A",
+    p = p
+  ) %>%
+    mutate(
+      pbase = p.adjust(p, method = "BH")
+    )
+
+  con <- DBI::dbConnect(duckdb::duckdb(), dbdir = ":memory:")
+  dplyr::copy_to(con, df, "df")
+  tbl_df <- dplyr::tbl(con, "df")
+
+  tbl_df <- tbl_df %>%
+    p_adjust_bh_inframe("p", "_simaerep")
+
+  df <- collect(tbl_df)
+
+  expect_true(all(near(df$pbase, df$p_adj, 5)))
+
+})

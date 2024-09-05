@@ -24,9 +24,27 @@ suppressPackageStartupMessages(library(tidyr))
 suppressPackageStartupMessages(library(simaerep))
 ```
 
-# Performance (Time)
+# Introduction
+
+With the latest `0.6.0` release we have added an alternative version of the {simaerep} algorithm that was coded using solely `dbplyr` compatible table operations.
+
+- expand the patients for each site `r` times
+- join each patient with a random eligible patient from same study
+- for each replicate calculate event per visit rate per site
+- calculate the ratio of having a lower event per visit rate than actually observed
+
+This comes with the following advantages and disadvantages:
+
+- Patients are individually matched with patients that have reached the same visit in the study. No need to pick visit_med75 as an evaluation point.
+- `dbplyr` compatibility means that code execution can be done in a database back-end as opposed to in-memory.
+- Matching patients individually is more costly, this increases in-memory computation time
+- Limited patient sample pool for patients that have more visits than other patients in study.
+
+# Sample Data
 
 ```{r}
+set.seed(1)
+
 df_visit <- sim_test_data_study(
   n_pat = 1000, # number of patients in study
   n_sites = 100, # number of sites in study
@@ -36,24 +54,69 @@ df_visit <- sim_test_data_study(
 )
 
 df_visit$study_id <- "A"
-
-# original settings visit_med75 always in memory, no over-reporting
-system.time({simaerep(df_visit, inframe = FALSE, visit_med75 = TRUE, under_only = TRUE, progress = FALSE)})
-
-# inframe with and without visit_med75
-system.time({simaerep(df_visit, inframe = TRUE, visit_med75 = FALSE, under_only = TRUE)})
-system.time({simaerep(df_visit, inframe = TRUE, visit_med75 = TRUE, under_only = TRUE)})
-
-# original settings visit_med75 in memory, with over-reporting
-system.time({simaerep(df_visit, inframe = FALSE, visit_med75 = TRUE, under_only = FALSE, progress = FALSE)})
-
-# inframe with and without visit_med75 with over-reporting
-system.time({simaerep(df_visit, inframe = TRUE, visit_med75 = FALSE, under_only = FALSE)})
-system.time({simaerep(df_visit, inframe = TRUE, visit_med75 = TRUE, under_only = FALSE)})
-
 ```
 
+# Patient-Level Matching
+
+Here we use the standard version of the algorithm.
+
+```{r}
+aerep_trad <- simaerep(df_visit)
+plot(aerep_trad)
+```
+
+To use the patient-level matching algorithm we set `inframe=TRUE` and `visit_med75=FALSE`.
+
+The original algorithm uses fixed seeds before sampling while the inframe method does not. In order to obtain consistent results we need to manually set a seed.
+
+```{r}
+set.seed(1)
+
+aerep_inframe <- simaerep(
+  df_visit,
+  inframe = TRUE,
+  visit_med75 = FALSE
+)
+```
+
+The plot shows that for all sites 10/10 patients were used and none were excluded. We also observe that
+the site average has become more noisy as less patients are used to calculate the averages for the higher
+visit numbers.
+
+```{r}
+plot(aerep_inframe)
+```
+
+The inframe method includes this noisier data but does not compare average event counts but event per visit rates.
+We can find `events_per_visit_site` and `events_per_visit_study` in `df_eval`. The latter is the average event rate
+obtained in the simulation in which each patient has been resampled according to its maximum visit.
+
+```{r}
+aerep_inframe$df_eval
+```
+
+We can also force the inframe method to use the visit_med75 this will prefilter `df_visit`, which adds an extra step
+and decreases performance. 
+
+```{r}
+
+set.seed(1)
+
+aerep_inframe_visit_med75 <- simaerep(
+  df_visit,
+  inframe = TRUE,
+  visit_med75 = TRUE
+)
+
+plot(aerep_inframe_visit_med75)
+```
+
+
 # DB
+
+We can demonstrate the database-backend compatibility by using a connection to a in memory `duckdb` database. In order to set the number of replications we need to create a new table in our back-end that has one column with as many rows as the desired replications.
+
+A lazy reference to this table can then be passed to the `r` parameter.
 
 ```{r}
 con <- DBI::dbConnect(duckdb::duckdb(), dbdir = ":memory:")
@@ -65,119 +128,76 @@ dplyr::copy_to(con, df_r, "r")
 tbl_visit <- tbl(con, "visit")
 tbl_r <- tbl(con, "r")
 
-system.time(simaerep(tbl_visit, r = tbl_r, check = TRUE))
-system.time(simaerep(tbl_visit, r = tbl_r, check = FALSE))
 
+aerep <- simaerep(tbl_visit, r = tbl_r, visit_med75 = FALSE)
 ```
 
-# Performance (Statistical)
+When inspecting `df_eval` we see that it is still a lazy table object.
 
 ```{r}
-suppressPackageStartupMessages(library(furrr))
-suppressPackageStartupMessages(library(future))
-
-plan(multisession, workers = 6)
+aerep$df_eval
 ```
 
-
-## Load Portfolio
+We can convert it to sql code. The `cte` option makes the sql code more readable.
 
 ```{r}
-df_config <- readr::read_csv("ae_conf_20240220.csv")
-df_ae_rates <- readr::read_csv("ae_rates_20240220.csv")
-
-df_portf_flex <- sim_test_data_portfolio(df_config, df_ae_rates = df_ae_rates, parallel = TRUE, progress = TRUE)
+sql_eval <- dbplyr::sql_render(aerep$df_eval, sql_options = dbplyr::sql_options(cte = TRUE))
+stringr::str_trunc(sql_eval, 500)
 ```
 
-## Functions
+We can take that code and wrap it in a `CREATE TABLE` statement
+
+```{r}
+sql_create <- glue::glue("CREATE TABLE eval AS ({sql_eval})")
+DBI::dbExecute(con, sql_create)
+```
+
+Retrieve the new table from the database.
+
+```{r}
+tbl_eval <- tbl(con, "eval")
+tbl_eval
+```
+
+We plot the results from the {simaerep} object.
+
+```{r}
+plot(aerep)
+```
+
+Or more efficiently by using `plot_study()` when we have already written the `simaerep` results into the database.
+Here we avoid that the results are being recalculated just for the sake of creating a plot. However this requires
+that we save `df_site` to the database as well.
+
+```{r}
+sql_site <- dbplyr::sql_render(aerep$df_site)
+DBI::dbExecute(con, glue::glue("CREATE TABLE site AS ({sql_site})"))
+tbl_site <- tbl(con, "site")
+
+plot_study(tbl_visit, tbl_site, tbl_eval, study = "A")
+```
 
 
 ```{r}
-perf <- function(df_visit, study_id, site_number, ur_rate) {
-  df_vs_study <- df_visit %>%
-    sim_ur(study_id, site_number, ur_rate)
-  
-  prob_low_prob_ur_visit_med75 <- df_vs_study %>%
-    simaerep(under_only = TRUE, progress = FALSE) %>%
-    .$df_eval %>%
-    filter(.data$site_number == .env$site_number) %>%
-    pull(prob_low_prob_ur)
-  
-  prob_low_prob_ur_inframe <- df_vs_study %>%
-    simaerep_inframe(under_only = TRUE) %>%
-    filter(.data$site_number == .env$site_number) %>%
-    pull(prob_low_prob_ur)
-  
-  prob_low_prob_ur_inframe_visit_med75 <- df_vs_study %>%
-    simaerep_inframe(under_only = TRUE, method_visit_med75 = "med75_adj") %>%
-    filter(.data$site_number == .env$site_number) %>%
-    pull(prob_low_prob_ur)
-
-  tibble(
-    visit_med75 = prob_low_prob_ur_visit_med75,
-    inframe = prob_low_prob_ur_inframe,
-    inframe_visit_med75 = prob_low_prob_ur_inframe_visit_med75
-  )
-}
-
-#perf(df_portf_flex, study_id = "0010", site_number = "15148", ur_rate = 1)
-#perf(df_portf_flex, study_id = "0001", site_number = "4746", ur_rate = 0.75)
-perf(df_portf_flex, study_id = "0010", site_number = "15148", ur_rate = 1)
-
+DBI::dbDisconnect(con)
 ```
 
 
-## Grid
+
+# In Memory Calculation Times
+
+Here we perform some examplary tests to illustrate the increase in-memory calculation time of the inframe calculation method.
+
+This is the calculation time for the default settings
+```{r}
+system.time({simaerep(df_visit, inframe = FALSE, visit_med75 = TRUE, under_only = TRUE, progress = FALSE)})
+```
+
+
+inframe calculation time is higher
 
 ```{r}
-df_grid <- df_portf_flex %>%
-  distinct(study_id, site_number) %>%
-  # to reduce calculation time we only take every xth study
-  filter(dense_rank(study_id)%%50 == 0) %>%
-  mutate(ur_rate = list(c(0, 0.1, 0.25, 0.5, 0.75, 1))) %>%
-  unnest(ur_rate)
-
-df_grid
+system.time({simaerep(df_visit, inframe = TRUE, visit_med75 = FALSE, under_only = TRUE)})
 ```
 
-## Apply
-
-### inframe
-
-```{r eval = FALSE}
-with_progress_cnd(
-  df_perf <- df_grid %>%
-    mutate(
-      perf = purrr_bar(
-        list(study_id, site_number, ur_rate),
-        .purrr = furrr::future_pmap,
-        .f = function(x, y, z) list(perf(df_portf_flex, x, y, z)),
-        .purrr_args = list(.options = furrr_options(seed = TRUE)),
-        .steps = nrow(.)
-      )
-    )
-)
-
-df_perf %>%
-  unnest(perf) %>%
-  unnest(perf) %>%
-  readr::write_csv("inframe.csv")
-```
-
-```{r}
-df_perf <- readr::read_csv("inframe.csv")
-```
-
-# Evaluation
-
-```{r}
-df_perf %>%
-  pivot_longer(c(visit_med75, inframe, inframe_visit_med75)) %>%
-  summarise(
-    n_ur = sum(value >= 0.95),
-    n_sites = n_distinct(site_number),
-    mean_ur_rate = mean(value),
-    .by = c(ur_rate, name)
-  )
-```
 
