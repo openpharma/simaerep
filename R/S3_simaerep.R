@@ -441,7 +441,14 @@ plot.simaerep <- function(x,
   )
 
   if (is.null(study)) {
-    study <- unique(x$df_eval$study_id)[[1]]
+
+    studies <- x$df_eval %>%
+      distinct(.data$study_id) %>%
+      pull(.data$study_id) %>%
+      sort()
+
+    study <- studies[1]
+
     message(paste0("study = NULL, defaulting to study:", study))
   }
 

@@ -446,22 +446,29 @@ plot_study <- function(df_visit,
 
   # TODO: parametrize scores, fix legend
 
-  stopifnot(study %in% unique(df_visit$study_id))
-  stopifnot(study %in% unique(df_site$study_id))
-  stopifnot(study %in% unique(df_eval$study_id))
+  studies <- df_visit %>%
+    distinct(study_id) %>%
+    pull(study_id)
+
+  stopifnot(study %in% studies)
+  stopifnot(study %in% studies)
+  stopifnot(study %in% studies)
 
   # filter studies -----------------------------------------------------------
 
   df_visit <- df_visit %>%
-    filter(.data$study_id %in% study)
+    filter(.data$study_id %in% study) %>%
+    collect()
 
   df_visit <- check_df_visit(df_visit)
 
   df_site <- df_site %>%
-    filter(.data$study_id %in% study)
+    filter(.data$study_id %in% study) %>%
+    collect()
 
   df_eval <- df_eval %>%
-    filter(.data$study_id %in% study)
+    filter(.data$study_id %in% study) %>%
+    collect()
 
   # alert level -------------------------------------------------------------
 
@@ -510,8 +517,26 @@ plot_study <- function(df_visit,
 
   if ("visit_med75" %in% colnames(df_site)) {
     col_visit <- "visit_med75"
+
+    df_pat <- pat_aggr(df_visit)
+
+    df_visit_med75 <- df_visit %>%
+      left_join(
+        df_site %>%
+          select(c("study_id", "site_number", "visit_med75")),
+        by = c("study_id", "site_number")
+      ) %>%
+      left_join(
+        df_pat %>%
+          select(c("study_id", "site_number", "patnum", "max_visit_per_pat")),
+        by = c("study_id", "site_number", "patnum")
+      ) %>%
+      filter(.data$visit <= .data$visit_med75, .data$max_visit_per_pat >= .data$visit_med75) %>%
+      select(- c("visit_med75", "max_visit_per_pat"))
+
   } else {
     col_visit <- "max_visit"
+    df_visit_med75 <- df_visit
   }
 
   # ordered sites -------------------------------------------------------------
@@ -535,12 +560,8 @@ plot_study <- function(df_visit,
 
   # mean AE development ------------------------------------------------------
 
-  df_mean_ae_dev_site <- df_visit %>%
-    group_by(.data$study_id, .data$site_number, .data$patnum) %>%
-    mutate(max_visit_per_pat = max(.data$visit)) %>%
-    ungroup() %>%
+  df_mean_ae_dev_site <- df_visit_med75 %>%
     left_join(df_site, by = c("study_id", "site_number")) %>%
-    filter(.data$visit <= .data[[col_visit]], .data$max_visit_per_pat >= .data[[col_visit]]) %>%
     group_by(.data$study_id,
              .data$site_number,
              .data[[col_visit]],
@@ -555,17 +576,13 @@ plot_study <- function(df_visit,
       df_site,
       by = c("study_id", "site_number")
     ) %>%
-    group_by(.data$study_id,
-             .data$site_number,
-             .data$patnum) %>%
-    mutate(max_visit_per_pat = max(.data$visit)) %>%
     group_by(.data$study_id) %>%
     mutate(
       visit_max = median(.data[[col_visit]]),
       n_pat = n_distinct(.data$patnum)
     ) %>%
+    filter(.data$visit <= .data$visit_max) %>%
     ungroup() %>%
-    filter(.data$visit <= .data$visit_max, .data$max_visit_per_pat >= .data$visit_max) %>%
     group_by(.data$study_id) %>%
     mutate(n_pat_with_med75 = n_distinct(.data$patnum)) %>%
     group_by(.data$study_id,

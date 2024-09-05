@@ -218,7 +218,7 @@ p_adjust_bh_inframe <- function(df_eval, col, suffix) {
     ) %>%
     mutate(
       !! as.name(col_adj) := 1 / .data$probx_p_vs_fp_ratio,
-      !! as.name(col_suffix) := 1 - .data[[col]]
+      !! as.name(col_suffix) := 1 - .data[[col_adj]]
     ) %>%
     select(- starts_with("probx"))
 
