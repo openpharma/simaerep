@@ -771,6 +771,11 @@ prob_lower_site_ae_vs_study_ae <- function(site_ae, study_ae, r = 1000, parallel
   mean_ae_site <- mean(site_ae, na.rm = TRUE)
   mean_ae_study <- mean(study_ae, na.rm = TRUE)
 
+  # this can happen when no patients with site visit_med75 were found in study
+  if (is.na(mean_ae_study)) {
+    return(NA)
+  }
+
   if (under_only) {
     # we are not interested in cases where site AE is greater study AE
     if (mean_ae_site > mean_ae_study) {
@@ -1403,6 +1408,11 @@ poiss_test_site_ae_vs_study_ae <- function(site_ae,
 
   mean_ae_site <- mean(site_ae, na.rm = TRUE)
   mean_ae_study <- mean(study_ae, na.rm = TRUE)
+
+  # this can happen when no patients with site visit_med75 were found in study
+  if (is.na(mean_ae_study)) {
+    return(NA)
+  }
 
   # we are not interested in cases where site AE is greater study AE
   if (mean_ae_site > mean_ae_study) {
