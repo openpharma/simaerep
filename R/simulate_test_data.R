@@ -444,7 +444,7 @@ sim_ur_scenarios <- function(df_portf,
 
   df_sim_sites <- bind_rows(ls_df_sim_sites)
 
-  df_sim_sites_ur0 <- df_sim_sites %>%
+  df_sim_sites_ur0 <- df_sim_sites %>% #nolint
     filter(.data$extra_ur_sites == 0,
            .data$frac_pat_with_ur == 0,
            .data$ur_rate == 0) %>%
@@ -985,4 +985,3 @@ sim_ur <- function(df_visit, study_id, site_number, ur_rate) {
   bind_rows(df_visit_study, df_visit_site_rem)
 
 }
-

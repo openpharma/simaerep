@@ -16,26 +16,32 @@ simaerep_inframe(
 )
 }
 \arguments{
-\item{df_visit}{Data frame with columns: study_id, site_number, patnum, visit, n_ae.}
+\item{df_visit}{Data frame with columns: study_id, site_number, patnum, visit,
+n_ae.}
 
-\item{r}{Integer or tbl_object, number of repetitions for bootstrap simulation.
-Pass a tbl object referring to a table with one column and as many rows as
-desired repetitions. Default: 1000.}
+\item{r}{Integer or tbl_object, number of repetitions for bootstrap
+simulation. Pass a tbl object referring to a table with one column and as
+many rows as desired repetitions. Default: 1000.}
 
-\item{under_only}{Logical, compute under-reporting probabilities only. Supersedes under_only parameter passed to \code{\link[=eval_sites]{eval_sites()}} and \code{\link[=sim_sites]{sim_sites()}}. Default: TRUE.}
+\item{under_only}{Logical, compute under-reporting probabilities only.
+Supersedes under_only parameter passed to \code{\link[=eval_sites]{eval_sites()}} and \code{\link[=sim_sites]{sim_sites()}}.
+Default: TRUE.}
 
-\item{visit_med75}{Logical, should evaluation point visit_med75 be used. Default: TRUE.}
+\item{visit_med75}{Logical, should evaluation point visit_med75 be used.
+Default: TRUE.}
 
 \item{check}{Logical, perform data check and attempt repair with
-\code{\link[=check_df_visit]{check_df_visit()}}. Computationally expensive on large data sets. Default: TRUE.}
+\code{\link[=check_df_visit]{check_df_visit()}}. Computationally expensive on large data sets. Default:
+TRUE.}
 
-\item{param_site_aggr}{List of parameters passed to \code{\link[=site_aggr]{site_aggr()}}.
-Default: list(method = "med75_adj", min_pat_pool = 0.2).}
+\item{param_site_aggr}{List of parameters passed to \code{\link[=site_aggr]{site_aggr()}}. Default:
+list(method = "med75_adj", min_pat_pool = 0.2).}
 
-\item{param_eval_sites}{List of parameters passed to \code{\link[=eval_sites]{eval_sites()}}.
-Default: list(method = "BH").}
+\item{param_eval_sites}{List of parameters passed to \code{\link[=eval_sites]{eval_sites()}}. Default:
+list(method = "BH").}
 
-\item{env}{Optional, provide environment of original visit data. Default: parent.frame().}
+\item{env}{Optional, provide environment of original visit data. Default:
+parent.frame().}
 }
 \description{
 simulate in dataframe

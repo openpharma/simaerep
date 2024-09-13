@@ -244,10 +244,10 @@ get_visit_med75 <- function(df_pat,
                             method = "med75_adj",
                             min_pat_pool = 0.2) {
 
-  if(inherits(df_pat, "data.frame")) {
-    fun_arrange = arrange
+  if (inherits(df_pat, "data.frame")) {
+    fun_arrange <- arrange
   } else {
-    fun_arrange = window_order
+    fun_arrange <- window_order
   }
 
   # we have to separate the aggregation steps into two steps
@@ -286,7 +286,7 @@ get_visit_med75 <- function(df_pat,
         pat_has_visit_med75 = ifelse(.data$max_visit_per_pat >= .data$visit_med75, 1, 0)
       )
 
-    if(inherits(df_pat, "data.frame")) {
+    if (inherits(df_pat, "data.frame")) {
       # this cannot be exactly replicated, we maintain this method so that results
       # do not change compared to previous versions
       df_qup8 <- df_site %>%
@@ -419,7 +419,7 @@ eval_sites <- function(df_sim_sites,
 
 
     if (! under_only) {
-      if(any(str_detect(colnames(df_out), "med75"))) {
+      if (any(str_detect(colnames(df_out), "med75"))) {
         df_out <- df_out %>%
           mutate(study_site_ae_equal = .data$mean_ae_site_med75 == .data$mean_ae_study_med75)
       } else {
@@ -443,10 +443,10 @@ eval_sites <- function(df_sim_sites,
 
   }
 
-  if(inherits(df_out, "data.frame")) {
-    fun_arrange = arrange
+  if (inherits(df_out, "data.frame")) {
+    fun_arrange <- arrange
   } else {
-    fun_arrange = window_order
+    fun_arrange <- window_order
   }
 
   df_out <- df_out %>%
@@ -483,7 +483,7 @@ warning_na <- function(df, col) {
 
   any_na <- get_any_na(df, col)
 
-  if(any_na) {
+  if (any_na) {
     warning_messages <- df %>%
       filter(is.na(.data[[col]])) %>%
       mutate(

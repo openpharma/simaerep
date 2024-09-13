@@ -62,28 +62,36 @@ validate_simaerep <- function(x) {
   return(x)
 }
 
-#' @title Create simaerep object
-#' @description Simulate AE under-reporting probabilities.
-#' @param df_visit Data frame with columns: study_id, site_number, patnum, visit, n_ae.
-#' @param r Integer or tbl_object, number of repetitions for bootstrap simulation.
-#' Pass a tbl object referring to a table with one column and as many rows as
-#' desired repetitions. Default: 1000.
-#' @param check Logical, perform data check and attempt repair with
-#'   [check_df_visit()]. Computationally expensive on large data sets. Default: TRUE.
-#' @param visit_med75 Logical, should evaluation point visit_med75 be used. Default: TRUE.
-#' @param inframe Logical, only table operations to be used; does not require visit_med75.
-#' Compatible with dbplyr supported database backends.
-#' @param param_site_aggr List of parameters passed to [site_aggr()].
-#'   Default: list(method = "med75_adj", min_pat_pool = 0.2).
-#' @param param_sim_sites List of parameters passed to [sim_sites()].
-#'   Default: list(r = 1000, poisson_test = FALSE, prob_lower = TRUE).
-#' @param param_eval_sites List of parameters passed to [eval_sites()].
-#'   Default: list(method = "BH").
-#' @param progress Logical, display progress bar. Default: TRUE.
-#' @param env Optional, provide environment of original visit data. Default: parent.frame().
-#' @param under_only Logical, compute under-reporting probabilities only. Supersedes under_only parameter passed to [eval_sites()] and [sim_sites()]. Default: TRUE.
-#' @return A simaerep object.
-#' @details Executes [site_aggr()], [sim_sites()], and [eval_sites()] on original visit data and stores all intermediate results. Stores lazy reference to original visit data for facilitated plotting using generic plot(x).
+#'@title Create simaerep object
+#'@description Simulate AE under-reporting probabilities.
+#'@param df_visit Data frame with columns: study_id, site_number, patnum, visit,
+#'  n_ae.
+#'@param r Integer or tbl_object, number of repetitions for bootstrap
+#'  simulation. Pass a tbl object referring to a table with one column and as
+#'  many rows as desired repetitions. Default: 1000.
+#'@param check Logical, perform data check and attempt repair with
+#'  [check_df_visit()]. Computationally expensive on large data sets. Default:
+#'  TRUE.
+#'@param visit_med75 Logical, should evaluation point visit_med75 be used.
+#'  Default: TRUE.
+#'@param inframe Logical, only table operations to be used; does not require
+#'  visit_med75. Compatible with dbplyr supported database backends.
+#'@param param_site_aggr List of parameters passed to [site_aggr()]. Default:
+#'  list(method = "med75_adj", min_pat_pool = 0.2).
+#'@param param_sim_sites List of parameters passed to [sim_sites()]. Default:
+#'  list(r = 1000, poisson_test = FALSE, prob_lower = TRUE).
+#'@param param_eval_sites List of parameters passed to [eval_sites()]. Default:
+#'  list(method = "BH").
+#'@param progress Logical, display progress bar. Default: TRUE.
+#'@param env Optional, provide environment of original visit data. Default:
+#'  parent.frame().
+#'@param under_only Logical, compute under-reporting probabilities only.
+#'  Supersedes under_only parameter passed to [eval_sites()] and [sim_sites()].
+#'  Default: TRUE.
+#'@return A simaerep object.
+#'@details Executes [site_aggr()], [sim_sites()], and [eval_sites()] on original
+#'  visit data and stores all intermediate results. Stores lazy reference to
+#'  original visit data for facilitated plotting using generic plot(x).
 #' @examples
 #' df_visit <- sim_test_data_study(
 #'   n_pat = 100,
@@ -110,8 +118,9 @@ validate_simaerep <- function(x) {
 #'   simaerep(tbl_visit, r = tbl_r, inframe = TRUE, visit_med75 = TRUE, under_only = FALSE)$df_eval
 #'   DBI::dbDisconnect(con)
 #' }
-#' @seealso [site_aggr()], [sim_sites()], [eval_sites()], [orivisit()], [plot.simaerep()]
-#' @export
+#'@seealso [site_aggr()], [sim_sites()], [eval_sites()], [orivisit()],
+#'  [plot.simaerep()]
+#'@export
 #'@seealso [site_aggr()][site_aggr], [sim_sites()][sim_sites],
 #'  [eval_sites()][eval_sites], [orivisit()][orivisit],
 #'  [plot.simaerep()][plot.simaerep]
@@ -144,7 +153,7 @@ simaerep <- function(df_visit,
   is_tbl_df_visit <- ! is.data.frame(df_visit) & inherits(df_visit, "tbl")
   is_tbl_r <- ! is.data.frame(r) & inherits(r, "tbl")
 
-  if (is_tbl_df_visit & is_tbl_r) {
+  if (is_tbl_df_visit && is_tbl_r) {
     inframe <- TRUE
   }
 
@@ -159,7 +168,7 @@ simaerep <- function(df_visit,
   param_sim_sites$under_only <- under_only
   param_eval_sites$under_only <- under_only
 
-  if (visit_med75 & ! inframe) {
+  if (visit_med75 && ! inframe) {
 
     if (r != param_sim_sites$r) {
       param_sim_sites$r <- r

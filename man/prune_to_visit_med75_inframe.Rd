@@ -7,7 +7,8 @@
 prune_to_visit_med75_inframe(df_visit, df_site)
 }
 \arguments{
-\item{df_visit}{Data frame with columns: study_id, site_number, patnum, visit, n_ae.}
+\item{df_visit}{Data frame with columns: study_id, site_number, patnum, visit,
+n_ae.}
 
 \item{df_site}{dataframe, as returned by \code{\link[=site_aggr]{site_aggr()}}}
 }

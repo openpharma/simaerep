@@ -80,7 +80,7 @@ test_that("simaerep_inframe must have identical counts and flags with duckdb bac
       pull(site_number),
     tbl_eval_med75 %>%
       dplyr::collect() %>%
-      arrange( study_id, site_number) %>%
+      arrange(study_id, site_number) %>%
       filter(prob_low_prob_ur >= 0.95)  %>%
       pull(site_number)
   )
@@ -91,7 +91,7 @@ test_that("simaerep_inframe must have identical counts and flags with duckdb bac
       pull(site_number),
     tbl_eval %>%
       dplyr::collect() %>%
-      arrange( study_id, site_number) %>%
+      arrange(study_id, site_number) %>%
       filter(prob_low_prob_ur >= 0.95)  %>%
       pull(site_number)
   )
@@ -100,9 +100,9 @@ test_that("simaerep_inframe must have identical counts and flags with duckdb bac
 
 })
 
-test_that('p.adjust result near p_adjust_bh_inframe', {
+test_that("p.adjust result near p_adjust_bh_inframe", {
   x <- rnorm(50, mean = c(rep(0, 500), rep(3, 500)))
-  p <- 2*pnorm(sort(-abs(x)))
+  p <- 2 * pnorm(sort(-abs(x)))
 
   df <- tibble(
       study_id = "A",
@@ -117,9 +117,9 @@ test_that('p.adjust result near p_adjust_bh_inframe', {
 
 })
 
-test_that('p.adjust result near p_adjust_bh_inframe with duckdb', {
+test_that("p.adjust result near p_adjust_bh_inframe with duckdb", {
   x <- rnorm(50, mean = c(rep(0, 500), rep(3, 500)))
-  p <- 2*pnorm(sort(-abs(x)))
+  p <- 2 * pnorm(sort(-abs(x)))
 
   df <- tibble(
     study_id = "A",

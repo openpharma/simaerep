@@ -447,8 +447,8 @@ plot_study <- function(df_visit,
   # TODO: parametrize scores, fix legend
 
   studies <- df_visit %>%
-    distinct(study_id) %>%
-    pull(study_id)
+    distinct(.data$study_id) %>%
+    pull(.data$study_id)
 
   stopifnot(study %in% studies)
   stopifnot(study %in% studies)
@@ -507,12 +507,10 @@ plot_study <- function(df_visit,
 
   # adjust to visit_med75 or alternative ---------------------------------------
 
-  if(all(c("events_per_visit_study", "events_per_visit_site") %in% colnames(df_eval))) {
+  if (all(c("events_per_visit_study", "events_per_visit_site") %in% colnames(df_eval))) {
     col_mean_site <- "events_per_visit_site"
-    col_mean_study <- "events_per_visit_study"
   } else {
     col_mean_site <- "mean_ae_site_med75"
-    col_mean_study <- "mean_ae_study_med75"
   }
 
   if ("visit_med75" %in% colnames(df_site)) {

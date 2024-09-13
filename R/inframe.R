@@ -82,7 +82,7 @@ sim_inframe <- function(df_visit, r = 1000) {
     distinct(.data$study_id, visit = .data$max_visit_per_pat) %>%
     left_join(
       df_pat_aggr,
-      by = join_by (
+      by = join_by(
         "visit" <= "max_visit_per_pat",
         "study_id" == "study_id"
       )
@@ -183,7 +183,7 @@ sim_inframe <- function(df_visit, r = 1000) {
 #'@keywords internal
 p_adjust_bh_inframe <- function(df_eval, col, suffix) {
 
-  any_probx = any(str_detect(colnames(df_eval), "probx_"))
+  any_probx <- any(str_detect(colnames(df_eval), "probx_"))
 
   stopifnot("probx_ prefix in colnames(df_eval) not allowed" = ! any_probx)
 
@@ -271,6 +271,3 @@ max_rank <- function(df, col, col_new) {
     ) %>%
     select(- "rwn")
 }
-
-
-

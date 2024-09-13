@@ -17,7 +17,7 @@
 #' @importFrom dplyr rename sample_n between row_number dense_rank desc case_when
 #' @importFrom dplyr group_by_at n is_grouped_df everything one_of lag any_of across
 #' @importFrom dplyr lead tbl cross_join join_by union_all cume_dist slice_sample
-#' @importFrom dplyr percent_rank all_of starts_with
+#' @importFrom dplyr percent_rank all_of starts_with collect near
 #' @importFrom tidyr tibble unnest nest fill
 #' @importFrom knitr kable
 #' @importFrom tibble tibble
