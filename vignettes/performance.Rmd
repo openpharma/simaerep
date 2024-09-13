@@ -1,0 +1,468 @@
+---
+title: "Statistical Performance"
+output:
+  html_document:
+    toc: true
+    toc_depth: 3
+    toc_float: true
+    number_sections: true
+    code_folding: show
+    collapse: false
+editor_options:
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, cache = FALSE, message = FALSE)
+```
+
+# Load
+```{r load}
+suppressPackageStartupMessages(library(dplyr))
+suppressPackageStartupMessages(library(tibble))
+suppressPackageStartupMessages(library(tidyr))
+suppressPackageStartupMessages(library(simaerep))
+suppressPackageStartupMessages(library(purrr))
+suppressPackageStartupMessages(library(stringr))
+```
+
+# Introduction
+
+
+
+# Performance (Statistical)
+
+```{r}
+suppressPackageStartupMessages(library(furrr))
+suppressPackageStartupMessages(library(future))
+
+plan(multisession, workers = 8)
+```
+
+
+## Load Portfolio
+
+```{r}
+df_config <- readr::read_csv("ae_conf_20240220.csv")
+df_ae_rates <- readr::read_csv("ae_rates_20240220.csv")
+
+df_portf_flex <- sim_test_data_portfolio(df_config, df_ae_rates = df_ae_rates, parallel = TRUE, progress = TRUE)
+```
+
+## Simulating Under Reporting
+
+Previously we have simulated under-reporting by removing a fraction of AEs from an aggregated metric.
+To compare the performance between visit_me75 and inframe better we remove AEs directly from the data and not from the agrgeagated metric.
+
+We compare performance between removing AE from the data with `sim_ur` vs removing AE from visit_med75 `sim_ur_scenarios`
+
+### Grid
+
+### sim_ur
+
+```{r}
+
+df_port_short <- df_portf_flex %>%
+  filter(dense_rank(study_id)%%25 == 0)
+
+df_grid <- df_port_short %>%
+  distinct(study_id, site_number) %>%
+  mutate(ur_rate = list(c(0, 0.1, 0.25, 0.5, 0.75, 1))) %>%
+  unnest(ur_rate)
+
+df_grid
+
+
+perf <- function(df_visit, study_id, site_number, ur_rate) {
+  df_vs_study <- df_visit %>%
+    sim_ur(study_id, site_number, ur_rate)
+  
+ df_vs_study %>%
+    simaerep(under_only = TRUE, progress = FALSE, check = FALSE) %>%
+    .$df_eval %>%
+    filter(.data$site_number == .env$site_number)
+}
+
+with_progress_cnd(
+  df_perf_sim_ur <- df_grid %>%
+    mutate(
+      perf = purrr_bar(
+        list(study_id, site_number, ur_rate),
+        .purrr = furrr::future_pmap,
+        .f = function(x, y, z) list(perf(df_portf_flex, x, y, z)),
+        .purrr_args = list(.options = furrr_options(seed = TRUE)),
+        .steps = nrow(.)
+      )
+    )
+)
+
+```
+
+### sim_ur_scenarios
+
+
+```{r}
+
+df_perf_sim_ur_scenario <- sim_ur_scenarios(
+   df_port_short,
+   extra_ur_sites = 0,
+   ur_rate = c(0, 0.1, 0.25, 0.5, 0.75, 1),
+   parallel = TRUE,
+   poisson = TRUE,
+   prob_lower = TRUE,
+   progress = TRUE
+)
+
+```
+
+### Compare
+
+```{r}
+df_perf_sim_ur_scenario %>%
+  summarise(
+    n_ur = sum(prob_low_prob_ur >= 0.95),
+    n_sites = n(),
+    .by = ur_rate
+  ) %>%
+  mutate(
+    ratio = n_ur / n_sites
+  )
+
+df_perf_sim_ur %>%
+  select(- study_id, - site_number) %>%
+  unnest(perf) %>%
+  unnest(perf) %>%
+  summarise(
+    n_ur = sum(prob_low_prob_ur >= 0.95),
+    n_sites = n(),
+    .by = ur_rate
+  ) %>%
+  mutate(
+    ratio = n_ur / n_sites
+  )
+  
+```
+
+
+```{r}
+df_perf_sim_ur_scenario %>%
+  filter(study_id == "0025", site_number == "14881") %>%
+  select(study_id, site_number, ur_rate, n_pat, n_pat_with_med75,
+        visit_med75, mean_ae_site_med75, mean_ae_study_med75, prob_low, prob_low_prob_ur) %>%
+  knitr::kable()
+
+df_perf_sim_ur %>%
+  select(- study_id, - site_number) %>%
+  unnest(perf) %>%
+  unnest(perf) %>%
+  filter(study_id == "0025", site_number == "14881") %>%
+  select(study_id, site_number, ur_rate, n_pat, n_pat_with_med75,
+        visit_med75, mean_ae_site_med75, mean_ae_study_med75, prob_low, prob_low_prob_ur) %>%
+  knitr::kable()
+
+
+sim_ur(df_portf_flex, study_id = "0025", site_number = "14881", ur_rate = 0.5) %>%
+  filter(site_number == "14881") %>%
+  filter(visit == max(visit)) %>%
+  summarise(
+    visit = sum(visit),
+    n_ae = sum(n_ae),
+    events_per_visit = sum(visit) / sum(n_ae)
+  )
+
+df_portf_flex %>%
+  filter(site_number == "14881", study_id == "0025") %>%
+  filter(visit == max(visit)) %>%
+  summarise(
+    visit = sum(visit),
+    n_ae = sum(n_ae),
+    events_per_visit = sum(visit) / sum(n_ae)
+  )
+
+df_sim_short <- df_perf_sim_ur_scenario <- sim_ur_scenarios(
+   filter(df_portf_flex, study_id == "0025"),
+   extra_ur_sites = 0,
+   ur_rate = c(0, 0.1, 0.25, 0.5, 0.75, 1),
+   parallel = TRUE,
+   poisson = TRUE,
+   prob_lower = TRUE,
+   progress = TRUE
+)
+```
+
+
+## Functions
+
+
+```{r}
+
+funnel <- function(df) {
+  df %>%
+  filter(visit == max(visit), .by = patnum) %>%
+  summarise(
+    Metric = sum(.data$n_ae) / sum(.data$visit),
+    n_ae = sum(n_ae),
+    visit = sum(visit),
+    .by = "site_number"
+  ) %>%
+  mutate(
+        vMu = sum(.data$n_ae) / sum(.data$visit),
+        z_0 = ifelse(.data$vMu == 0,
+          0,
+          (.data$Metric - .data$vMu) /
+            sqrt(.data$vMu / .data$visit)
+        ),
+        phi = mean(.data$z_0^2),
+        z_i = ifelse(.data$vMu == 0 | .data$phi == 0,
+          0,
+          (.data$Metric - .data$vMu) /
+            sqrt(.data$phi * .data$vMu / .data$visit)
+        )
+  )
+}
+
+box <- function(df) {
+  df <- df %>%
+    filter(visit == max(visit), .by = patnum) %>%
+    summarise(
+      event_per_visit = sum(.data$n_ae) / sum(.data$visit),
+      .by = "site_number"
+    )
+  
+  bx <- boxplot.stats(df$event_per_visit)
+  
+  df <- df %>%
+    mutate(
+      box_out = event_per_visit < bx$stats[1]
+    )
+  
+}
+
+
+
+perf <- function(df_visit, study_id, site_number, ur_rate) {
+  df_vs_study <- df_visit %>%
+    sim_ur(study_id, site_number, ur_rate)
+  
+  prob_low_prob_ur_visit_med75 <- df_vs_study %>%
+    simaerep(under_only = TRUE, progress = FALSE, check = FALSE) %>%
+    .$df_eval %>%
+    filter(.data$site_number == .env$site_number) %>%
+    pull(prob_low_prob_ur)
+  
+  prob_low_prob_ur_inframe <- df_vs_study %>%
+    simaerep(inframe = TRUE, under_only = TRUE, check = FALSE, visit_med75 = FALSE) %>%
+    .$df_eval %>%
+    filter(.data$site_number == .env$site_number) %>%
+    pull(prob_low_prob_ur)
+  
+  prob_low_prob_ur_inframe_visit_med75 <- df_vs_study %>%
+    simaerep(inframe = TRUE, under_only = TRUE, check = FALSE, visit_med75 = TRUE) %>%
+    .$df_eval %>%
+    filter(.data$site_number == .env$site_number) %>%
+    pull(prob_low_prob_ur)
+  
+  funnel_zi <- funnel(df_vs_study) %>%
+    filter(.data$site_number == .env$site_number) %>%
+    pull(z_i)
+  
+  box_out <- box(df_vs_study) %>%
+    filter(.data$site_number == .env$site_number) %>%
+    pull(box_out)
+  
+  tibble(
+    visit_med75 = prob_low_prob_ur_visit_med75,
+    inframe = prob_low_prob_ur_inframe,
+    inframe_visit_med75 = prob_low_prob_ur_inframe_visit_med75,
+    funnel_zi = funnel_zi,
+    box_out = as.integer(box_out)
+  )
+}
+
+perf(df_portf_flex, study_id = "0010", site_number = "15148", ur_rate = 0.5)
+perf(df_portf_flex, study_id = "0010", site_number = "15148", ur_rate = 0.75)
+perf(df_portf_flex, study_id = "0010", site_number = "15148", ur_rate = 1)
+
+```
+
+
+```{r}
+perf_funnel <- perf <- function(df_visit, study_id, site_number, ur_rate) {
+  df_vs_study <- df_visit %>%
+    sim_ur(study_id, site_number, ur_rate)
+
+  funnel_zi <- funnel(df_vs_study) %>%
+    filter(.data$site_number == .env$site_number) %>%
+    pull(z_i)
+
+  tibble(
+    funnel_zi = funnel_zi
+  )
+}
+```
+
+
+## Grid
+
+```{r}
+df_grid <- df_portf_flex %>%
+  distinct(study_id, site_number) %>%
+  # to reduce calculation time we only take every xth study
+  filter(dense_rank(study_id)%%3 == 0) %>%
+  mutate(ur_rate = list(c(0, 0.1, 0.25, 0.5, 0.75, 1))) %>%
+  unnest(ur_rate)
+
+df_grid
+```
+
+```{r}
+df_grid_fix <- df_portf_fix %>%
+  distinct(study_id, site_number) %>%
+  # to reduce calculation time we only take every xth study
+  filter(dense_rank(study_id)%%3 == 0) %>%
+  mutate(ur_rate = list(c(0, 0.1, 0.25, 0.5, 0.75, 1))) %>%
+  unnest(ur_rate)
+```
+
+
+## Apply
+
+### fix 
+
+```{r}
+with_progress_cnd(
+  df_perf <- df_grid_fix %>%
+    mutate(
+      perf = purrr_bar(
+        list(study_id, site_number, ur_rate),
+        .purrr = furrr::future_pmap,
+        .f = function(x, y, z) list(perf_funnel(df_portf_fix, x, y, z)),
+        .purrr_args = list(.options = furrr_options(seed = TRUE)),
+        .steps = nrow(.)
+      )
+    )
+)
+
+df_perf %>%
+  unnest(perf) %>%
+  unnest(perf) %>%
+  readr::write_csv("fix.csv")
+```
+
+
+
+### inframe
+
+```{r eval = FALSE}
+with_progress_cnd(
+  df_perf <- df_grid %>%
+    mutate(
+      perf = purrr_bar(
+        list(study_id, site_number, ur_rate),
+        .purrr = furrr::future_pmap,
+        .f = function(x, y, z) list(perf(df_portf_flex, x, y, z)),
+        .purrr_args = list(.options = furrr_options(seed = TRUE)),
+        .steps = nrow(.)
+      )
+    )
+)
+
+df_perf %>%
+  unnest(perf) %>%
+  unnest(perf) %>%
+  readr::write_csv("inframe.csv")
+```
+
+```{r}
+df_perf <- readr::read_csv("inframe.csv")
+```
+
+# Evaluation
+
+## tpr/fpr
+
+```{r}
+df_perf_rates <- df_perf %>%
+  mutate(across(c(visit_med75, inframe, inframe_visit_med75), ~ . >= 0.95)) %>%
+  mutate(funnel_zi = funnel_zi <= -2) %>%
+  pivot_longer(c(visit_med75, inframe, inframe_visit_med75, box_out, funnel_zi)) %>%
+  summarise(
+    n_ur = sum(value),
+    n_sites = n_distinct(site_number),
+    ratio = n_ur / n_sites,
+    # mean_ur_rate = mean(value),
+    .by = c(ur_rate, name)
+  ) %>%
+  mutate(
+    prop = map2(n_ur, n_sites, ~ prop.test(.x, .y)),
+    ratio_type = ifelse(ur_rate == 0, "fpr", "tpr"),
+    ci95_lwr = map_dbl(prop, ~ .[["conf.int"]][1]),
+    ci95_upr = map_dbl(prop, ~ .[["conf.int"]][2])
+  )
+```
+
+```{r}
+df_perf_rates %>%
+  select(- prop) %>%
+  knitr::kable()
+```
+
+
+```{r}
+df_perf_rates %>%
+  mutate(ur_rate = paste0("under-reporting rate: ",  ur_rate, " - ", ratio_type),
+         ur_rate = ifelse(str_detect(ur_rate, "fpr"), "fpr", ur_rate)) %>%
+  ggplot(aes(name, ratio)) +
+    geom_errorbar(aes(ymin = ci95_lwr, ymax = ci95_upr, color = name), linewidth = 1) +
+    facet_grid(~ ur_rate) +
+    coord_flip() +
+    theme(legend.position = "bottom") +
+    labs(
+      x = "",
+      y = "CI95 Performance Ratio", 
+      title = "{simaerep} vs {gsm} Performance"
+    ) +
+    scale_color_brewer(palette = "Dark2")
+
+```
+
+## AUC
+
+
+```{r}
+df_perf_long <- df_perf %>%
+  pivot_longer(c(visit_med75, inframe, inframe_visit_med75, box_out, funnel_zi))
+
+df_perf_ur <- df_perf_long %>%
+  filter(ur_rate > 0) %>%
+  mutate(actual = 1) %>%
+  nest(data_ur = c(value, actual),.by = c(name, ur_rate, study_id))
+
+df_perf_nr <- df_perf_long %>%
+  filter(ur_rate == 0) %>%
+  select(- ur_rate) %>%
+  mutate(actual = 0) %>%
+  nest(data_nr = c(value, actual),.by = c(name, study_id))
+  
+df_perf_auc <- df_perf_ur %>%
+  left_join(
+    df_perf_nr,
+    by = c("name", "study_id")
+  ) %>%
+  mutate(
+    data = map2(data_ur, data_nr, bind_rows),
+    roc = map(data, ~ pROC::roc(.$actual, .$value)),
+    auc = map_dbl(roc, pROC::auc)
+  ) %>%
+  summarise(
+    auc = mean(auc),
+    sd_auc = sd(auc),
+    n_studies = n_distinct(study_id),
+    vals = paste(auc, collapse = "+"),
+    .by = c(name, ur_rate)
+  )
+
+df_perf_auc %>%
+  knitr::kable()
+```
+
