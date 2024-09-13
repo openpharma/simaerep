@@ -319,12 +319,15 @@ sim_ur_scenarios <- function(df_portf,
 
   df_visit <- check_df_visit(df_portf)
 
+  # get visit_med75 and number elibible patients
   df_site <- do.call(site_aggr, c(list(df_visit = df_visit), site_aggr_args))
 
   if (progress) {
     message("prepping for simulation")
   }
 
+  # for every patient at site add AE count at visit_med75 to site integer vector
+  # same for study
   df_sim_prep <- prep_for_sim(df_site = df_site, df_visit = df_visit)
 
   if (progress) {
@@ -373,11 +376,12 @@ sim_ur_scenarios <- function(df_portf,
 
   df_grid <- bind_rows(df_grid_0, df_grid_gr0)
 
+  # we join the parameter grid with site and study ae count vectors
   df_scen_prep <- df_sim_prep %>%
     left_join(df_grid, by = c("study_id", "site_number"))
 
   # generating scenarios
-
+  # manipulate site and study ae count vectors according to scenario parameter
   df_scen <- df_scen_prep %>%
     mutate(
       scenarios = purrr::pmap(
@@ -410,6 +414,8 @@ sim_ur_scenarios <- function(df_portf,
     ungroup() %>%
     select(- c("study_id_gr", "site_number_gr"))
 
+
+  # generate prob_low for every scenario parameter
   with_progress_cnd(
     ls_df_sim_sites <- purrr_bar(
       df_sim_sites$data,
@@ -432,16 +438,77 @@ sim_ur_scenarios <- function(df_portf,
     message("evaluating stats")
   }
 
+  # every row is one scenario in order to apply multiplicity correction
+  # we need to join each site-level scenario back into the study context
+  # with regular under-reporting score
+
   df_sim_sites <- bind_rows(ls_df_sim_sites)
 
-  df_eval <- do.call(eval_sites, c(list(df_sim_sites = df_sim_sites), eval_sites_args)) %>%
+  df_sim_sites_ur0 <- df_sim_sites %>%
+    filter(.data$extra_ur_sites == 0,
+           .data$frac_pat_with_ur == 0,
+           .data$ur_rate == 0) %>%
+    select(- c("extra_ur_sites", "frac_pat_with_ur", "ur_rate"))
+
+  df_eval_prep <- df_sim_sites %>%
+    mutate(
+      study_id_gr = .data$study_id,
+      site_number_gr = .data$site_number
+    ) %>%
+    group_by(
+      .data$study_id_gr,
+      .data$site_number_gr,
+      .data$extra_ur_sites,
+      .data$frac_pat_with_ur,
+      .data$ur_rate
+    ) %>%
+    nest() %>%
+    ungroup() %>%
+    mutate(
+      # add site scores to study score w/o same site
+      eval = map2(
+        .data$study_id_gr, .data$site_number_gr,
+        ~ filter(df_sim_sites_ur0, study_id == .x, site_number != .y)
+      ),
+      eval = map2(
+        .data$data, .data$eval,
+        bind_rows
+      )
+    ) %>%
+    select(- "data")
+
+  # apply eval sites for every scenario
+  df_eval <- df_eval_prep %>%
+    mutate(
+      eval = map(
+        .data$eval,
+        ~ do.call(eval_sites, c(list(df_sim_sites = .), eval_sites_args)),
+        .progess = progress
+      ),
+      # filter back to site level
+      eval = map2(.data$eval, .data$site_number_gr, ~ filter(.x, site_number == .y))
+    ) %>%
+    select(- c("study_id_gr", "site_number_gr")) %>%
+    unnest(eval) %>%
     arrange(
       .data$study_id,
       .data$site_number,
       .data$extra_ur_sites,
       .data$frac_pat_with_ur,
       .data$ur_rate
+    ) %>%
+    select(
+      c(
+        "study_id",
+        "site_number",
+        "extra_ur_sites",
+        "frac_pat_with_ur",
+        "ur_rate"
+      ),
+      everything()
     )
+
+  stopifnot(nrow(df_eval) == nrow(df_grid))
 
   return(df_eval)
 
@@ -887,6 +954,7 @@ get_portf_perf <- function(df_scen, stat = "prob_low_prob_ur", fpr = c(0.001, 0.
 #' df_visit[df_visit$site_number == "S0001" & df_visit$patnum == "P000001",]$n_ae
 #'
 sim_ur <- function(df_visit, study_id, site_number, ur_rate) {
+
   df_visit_study <- df_visit %>%
     filter(study_id == .env$study_id, site_number != .env$site_number)
 
