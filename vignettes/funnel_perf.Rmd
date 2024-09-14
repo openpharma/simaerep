@@ -327,8 +327,6 @@ get_roc <- function(df_ur, df_nr) {
   pROC::roc(df, response = "is_ur", predictor = "score", quiet = TRUE)
 }
 
-get_auc_safely <- purrr::safely(get_auc, otherwise = 0.5)
-
 # use 0 scenario to mix with ur scenario and calculate auc from scores
 df_nr <- df_eval %>%
   filter(ur_rate == 0) %>%
