@@ -102,3 +102,95 @@ test_that("check portfolio performance test data reproducibility", {
   # expect_equal(df_scen_test, df_scen_check) #nolint
   # expect_equal(df_perf_test, df_perf_check) #nolint
 })
+
+
+test_that("sim_ur() ae_count as expected for max patient visits", {
+
+  n_ae_test <- df_visit_test %>%
+    filter(visit == max(visit), .by = c("study_id", "site_number", "patnum")) %>%
+    filter(site_number == "S0001", study_id == "A") %>%
+    pull(n_ae) %>%
+    sum()
+
+  n_ae_0p5 <- df_visit_test %>%
+    sim_ur(study_id = "A", site_number = "S0001", ur_rate = 0.5) %>%
+    filter(visit == max(visit), .by = c("study_id", "site_number", "patnum")) %>%
+    filter(site_number == "S0001", study_id == "A") %>%
+    pull(n_ae) %>%
+    sum()
+
+  expect_true(n_ae_test == n_ae_0p5 * 2)
+
+})
+
+
+test_that("sim_ur() and sim_ur_scenario() must give similar results", {
+
+  df_sim_ur_scenarios <- sim_ur_scenarios(
+      df_visit_test,
+      extra_ur_sites = 0,
+      ur_rate = c(0.5, 1),
+      parallel = FALSE,
+      poisson = FALSE,
+      prob_lower = TRUE,
+      progress = FALSE,
+      check = FALSE,
+      site_aggr_args = list(method = "med75_adj")
+    ) %>%
+    arrange(study_id, site_number, ur_rate)
+
+  # sim_ur -------------------------------------
+
+  perf <- function(df_visit, study_id, site_number, ur_rate) {
+    df_vs_study <- df_visit %>%
+      sim_ur(study_id, site_number, ur_rate)
+
+    df_vs_study %>%
+      simaerep(under_only = TRUE, progress = FALSE, check = FALSE) %>%
+      .$df_eval %>%
+      filter(.data$site_number == .env$site_number)
+  }
+
+  df_grid <- df_visit_test %>%
+    distinct(study_id, site_number) %>%
+    mutate(ur_rate = list(c(0, 0.5, 1))) %>%
+    unnest(ur_rate)
+
+  df_sim_ur <- df_grid %>%
+    mutate(
+      perf = purrr::pmap(
+        list(study_id, site_number, ur_rate),
+        function(x, y, z) perf(df_visit_test, x, y, z)
+      )
+    ) %>%
+    select(- study_id, - site_number) %>%
+    unnest(perf) %>%
+    arrange(study_id, site_number, ur_rate)
+
+  # compare ------------------------------------
+
+  cols_equal <- c(
+    "study_id",
+    "site_number",
+    "ur_rate",
+    "visit_med75",
+    "n_pat_with_med75",
+    "mean_ae_study_med75"
+  )
+
+  expect_equal(
+    df_sim_ur_scenarios[, cols_equal],
+    df_sim_ur[, cols_equal]
+  )
+
+  # sim_ur calculates the number of AEs to be removed based
+  # on tha latest visit of each patient and removes them from
+  # the beginning. This can give smaller AE counts than removing
+  # a fraction of AEs from visit_med75.
+
+  expect_true(all(
+    round(df_sim_ur$mean_ae_site_med75, 5) <=
+    round(df_sim_ur_scenarios$mean_ae_site_med75, 5)
+  ))
+
+})
