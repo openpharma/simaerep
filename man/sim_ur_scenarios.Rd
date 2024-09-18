@@ -14,7 +14,8 @@ sim_ur_scenarios(
   parallel = FALSE,
   progress = TRUE,
   site_aggr_args = list(),
-  eval_sites_args = list()
+  eval_sites_args = list(),
+  check = TRUE
 )
 }
 \arguments{
@@ -41,6 +42,8 @@ Default: c(0.25, 0.5)}
 
 \item{eval_sites_args}{named list of parameters passed to
 \code{\link{eval_sites}}, Default: list()}
+
+\item{check}{logical, perform data check and attempt repair with}
 }
 \value{
 dataframe with the following columns:

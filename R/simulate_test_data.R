@@ -303,7 +303,8 @@ sim_ur_scenarios <- function(df_portf,
                           parallel = FALSE,
                           progress = TRUE,
                           site_aggr_args = list(),
-                          eval_sites_args = list()) {
+                          eval_sites_args = list(),
+                          check = TRUE) {
   # checks
 
   stopifnot("all site_aggr_args list items must be named" = all(names(site_aggr_args) != ""))
@@ -312,12 +313,15 @@ sim_ur_scenarios <- function(df_portf,
   stopifnot(length(extra_ur_sites) == 1)
   extra_ur_sites <- as.integer(extra_ur_sites)
 
-
   if (progress) {
     message("aggregating site level")
   }
 
-  df_visit <- check_df_visit(df_portf)
+  if (check) {
+    df_visit <- check_df_visit(df_portf)
+  } else {
+    df_visit <- df_portf
+  }
 
   # get visit_med75 and number elibible patients
   df_site <- do.call(site_aggr, c(list(df_visit = df_visit), site_aggr_args))
@@ -345,6 +349,11 @@ sim_ur_scenarios <- function(df_portf,
               sum_n_pat = sum(.data$n_pat),
               n_sites = n_distinct(.data$site_number),
               .groups = "drop")
+
+  # free up RAM
+  remove(df_portf)
+  remove(df_visit)
+  gc()
 
   ur_rate <- ur_rate[ur_rate > 0]
 
@@ -954,6 +963,9 @@ get_portf_perf <- function(df_scen, stat = "prob_low_prob_ur", fpr = c(0.001, 0.
 #' df_visit[df_visit$site_number == "S0001" & df_visit$patnum == "P000001",]$n_ae
 #'
 sim_ur <- function(df_visit, study_id, site_number, ur_rate) {
+
+  df_visit <- df_visit %>%
+    mutate(n_ae = as.numeric(.data$n_ae))
 
   df_visit_study <- df_visit %>%
     filter(study_id == .env$study_id, site_number != .env$site_number)
