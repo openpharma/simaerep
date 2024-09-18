@@ -2,23 +2,9 @@
 
 
 #' prune visits to visit_med75 using table operations
-#'@export
 #'@inheritParams simaerep
 #'@param df_site dataframe, as returned by [site_aggr()]
-#'@examples
-#' df_visit <- sim_test_data_study(
-#'   n_pat = 100,
-#'   n_sites = 5,
-#'   frac_site_with_ur = 0.4,
-#'   ur_rate = 0.6
-#' )
-#' df_visit$study_id <- "A"
-#'
-#' df_site <- site_aggr(df_visit)
-#' df_visit_prune <- prune_to_visit_med75_inframe(df_visit, df_site)
-#' df_sim <- sim_inframe(df_visit_prune)
-#' df_eval <- eval_sites(df_sim)
-#' df_eval
+#'@keywords internal
 prune_to_visit_med75_inframe <- function(df_visit, df_site) {
   df_pat_aggr <- pat_aggr(df_visit)
 
@@ -45,6 +31,8 @@ prune_to_visit_med75_inframe <- function(df_visit, df_site) {
 #' Calculate prob_lower for study sites using table operations
 #'@export
 #'@inheritParams simaerep
+#'@param df_site, dataframe as returned be [site_aggr()], Will switch to visit_med75.
+#'Default: NULL
 #'@examples
 #' df_visit <- sim_test_data_study(
 #'   n_pat = 100,
@@ -57,7 +45,7 @@ prune_to_visit_med75_inframe <- function(df_visit, df_site) {
 #' df_sim <- sim_inframe(df_visit)
 #' df_eval <- eval_sites(df_sim)
 #' df_eval
-sim_inframe <- function(df_visit, r = 1000) {
+sim_inframe <- function(df_visit, r = 1000, df_site = NULL) {
 
   # db back-end, to not form ratios from integers
   df_visit <- df_visit %>%
@@ -74,14 +62,48 @@ sim_inframe <- function(df_visit, r = 1000) {
   }
 
   # aggregate per patient to get max visits
-  df_pat_aggr <- pat_aggr(df_visit)
+  df_pat_aggr_pool <- pat_aggr(df_visit)
+
+  # this implements visit_med75
+  if (! is.null(df_site)) {
+    df_visit_prune <- prune_to_visit_med75_inframe(df_visit, df_site)
+
+    df_calc_ori <- df_visit_prune %>%
+      filter(visit == max(.data$visit, na.rm = TRUE), .by = c("patnum", "study_id")) %>%
+      summarise(
+        events = sum(.data$n_ae),
+        visits = sum(.data$visit),
+        n_pat = n_distinct(.data$patnum),
+        events_per_visit_site_ori = sum(.data$n_ae, na.rm = TRUE) / sum(.data$visit, na.rm = TRUE),
+        .by = c("study_id", "site_number")
+      )
+
+    df_pat_aggr_site <- df_visit_prune %>%
+      prune_to_visit_med75_inframe(df_site) %>%
+      pat_aggr()
+
+    remove(df_visit_prune)
+
+  } else {
+    df_pat_aggr_site <- df_pat_aggr_pool
+
+    df_calc_ori <- df_visit %>%
+      filter(visit == max(.data$visit, na.rm = TRUE), .by = c("patnum", "study_id")) %>%
+      summarise(
+        events = sum(.data$n_ae),
+        visits = sum(.data$visit),
+        n_pat = n_distinct(.data$patnum),
+        events_per_visit_site_ori = sum(.data$n_ae, na.rm = TRUE) / sum(.data$visit, na.rm = TRUE),
+        .by = c("study_id", "site_number")
+      )
+  }
 
   # for every max visit in the data add all eligible patients
   # assign a number to each patient
-  df_visit_pat_pool <- df_pat_aggr %>%
+  df_visit_pat_pool <- df_pat_aggr_pool %>%
     distinct(.data$study_id, visit = .data$max_visit_per_pat) %>%
     left_join(
-      df_pat_aggr,
+      df_pat_aggr_pool,
       by = join_by(
         "visit" <= "max_visit_per_pat",
         "study_id" == "study_id"
@@ -96,14 +118,13 @@ sim_inframe <- function(df_visit, r = 1000) {
       .by = c("study_id", "visit")
     )
 
-
   # for each site create repetitions using cross join
   # add patients with maximum visit back to each site
-  df_sim_prep <- df_visit %>%
+  df_sim_prep <- df_pat_aggr_site %>%
     distinct(.data$study_id, .data$site_number) %>%
     cross_join(df_r) %>%
     left_join(
-      df_pat_aggr,
+      df_pat_aggr_site,
       by = c("study_id", "site_number"),
       relationship = "many-to-many"
     ) %>%
@@ -141,17 +162,6 @@ sim_inframe <- function(df_visit, r = 1000) {
     summarise(
       events_per_visit_site_rep = sum(.data$n_ae, na.rm = TRUE) / sum(.data$visit, na.rm = TRUE),
       .by = c("study_id", "rep", "site_number")
-    )
-
-  # get original site event stats
-  df_calc_ori <- df_visit %>%
-    filter(visit == max(.data$visit, na.rm = TRUE), .by = c("patnum", "study_id")) %>%
-    summarise(
-      events = sum(.data$n_ae),
-      visits = sum(.data$visit),
-      n_pat = n_distinct(.data$patnum),
-      events_per_visit_site_ori = sum(.data$n_ae, na.rm = TRUE) / sum(.data$visit, na.rm = TRUE),
-      .by = c("study_id", "site_number")
     )
 
   # join original with simulations

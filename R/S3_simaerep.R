@@ -277,10 +277,10 @@ simaerep_inframe <- function(df_visit,
   )
 
   if (visit_med75) {
-    df_visit <- prune_to_visit_med75_inframe(df_visit, df_site)
+    df_sim_sites <- sim_inframe(df_visit, r = r, df_site = df_site)
+  } else {
+    df_sim_sites <- sim_inframe(df_visit, r = r)
   }
-
-  df_sim_sites <- sim_inframe(df_visit, r = r)
 
   # evaluate
   df_eval <- do.call(
