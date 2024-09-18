@@ -15,18 +15,4 @@ n_ae.}
 \description{
 prune visits to visit_med75 using table operations
 }
-\examples{
-df_visit <- sim_test_data_study(
-  n_pat = 100,
-  n_sites = 5,
-  frac_site_with_ur = 0.4,
-  ur_rate = 0.6
-)
-df_visit$study_id <- "A"
-
-df_site <- site_aggr(df_visit)
-df_visit_prune <- prune_to_visit_med75_inframe(df_visit, df_site)
-df_sim <- sim_inframe(df_visit_prune)
-df_eval <- eval_sites(df_sim)
-df_eval
-}
+\keyword{internal}

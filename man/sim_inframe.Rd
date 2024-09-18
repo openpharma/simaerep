@@ -4,7 +4,7 @@
 \alias{sim_inframe}
 \title{Calculate prob_lower for study sites using table operations}
 \usage{
-sim_inframe(df_visit, r = 1000)
+sim_inframe(df_visit, r = 1000, df_site = NULL)
 }
 \arguments{
 \item{df_visit}{Data frame with columns: study_id, site_number, patnum, visit,
@@ -13,6 +13,9 @@ n_ae.}
 \item{r}{Integer or tbl_object, number of repetitions for bootstrap
 simulation. Pass a tbl object referring to a table with one column and as
 many rows as desired repetitions. Default: 1000.}
+
+\item{df_site, }{dataframe as returned be \code{\link[=site_aggr]{site_aggr()}}, Will switch to visit_med75.
+Default: NULL}
 }
 \description{
 Calculate prob_lower for study sites using table operations
