@@ -1,0 +1,380 @@
+---
+title: "Statistical Performance"
+output:
+  html_document:
+    toc: true
+    toc_depth: 3
+    toc_float: true
+    number_sections: true
+    code_folding: show
+    collapse: false
+editor_options:
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, cache = FALSE, message = FALSE)
+```
+
+# Load
+```{r load}
+suppressPackageStartupMessages(library(dplyr))
+suppressPackageStartupMessages(library(tibble))
+suppressPackageStartupMessages(library(tidyr))
+suppressPackageStartupMessages(library(simaerep))
+suppressPackageStartupMessages(library(purrr))
+suppressPackageStartupMessages(library(stringr))
+```
+
+# Introduction
+
+
+
+# Performance (Statistical)
+
+```{r}
+suppressPackageStartupMessages(library(furrr))
+suppressPackageStartupMessages(library(future))
+
+plan(multisession, workers = 6)
+```
+
+
+## Load Portfolio
+
+```{r eval = FALSE}
+df_config <- readr::read_csv("ae_conf_20240220.csv")
+df_ae_rates <- readr::read_csv("ae_rates_20240220.csv")
+
+df_portf_flex <- sim_test_data_portfolio(df_config, df_ae_rates = df_ae_rates, parallel = TRUE, progress = TRUE)
+
+df_portf_flex %>%
+  readr::write_csv("portf.csv")
+```
+
+```{r}
+df_portf_flex <- readr::read_csv("portf.csv")
+```
+
+
+## Simulating Under Reporting
+
+Here we reanalyze performance of {simaerep} integrating the lessons learned from previous versions. We will apply the following.
+
+- generate portfolio using flexible AE rates
+- remove AEs directly from the data set and not from an aggregated metric using `sim_ur()`
+- set threshold for confusion matrix so that all methods have similar fpr
+- test the following {simaerep} parameters **with and without correcting for multiplicity**:
+  * default algorithm
+  * default algorithm with active over-reporting scoring
+  * inframe algorithm with visit_med75
+  * inframe algorithm
+- test the following outlier detection methods
+  * box-plot
+  * funnel-plot
+  
+
+## Functions
+
+
+```{r}
+
+funnel <- function(df) {
+  df %>%
+  filter(visit == max(visit), .by = patnum) %>%
+  summarise(
+    Metric = sum(.data$n_ae) / sum(.data$visit),
+    n_ae = sum(n_ae),
+    visit = sum(visit),
+    .by = "site_number"
+  ) %>%
+  mutate(
+        vMu = sum(.data$n_ae) / sum(.data$visit),
+        z_0 = ifelse(.data$vMu == 0,
+          0,
+          (.data$Metric - .data$vMu) /
+            sqrt(.data$vMu / .data$visit)
+        ),
+        phi = mean(.data$z_0^2),
+        z_i = ifelse(.data$vMu == 0 | .data$phi == 0,
+          0,
+          (.data$Metric - .data$vMu) /
+            sqrt(.data$phi * .data$vMu / .data$visit)
+        )
+  )
+}
+
+box <- function(df) {
+  df <- df %>%
+    filter(visit == max(visit), .by = patnum) %>%
+    summarise(
+      event_per_visit = sum(.data$n_ae) / sum(.data$visit),
+      .by = "site_number"
+    )
+  
+  bx <- boxplot.stats(df$event_per_visit)
+  
+  df <- df %>%
+    mutate(
+      box_out = event_per_visit < bx$stats[1]
+    )
+  
+}
+
+
+perf <- function(df_visit, study_id, site_number, ur_rate) {
+  df_vs_study <- df_visit %>%
+    sim_ur(study_id, site_number, ur_rate)
+  
+  df_visit_med75 <- df_vs_study %>%
+    simaerep(under_only = TRUE, progress = FALSE, check = FALSE) %>%
+    .$df_eval %>%
+    filter(.data$site_number == .env$site_number)
+  
+  df_visit_med75_over <- df_vs_study %>%
+    simaerep(under_only = FALSE, progress = FALSE, check = FALSE) %>%
+    .$df_eval %>%
+    filter(.data$site_number == .env$site_number)
+
+  df_inframe <- df_vs_study %>%
+    simaerep(inframe = TRUE, under_only = TRUE, check = FALSE, visit_med75 = FALSE) %>%
+    .$df_eval %>%
+    filter(.data$site_number == .env$site_number)
+  
+  df_inframe_visit_med75 <- df_vs_study %>%
+    simaerep(inframe = TRUE, under_only = TRUE, check = FALSE, visit_med75 = TRUE) %>%
+    .$df_eval %>%
+    filter(.data$site_number == .env$site_number)
+  
+  funnel_zi <- funnel(df_vs_study) %>%
+    filter(.data$site_number == .env$site_number) %>%
+    pull(z_i)
+  
+  box_out <- box(df_vs_study) %>%
+    filter(.data$site_number == .env$site_number) %>%
+    pull(box_out)
+
+  tibble(
+    score_visit_med75 = df_visit_med75$prob_low_prob_ur,
+    score_visit_med75_no_mult = 1 - df_visit_med75$prob_low,
+    score_visit_med75_over = df_visit_med75_over$prob_low_prob_ur,
+    score_visit_med75_over_no_mult = 1 - df_visit_med75_over$prob_low,
+    score_inframe = df_inframe$prob_low_prob_ur,
+    score_inframe_no_mult = 1 - df_inframe$prob_low,
+    score_inframe_visit_med75 = df_inframe_visit_med75$prob_low_prob_ur,
+    score_inframe_visit_med75_no_mult = 1 - df_inframe_visit_med75$prob_low,
+    score_funnel_zi = funnel_zi,
+    score_box_out = as.integer(box_out),
+    stat_visit_med75_visit_med75 = df_visit_med75$visit_med75,
+    stat_visit_med75_n_pat_with_med75 = df_visit_med75$n_pat_with_med75,
+    stat_visit_med75_mean_ae_site_med75 = df_visit_med75$mean_ae_site_med75,
+    stat_visit_med75_mean_ae_study_med75 = df_visit_med75$mean_ae_study_med75,
+    stat_inframe_visit_med75 = df_inframe_visit_med75$visit_med75,
+    stat_inframe_visit_med75_n_pat_with_med75 = df_inframe_visit_med75$n_pat_with_med75,
+    stat_inframe_visit_med75_events_per_visit_site = df_inframe_visit_med75$events_per_visit_site,
+    stat_inframe_visit_med75_events_per_visit_study = df_inframe_visit_med75$events_per_visit_study,
+    stat_inframe_n_pat = df_inframe$n_pat,
+    stat_inframe_events_per_visit_site = df_inframe$events_per_visit_site,
+    stat_inframe_events_per_visit_study = df_inframe$events_per_visit_study,
+  )
+}
+
+# perf(df_portf_flex, study_id = "0010", site_number = "15153", ur_rate = 0) %>% unlist()
+# perf(df_portf_flex, study_id = "0010", site_number = "15153", ur_rate = 0.5) %>% unlist()
+# perf(df_portf_flex, study_id = "0010", site_number = "15153", ur_rate = 0.75) %>% unlist()
+# perf(df_portf_flex, study_id = "0010", site_number = "15153", ur_rate = 1) %>% unlist()
+
+```
+
+
+## Grid
+
+```{r}
+df_grid <- df_portf_flex %>%
+  distinct(study_id, site_number) %>%
+  # to reduce calculation time we only take every xth study
+  filter(dense_rank(study_id)%%5 == 0) %>%
+  mutate(ur_rate = list(c(0, 0.1, 0.25, 0.5, 0.75, 1))) %>%
+  unnest(ur_rate)
+
+df_grid
+```
+
+
+
+## Apply
+
+```{r eval = FALSE}
+with_progress_cnd(
+  df_perf <- df_grid %>%
+    mutate(
+      perf = purrr_bar(
+        list(study_id, site_number, ur_rate),
+        .purrr = furrr::future_pmap,
+        .f = function(x, y, z) perf(df_portf_flex, x, y, z),
+        .purrr_args = list(.options = furrr_options(seed = TRUE)),
+        .steps = nrow(.)
+      )
+    )
+)
+
+df_perf %>%
+  unnest(perf) %>%
+  readr::write_csv("perf.csv")
+```
+
+
+
+```{r}
+df_perf <- readr::read_csv("perf.csv", show_col_types = FALSE)
+```
+
+
+```{r}
+df_perf_long <- df_perf %>%
+  pivot_longer(cols = - c(study_id, site_number, ur_rate), names_to = "type", values_to = "score") %>%
+  filter(startsWith(type, "score_")) %>%
+  mutate(type = stringr::str_replace(type, "score_", ""))
+```
+
+
+# Evaluation
+
+
+### Thresholds
+
+We set the thresholds so that we get a fpr of 0.01.
+
+Note that this results in probability thresholds ~ 0.99 for scores w/o multiplicity correction and in the recommended funnel plot score threshold of -2.
+
+```{r}
+
+target_fpr <- 0.01
+
+df_thresh <- df_perf_long %>%
+  group_by(type) %>%
+  nest() %>%
+  ungroup() %>%
+  mutate(
+    data = map(data, ~ filter(., ur_rate == 0)),
+    thresh1 = map_dbl(data, ~ quantile(pull(., score), 1 - target_fpr)),
+    thresh2 = map_dbl(data, ~ quantile(pull(., score), target_fpr)),
+    thresh = ifelse(type == "funnel_zi", thresh2, thresh1)
+  ) %>%
+  select(type, thresh)
+  
+df_thresh
+```
+
+### Aggregate
+
+```{r}
+get_prop_test_ci95 <- function(..., ix) {
+  
+  stopifnot(ix %in% c(1, 2))
+  
+  tryCatch(
+    prop.test(...)$conf.int[ix],
+    error = function(cnd) c(NA, NA)[ix]
+  )
+}
+
+df_aggr <- df_perf_long %>%
+  left_join(df_thresh, by = "type") %>%
+  mutate(
+    is_ur = ifelse(type == "funnel_zi", score <= thresh, score >= thresh),
+    is_ur = ifelse(type == "box_out", score == 1, is_ur)
+  ) %>%
+  summarise(
+    n = n(),
+    .by = c(type, ur_rate, is_ur)
+  ) %>%
+  pivot_wider(
+    names_from = is_ur,
+    values_from = n,
+    names_prefix = "is_ur_",
+    values_fill = 0
+  ) %>%
+  mutate(
+    n_sites = is_ur_TRUE + is_ur_FALSE,
+    ratio = is_ur_TRUE / n_sites,
+    ratio_type = ifelse(ur_rate == 0, "fpr", "tpr"),
+    ci95_low = map2_dbl(is_ur_TRUE, n_sites, ~ get_prop_test_ci95(.x, .y, ix = 1)),
+    ci95_high = map2_dbl(is_ur_TRUE, n_sites, ~ get_prop_test_ci95(.x, .y, ix = 2)),
+    type_strip = str_replace(type, "_no_mult", ""),
+    has_mult = ! str_detect(type, "no_mult") & ! type %in% c("funnel_zi", "box_out")
+  )
+```
+
+### Table
+
+Methods:
+
+- **visit_med75:** default algorithm
+- **visit_med75_over:** default algorithm including over-reporting score
+- **inframe:** new algorithm using table operations and no visit_med75
+- **inframe visit_med75:** new algorithm using table operations and visit_med75
+- **funnel_zi:** funnel plot derived outlier detection
+- **box_out:** box plot derived outlier detection
+
+FN: false negatives
+TP: true positives
+
+```{r}
+df_aggr %>%
+  select(method = type_strip, has_mult, ur_rate, FN = is_ur_FALSE, TP = is_ur_TRUE, n_sites, ratio_type, ratio, ci95_low, ci95_high) %>%
+  knitr::kable(digits = 4)
+
+```
+
+
+### Plot
+
+```{r, plot, fig.width=10, fig.height = 12}
+
+df_aggr %>%
+  mutate(ur_rate = paste0("under-reporting rate: ",  ur_rate, " - ", ratio_type)
+  ) %>%
+  group_by(ur_rate) %>%
+  ggplot(aes(type, ratio)) +
+    geom_errorbar(aes(ymin = ci95_low, ymax = ci95_high, color = type_strip, alpha = has_mult), linewidth = 1) +
+    facet_wrap(~ ur_rate, ncol = 1) +
+    coord_flip() +
+    theme(
+      legend.position = "right",
+      axis.text.y = element_blank(),
+      axis.ticks.y = element_blank()
+    ) +
+    labs(
+      x = "",
+      y = "Ratio (CI95)", 
+      title = "{simaerep} Performance",
+      color = "Method",
+      alpha = "Multiplicity Correction"
+    ) +
+    scale_color_manual(values = rev(RColorBrewer::brewer.pal(n = 6, name = "Dark2"))) +
+    scale_alpha_manual(values = c(1, 0.5))
+
+```
+
+
+### Summary
+
+- new inframe method has slightly better performance than original algorithm
+
+> The new inframe methods compares event per visit rates without dropping any patients or AEs from the analysis.
+This is likely to explain the performance increase. We observed a similar increase when we optimized visit_med75
+in past experiments.
+
+- multiplicity correction imposes a penalty on the true positive rate
+
+> This observation was already made by the Boeringer Ingelheim Team during the evaluation of {simaerep}. We can 
+now reporducibly confirm this. The unaltered probability score as returned by the bootstrap algorithm already provides
+very realistic under-reporting probabilities.
+
+- {simaerep} outperforms simpler methods such as funnel plot and box plot outlier detection.
+
+> These controls confirm previous observations that were made during the {simaerep} validation.
+
+
+

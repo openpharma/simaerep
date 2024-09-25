@@ -1,6 +1,6 @@
 Package: simaerep
 Title: Find Clinical Trial Sites Under-Reporting Adverse Events
-Version: 0.5.0
+Version: 0.5.0.900
 Authors@R: c(
     person(given = "Bjoern",
            family = "Koneswarakantha",
@@ -34,7 +34,8 @@ Imports:
     furrr (>= 0.2.1),
     progressr,
     knitr,
-    tibble
+    tibble,
+    dbplyr
 Suggests:
     testthat,
     devtools,
@@ -42,8 +43,11 @@ Suggests:
     spelling,
     haven,
     vdiffr,
-    lintr
+    lintr,
+    DBI,
+    duckdb,
+    ggExtra
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.2
 Language: en-US
 Config/testthat/edition: 3

@@ -22,3 +22,5 @@ run_remote.md
 *.csv
 
 .DS_Store
+
+.tmp

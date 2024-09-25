@@ -1,0 +1,203 @@
+---
+title: "Inframe Simulation Using Table Operations"
+output:
+  html_document:
+    toc: true
+    toc_depth: 3
+    toc_float: true
+    number_sections: true
+    code_folding: show
+    collapse: false
+editor_options:
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, cache = FALSE, message = FALSE)
+```
+
+# Load
+```{r load}
+suppressPackageStartupMessages(library(dplyr))
+suppressPackageStartupMessages(library(tibble))
+suppressPackageStartupMessages(library(tidyr))
+suppressPackageStartupMessages(library(simaerep))
+```
+
+# Introduction
+
+With the latest `0.6.0` release we have added an alternative version of the {simaerep} algorithm that was coded using solely `dbplyr` compatible table operations.
+
+- expand the patients for each site `r` times
+- join each patient with a random eligible patient from same study
+- for each replicate calculate event per visit rate per site
+- calculate the ratio of having a lower event per visit rate than actually observed
+
+This comes with the following advantages and disadvantages:
+
+- Patients are individually matched with patients that have reached the same visit in the study. No need to pick visit_med75 as an evaluation point.
+- `dbplyr` compatibility means that code execution can be done in a database back-end as opposed to in-memory.
+- Matching patients individually is more costly, this increases in-memory computation time
+- Limited patient sample pool for patients that have more visits than other patients in study.
+
+# Sample Data
+
+```{r}
+set.seed(1)
+
+df_visit <- sim_test_data_study(
+  n_pat = 1000, # number of patients in study
+  n_sites = 100, # number of sites in study
+  frac_site_with_ur = 0.05, # fraction of sites under-reporting
+  ur_rate = 0.4, # rate of under-reporting
+  ae_per_visit_mean = 0.5 # mean AE per patient visit
+)
+
+df_visit$study_id <- "A"
+```
+
+# Patient-Level Matching
+
+Here we use the standard version of the algorithm.
+
+```{r}
+aerep_trad <- simaerep(df_visit)
+plot(aerep_trad)
+```
+
+To use the patient-level matching algorithm we set `inframe=TRUE` and `visit_med75=FALSE`.
+
+The original algorithm uses fixed seeds before sampling while the inframe method does not. In order to obtain consistent results we need to manually set a seed.
+
+```{r}
+set.seed(1)
+
+aerep_inframe <- simaerep(
+  df_visit,
+  inframe = TRUE,
+  visit_med75 = FALSE
+)
+```
+
+The plot shows that for all sites 10/10 patients were used and none were excluded. We also observe that
+the site average has become more noisy as less patients are used to calculate the averages for the higher
+visit numbers.
+
+```{r}
+plot(aerep_inframe)
+```
+
+The inframe method includes this noisier data but does not compare average event counts but event per visit rates.
+We can find `events_per_visit_site` and `events_per_visit_study` in `df_eval`. The latter is the average event rate
+obtained in the simulation in which each patient has been resampled according to its maximum visit.
+
+```{r}
+aerep_inframe$df_eval
+```
+
+We can also force the inframe method to use the visit_med75 this will pre-filter `df_visit`, which adds an extra step
+and decreases performance. 
+
+```{r}
+
+set.seed(1)
+
+aerep_inframe_visit_med75 <- simaerep(
+  df_visit,
+  inframe = TRUE,
+  visit_med75 = TRUE
+)
+
+plot(aerep_inframe_visit_med75)
+```
+
+
+# DB
+
+We can demonstrate the database-backend compatibility by using a connection to a in memory `duckdb` database. In order to set the number of replications we need to create a new table in our back-end that has one column with as many rows as the desired replications.
+
+A lazy reference to this table can then be passed to the `r` parameter.
+
+```{r}
+con <- DBI::dbConnect(duckdb::duckdb(), dbdir = ":memory:")
+df_r <- tibble(rep = seq(1, 1000))
+
+dplyr::copy_to(con, df_visit, "visit")
+dplyr::copy_to(con, df_r, "r")
+
+tbl_visit <- tbl(con, "visit")
+tbl_r <- tbl(con, "r")
+
+
+aerep <- simaerep(tbl_visit, r = tbl_r, visit_med75 = FALSE)
+```
+
+When inspecting `df_eval` we see that it is still a lazy table object.
+
+```{r}
+aerep$df_eval
+```
+
+We can convert it to sql code. The `cte` option makes the sql code more readable.
+
+```{r}
+sql_eval <- dbplyr::sql_render(aerep$df_eval, sql_options = dbplyr::sql_options(cte = TRUE))
+stringr::str_trunc(sql_eval, 500)
+```
+
+We can take that code and wrap it in a `CREATE TABLE` statement
+
+```{r}
+sql_create <- glue::glue("CREATE TABLE eval AS ({sql_eval})")
+DBI::dbExecute(con, sql_create)
+```
+
+Retrieve the new table from the database.
+
+```{r}
+tbl_eval <- tbl(con, "eval")
+tbl_eval
+```
+
+We plot the results from the {simaerep} object.
+
+```{r}
+plot(aerep)
+```
+
+Or more efficiently by using `plot_study()` when we have already written the `simaerep` results into the database.
+Here we avoid that the results are being recalculated just for the sake of creating a plot. However this requires
+that we save `df_site` to the database as well.
+
+```{r}
+sql_site <- dbplyr::sql_render(aerep$df_site)
+DBI::dbExecute(con, glue::glue("CREATE TABLE site AS ({sql_site})"))
+tbl_site <- tbl(con, "site")
+
+plot_study(tbl_visit, tbl_site, tbl_eval, study = "A")
+```
+
+
+```{r}
+DBI::dbDisconnect(con)
+```
+
+
+
+# In Memory Calculation Times
+
+Here we perform some examplary tests to illustrate the increase in-memory calculation time of the inframe calculation method.
+
+This is the calculation time for the default settings
+```{r}
+system.time({simaerep(df_visit, inframe = FALSE, visit_med75 = TRUE, under_only = TRUE, progress = FALSE)})
+```
+
+
+inframe calculation time is higher
+
+```{r}
+system.time({simaerep(df_visit, inframe = TRUE, visit_med75 = FALSE, under_only = TRUE)})
+```
+
+

@@ -38,37 +38,23 @@ check_df_visit <- function(df_visit) {
   df_visit <- ungroup(df_visit)
 
   stopifnot(
-    all(c("study_id", "site_number", "patnum", "n_ae", "visit") %in% names(df_visit))
+    all(c("study_id", "site_number", "patnum", "n_ae", "visit") %in% colnames(df_visit))
   )
 
-  cols_na <- df_visit %>%
-    summarise_at(
-        vars(c(
-          "study_id",
-          "site_number",
-          "patnum",
-          "n_ae",
-          "visit"
-        )),
-        anyNA
-      ) %>%
+  no_na_cols <- c(
+    "study_id",
+    "site_number",
+    "patnum",
+    "n_ae",
+    "visit"
+  )
+
+  cols_na <- purrr::map(no_na_cols, ~ get_any_na(df_visit, .)) %>%
     unlist()
 
   if (any(cols_na)) {
-    stop(paste("NA detected in columns:", paste(names(cols_na)[cols_na], collapse = ",")))
+    stop(paste("NA detected in columns:", paste(no_na_cols[cols_na], collapse = ",")))
   }
-
-    df_visit %>%
-      summarise_at(
-        vars(c(
-          "n_ae",
-          "visit"
-        )),
-        ~ is.numeric(.)
-      ) %>%
-      unlist() %>%
-      all() %>%
-      stopifnot("n_ae and vist columns must be numeric" = .)
 
   df_visit %>%
     group_by(.data$study_id, .data$patnum) %>%
@@ -86,9 +72,22 @@ check_df_visit <- function(df_visit) {
     all() %>%
     stopifnot("visit numbering should start at 1" = .)
 
-  df_visit <- exp_implicit_missing_visits(df_visit)
+  if (inherits(df_visit, "data.frame")) {
+    df_visit %>%
+      summarise_at(
+        vars(c(
+          "n_ae",
+          "visit"
+        )),
+        ~ is.numeric(.)
+      ) %>%
+      unlist() %>%
+      all() %>%
+      stopifnot("n_ae and visit columns must be numeric" = .)
 
-  df_visit <- aggr_duplicated_visits(df_visit)
+    df_visit <- exp_implicit_missing_visits(df_visit)
+    df_visit <- aggr_duplicated_visits(df_visit)
+  }
 
   return(df_visit)
 }
@@ -245,19 +244,39 @@ get_visit_med75 <- function(df_pat,
                             method = "med75_adj",
                             min_pat_pool = 0.2) {
 
+  if (inherits(df_pat, "data.frame")) {
+    fun_arrange <- arrange
+  } else {
+    fun_arrange <- window_order
+  }
+
+  # we have to separate the aggregation steps into two steps
+  # we need to reference visit_med75 for counting patients with
+  # visit_med75 not all db backends may support this
+
+  df_visit_med75 <- df_pat %>%
+    summarise(
+      visit_med75 = ceiling(median(.data$max_visit_per_pat) * 0.75),
+      .by = c("study_id", "site_number")
+    )
+
   df_site <- df_pat %>%
-    group_by(.data$study_id, .data$site_number) %>%
+    left_join(
+      df_visit_med75,
+      by = c("study_id", "site_number")
+    ) %>%
     summarise(
       n_pat = n_distinct(.data$patnum),
-      visit_med75 = ceiling(median(.data$max_visit_per_pat) * 0.75),
-      n_pat_with_med75 = n_distinct(
-        .data$patnum[.data$max_visit_per_pat >= .data$visit_med75]
+      n_pat_with_med75 = sum(ifelse(
+        .data$max_visit_per_pat >= .data$visit_med75,
+        1, 0)
       ),
-      .groups = "drop"
+      .by = c("study_id", "site_number", "visit_med75")
     )
 
 
   if (method == "med75_adj") {
+
     df_site <- df_site %>%
       right_join(
         df_pat,
@@ -265,26 +284,49 @@ get_visit_med75 <- function(df_pat,
       ) %>%
       mutate(
         pat_has_visit_med75 = ifelse(.data$max_visit_per_pat >= .data$visit_med75, 1, 0)
-      ) %>%
-      group_by(.data$study_id) %>%
-      mutate(
-        study_qup8_max_visit = quantile(.data$max_visit_per_pat, probs = c(1 - min_pat_pool)),
-        study_qup8_max_visit = round(.data$study_qup8_max_visit, 0)
-      ) %>%
-      group_by(
-        .data$study_id,
-        .data$site_number,
-        .data$n_pat,
-        .data$n_pat_with_med75,
-        .data$study_qup8_max_visit,
+      )
+
+    if (inherits(df_pat, "data.frame")) {
+      # this cannot be exactly replicated, we maintain this method so that results
+      # do not change compared to previous versions
+      df_qup8 <- df_site %>%
+        summarise(
+          study_qup8_max_visit = quantile(.data$max_visit_per_pat, probs = c(1 - min_pat_pool)),
+          study_qup8_max_visit = round(.data$study_qup8_max_visit, 0),
+          .by = "study_id"
         ) %>%
+        select(c("study_id", "study_qup8_max_visit"))
+
+    } else {
+      # calculate max_visit that covers at least min_map_pool
+      # wer are not using quantile for db backend compatibility
+      df_qup8 <- df_site %>%
+        mutate(
+          rnk = percent_rank(.data$max_visit_per_pat),
+          .by = "study_id"
+        ) %>%
+        filter(.data$rnk <= 1 - .env$min_pat_pool) %>%
+        fun_arrange(.data$study_id, desc(.data$max_visit_per_pat)) %>%
+        filter(row_number() == 1, .by = "study_id") %>%
+        select(c("study_id", study_qup8_max_visit = "max_visit_per_pat"))
+    }
+
+    df_site <- df_site %>%
+      left_join(
+        df_qup8,
+        by = c("study_id")
+      ) %>%
       summarise(
+        # from all patients that have a visit_med75 we take the smallest maximum
         visit_med75 = min(
-          .data$max_visit_per_pat[.data$pat_has_visit_med75 == 1]
+          ifelse(.data$pat_has_visit_med75 == 1, .data$max_visit_per_pat, NA),
+          na.rm = TRUE
         ),
-        .groups = "drop"
+        .by = c("study_id", "site_number", "n_pat", "n_pat_with_med75", "study_qup8_max_visit")
       ) %>%
       mutate(
+        # we correct visit_med75 so that it cannot exceed a visit with less than
+        # the minimum ratio of patients
         visit_med75 = ifelse(
           .data$visit_med75 > .data$study_qup8_max_visit,
           .data$study_qup8_max_visit,
@@ -360,77 +402,118 @@ eval_sites <- function(df_sim_sites,
 
   df_out <- df_sim_sites
 
-  if ("pval" %in% names(df_out)) {
-    # nolint start
-    if (anyNA(df_out$pval)) {
-      warning_messages <- df_out %>%
-        filter(is.na(.data$pval)) %>%
-        mutate(
-          warning = paste0("\nstudy_id: ", .data$study_id, ", site_number: ", .data$site_number),
-          warning = paste0(.data$warning, ". pval == NA")
-        ) %>%
-        pull(.data$warning)
+  if ("pval" %in% colnames(df_out)) {
 
-      warning(warning_messages)
-    }
-    # nolint end
+    warning_na(df_out, "pval")
 
     df_out <- df_out %>%
-      group_by(.data$study_id) %>%
-      arrange(.data$study_id, .data$pval) %>%
-      mutate(
-        pval_adj = p.adjust(.data$pval, method = method),
-        pval_prob_ur = 1 - .data$pval_adj
-      )
+      p_adjust("pval", "_prob_ur", method = method)
   }
 
-  if ("prob_low" %in% names(df_out)) {
-    # nolint start
-    if (anyNA(df_out$prob_low)) {
-      warning_messages <- df_out %>%
-        filter(is.na(.data$prob_low)) %>%
-        mutate(
-          warning = paste0("\nstudy_id: ", .data$study_id, ", site_number: ", .data$site_number),
-          warning = paste0(.data$warning, ", prob_low == NA")
-        ) %>%
-        distinct() %>%
-        pull(.data$warning) %>%
-        paste(collapse = "\n")
+  if ("prob_low" %in% colnames(df_out)) {
 
-      warning(warning_messages)
-    }
-    # nolint end
+    warning_na(df_out, "prob_low")
 
     df_out <- df_out %>%
-      group_by(.data$study_id) %>%
-      arrange(.data$study_id, .data$prob_low) %>%
-      mutate(
-        prob_low_adj = p.adjust(.data$prob_low, method = method),
-        prob_low_prob_ur = 1 - .data$prob_low_adj
-      )
+      p_adjust("prob_low", "_prob_ur", method = method)
+
 
     if (! under_only) {
+      if (any(str_detect(colnames(df_out), "med75"))) {
+        df_out <- df_out %>%
+          mutate(study_site_ae_equal = .data$mean_ae_site_med75 == .data$mean_ae_study_med75)
+      } else {
+        df_out <- df_out %>%
+          mutate(study_site_ae_equal = .data$events_per_visit_site == .data$events_per_visit_study)
+      }
+
       df_out <- df_out %>%
         mutate(
           prob_high = 1 - .data$prob_low,
+          # when study and site values are equl e.g. both zero, no over-reporting possible
           prob_high = ifelse(
-            .data$mean_ae_site_med75 == .data$mean_ae_study_med75,
+            .data$study_site_ae_equal,
             1,
             .data$prob_high
           )
         ) %>%
-        arrange(.data$study_id, .data$prob_high) %>%
-        mutate(
-          prob_high_adj = p.adjust(.data$prob_high, method = method),
-          prob_high_prob_or = 1 - .data$prob_high_adj
-        )
+        select(- "study_site_ae_equal") %>%
+        p_adjust("prob_high", "_prob_or", method = method)
     }
 
   }
 
-  return(ungroup(df_out))
+  if (inherits(df_out, "data.frame")) {
+    fun_arrange <- arrange
+  } else {
+    fun_arrange <- window_order
+  }
+
+  df_out <- df_out %>%
+    fun_arrange(.data$study_id, .data$site_number)
+
+  return(df_out)
 }
 
+#'@keywords internal
+p_adjust <- function(df, col, suffix, method = "BH") {
+
+  if (inherits(df, "data.frame")) {
+
+  col_adj <- paste0(col, "_adj")
+  col_suffix <- paste0(col, suffix)
+
+  df_out <- df %>%
+    mutate(
+      !! as.name(col_adj) := p.adjust(.data[[col]], method = method),
+      !! as.name(col_suffix) := 1 - .data[[col_adj]],
+      .by = "study_id"
+    )
+
+  } else {
+    df_out <- p_adjust_bh_inframe(df, col, suffix)
+  }
+
+  return(df_out)
+
+}
+
+#'@keywords internal
+warning_na <- function(df, col) {
+
+  any_na <- get_any_na(df, col)
+
+  if (any_na) {
+    warning_messages <- df %>%
+      filter(is.na(.data[[col]])) %>%
+      mutate(
+        warning = paste0("\nstudy_id: ", .data$study_id, ", site_number: ", .data$site_number),
+        warning = paste0(.data$warning, ", ", col, "== NA")
+      ) %>%
+      distinct() %>%
+      pull(.data$warning) %>%
+      paste(collapse = "\n")
+
+    warning(warning_messages)
+  }
+}
+
+get_any_na <- function(df, col) {
+  # dbplyr throws a warning for not using na.rm = TRUE
+  suppressWarnings({
+    df %>%
+      mutate(
+        any_na = ifelse(is.na(.data[[col]]), 1, 0)
+      ) %>%
+      summarise(
+        any_na = sum(.data$any_na, na.rm = TRUE)
+      ) %>%
+      mutate(
+        any_na = .data$any_na > 0
+      ) %>%
+      pull(.data$any_na)
+  })
+}
 
 #' @title Evaluate sites.
 #' @description Correct under-reporting probabilities by the expected number of
@@ -537,6 +620,8 @@ eval_sites_deprecated <- function(df_sim_sites,
 
   return(ungroup(df_out))
 }
+
+
 
 #' @title Get empirical cumulative distribution values of pval or prob_lower
 #' @description Test function, test applicability of poisson test, by calculating
@@ -685,6 +770,11 @@ prob_lower_site_ae_vs_study_ae <- function(site_ae, study_ae, r = 1000, parallel
 
   mean_ae_site <- mean(site_ae, na.rm = TRUE)
   mean_ae_study <- mean(study_ae, na.rm = TRUE)
+
+  # this can happen when no patients with site visit_med75 were found in study
+  if (is.na(mean_ae_study)) {
+    return(NA)
+  }
 
   if (under_only) {
     # we are not interested in cases where site AE is greater study AE
@@ -1229,8 +1319,26 @@ site_aggr <- function(df_visit,
 
   # Checks ----------------------------------------------------------
   stopifnot(
-    method %in% c("med75", "med75_adj")
+    method %in% c("med75", "med75_adj", "max")
   )
+
+  if (method == "max") {
+
+    df_site <- df_visit %>%
+      mutate(
+        max_visit = max(.data$visit, na.rm = TRUE),
+        pat_has_max_visit = ifelse(visit == .data$max_visit, patnum, NA),
+        .by = c("study_id", "site_number")
+      ) %>%
+      summarise(
+        n_pat = n_distinct(.data$patnum),
+        n_pat_with_max_visit = n_distinct(.data$pat_has_max_visit),
+        .by = c("study_id", "site_number", "max_visit")
+      )
+
+    return(df_site)
+  }
+
   if (check) {
     df_visit <- check_df_visit(df_visit)
   }
@@ -1300,6 +1408,11 @@ poiss_test_site_ae_vs_study_ae <- function(site_ae,
 
   mean_ae_site <- mean(site_ae, na.rm = TRUE)
   mean_ae_study <- mean(study_ae, na.rm = TRUE)
+
+  # this can happen when no patients with site visit_med75 were found in study
+  if (is.na(mean_ae_study)) {
+    return(NA)
+  }
 
   # we are not interested in cases where site AE is greater study AE
   if (mean_ae_site > mean_ae_study) {

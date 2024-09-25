@@ -26,7 +26,7 @@ suppressPackageStartupMessages(library(simaerep))
 
 # RAM ~26 GB
 # plan 4GB per core
-plan(multisession, workers = 6)
+plan(multisession, workers = 4)
 ```
 
 # Introduction
@@ -38,7 +38,7 @@ We want to define minimal requirements for simulating test data that reflects re
 These simulations take some time to run and require multiple cores and appropriate memory. Rendering articles in {pkgdown} can be a bit unstable so we recommend to render first using pure {rmarkdown} to generate the intermediate csv files.
 
 ```{r perf, eval = FALSE}
-rmarkdown::render("vignettes/_portfolio_perf.Rmd", knit_root_dir = "/home/koneswab/simaerep")
+rmarkdown::render("vignettes/_portfolio_perf.Rmd", knit_root_dir = paste0(getwd(), "/vignettes"))
 ```
 
 
@@ -484,12 +484,15 @@ wr <- function(df) {
                                parallel = FALSE,
                                poisson = TRUE,
                                prob_lower = TRUE,
-                               progress = FALSE)
+                               progress = FALSE,
+                               check = FALSE)
   return(df_scen)
 }
 
 df_prep <- df_config %>%
   select(- max_visit_sd, - max_visit_mean, - ae_per_visit_mean) %>%
+  # we exclude studies running on average over 5 years
+  filter(mean(max_days_mean) <= 5 * 365, .by = study_id) %>%
   rename(max_visit_sd = max_days_sd,
          max_visit_mean = max_days_mean,
          ae_per_visit_mean = ae_per_day_mean) %>%

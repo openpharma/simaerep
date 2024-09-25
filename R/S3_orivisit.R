@@ -15,8 +15,7 @@ validate_orivisit <- function(x) {
   comp <- sort(attributes(x)$names) ==  sort(c("dim", "df_summary", "str_call"))
   stopifnot(all(comp))
   stopifnot(length(x$dim) == 2)
-  stopifnot(is.data.frame(x$df_summary))
-  stopifnot(nrow(x$df_summary) == 1)
+  inherits(x$df_summary, "data.frame") | inherits(x$df_summary, "tbl")
   stopifnot(is.character(x$str_call) | is.na(x$str_call))
   return(x)
 }
@@ -44,7 +43,7 @@ get_str_var <- function(call, env) {
 
   str_call <- deparse(call)
 
-  if (str_length(str_call) > 80) {
+  if (sum(str_length(str_call)) > 80) {
     return(NA)
   }
 
@@ -94,7 +93,7 @@ orivisit <- function(df_visit, call = NULL, env = parent.frame()) {
     call <- rlang::enexpr(df_visit)
   }
 
-  stopifnot(is.data.frame(df_visit))
+  stopifnot(inherits(df_visit, "data.frame") | inherits(df_visit, "tbl"))
 
   dim <- dim(df_visit)
   df_summary <- summarise_df_visit(df_visit)
@@ -117,11 +116,15 @@ as.data.frame.orivisit <- function(x, ..., env = parent.frame()) {
 
   df <- rlang::env_get(env, x$str_call, inherit = TRUE)
 
-  dim <- dim(df)
-  df_summary <- summarise_df_visit(df)
+  df_is_tbl <- ! inherits(df, "data.frame") & inherits(df, "tbl")
 
-  if (! all.equal(df_summary, x$df_summary, tolerance = 1e-4)) stop.orivisit()
-  if (! all(dim == x$dim)) stop.orivisit()
+  if (! df_is_tbl) {
+    dim <- dim(df)
+    df_summary <- summarise_df_visit(df)
+
+    if (! all.equal(df_summary, x$df_summary, tolerance = 1e-4)) stop.orivisit()
+    if (! all(dim == x$dim)) stop.orivisit()
+  }
 
   return(df)
 }

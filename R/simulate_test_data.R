@@ -303,7 +303,8 @@ sim_ur_scenarios <- function(df_portf,
                           parallel = FALSE,
                           progress = TRUE,
                           site_aggr_args = list(),
-                          eval_sites_args = list()) {
+                          eval_sites_args = list(),
+                          check = TRUE) {
   # checks
 
   stopifnot("all site_aggr_args list items must be named" = all(names(site_aggr_args) != ""))
@@ -312,19 +313,25 @@ sim_ur_scenarios <- function(df_portf,
   stopifnot(length(extra_ur_sites) == 1)
   extra_ur_sites <- as.integer(extra_ur_sites)
 
-
   if (progress) {
     message("aggregating site level")
   }
 
-  df_visit <- check_df_visit(df_portf)
+  if (check) {
+    df_visit <- check_df_visit(df_portf)
+  } else {
+    df_visit <- df_portf
+  }
 
+  # get visit_med75 and number elibible patients
   df_site <- do.call(site_aggr, c(list(df_visit = df_visit), site_aggr_args))
 
   if (progress) {
     message("prepping for simulation")
   }
 
+  # for every patient at site add AE count at visit_med75 to site integer vector
+  # same for study
   df_sim_prep <- prep_for_sim(df_site = df_site, df_visit = df_visit)
 
   if (progress) {
@@ -342,6 +349,11 @@ sim_ur_scenarios <- function(df_portf,
               sum_n_pat = sum(.data$n_pat),
               n_sites = n_distinct(.data$site_number),
               .groups = "drop")
+
+  # free up RAM
+  remove(df_portf)
+  remove(df_visit)
+  gc()
 
   ur_rate <- ur_rate[ur_rate > 0]
 
@@ -373,11 +385,12 @@ sim_ur_scenarios <- function(df_portf,
 
   df_grid <- bind_rows(df_grid_0, df_grid_gr0)
 
+  # we join the parameter grid with site and study ae count vectors
   df_scen_prep <- df_sim_prep %>%
     left_join(df_grid, by = c("study_id", "site_number"))
 
   # generating scenarios
-
+  # manipulate site and study ae count vectors according to scenario parameter
   df_scen <- df_scen_prep %>%
     mutate(
       scenarios = purrr::pmap(
@@ -410,6 +423,8 @@ sim_ur_scenarios <- function(df_portf,
     ungroup() %>%
     select(- c("study_id_gr", "site_number_gr"))
 
+
+  # generate prob_low for every scenario parameter
   with_progress_cnd(
     ls_df_sim_sites <- purrr_bar(
       df_sim_sites$data,
@@ -432,16 +447,77 @@ sim_ur_scenarios <- function(df_portf,
     message("evaluating stats")
   }
 
+  # every row is one scenario in order to apply multiplicity correction
+  # we need to join each site-level scenario back into the study context
+  # with regular under-reporting score
+
   df_sim_sites <- bind_rows(ls_df_sim_sites)
 
-  df_eval <- do.call(eval_sites, c(list(df_sim_sites = df_sim_sites), eval_sites_args)) %>%
+  df_sim_sites_ur0 <- df_sim_sites %>% #nolint
+    filter(.data$extra_ur_sites == 0,
+           .data$frac_pat_with_ur == 0,
+           .data$ur_rate == 0) %>%
+    select(- c("extra_ur_sites", "frac_pat_with_ur", "ur_rate"))
+
+  df_eval_prep <- df_sim_sites %>%
+    mutate(
+      study_id_gr = .data$study_id,
+      site_number_gr = .data$site_number
+    ) %>%
+    group_by(
+      .data$study_id_gr,
+      .data$site_number_gr,
+      .data$extra_ur_sites,
+      .data$frac_pat_with_ur,
+      .data$ur_rate
+    ) %>%
+    nest() %>%
+    ungroup() %>%
+    mutate(
+      # add site scores to study score w/o same site
+      eval = map2(
+        .data$study_id_gr, .data$site_number_gr,
+        ~ filter(df_sim_sites_ur0, study_id == .x, site_number != .y)
+      ),
+      eval = map2(
+        .data$data, .data$eval,
+        bind_rows
+      )
+    ) %>%
+    select(- "data")
+
+  # apply eval sites for every scenario
+  df_eval <- df_eval_prep %>%
+    mutate(
+      eval = map(
+        .data$eval,
+        ~ do.call(eval_sites, c(list(df_sim_sites = .), eval_sites_args)),
+        .progess = progress
+      ),
+      # filter back to site level
+      eval = map2(.data$eval, .data$site_number_gr, ~ filter(.x, site_number == .y))
+    ) %>%
+    select(- c("study_id_gr", "site_number_gr")) %>%
+    unnest(eval) %>%
     arrange(
       .data$study_id,
       .data$site_number,
       .data$extra_ur_sites,
       .data$frac_pat_with_ur,
       .data$ur_rate
+    ) %>%
+    select(
+      c(
+        "study_id",
+        "site_number",
+        "extra_ur_sites",
+        "frac_pat_with_ur",
+        "ur_rate"
+      ),
+      everything()
     )
+
+  stopifnot(nrow(df_eval) == nrow(df_grid))
 
   return(df_eval)
 
@@ -861,4 +937,63 @@ get_portf_perf <- function(df_scen, stat = "prob_low_prob_ur", fpr = c(0.001, 0.
 
   bind_rows(df_prep_0, df_prep_gr0) %>%
     arrange(.data$fpr, .data$ur_rate)
+}
+#' simulate under-reporting
+#'@param df_visit, dataframe
+#'@param study_id, character
+#'@param site_number, character
+#'@param ur_rate, double
+#'@description we remove a fraction of AEs from a specific site
+#'@details we determine the absolute number of AEs per patient for removal.
+#'Then them remove them at the first visit.
+#'We intentionally allow fractions
+#'@export
+#'@examples
+#' df_visit <- sim_test_data_study(n_pat = 100, n_sites = 10,
+#'                                  frac_site_with_ur = 0.4, ur_rate = 0.6)
+#'
+#' df_visit$study_id <- "A"
+#'
+#' df_ur <- sim_ur(df_visit, "A", site_number = "S0001", ur_rate = 0.35)
+#'
+#' # Example cumulated AE for first patient with 35% under-reporting
+#' df_ur[df_ur$site_number == "S0001" & df_ur$patnum == "P000001",]$n_ae
+#'
+#' # Example cumulated AE for first patient with no under-reporting
+#' df_visit[df_visit$site_number == "S0001" & df_visit$patnum == "P000001",]$n_ae
+#'
+sim_ur <- function(df_visit, study_id, site_number, ur_rate) {
+
+  df_visit <- df_visit %>%
+    mutate(n_ae = as.numeric(.data$n_ae))
+
+  df_visit_study <- df_visit %>%
+    filter(study_id == .env$study_id, site_number != .env$site_number)
+
+  df_visit_site <- df_visit %>%
+    filter(study_id == .env$study_id, site_number == .env$site_number)
+
+  # determine total AE per patient
+  # convert cumulative counts to single increments
+  # first value needs to be AE start value
+  # from start value substract ae count * ur_rate
+  # convert back to cumulative count
+  df_visit_site_rem <- df_visit_site %>%
+    mutate(
+      n_ae_pat = max(ifelse(visit == max(visit), n_ae, 0)),
+      n_ae_rem = .data$n_ae - lag(.data$n_ae),
+      n_ae_rem = ifelse(
+        .data$visit == 1,
+        .data$n_ae - (.data$n_ae_pat * .env$ur_rate),
+        .data$n_ae_rem),
+      n_ae = cumsum(.data$n_ae_rem),
+      .by = "patnum"
+    ) %>%
+    mutate(
+      n_ae = ifelse(n_ae < 0, 0, n_ae)
+    ) %>%
+    select(- "n_ae_rem", - "n_ae_pat")
+
+  bind_rows(df_visit_study, df_visit_site_rem)
+
 }
