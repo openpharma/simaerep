@@ -76,6 +76,7 @@ validate_simaerep <- function(x) {
 #'  Default: TRUE.
 #'@param inframe Logical, only table operations to be used; does not require
 #'  visit_med75. Compatible with dbplyr supported database backends.
+#'@param mult_corr Logical, multiplicity correction, Default: TRUE
 #'@param param_site_aggr List of parameters passed to [site_aggr()]. Default:
 #'  list(method = "med75_adj", min_pat_pool = 0.2).
 #'@param param_sim_sites List of parameters passed to [sim_sites()]. Default:
@@ -133,6 +134,7 @@ simaerep <- function(df_visit,
                      visit_med75 = TRUE,
                      inframe = FALSE,
                      progress = TRUE,
+                     mult_corr = TRUE,
                      param_site_aggr = list(
                        method = "med75_adj",
                        min_pat_pool = 0.2
@@ -167,6 +169,10 @@ simaerep <- function(df_visit,
 
   param_sim_sites$under_only <- under_only
   param_eval_sites$under_only <- under_only
+
+  if (! mult_corr) {
+    param_eval_sites$method <- NA
+  }
 
   if (visit_med75 && ! inframe) {
 

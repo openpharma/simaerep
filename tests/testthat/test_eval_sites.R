@@ -52,23 +52,3 @@ test_that("eval_sites() - check column names of returned data frame", {
       all()
   )
 })
-
-test_that(
-  paste(
-    "eval_sites() with method = NULL uses deprecated method for p value correction.",
-    "Must throw warning.",
-    "Stats from sim_sites() must negatively correlate with p/fp ratio.",
-    "p/fp ratio must not be smaller 1."
-  ), {
-
-  expect_warning({
-    df_eval <- eval_sites(df_sim_sites_test, method = NULL, r_sim_sites = 100)
-  })
-
-  expect_true(cor(df_eval$prob_low, df_eval$prob_low_p_vs_fp_ratio) < 0)
-  expect_true(cor(df_eval$pval, df_eval$pval_p_vs_fp_ratio) < 0)
-
-  expect_true(! any(df_eval$prob_low_p_vs_fp_ratio < 1))
-  expect_true(! any(df_eval$pval_p_vs_fp_ratio < 1))
-
-})
