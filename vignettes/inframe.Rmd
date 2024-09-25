@@ -95,7 +95,7 @@ obtained in the simulation in which each patient has been resampled according to
 aerep_inframe$df_eval
 ```
 
-We can also force the inframe method to use the visit_med75 this will prefilter `df_visit`, which adds an extra step
+We can also force the inframe method to use the visit_med75 this will pre-filter `df_visit`, which adds an extra step
 and decreases performance. 
 
 ```{r}

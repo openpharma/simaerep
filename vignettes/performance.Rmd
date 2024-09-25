@@ -59,7 +59,7 @@ df_portf_flex <- readr::read_csv("portf.csv")
 
 ## Simulating Under Reporting
 
-Here we reanalyze performance of {simaerep} integrating the learnings from previous versions. We will apply the following.
+Here we reanalyze performance of {simaerep} integrating the lessons learned from previous versions. We will apply the following.
 
 - generate portfolio using flexible AE rates
 - remove AEs directly from the data set and not from an aggregated metric using `sim_ur()`
@@ -245,7 +245,7 @@ df_perf_long <- df_perf %>%
 
 We set the thresholds so that we get a fpr of 0.01.
 
-Note that this results in probability thresholds ~ 0.99 for scores w/o multiplicity correction and in the recommended funne plot score threshold of -2.
+Note that this results in probability thresholds ~ 0.99 for scores w/o multiplicity correction and in the recommended funnel plot score threshold of -2.
 
 ```{r}
 
@@ -313,7 +313,7 @@ Methods:
 - **visit_med75:** default algorithm
 - **visit_med75_over:** default algorithm including over-reporting score
 - **inframe:** new algorithm using table operations and no visit_med75
-- **inframe visit_med75:** new aldorithm using table operations and visit_med75
+- **inframe visit_med75:** new algorithm using table operations and visit_med75
 - **funnel_zi:** funnel plot derived outlier detection
 - **box_out:** box plot derived outlier detection
 
@@ -370,11 +370,11 @@ in past experiments.
 
 > This observation was already made by the Boeringer Ingelheim Team during the evaluation of {simaerep}. We can 
 now reporducibly confirm this. The unaltered probability score as returned by the bootstrap algorithm already provides
-very realistic under-reporting probability.
+very realistic under-reporting probabilities.
 
 - {simaerep} outperforms simpler methods such as funnel plot and box plot outlier detection.
 
-> These controly confirm previous observations that were made during the {simaerep} validation.
+> These controls confirm previous observations that were made during the {simaerep} validation.
 
 
 

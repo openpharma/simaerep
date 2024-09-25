@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Check Poisson Test Applicability • simaerep</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
@@ -12,18 +12,12 @@
 <link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png">
 <link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png">
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png">
-<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="../bootstrap-toc.css">
-<script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
-<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
-<script src="../pkgdown.js"></script><meta property="og:title" content="Check Poisson Test Applicability">
-<meta property="og:description" content="simaerep">
-<meta property="og:image" content="https://openpharma.github.io/simaerep/logo.png">
-<!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
-<script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-<![endif]--><!-- Global site tag (gtag.js) - Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=UA-123997499-2"></script><script>
+<script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.4.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Check Poisson Test Applicability">
+<!-- Global site tag (gtag.js) - Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=UA-123997499-2"></script><script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
@@ -31,105 +25,63 @@
   gtag('config', 'UA-123997499-2');
 </script>
 </head>
-<body data-spy="scroll" data-target="#toc">
-    
+<body>
+    <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
-    <div class="container template-article">
-      <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
-  <div class="container">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <span class="navbar-brand">
-        <a class="navbar-link" href="../index.html">simaerep</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.3.900</span>
-      </span>
-    </div>
 
-    <div id="navbar" class="navbar-collapse collapse">
-      <ul class="nav navbar-nav">
-<li>
-  <a href="../index.html">
-    <span class="fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
-  <a href="../articles/intro.html">Get Started</a>
-</li>
-<li>
-  <a href="../reference/index.html">Reference</a>
-</li>
-<li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-    Articles
-     
-    <span class="caret"></span>
-  </a>
-  <ul class="dropdown-menu" role="menu">
-<li>
-      <a href="../articles/intro.html">Introduction</a>
-    </li>
-    <li>
-      <a href="../articles/sas_files.html">SAS Files as a Data Source</a>
-    </li>
-    <li>
-      <a href="../articles/portfolio_perf.html">simaerep Portfolio Performance</a>
-    </li>
-    <li>
-      <a href="../articles/visit_med75.html">Adjusted Evaluation Point visit_med75</a>
-    </li>
-    <li>
-      <a href="../articles/usability_limits.html">Address Usability Limits of Bootstrap Method</a>
-    </li>
-    <li>
-      <a href="../articles/check_poisson.html">Check Poisson Test Applicability</a>
-    </li>
-    <li>
-      <a href="../articles/visits_or_days.html">Aggregate AEs by Days or Visit?</a>
-    </li>
-    <li>
-      <a href="../articles/gsm_perf.html">Comparing {simaerep} and {gsm} Performance</a>
-    </li>
-    <li>
-      <a href="../articles/over.html">Over-Reporting Probability</a>
-    </li>
+    <nav class="navbar navbar-expand-lg fixed-top bg-light" data-bs-theme="light" aria-label="Site navigation"><div class="container">
+
+    <a class="navbar-brand me-2" href="../index.html">simaerep</a>
+
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.0.900</small>
+
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div id="navbar" class="collapse navbar-collapse ms-3">
+      <ul class="navbar-nav me-auto">
+<li class="nav-item"><a class="nav-link" href="../index.html"><span class="fa fas fa-home fa-lg"></span></a></li>
+<li class="nav-item"><a class="nav-link" href="../articles/intro.html">Get Started</a></li>
+<li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
+<li class="active nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
+<li><a class="dropdown-item" href="../articles/intro.html">Introduction</a></li>
+    <li><a class="dropdown-item" href="../articles/inframe.html">Inframe Simulation Using Table Operations</a></li>
+    <li><a class="dropdown-item" href="../articles/over.html">Over-Reporting Probability</a></li>
+    <li><a class="dropdown-item" href="../articles/performance.html">Statistical Performance</a></li>
+    <li><a class="dropdown-item" href="../articles/funnel_perf.html">Comparing {simaerep} and Funnel Plot Performance</a></li>
+    <li><a class="dropdown-item" href="../articles/sas_files.html">SAS Files as a Data Source</a></li>
+    <li><a class="dropdown-item" href="../articles/portfolio_perf.html">(superseeded) simaerep Portfolio Performance</a></li>
+    <li><a class="dropdown-item" href="../articles/visit_med75.html">Adjusted Evaluation Point visit_med75</a></li>
+    <li><a class="dropdown-item" href="../articles/usability_limits.html">Address Usability Limits of Bootstrap Method</a></li>
+    <li><a class="dropdown-item" href="../articles/check_poisson.html">Check Poisson Test Applicability</a></li>
+    <li><a class="dropdown-item" href="../articles/visits_or_days.html">Aggregate AEs by Days or Visit?</a></li>
   </ul>
 </li>
-<li>
-  <a href="../news/index.html">Changelog</a>
-</li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul>
-<ul class="nav navbar-nav navbar-right">
-<li>
-  <a href="https://github.com/openpharma/simaerep/" class="external-link">
-    <span class="fab fa-github fa-lg"></span>
-     
-  </a>
-</li>
+<ul class="navbar-nav">
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/openpharma/simaerep/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul>
 </div>
-<!--/.nav-collapse -->
+
+
   </div>
-<!--/.container -->
-</div>
-<!--/.navbar -->
+</nav><div class="container template-article">
 
-      
 
-      </header><div class="row">
-  <div class="col-md-9 contents">
-    <div class="page-header toc-ignore">
-      <h1 data-toc-skip>Check Poisson Test Applicability</h1>
+
+
+<div class="row">
+  <main id="main" class="col-md-9"><div class="page-header">
+      <img src="../logo.png" class="logo" alt=""><h1>Check Poisson Test Applicability</h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/openpharma/simaerep/blob/HEAD/vignettes/check_poisson.Rmd" class="external-link"><code>vignettes/check_poisson.Rmd</code></a></small>
-      <div class="hidden name"><code>check_poisson.Rmd</code></div>
-
+      <div class="d-none name"><code>check_poisson.Rmd</code></div>
     </div>
 
     
@@ -204,7 +156,7 @@ all functions we already <a href="https://openpharma.github.io/simaerep/articles
 <span><span class="va">df_sim_sites</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sim_sites.html">sim_sites</a></span><span class="op">(</span><span class="va">df_site</span>, <span class="va">df_visit</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">df_visit</span></span></code></pre></div>
-<pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 58,314 × 9</span></span></span>
+<pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 58,505 × 9</span></span></span>
 <span><span class="co">##    patnum  site_number is_ur max_visit_mean max_visit_sd ae_per_visit_mean visit</span></span>
 <span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
 <span><span class="co">## <span style="color: #BCBCBC;"> 1</span> P000001 S0001       TRUE              20            4              0.25     1</span></span>
@@ -217,39 +169,39 @@ all functions we already <a href="https://openpharma.github.io/simaerep/articles
 <span><span class="co">## <span style="color: #BCBCBC;"> 8</span> P000001 S0001       TRUE              20            4              0.25     8</span></span>
 <span><span class="co">## <span style="color: #BCBCBC;"> 9</span> P000001 S0001       TRUE              20            4              0.25     9</span></span>
 <span><span class="co">## <span style="color: #BCBCBC;">10</span> P000001 S0001       TRUE              20            4              0.25    10</span></span>
-<span><span class="co">## <span style="color: #949494;"># ℹ 58,304 more rows</span></span></span>
+<span><span class="co">## <span style="color: #949494;"># ℹ 58,495 more rows</span></span></span>
 <span><span class="co">## <span style="color: #949494;"># ℹ 2 more variables: n_ae &lt;int&gt;, study_id &lt;chr&gt;</span></span></span></code></pre>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">df_site</span></span></code></pre></div>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 300 × 6</span></span></span>
 <span><span class="co">##    study_id    site_number n_pat n_pat_with_med75 visit_med75 mean_ae_site_med75</span></span>
-<span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> ae_per_vis… S0001          10                9          15              0.444</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> ae_per_vis… S0002          10                7          15              0.429</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> ae_per_vis… S0003          10                9          16              0.222</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> ae_per_vis… S0004          10               10          14              0.6  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> ae_per_vis… S0005          10               10          17              0.5  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> ae_per_vis… S0006          10               10          16              0.7  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> ae_per_vis… S0007          10               10          14              0.4  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> ae_per_vis… S0008          10                9          15              0.444</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> ae_per_vis… S0009          10                9          16              0.444</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">10</span> ae_per_vis… S0010          10                8          18              0.625</span></span>
+<span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> ae_per_vis… S0001          10               10          15              0.3  </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> ae_per_vis… S0002          10                9          15              0.667</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> ae_per_vis… S0003          10                8          17              0.375</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> ae_per_vis… S0004          10               10          15              0.3  </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> ae_per_vis… S0005          10                9          18              0.222</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> ae_per_vis… S0006          10                9          16              0.556</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> ae_per_vis… S0007          10                9          17              0.667</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> ae_per_vis… S0008          10                9          16              0.333</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> ae_per_vis… S0009          10               10          14              0.3  </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">10</span> ae_per_vis… S0010          10               10          17              0.2  </span></span>
 <span><span class="co">## <span style="color: #949494;"># ℹ 290 more rows</span></span></span></code></pre>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">df_sim_sites</span></span></code></pre></div>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 300 × 10</span></span></span>
 <span><span class="co">##    study_id    site_number n_pat n_pat_with_med75 visit_med75 mean_ae_site_med75</span></span>
-<span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> ae_per_vis… S0001          10                9          15              0.444</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> ae_per_vis… S0002          10                7          15              0.429</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> ae_per_vis… S0003          10                9          16              0.222</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> ae_per_vis… S0004          10               10          14              0.6  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> ae_per_vis… S0005          10               10          17              0.5  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> ae_per_vis… S0006          10               10          16              0.7  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> ae_per_vis… S0007          10               10          14              0.4  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> ae_per_vis… S0008          10                9          15              0.444</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> ae_per_vis… S0009          10                9          16              0.444</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">10</span> ae_per_vis… S0010          10                8          18              0.625</span></span>
+<span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> ae_per_vis… S0001          10               10          15              0.3  </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> ae_per_vis… S0002          10                9          15              0.667</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> ae_per_vis… S0003          10                8          17              0.375</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> ae_per_vis… S0004          10               10          15              0.3  </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> ae_per_vis… S0005          10                9          18              0.222</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> ae_per_vis… S0006          10                9          16              0.556</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> ae_per_vis… S0007          10                9          17              0.667</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> ae_per_vis… S0008          10                9          16              0.333</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> ae_per_vis… S0009          10               10          14              0.3  </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">10</span> ae_per_vis… S0010          10               10          17              0.2  </span></span>
 <span><span class="co">## <span style="color: #949494;"># ℹ 290 more rows</span></span></span>
 <span><span class="co">## <span style="color: #949494;"># ℹ 4 more variables: mean_ae_study_med75 &lt;dbl&gt;, n_pat_with_med75_study &lt;int&gt;,</span></span></span>
 <span><span class="co">## <span style="color: #949494;">#   pval &lt;dbl&gt;, prob_low &lt;dbl&gt;</span></span></span></code></pre>
@@ -275,17 +227,17 @@ maintaining the number of patients and the visit_med75 of each site.</p>
 <span><span class="va">df_sim_studies</span></span></code></pre></div>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 30,000 × 8</span></span></span>
 <span><span class="co">##        r study_id     site_number visit_med75 n_pat_with_med75 n_pat_study  pval</span></span>
-<span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 1</span>     1 ae_per_visi… S0001                15                9         893 1    </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 2</span>     1 ae_per_visi… S0002                15                7         895 1    </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 3</span>     1 ae_per_visi… S0003                16                9         840 1    </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 4</span>     1 ae_per_visi… S0004                14               10         930 1    </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 5</span>     1 ae_per_visi… S0005                17               10         751 0.731</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 6</span>     1 ae_per_visi… S0006                16               10         839 0.372</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 7</span>     1 ae_per_visi… S0007                14               10         930 1    </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 8</span>     1 ae_per_visi… S0008                15                9         893 1    </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 9</span>     1 ae_per_visi… S0009                16                9         840 1    </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">10</span>     1 ae_per_visi… S0010                18                8         668 1    </span></span>
+<span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 1</span>     1 ae_per_visi… S0001                15               10         905 1    </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 2</span>     1 ae_per_visi… S0002                15                9         906 0.673</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 3</span>     1 ae_per_visi… S0003                17                8         760 1    </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 4</span>     1 ae_per_visi… S0004                15               10         905 1    </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 5</span>     1 ae_per_visi… S0005                18                9         678 0.850</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 6</span>     1 ae_per_visi… S0006                16                9         828 1    </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 7</span>     1 ae_per_visi… S0007                17                9         759 1    </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 8</span>     1 ae_per_visi… S0008                16                9         828 1    </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 9</span>     1 ae_per_visi… S0009                14               10         942 1    </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">10</span>     1 ae_per_visi… S0010                17               10         758 0.714</span></span>
 <span><span class="co">## <span style="color: #949494;"># ℹ 29,990 more rows</span></span></span>
 <span><span class="co">## <span style="color: #949494;"># ℹ 1 more variable: prob_low &lt;dbl&gt;</span></span></span></code></pre>
 </div>
@@ -306,17 +258,17 @@ for the corresponding axis.</p>
 <span><span class="va">df_check_pval</span></span></code></pre></div>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 300 × 11</span></span></span>
 <span><span class="co">##    study_id    site_number n_pat n_pat_with_med75 visit_med75 mean_ae_site_med75</span></span>
-<span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> ae_per_vis… S0001          10                9          15              0.444</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> ae_per_vis… S0002          10                7          15              0.429</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> ae_per_vis… S0003          10                9          16              0.222</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> ae_per_vis… S0004          10               10          14              0.6  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> ae_per_vis… S0005          10               10          17              0.5  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> ae_per_vis… S0006          10               10          16              0.7  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> ae_per_vis… S0007          10               10          14              0.4  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> ae_per_vis… S0008          10                9          15              0.444</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> ae_per_vis… S0009          10                9          16              0.444</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">10</span> ae_per_vis… S0010          10                8          18              0.625</span></span>
+<span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> ae_per_vis… S0001          10               10          15              0.3  </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> ae_per_vis… S0002          10                9          15              0.667</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> ae_per_vis… S0003          10                8          17              0.375</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> ae_per_vis… S0004          10               10          15              0.3  </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> ae_per_vis… S0005          10                9          18              0.222</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> ae_per_vis… S0006          10                9          16              0.556</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> ae_per_vis… S0007          10                9          17              0.667</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> ae_per_vis… S0008          10                9          16              0.333</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> ae_per_vis… S0009          10               10          14              0.3  </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">10</span> ae_per_vis… S0010          10               10          17              0.2  </span></span>
 <span><span class="co">## <span style="color: #949494;"># ℹ 290 more rows</span></span></span>
 <span><span class="co">## <span style="color: #949494;"># ℹ 5 more variables: mean_ae_study_med75 &lt;dbl&gt;, n_pat_with_med75_study &lt;int&gt;,</span></span></span>
 <span><span class="co">## <span style="color: #949494;">#   pval &lt;dbl&gt;, prob_low &lt;dbl&gt;, pval_ecd &lt;dbl&gt;</span></span></span></code></pre>
@@ -345,17 +297,17 @@ the smallest value greater zero we get for prob_low is 0.001 (1e-3).</p>
 <span><span class="va">df_check_prob</span></span></code></pre></div>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 300 × 11</span></span></span>
 <span><span class="co">##    study_id    site_number n_pat n_pat_with_med75 visit_med75 mean_ae_site_med75</span></span>
-<span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> ae_per_vis… S0001          10                9          15              0.444</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> ae_per_vis… S0002          10                7          15              0.429</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> ae_per_vis… S0003          10                9          16              0.222</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> ae_per_vis… S0004          10               10          14              0.6  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> ae_per_vis… S0005          10               10          17              0.5  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> ae_per_vis… S0006          10               10          16              0.7  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> ae_per_vis… S0007          10               10          14              0.4  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> ae_per_vis… S0008          10                9          15              0.444</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> ae_per_vis… S0009          10                9          16              0.444</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">10</span> ae_per_vis… S0010          10                8          18              0.625</span></span>
+<span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> ae_per_vis… S0001          10               10          15              0.3  </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> ae_per_vis… S0002          10                9          15              0.667</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> ae_per_vis… S0003          10                8          17              0.375</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> ae_per_vis… S0004          10               10          15              0.3  </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> ae_per_vis… S0005          10                9          18              0.222</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> ae_per_vis… S0006          10                9          16              0.556</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> ae_per_vis… S0007          10                9          17              0.667</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> ae_per_vis… S0008          10                9          16              0.333</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> ae_per_vis… S0009          10               10          14              0.3  </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">10</span> ae_per_vis… S0010          10               10          17              0.2  </span></span>
 <span><span class="co">## <span style="color: #949494;"># ℹ 290 more rows</span></span></span>
 <span><span class="co">## <span style="color: #949494;"># ℹ 5 more variables: mean_ae_study_med75 &lt;dbl&gt;, n_pat_with_med75_study &lt;int&gt;,</span></span></span>
 <span><span class="co">## <span style="color: #949494;">#   pval &lt;dbl&gt;, prob_low &lt;dbl&gt;, prob_low_ecd &lt;dbl&gt;</span></span></span></code></pre>
@@ -387,35 +339,26 @@ data set.</p>
 <code class="sourceCode R"><span><span class="fu"><a href="https://future.futureverse.org/reference/plan.html" class="external-link">plan</a></span><span class="op">(</span><span class="va">sequential</span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
-  </div>
-
-  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
-
-        <nav id="toc" data-toggle="toc"><h2 data-toc-skip>Contents</h2>
-    </nav>
-</div>
-
+  </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
+    </nav></aside>
 </div>
 
 
 
-      <footer><div class="copyright">
-  <p></p>
-<p>Developed by Bjoern Koneswarakantha.</p>
+    <footer><div class="pkgdown-footer-left">
+  <p>Developed by Bjoern Koneswarakantha.</p>
 </div>
 
-<div class="pkgdown">
-  <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
+<div class="pkgdown-footer-right">
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
 </div>
 
-      </footer>
+    </footer>
 </div>
 
-  
 
 
-  
+
 
   </body>
 </html>

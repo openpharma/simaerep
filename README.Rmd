@@ -54,21 +54,16 @@ devtools::install_github("openpharma/simaerep")
 
 [![IMPALA logo](https://impala-consortium.org/wp-content/uploads/IMPALA-logo-x2.png)](https://impala-consortium.org/)
 
-## Publication
+## Publications
+
+Koneswarakantha, B., Adyanthaya, R., Emerson, J. et al. An Open-Source R Package for Detection of Adverse Events Under-Reporting in Clinical Trials: Implementation and Validation by the IMPALA (Inter coMPany quALity Analytics) Consortium. Ther Innov Regul Sci 58, 591–599 (2024). [https://doi.org/10.1007/s43441-024-00631-8](https://doi.org/10.1007/s43441-024-00631-8)
 
 Koneswarakantha, B., Barmaz, Y., Ménard, T. et al. Follow-up on the Use of Advanced Analytics for Clinical Quality Assurance: Bootstrap Resampling to Enhance Detection of Adverse Event Under-Reporting. Drug Saf (2020). [https://doi.org/10.1007/s40264-020-01011-5](https://doi.org/10.1007/s40264-020-01011-5)
 
-## Vignettes/ Articles/ Tutorials
+## Tutorials
 
-[video presentation 15 min](https://vimeo.com/776275791?embedded=true&source=vimeo_logo&owner=189858368)
-
-- [Introduction](https://openpharma.github.io/simaerep/articles/intro.html)
-- [Usability Limits](https://openpharma.github.io/simaerep/articles/usability_limits.html)
-- [Check Poisson Test Applicability](https://openpharma.github.io/simaerep/articles/check_poisson.html)
-- [SAS Files](https://openpharma.github.io/simaerep/articles/sas_files.html)
-- [Adjusted Evaluation Point visit_med75](https://openpharma.github.io/simaerep/articles/visit_med75.html)
-- [Aggregate AEs by Days or Visit?](https://openpharma.github.io/simaerep/articles/visits_or_days.html)
-- [Portfolio Performance](https://openpharma.github.io/simaerep/articles/portfolio_perf.html)
+- [video presentation 15 min](https://vimeo.com/776275791?embedded=true&source=vimeo_logo&owner=189858368)
+- [Documentation with Vignettes](https://openpharma.github.io/simaerep)
 
 ## Validation Report
 

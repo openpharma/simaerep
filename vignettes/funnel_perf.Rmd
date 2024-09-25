@@ -123,7 +123,7 @@ we see that the AE rate profile is very unique for each study.
 
 ## Example
 
-Here we demonstrate how to use the {gsm} package on our simulated portfolios so that we can get a good visualisation of the funnel plot.
+Here we demonstrate how to use the {gsm} package on our simulated portfolios so that we can get a good visualization of the funnel plot.
 
 ```{r}
 
@@ -501,7 +501,7 @@ plot_perf(df_perf)
 # Summary
 
 - Funnel plot expects constant event rates over time. Performance decrease when event rates are flexible.
-- {simaerep} performance is uneffected by flexible event rates.
+- {simaerep} performance is unaffected by flexible event rates.
 - {simaerep} detection rates with comparable false positive rates are greater than funnel plot detection rates when event rates are flexible.
 
 ```{r close}

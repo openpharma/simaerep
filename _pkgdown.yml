@@ -20,6 +20,7 @@ navbar:
       href: reference/index.html
 
 template:
+  bootstrap: 5
   params:
     ganalytics: UA-123997499-2
 
@@ -30,14 +31,16 @@ articles:
   navbar: ~
   contents:
   - intro
+  - inframe
+  - over
+  - performance
+  - funnel_perf
   - sas_files
   - portfolio_perf
   - visit_med75
   - usability_limits
   - check_poisson
   - visits_or_days
-  - funnel_perf
-  - over
 
 reference:
 - title: S3 Interface

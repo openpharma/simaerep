@@ -1,3 +1,9 @@
+# simaerep 0.6.0
+- inframe method use table operations only, do not use visit_med75
+- https://github.com/openpharma/simaerep/issues/59
+- https://github.com/openpharma/simaerep/issues/16
+- update vignettes
+
 # simaerep 0.5.0
 - allow flexible AE rates in data simulations
 - add vignette comparing simaerep to gsm performance

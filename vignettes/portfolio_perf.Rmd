@@ -1,5 +1,5 @@
 ---
-title: "simaerep Portfolio Performance"
+title: "(superseded) simaerep Portfolio Performance"
 output:
   html_document:
     toc: true
@@ -38,7 +38,7 @@ We want to define minimal requirements for simulating test data that reflects re
 These simulations take some time to run and require multiple cores and appropriate memory. Rendering articles in {pkgdown} can be a bit unstable so we recommend to render first using pure {rmarkdown} to generate the intermediate csv files.
 
 ```{r perf, eval = FALSE}
-rmarkdown::render("vignettes/_portfolio_perf.Rmd", knit_root_dir = "/home/koneswab/simaerep")
+rmarkdown::render("vignettes/_portfolio_perf.Rmd", knit_root_dir = paste0(getwd(), "/vignettes"))
 ```
 
 

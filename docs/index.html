@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Find Clinical Trial Sites Under-Reporting Adverse Events • simaerep</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
@@ -12,18 +12,15 @@
 <link rel="apple-touch-icon" type="image/png" sizes="120x120" href="apple-touch-icon-120x120.png">
 <link rel="apple-touch-icon" type="image/png" sizes="76x76" href="apple-touch-icon-76x76.png">
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="apple-touch-icon-60x60.png">
-<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="bootstrap-toc.css">
-<script src="bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
-<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
-<script src="pkgdown.js"></script><meta property="og:title" content="Find Clinical Trial Sites Under-Reporting Adverse Events">
+<script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
+<script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.4.2/css/all.min.css" rel="stylesheet">
+<link href="deps/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet">
+<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Find Clinical Trial Sites Under-Reporting Adverse Events">
+<meta name="description" content="Monitoring of Adverse Event (AE) reporting in clinical trials is important for patient safety. Sites that are under-reporting AEs can be detected using Bootstrap-based simulations that simulate overall AE reporting. Based on the simulation an AE under-reporting probability is assigned to each site in a given trial (Koneswarakantha 2021 &lt;doi:10.1007/s40264-020-01011-5&gt;).">
 <meta property="og:description" content="Monitoring of Adverse Event (AE) reporting in clinical trials is important for patient safety. Sites that are under-reporting AEs can be detected using Bootstrap-based simulations that simulate overall AE reporting. Based on the simulation an AE under-reporting probability is assigned to each site in a given trial (Koneswarakantha 2021 &lt;doi:10.1007/s40264-020-01011-5&gt;).">
 <meta property="og:image" content="https://openpharma.github.io/simaerep/logo.png">
-<!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
-<script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-<![endif]--><!-- Global site tag (gtag.js) - Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=UA-123997499-2"></script><script>
+<!-- Global site tag (gtag.js) - Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=UA-123997499-2"></script><script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
@@ -31,102 +28,59 @@
   gtag('config', 'UA-123997499-2');
 </script>
 </head>
-<body data-spy="scroll" data-target="#toc">
+<body>
+    <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
-    <div class="container template-home">
-      <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
-  <div class="container">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <span class="navbar-brand">
-        <a class="navbar-link" href="index.html">simaerep</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.0</span>
-      </span>
-    </div>
+    <nav class="navbar navbar-expand-lg fixed-top bg-light" data-bs-theme="light" aria-label="Site navigation"><div class="container">
 
-    <div id="navbar" class="navbar-collapse collapse">
-      <ul class="nav navbar-nav">
-<li>
-  <a href="index.html">
-    <span class="fas fa-home fa-lg"></span>
+    <a class="navbar-brand me-2" href="index.html">simaerep</a>
 
-  </a>
-</li>
-<li>
-  <a href="articles/intro.html">Get Started</a>
-</li>
-<li>
-  <a href="reference/index.html">Reference</a>
-</li>
-<li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-    Articles
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.0.900</small>
 
-    <span class="caret"></span>
-  </a>
-  <ul class="dropdown-menu" role="menu">
-<li>
-      <a href="articles/intro.html">Introduction</a>
-    </li>
-    <li>
-      <a href="articles/sas_files.html">SAS Files as a Data Source</a>
-    </li>
-    <li>
-      <a href="articles/portfolio_perf.html">simaerep Portfolio Performance</a>
-    </li>
-    <li>
-      <a href="articles/visit_med75.html">Adjusted Evaluation Point visit_med75</a>
-    </li>
-    <li>
-      <a href="articles/usability_limits.html">Address Usability Limits of Bootstrap Method</a>
-    </li>
-    <li>
-      <a href="articles/check_poisson.html">Check Poisson Test Applicability</a>
-    </li>
-    <li>
-      <a href="articles/visits_or_days.html">Aggregate AEs by Days or Visit?</a>
-    </li>
-    <li>
-      <a href="articles/gsm_perf.html">Comparing {simaerep} and {gsm} Performance</a>
-    </li>
-    <li>
-      <a href="articles/over.html">Over-Reporting Probability</a>
-    </li>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div id="navbar" class="collapse navbar-collapse ms-3">
+      <ul class="navbar-nav me-auto">
+<li class="active nav-item"><a class="nav-link" href="index.html"><span class="fa fas fa-home fa-lg"></span></a></li>
+<li class="nav-item"><a class="nav-link" href="articles/intro.html">Get Started</a></li>
+<li class="nav-item"><a class="nav-link" href="reference/index.html">Reference</a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
+<li><a class="dropdown-item" href="articles/intro.html">Introduction</a></li>
+    <li><a class="dropdown-item" href="articles/inframe.html">Inframe Simulation Using Table Operations</a></li>
+    <li><a class="dropdown-item" href="articles/over.html">Over-Reporting Probability</a></li>
+    <li><a class="dropdown-item" href="articles/performance.html">Statistical Performance</a></li>
+    <li><a class="dropdown-item" href="articles/funnel_perf.html">Comparing {simaerep} and Funnel Plot Performance</a></li>
+    <li><a class="dropdown-item" href="articles/sas_files.html">SAS Files as a Data Source</a></li>
+    <li><a class="dropdown-item" href="articles/portfolio_perf.html">(superseeded) simaerep Portfolio Performance</a></li>
+    <li><a class="dropdown-item" href="articles/visit_med75.html">Adjusted Evaluation Point visit_med75</a></li>
+    <li><a class="dropdown-item" href="articles/usability_limits.html">Address Usability Limits of Bootstrap Method</a></li>
+    <li><a class="dropdown-item" href="articles/check_poisson.html">Check Poisson Test Applicability</a></li>
+    <li><a class="dropdown-item" href="articles/visits_or_days.html">Aggregate AEs by Days or Visit?</a></li>
   </ul>
 </li>
-<li>
-  <a href="news/index.html">Changelog</a>
-</li>
+<li class="nav-item"><a class="nav-link" href="news/index.html">Changelog</a></li>
       </ul>
-<ul class="nav navbar-nav navbar-right">
-<li>
-  <a href="https://github.com/openpharma/simaerep/" class="external-link">
-    <span class="fab fa-github fa-lg"></span>
-
-  </a>
-</li>
+<ul class="navbar-nav">
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/openpharma/simaerep/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul>
 </div>
-<!--/.nav-collapse -->
+
+
   </div>
-<!--/.container -->
-</div>
-<!--/.navbar -->
-
-
-
-      </header><div class="row">
-  <div class="contents col-md-9">
-<div class="section level1">
-<div class="page-header"><h1 id="simaerep-">simaerep <a href="https://openpharma.github.io/simaerep/"><img src="reference/figures/logo.png" align="right" height="139"></a>
+</nav><div class="container template-home">
+<div class="row">
+  <main id="main" class="col-md-9"><div class="section level1">
+<div class="page-header">
+<img src="logo.png" class="logo" alt=""><h1 id="simaerep-">simaerep 
 <a class="anchor" aria-label="anchor" href="#simaerep-"></a>
-</h1></div>
+</h1>
+</div>
 <!-- badges: start -->
 
 <p>Simulate adverse event reporting in clinical trials with the goal of detecting under-reporting sites.</p>
@@ -156,22 +110,17 @@
 <p><a href="https://impala-consortium.org/" class="external-link"><img src="https://impala-consortium.org/wp-content/uploads/IMPALA-logo-x2.png" alt="IMPALA logo"></a></p>
 </div>
 <div class="section level2">
-<h2 id="publication">Publication<a class="anchor" aria-label="anchor" href="#publication"></a>
+<h2 id="publications">Publications<a class="anchor" aria-label="anchor" href="#publications"></a>
 </h2>
+<p>Koneswarakantha, B., Adyanthaya, R., Emerson, J. et al. An Open-Source R Package for Detection of Adverse Events Under-Reporting in Clinical Trials: Implementation and Validation by the IMPALA (Inter coMPany quALity Analytics) Consortium. Ther Innov Regul Sci 58, 591–599 (2024). <a href="https://doi.org/10.1007/s43441-024-00631-8" class="external-link uri">https://doi.org/10.1007/s43441-024-00631-8</a></p>
 <p>Koneswarakantha, B., Barmaz, Y., Ménard, T. et al. Follow-up on the Use of Advanced Analytics for Clinical Quality Assurance: Bootstrap Resampling to Enhance Detection of Adverse Event Under-Reporting. Drug Saf (2020). <a href="https://doi.org/10.1007/s40264-020-01011-5" class="external-link uri">https://doi.org/10.1007/s40264-020-01011-5</a></p>
 </div>
 <div class="section level2">
-<h2 id="vignettes-articles-tutorials">Vignettes/ Articles/ Tutorials<a class="anchor" aria-label="anchor" href="#vignettes-articles-tutorials"></a>
+<h2 id="tutorials">Tutorials<a class="anchor" aria-label="anchor" href="#tutorials"></a>
 </h2>
-<p><a href="https://vimeo.com/776275791?embedded=true&amp;source=vimeo_logo&amp;owner=189858368" class="external-link">video presentation 15 min</a></p>
 <ul>
-<li><a href="https://openpharma.github.io/simaerep/articles/intro.html">Introduction</a></li>
-<li><a href="https://openpharma.github.io/simaerep/articles/usability_limits.html">Usability Limits</a></li>
-<li><a href="https://openpharma.github.io/simaerep/articles/check_poisson.html">Check Poisson Test Applicability</a></li>
-<li><a href="https://openpharma.github.io/simaerep/articles/sas_files.html">SAS Files</a></li>
-<li><a href="https://openpharma.github.io/simaerep/articles/visit_med75.html">Adjusted Evaluation Point visit_med75</a></li>
-<li><a href="https://openpharma.github.io/simaerep/articles/visits_or_days.html">Aggregate AEs by Days or Visit?</a></li>
-<li><a href="https://openpharma.github.io/simaerep/articles/portfolio_perf.html">Portfolio Performance</a></li>
+<li><a href="https://vimeo.com/776275791?embedded=true&amp;source=vimeo_logo&amp;owner=189858368" class="external-link">video presentation 15 min</a></li>
+<li><a href="https://openpharma.github.io/simaerep">Documentation with Vignettes</a></li>
 </ul>
 </div>
 <div class="section level2">
@@ -399,10 +348,7 @@
 <p><em>Left panel shows mean AE reporting per site (lightblue and darkblue lines) against mean AE reporting of the entire study (golden line). Single sites are plotted in descending order by AE under-reporting probability on the right panel in which grey lines denote cumulative AE count of single patients. Grey dots in the left panel plot indicate sites that were picked for single plotting. AE under-reporting probability of dark blue lines crossed threshold of 95%. Numbers in the upper left corner indicate the ratio of patients that have been used for the analysis against the total number of patients. Patients that have not been on the study long enough to reach the evaluation point (visit_med75, see introduction) will be ignored.</em></p>
 </div>
 </div>
-  </div>
-
-  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
-    <div class="links">
+  </main><aside class="col-md-3"><div class="links">
 <h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
 <li><a href="https://cloud.r-project.org/package=simaerep" class="external-link">View on CRAN</a></li>
@@ -445,23 +391,20 @@
 </ul>
 </div>
 
-  </div>
+  </aside>
 </div>
 
 
-      <footer><div class="copyright">
-  <p></p>
-<p>Developed by Bjoern Koneswarakantha.</p>
+    <footer><div class="pkgdown-footer-left">
+  <p>Developed by Bjoern Koneswarakantha.</p>
 </div>
 
-<div class="pkgdown">
-  <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+<div class="pkgdown-footer-right">
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
 </div>
 
-      </footer>
+    </footer>
 </div>
-
 
 
 
