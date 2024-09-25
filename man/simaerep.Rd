@@ -12,6 +12,7 @@ simaerep(
   visit_med75 = TRUE,
   inframe = FALSE,
   progress = TRUE,
+  mult_corr = TRUE,
   param_site_aggr = list(method = "med75_adj", min_pat_pool = 0.2),
   param_sim_sites = list(r = 1000, poisson_test = FALSE, prob_lower = TRUE),
   param_eval_sites = list(method = "BH"),
@@ -41,6 +42,8 @@ Default: TRUE.}
 visit_med75. Compatible with dbplyr supported database backends.}
 
 \item{progress}{Logical, display progress bar. Default: TRUE.}
+
+\item{mult_corr}{Logical, multiplicity correction, Default: TRUE}
 
 \item{param_site_aggr}{List of parameters passed to \code{\link[=site_aggr]{site_aggr()}}. Default:
 list(method = "med75_adj", min_pat_pool = 0.2).}

@@ -369,7 +369,7 @@ in past experiments.
 - multiplicity correction imposes a penalty on the true positive rate
 
 > This observation was already made by the Boeringer Ingelheim Team during the evaluation of {simaerep}. We can 
-now reporducibly confirm this. The unaltered probability score as returned by the bootstrap algorithm already provides
+now reproducibly confirm this. The unaltered probability score as returned by the bootstrap algorithm already provides
 very realistic under-reporting probabilities.
 
 - {simaerep} outperforms simpler methods such as funnel plot and box plot outlier detection.

@@ -90,3 +90,21 @@ test_that("plot.simaerep throws error when original visit data cannot be retriev
     "ggplot"
   )
 })
+
+test_that("simaerep() with mult_corr = FALSE must not return adjusted probabilities", {
+
+  aerep <- simaerep(df_visit_test, mult_corr = FALSE)
+  expect_true(! "prob_low_prob_ur" %in% colnames(aerep$df_eval))
+
+  aerep <- simaerep(df_visit_test, mult_corr = FALSE, under_only = FALSE)
+  expect_true(! "prob_low_prob_ur" %in% colnames(aerep$df_eval))
+  expect_true(! "prob_high_prob_or" %in% colnames(aerep$df_eval))
+
+  aerep <- simaerep(df_visit_test, mult_corr = FALSE, inframe = TRUE)
+  expect_true(! "prob_low_prob_ur" %in% colnames(aerep$df_eval))
+
+  aerep <- simaerep(df_visit_test, mult_corr = FALSE, under_only = FALSE, inframe = TRUE)
+  expect_true(! "prob_low_prob_ur" %in% colnames(aerep$df_eval))
+  expect_true(! "prob_high_prob_or" %in% colnames(aerep$df_eval))
+
+})

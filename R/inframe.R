@@ -137,7 +137,23 @@ sim_inframe <- function(df_visit, r = 1000, df_site = NULL) {
     mutate(
       # we generate a random number between 1 and the maximum number
       # of eligible patients
-      rnd = runif(n()),
+      rnd = runif(n())
+    )
+
+  if (inherits(df_sim_prep, "tbl_Snowflake")) {
+    # snowflake RANDOM() works differently than other backends and returns large
+    # positive and negative integers. We normalize by using the min and max values
+    # of those 64bit integers. Source for integer values is ChatGPT.
+    # for a range from -5 to 5: 4 -> 0.0  -4 -> 0.1, with underlying formula
+
+    df_sim_prep <- df_sim_prep %>%
+      mutate(
+        rnd = (.data$rnd - (-9223372036854775808)) / (9223372036854775807 - (-9223372036854775808))
+      )
+  }
+
+  df_sim_prep <- df_sim_prep %>%
+    mutate(
       # transform to values between 1 and max number of patients
       rnd_rwn = floor(.data$rnd * .data$max_rwn) + 1
     )

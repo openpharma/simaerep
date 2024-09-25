@@ -3,6 +3,7 @@
 - https://github.com/openpharma/simaerep/issues/59
 - https://github.com/openpharma/simaerep/issues/16
 - update vignettes
+- https://github.com/openpharma/simaerep/issues/62
 
 # simaerep 0.5.0
 - allow flexible AE rates in data simulations
