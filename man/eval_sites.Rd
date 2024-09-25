@@ -50,9 +50,6 @@ df_sim_sites <- sim_sites(df_site, df_visit, r = 100)
 df_eval <- eval_sites(df_sim_sites)
 df_eval
 
-# use deprecated method  -------
-df_eval <- eval_sites(df_sim_sites, method = NULL, r_sim_sites = 100)
-df_eval
 }
 \seealso{
 \code{\link[simaerep]{site_aggr}},
