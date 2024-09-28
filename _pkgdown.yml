@@ -94,9 +94,6 @@ reference:
   - is_simaerep
   - is_orivisit
   - max_rank
-- title: Deprecated
-  contents:
-  - eval_sites_deprecated
 - title: Additional Plot Functions
   desc: These functions are intended for creating plots for the documentation.
   contents:
