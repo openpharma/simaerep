@@ -87,6 +87,8 @@ using
 
 ## Application
 
+Recommended Threshold: `aerep$dfeval$prob_low_prob_ur: 0.95`
+
 ``` r
 
 suppressPackageStartupMessages(library(simaerep))
@@ -143,7 +145,7 @@ df_visit %>%
 
 aerep <- simaerep(df_visit)
 
-plot(aerep, study = "A") 
+plot(aerep, study = "A")
 ```
 
 <img src="man/figures/README-unnamed-chunk-2-1.png" width="100%" />
@@ -159,3 +161,71 @@ upper left corner indicate the ratio of patients that have been used for
 the analysis against the total number of patients. Patients that have
 not been on the study long enough to reach the evaluation point
 (visit_med75, see introduction) will be ignored.*
+
+## Optimized Statistical Performance
+
+Following the recommendation of our latest [performance
+benchmark](https://openpharma.github.io/simaerep/articles/performance.html)
+statistical performance can be increased by using the
+[inframe](https://openpharma.github.io/simaerep/articles/inframe.html)
+algorithm without multiplicity correction.
+
+**Note that the plot is more noisy because no patients are excluded and
+only a few patients contribute to the event count at higher visits**
+
+Recommended Threshold: `aerep$dfeval$prob_low_prob_ur: 0.99`
+
+``` r
+aerep <- simaerep(
+  df_visit,
+  inframe = TRUE,
+  visit_med75 = FALSE,
+  mult_corr = FALSE
+)
+
+plot(aerep, study = "A")
+```
+
+<img src="man/figures/README-unnamed-chunk-3-1.png" width="100%" />
+
+## In Database Calculation
+
+The
+[inframe](https://openpharma.github.io/simaerep/articles/inframe.html)
+algorithm uses only `dbplyr` compatible table operations and can be
+executed within a database backend as we demonstrate here using
+`duckdb`.
+
+However, we need to provide a in database table that has as many rows as
+the desired replications in our simulation, instead of providing an
+integer for the `r` parameter.
+
+``` r
+con <- DBI::dbConnect(duckdb::duckdb(), dbdir = ":memory:")
+df_r <- tibble(rep = seq(1, 1000))
+
+dplyr::copy_to(con, df_visit, "visit")
+dplyr::copy_to(con, df_r, "r")
+
+tbl_visit <- tbl(con, "visit")
+tbl_r <- tbl(con, "r")
+
+
+aerep <- simaerep(
+  tbl_visit,
+  r = tbl_r,
+  inframe = TRUE,
+  visit_med75 = FALSE,
+  mult_corr = FALSE
+)
+
+plot(aerep, df_visit = tbl_visit)
+#> study = NULL, defaulting to study:A
+```
+
+<img src="man/figures/README-unnamed-chunk-4-1.png" width="100%" />
+
+``` r
+
+DBI::dbDisconnect(con)
+```

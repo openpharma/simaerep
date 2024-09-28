@@ -448,14 +448,19 @@ eval_sites <- function(df_sim_sites,
 #'@keywords internal
 p_adjust <- function(df, col, suffix, method = "BH") {
 
+  col_adj <- paste0(col, "_adj")
+  col_suffix <- paste0(col, suffix)
+
   if (is.na(method) || is.null(method) || method %in% c("None", "none")) {
-    return(df)
+    df_out <- df %>%
+      mutate(
+        !! as.name(col_suffix) := 1 - .data[[col]]
+      )
+
+    return(df_out)
   }
 
   if (inherits(df, "data.frame")) {
-
-  col_adj <- paste0(col, "_adj")
-  col_suffix <- paste0(col, suffix)
 
   df_out <- df %>%
     mutate(
