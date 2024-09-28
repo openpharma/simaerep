@@ -58,7 +58,12 @@ sim_inframe <- function(df_visit, r = 1000, df_site = NULL) {
     df_r <- tibble(rep = seq(1, r))
   } else {
     df_r <- r %>%
-      rename(rep = 1)
+      # here we make sure that any input dataframe works
+      # we use as many replications as we have rows
+      rename(rep = 1) %>%
+      mutate(
+        rep = row_number()
+      )
   }
 
   # aggregate per patient to get max visits
