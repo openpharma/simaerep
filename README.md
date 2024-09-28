@@ -173,7 +173,7 @@ algorithm without multiplicity correction.
 **Note that the plot is more noisy because no patients are excluded and
 only a few patients contribute to the event count at higher visits**
 
-Recommended Threshold: `aerep$dfeval$prob_low_prob_ur: 0.98`
+Recommended Threshold: `aerep$dfeval$prob_low_prob_ur: 0.99`
 
 ``` r
 aerep <- simaerep(

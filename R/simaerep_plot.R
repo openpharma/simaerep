@@ -546,7 +546,7 @@ plot_study <- function(df_visit,
                                            NA))
     } else {
     thresh <- 0.9
-    breaks <- c(0, 0.9, 0.95, 0.98, ifelse(max(df_eval[[prob_col]], na.rm = TRUE) > 0.95,
+    breaks <- c(0, 0.9, 0.95, 0.99, ifelse(max(df_eval[[prob_col]], na.rm = TRUE) > 0.95,
                                            max(df_eval[[prob_col]], na.rm = TRUE) + 0.1,
                                            NA))
     }
