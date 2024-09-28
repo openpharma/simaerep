@@ -539,14 +539,26 @@ plot_study <- function(df_visit,
 
   # ordered sites -------------------------------------------------------------
 
+  if (any(stringr::str_detect(colnames(df_eval), "_adj$"))) {
+    thresh <- 0.5
+    breaks <- c(0, 0.5, 0.75, 0.95, ifelse(max(df_eval[[prob_col]], na.rm = TRUE) > 0.95,
+                                           max(df_eval[[prob_col]], na.rm = TRUE) + 0.1,
+                                           NA)
+    )  } else {
+    thresh <- 0.9
+    breaks <- c(0, 0.9, 0.95, 0.98, ifelse(max(df_eval[[prob_col]], na.rm = TRUE) > 0.95,
+                                           max(df_eval[[prob_col]], na.rm = TRUE) + 0.1,
+                                           NA)
+    )  }
+
   n_site_ur_gr_0p5 <- df_eval %>%
-    filter(.data[[prob_col]] > 0.5) %>%
+    filter(.data[[prob_col]] > thresh) %>%
     nrow()
 
   if (n_site_ur_gr_0p5 > 0) {
     sites_ordered <- df_eval %>%
       arrange(.data$study_id, desc(.data[[prob_col]]), .data[[col_mean_site]]) %>%
-      filter(.data[[prob_col]] > 0.5) %>%
+      filter(.data[[prob_col]] > thresh) %>%
       head(n_sites) %>%
       .$site_number
   } else {
@@ -604,10 +616,7 @@ plot_study <- function(df_visit,
   # define score cut-offs + labels----------------------------------------------
 
   palette <- RColorBrewer::brewer.pal(9, "Blues")[c(3, 5, 7, 9)]
-  breaks <- c(0, 0.5, 0.75, 0.95, ifelse(max(df_eval[[prob_col]], na.rm = TRUE) > 0.95,
-                                    max(df_eval[[prob_col]], na.rm = TRUE) + 0.1,
-                                    NA)
-              )
+
 
   breaks <- breaks[! is.na(breaks)]
 

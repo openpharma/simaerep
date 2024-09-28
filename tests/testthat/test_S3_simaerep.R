@@ -49,6 +49,16 @@ test_that("simaerep - original dataframe unretrievable when called with slice", 
   expect_error(as.data.frame(aerep_new$visit), "Could not find original visit data")
 })
 
+test_that("plot.simaerep with simaerep(mult_corr = FALSE)", {
+  aerep_new <- simaerep(df_visit_test, inframe = FALSE, visit_med75 = TRUE, mult_corr = FALSE)
+  expect_s3_class(plot(aerep_new, what = "ur", study = "A"), "ggplot")
+
+  aerep_new <- simaerep(df_visit_test, inframe = TRUE, visit_med75 = TRUE, mult_corr = FALSE)
+  expect_s3_class(plot(aerep_new, what = "ur", study = "A"), "ggplot")
+
+  aerep_new <- simaerep(df_visit_test, inframe = TRUE, visit_med75 = FALSE, mult_corr = FALSE)
+  expect_s3_class(plot(aerep_new, what = "ur", study = "A"), "ggplot")
+})
 
 test_that("plot.simaerep with what='ur'", {
   aerep_new <- simaerep(df_visit_test, inframe = FALSE, visit_med75 = TRUE)
@@ -94,17 +104,17 @@ test_that("plot.simaerep throws error when original visit data cannot be retriev
 test_that("simaerep() with mult_corr = FALSE must not return adjusted probabilities", {
 
   aerep <- simaerep(df_visit_test, mult_corr = FALSE)
-  expect_true(! "prob_low_prob_ur" %in% colnames(aerep$df_eval))
+  expect_true(! "prob_low_adj" %in% colnames(aerep$df_eval))
 
   aerep <- simaerep(df_visit_test, mult_corr = FALSE, under_only = FALSE)
-  expect_true(! "prob_low_prob_ur" %in% colnames(aerep$df_eval))
-  expect_true(! "prob_high_prob_or" %in% colnames(aerep$df_eval))
+  expect_true(! "prob_low_adj" %in% colnames(aerep$df_eval))
+  expect_true(! "prob_high_adj" %in% colnames(aerep$df_eval))
 
   aerep <- simaerep(df_visit_test, mult_corr = FALSE, inframe = TRUE)
-  expect_true(! "prob_low_prob_ur" %in% colnames(aerep$df_eval))
+  expect_true(! "prob_low_adj" %in% colnames(aerep$df_eval))
 
   aerep <- simaerep(df_visit_test, mult_corr = FALSE, under_only = FALSE, inframe = TRUE)
-  expect_true(! "prob_low_prob_ur" %in% colnames(aerep$df_eval))
-  expect_true(! "prob_high_prob_or" %in% colnames(aerep$df_eval))
+  expect_true(! "prob_low_adj" %in% colnames(aerep$df_eval))
+  expect_true(! "prob_high_adj" %in% colnames(aerep$df_eval))
 
 })
