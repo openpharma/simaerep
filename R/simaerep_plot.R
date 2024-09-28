@@ -543,13 +543,13 @@ plot_study <- function(df_visit,
     thresh <- 0.5
     breaks <- c(0, 0.5, 0.75, 0.95, ifelse(max(df_eval[[prob_col]], na.rm = TRUE) > 0.95,
                                            max(df_eval[[prob_col]], na.rm = TRUE) + 0.1,
-                                           NA)
-    )  } else {
+                                           NA))
+    } else {
     thresh <- 0.9
     breaks <- c(0, 0.9, 0.95, 0.98, ifelse(max(df_eval[[prob_col]], na.rm = TRUE) > 0.95,
                                            max(df_eval[[prob_col]], na.rm = TRUE) + 0.1,
-                                           NA)
-    )  }
+                                           NA))
+    }
 
   n_site_ur_gr_0p5 <- df_eval %>%
     filter(.data[[prob_col]] > thresh) %>%
