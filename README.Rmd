@@ -63,11 +63,11 @@ Koneswarakantha, B., Barmaz, Y., Ménard, T. et al. Follow-up on the Use of Adva
 ## Tutorials
 
 - [video presentation 15 min](https://vimeo.com/776275791?embedded=true&source=vimeo_logo&owner=189858368)
-- [Documentation with Vignettes](https://openpharma.github.io/simaerep)
+- [Documentation with Vignettes](https://openpharma.github.io/simaerep/)
 
 ## Validation Report
 
-Download as pdf in the [release section](https://github.com/openpharma/simaerep/releases) generated using [thevalidatoR](https://github.com/insightsengineering/thevalidatoR). 
+Download as pdf in the [release section](https://github.com/openpharma/simaerep/releases) generated using [thevalidatoR](https://github.com/insightsengineering/thevalidatoR/). 
 
 ## Application
 
