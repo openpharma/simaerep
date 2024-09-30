@@ -76,14 +76,14 @@ Saf (2020). <https://doi.org/10.1007/s40264-020-01011-5>
 
 - [video presentation 15
   min](https://vimeo.com/776275791?embedded=true&source=vimeo_logo&owner=189858368)
-- [Documentation with Vignettes](https://openpharma.github.io/simaerep)
+- [Documentation with Vignettes](https://openpharma.github.io/simaerep/)
 
 ## Validation Report
 
 Download as pdf in the [release
 section](https://github.com/openpharma/simaerep/releases) generated
 using
-[thevalidatoR](https://github.com/insightsengineering/thevalidatoR).
+[thevalidatoR](https://github.com/insightsengineering/thevalidatoR/).
 
 ## Application
 

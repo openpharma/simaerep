@@ -15,7 +15,7 @@ Description: Monitoring of Adverse Event (AE) reporting in clinical trials is
   using Bootstrap-based simulations that simulate overall AE reporting. Based on the 
   simulation an AE under-reporting probability is assigned to each site in a 
   given trial (Koneswarakantha 2021 <doi:10.1007/s40264-020-01011-5>).
-URL: https://openpharma.github.io/simaerep/, https://github.com/openpharma/simaerep
+URL: https://openpharma.github.io/simaerep/, https://github.com/openpharma/simaerep/
 License: MIT + file LICENSE
 Encoding: UTF-8
 Depends:
