@@ -1,6 +1,6 @@
 Package: simaerep
 Title: Find Clinical Trial Sites Under-Reporting Adverse Events
-Version: 0.6.0
+Version: 0.6.1
 Authors@R: c(
     person(given = "Bjoern",
            family = "Koneswarakantha",
@@ -22,7 +22,7 @@ Depends:
     R (>= 4.0),
     ggplot2
 Imports:
-    dplyr (>= 1.0.0),
+    dplyr (>= 1.1.0),
     tidyr (>= 1.1.0),
     magrittr,
     purrr,

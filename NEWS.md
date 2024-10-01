@@ -1,3 +1,6 @@
+# simaerep 0.6.1
+- set dplyr requirement to v1.1.0
+
 # simaerep 0.6.0
 - inframe method use table operations only, do not use visit_med75
 - https://github.com/openpharma/simaerep/issues/59

@@ -33,7 +33,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">simaerep</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.0.900</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -54,7 +54,7 @@
     <li><a class="dropdown-item" href="../articles/performance.html">Statistical Performance</a></li>
     <li><a class="dropdown-item" href="../articles/funnel_perf.html">Comparing {simaerep} and Funnel Plot Performance</a></li>
     <li><a class="dropdown-item" href="../articles/sas_files.html">SAS Files as a Data Source</a></li>
-    <li><a class="dropdown-item" href="../articles/portfolio_perf.html">(superseeded) simaerep Portfolio Performance</a></li>
+    <li><a class="dropdown-item" href="../articles/portfolio_perf.html">(superseded) simaerep Portfolio Performance</a></li>
     <li><a class="dropdown-item" href="../articles/visit_med75.html">Adjusted Evaluation Point visit_med75</a></li>
     <li><a class="dropdown-item" href="../articles/usability_limits.html">Address Usability Limits of Bootstrap Method</a></li>
     <li><a class="dropdown-item" href="../articles/check_poisson.html">Check Poisson Test Applicability</a></li>
@@ -192,7 +192,7 @@ patient has been resampled according to its maximum visit.</p>
 <span><span class="co">## <span style="color: #949494;"># ℹ 3 more variables: events_per_visit_study &lt;dbl&gt;, prob_low_adj &lt;dbl&gt;,</span></span></span>
 <span><span class="co">## <span style="color: #949494;">#   prob_low_prob_ur &lt;dbl&gt;</span></span></span></code></pre>
 <p>We can also force the inframe method to use the visit_med75 this will
-prefilter <code>df_visit</code>, which adds an extra step and decreases
+pre-filter <code>df_visit</code>, which adds an extra step and decreases
 performance.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
@@ -236,16 +236,16 @@ table object.</p>
 <span><span class="co">## <span style="color: #949494;"># Ordered by: study_id, site_number</span></span></span>
 <span><span class="co">##    study_id site_number events_per_visit_site events visits n_pat prob_low</span></span>
 <span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> A        S0040                       0.477     95    199    10    0.43 </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> A        S0082                       0.470     87    185    10    0.382</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> A        S0084                       0.513    101    197    10    0.698</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> A        S0030                       0.538    106    197    10    0.828</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> A        S0037                       0.429     85    198    10    0.143</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> A        S0034                       0.432     79    183    10    0.148</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> A        S0095                       0.452     80    177    10    0.255</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> A        S0089                       0.481     91    189    10    0.467</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> A        S0031                       0.49      98    200    10    0.527</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">10</span> A        S0069                       0.503     88    175    10    0.644</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> A        S0005                       0.297     58    195    10    0    </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> A        S0076                       0.399     75    188    10    0.05 </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> A        S0001                       0.279     50    179    10    0    </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> A        S0003                       0.291     55    189    10    0    </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> A        S0004                       0.312     59    189    10    0    </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> A        S0092                       0.507    113    223    10    0.658</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> A        S0090                       0.516     95    184    10    0.732</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> A        S0077                       0.520     90    173    10    0.732</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> A        S0017                       0.521     98    188    10    0.745</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">10</span> A        S0097                       0.523    103    197    10    0.761</span></span>
 <span><span class="co">## <span style="color: #949494;"># ℹ more rows</span></span></span>
 <span><span class="co">## <span style="color: #949494;"># ℹ 3 more variables: events_per_visit_study &lt;dbl&gt;, prob_low_adj &lt;dbl&gt;,</span></span></span>
 <span><span class="co">## <span style="color: #949494;">#   prob_low_prob_ur &lt;dbl&gt;</span></span></span></code></pre>
@@ -273,12 +273,13 @@ sql code more readable.</p>
 <span><span class="co">##   GROUP BY study_id, site_number, patnum</span></span>
 <span><span class="co">## ),</span></span>
 <span><span class="co">## q03 AS (</span></span>
-<span><span class="co">##   SELECT study_id, site_number, patnum, MAX(visit) AS max_visit_per_pat</span></span>
-<span><span class="co">##   FROM q01</span></span>
-<span><span class="co">##   GROUP BY study_id, site_number, patnum</span></span>
+<span><span class="co">##   SELECT ROW_NUMBER() OVER () AS rep</span></span>
+<span><span class="co">##   FROM r</span></span>
 <span><span class="co">## ),</span></span>
 <span><span class="co">## q04 AS (</span></span>
-<span><span class="co">##   SELECT DISTINCT study...</span></span></code></pre>
+<span><span class="co">##   SELECT study_id, site_number, patnum, MAX(visit) AS max_visit_per_pat</span></span>
+<span><span class="co">##   FROM q01</span></span>
+<span><span class="co">##   GROUP BY study_i...</span></span></code></pre>
 <p>We can take that code and wrap it in a <code>CREATE TABLE</code>
 statement</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
@@ -293,16 +294,16 @@ statement</p>
 <span><span class="co">## <span style="color: #949494;"># Database: DuckDB v1.0.0 [koneswab@Darwin 23.6.0:R 4.4.1/:memory:]</span></span></span>
 <span><span class="co">##    study_id site_number events_per_visit_site events visits n_pat prob_low</span></span>
 <span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> A        S0039                       0.472     92    195    10    0.389</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> A        S0010                       0.470     87    185    10    0.385</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> A        S0024                       0.495     91    184    10    0.579</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> A        S0014                       0.505    103    204    10    0.629</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> A        S0043                       0.503     91    181    10    0.629</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> A        S0036                       0.506     89    176    10    0.666</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> A        S0067                       0.428     83    194    10    0.127</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> A        S0019                       0.448     74    165    10    0.256</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> A        S0042                       0.470     85    181    10    0.379</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">10</span> A        S0094                       0.469     99    211    10    0.379</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> A        S0010                       0.470     87    185    10    0.385</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> A        S0014                       0.505    103    204    10    0.654</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> A        S0023                       0.531    104    196    10    0.804</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> A        S0078                       0.543    107    197    10    0.859</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> A        S0029                       0.563    120    213    10    0.94 </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> A        S0061                       0.580    105    181    10    0.956</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> A        S0052                       0.431     81    188    10    0.132</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> A        S0055                       0.430     83    193    10    0.132</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> A        S0034                       0.432     79    183    10    0.149</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">10</span> A        S0071                       0.483     99    205    10    0.51 </span></span>
 <span><span class="co">## <span style="color: #949494;"># ℹ more rows</span></span></span>
 <span><span class="co">## <span style="color: #949494;"># ℹ 3 more variables: events_per_visit_study &lt;dbl&gt;, prob_low_adj &lt;dbl&gt;,</span></span></span>
 <span><span class="co">## <span style="color: #949494;">#   prob_low_prob_ur &lt;dbl&gt;</span></span></span></code></pre>
@@ -336,12 +337,12 @@ in-memory calculation time of the inframe calculation method.</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="op">{</span><span class="fu"><a href="../reference/simaerep.html">simaerep</a></span><span class="op">(</span><span class="va">df_visit</span>, inframe <span class="op">=</span> <span class="cn">FALSE</span>, visit_med75 <span class="op">=</span> <span class="cn">TRUE</span>, under_only <span class="op">=</span> <span class="cn">TRUE</span>, progress <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">}</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##    user  system elapsed </span></span>
-<span><span class="co">##   0.793   0.010   0.802</span></span></code></pre>
+<span><span class="co">##   0.852   0.011   0.864</span></span></code></pre>
 <p>inframe calculation time is higher</p>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="op">{</span><span class="fu"><a href="../reference/simaerep.html">simaerep</a></span><span class="op">(</span><span class="va">df_visit</span>, inframe <span class="op">=</span> <span class="cn">TRUE</span>, visit_med75 <span class="op">=</span> <span class="cn">FALSE</span>, under_only <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">}</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##    user  system elapsed </span></span>
-<span><span class="co">##   1.968   0.044   2.013</span></span></code></pre>
+<span><span class="co">##   2.028   0.046   2.078</span></span></code></pre>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
