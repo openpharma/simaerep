@@ -33,7 +33,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">simaerep</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.0.900</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -54,7 +54,7 @@
     <li><a class="dropdown-item" href="../articles/performance.html">Statistical Performance</a></li>
     <li><a class="dropdown-item" href="../articles/funnel_perf.html">Comparing {simaerep} and Funnel Plot Performance</a></li>
     <li><a class="dropdown-item" href="../articles/sas_files.html">SAS Files as a Data Source</a></li>
-    <li><a class="dropdown-item" href="../articles/portfolio_perf.html">(superseeded) simaerep Portfolio Performance</a></li>
+    <li><a class="dropdown-item" href="../articles/portfolio_perf.html">(superseded) simaerep Portfolio Performance</a></li>
     <li><a class="dropdown-item" href="../articles/visit_med75.html">Adjusted Evaluation Point visit_med75</a></li>
     <li><a class="dropdown-item" href="../articles/usability_limits.html">Address Usability Limits of Bootstrap Method</a></li>
     <li><a class="dropdown-item" href="../articles/check_poisson.html">Check Poisson Test Applicability</a></li>
@@ -126,8 +126,8 @@
 <div class="section level3">
 <h3 id="simulating-under-reporting">Simulating Under Reporting<a class="anchor" aria-label="anchor" href="#simulating-under-reporting"></a>
 </h3>
-<p>Here we reanalyze performance of {simaerep} integrating the learnings
-from previous versions. We will apply the following.</p>
+<p>Here we reanalyze performance of {simaerep} integrating the lessons
+learned from previous versions. We will apply the following.</p>
 <ul>
 <li>generate portfolio using flexible AE rates</li>
 <li>remove AEs directly from the data set and not from an aggregated
@@ -325,7 +325,7 @@ correcting for multiplicity</strong>:
 </h4>
 <p>We set the thresholds so that we get a fpr of 0.01.</p>
 <p>Note that this results in probability thresholds ~ 0.99 for scores
-w/o multiplicity correction and in the recommended funne plot score
+w/o multiplicity correction and in the recommended funnel plot score
 threshold of -2.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">target_fpr</span> <span class="op">&lt;-</span> <span class="fl">0.01</span></span>
@@ -411,7 +411,7 @@ over-reporting score</li>
 <strong>inframe:</strong> new algorithm using table operations and
 no visit_med75</li>
 <li>
-<strong>inframe visit_med75:</strong> new aldorithm using table
+<strong>inframe visit_med75:</strong> new algorithm using table
 operations and visit_med75</li>
 <li>
 <strong>funnel_zi:</strong> funnel plot derived outlier
@@ -1220,7 +1220,7 @@ rate</li>
 </ul>
 <blockquote>
 <p>This observation was already made by the Boeringer Ingelheim Team
-during the evaluation of {simaerep}. We can now reporducibly confirm
+during the evaluation of {simaerep}. We can now reproducibly confirm
 this. The unaltered probability score as returned by the bootstrap
 algorithm already provides very realistic under-reporting
 probabilities.</p>
@@ -1230,7 +1230,7 @@ probabilities.</p>
 plot outlier detection.</li>
 </ul>
 <blockquote>
-<p>These controly confirm previous observations that were made during
+<p>These controls confirm previous observations that were made during
 the {simaerep} validation.</p>
 </blockquote>
 </div>

@@ -21,7 +21,7 @@ in combination with sim_studies().
 
     <a class="navbar-brand me-2" href="../index.html">simaerep</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.0.900</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -40,7 +40,7 @@ in combination with sim_studies().
     <li><a class="dropdown-item" href="../articles/performance.html">Statistical Performance</a></li>
     <li><a class="dropdown-item" href="../articles/funnel_perf.html">Comparing {simaerep} and Funnel Plot Performance</a></li>
     <li><a class="dropdown-item" href="../articles/sas_files.html">SAS Files as a Data Source</a></li>
-    <li><a class="dropdown-item" href="../articles/portfolio_perf.html">(superseeded) simaerep Portfolio Performance</a></li>
+    <li><a class="dropdown-item" href="../articles/portfolio_perf.html">(superseded) simaerep Portfolio Performance</a></li>
     <li><a class="dropdown-item" href="../articles/visit_med75.html">Adjusted Evaluation Point visit_med75</a></li>
     <li><a class="dropdown-item" href="../articles/usability_limits.html">Address Usability Limits of Bootstrap Method</a></li>
     <li><a class="dropdown-item" href="../articles/check_poisson.html">Check Poisson Test Applicability</a></li>
@@ -140,22 +140,22 @@ of <code><a href="sim_studies.html">sim_studies()</a></code></p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 5 × 11</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   study_id site_number n_pat n_pat_with_med75 visit_med75 mean_ae_site_med75</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> A        S0001          20               18          17               5.89</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> A        S0002          20               18          15               5.5 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> A        S0003          20               17          16               8.53</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> A        S0004          20               20          15               6.4 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> A        S0005          20               16          16               8.38</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> A        S0001          20               18          15               5.28</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> A        S0002          20               17          16               6.12</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> A        S0003          20               17          16               8.35</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> A        S0004          20               20          15               6.55</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> A        S0005          20               16          15               7.62</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 5 more variables: mean_ae_study_med75 &lt;dbl&gt;, n_pat_with_med75_study &lt;int&gt;,</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   pval &lt;dbl&gt;, prob_low &lt;dbl&gt;, prob_low_ecd &lt;dbl&gt;</span></span>
 <span class="r-in"><span><span class="fu">get_ecd_values</span><span class="op">(</span><span class="va">df_sim_studies</span>, <span class="va">df_sim_sites</span>, <span class="st">"pval"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 5 × 11</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   study_id site_number n_pat n_pat_with_med75 visit_med75 mean_ae_site_med75</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> A        S0001          20               18          17               5.89</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> A        S0002          20               18          15               5.5 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> A        S0003          20               17          16               8.53</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> A        S0004          20               20          15               6.4 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> A        S0005          20               16          16               8.38</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> A        S0001          20               18          15               5.28</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> A        S0002          20               17          16               6.12</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> A        S0003          20               17          16               8.35</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> A        S0004          20               20          15               6.55</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> A        S0005          20               16          15               7.62</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 5 more variables: mean_ae_study_med75 &lt;dbl&gt;, n_pat_with_med75_study &lt;int&gt;,</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   pval &lt;dbl&gt;, prob_low &lt;dbl&gt;, pval_ecd &lt;dbl&gt;</span></span>
 </code></pre></div>

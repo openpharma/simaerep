@@ -33,7 +33,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">simaerep</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.0.900</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -54,7 +54,7 @@
     <li><a class="dropdown-item" href="../articles/performance.html">Statistical Performance</a></li>
     <li><a class="dropdown-item" href="../articles/funnel_perf.html">Comparing {simaerep} and Funnel Plot Performance</a></li>
     <li><a class="dropdown-item" href="../articles/sas_files.html">SAS Files as a Data Source</a></li>
-    <li><a class="dropdown-item" href="../articles/portfolio_perf.html">(superseeded) simaerep Portfolio Performance</a></li>
+    <li><a class="dropdown-item" href="../articles/portfolio_perf.html">(superseded) simaerep Portfolio Performance</a></li>
     <li><a class="dropdown-item" href="../articles/visit_med75.html">Adjusted Evaluation Point visit_med75</a></li>
     <li><a class="dropdown-item" href="../articles/usability_limits.html">Address Usability Limits of Bootstrap Method</a></li>
     <li><a class="dropdown-item" href="../articles/check_poisson.html">Check Poisson Test Applicability</a></li>
@@ -137,7 +137,7 @@ the parameter <code>under_only = FALSE</code>.</p>
 <span>  <span class="va">aerep_def</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/simaerep.html">simaerep</a></span><span class="op">(</span><span class="va">df_visit</span>, under_only <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##    user  system elapsed </span></span>
-<span><span class="co">##  19.149   1.116  20.268</span></span></code></pre>
+<span><span class="co">##  19.917   1.169  21.987</span></span></code></pre>
 <p>The original setting skips the simulation for all sites that do have
 more AEs than the study average.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
@@ -145,7 +145,7 @@ more AEs than the study average.</p>
 <span>  <span class="va">aerep_ovr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/simaerep.html">simaerep</a></span><span class="op">(</span><span class="va">df_visit</span>, under_only <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##    user  system elapsed </span></span>
-<span><span class="co">##  23.329   1.100  24.481</span></span></code></pre>
+<span><span class="co">##  23.841   1.240  25.634</span></span></code></pre>
 <p>The new parameter calculates the probability of a site getting
 <code>a lower or equal</code> average AE count for the site visit_med75
 for every site, regardless of how its initial value compares to the

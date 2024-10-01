@@ -13,7 +13,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">simaerep</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -175,44 +175,44 @@ original visit data for facilitated plotting using generic plot(x).</p>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">aerep</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> List of 11</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ visit           :List of 3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ dim       : int [1:2] 1929 9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ dim       : int [1:2] 1972 9</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ df_summary: tibble [1 × 5] (S3: tbl_df/tbl/data.frame)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ n_studies : int 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ n_sites   : int 5</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ n_patients: int 100</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ n_visits  : int 1929</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ n_aes     : int 722</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ n_visits  : int 1972</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ n_aes     : int 705</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ str_call  : chr "df_visit"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..- attr(*, "class")= chr "orivisit"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ df_site         : tibble [5 × 6] (S3: tbl_df/tbl/data.frame)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ study_id          : chr [1:5] "A" "A" "A" "A" ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ site_number       : chr [1:5] "S0001" "S0002" "S0003" "S0004" ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ n_pat             : int [1:5] 20 20 20 20 20</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ n_pat_with_med75  : num [1:5] 19 18 14 15 14</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ visit_med75       : Named num [1:5] 16 15 15 19 16</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ n_pat_with_med75  : num [1:5] 18 18 17 20 16</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ visit_med75       : Named num [1:5] 17 15 16 15 16</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..- attr(*, "names")= chr [1:5] "80%" "80%" "80%" "80%" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ mean_ae_site_med75: num [1:5] 3 2.39 7.71 10.4 7.5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ mean_ae_site_med75: num [1:5] 3.11 2.56 8.53 6.4 8.38</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ df_sim_sites    : tibble [5 × 9] (S3: tbl_df/tbl/data.frame)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ study_id              : chr [1:5] "A" "A" "A" "A" ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ site_number           : chr [1:5] "S0001" "S0002" "S0003" "S0004" ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ n_pat                 : int [1:5] 20 20 20 20 20</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ n_pat_with_med75      : num [1:5] 19 18 14 15 14</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ visit_med75           : Named num [1:5] 16 15 15 19 16</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ n_pat_with_med75      : num [1:5] 18 18 17 20 16</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ visit_med75           : Named num [1:5] 17 15 16 15 16</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..- attr(*, "names")= chr [1:5] "80%" "80%" "80%" "80%" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ mean_ae_site_med75    : num [1:5] 3 2.39 7.71 10.4 7.5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ mean_ae_study_med75   : num [1:5] 6.78 6.2 4.88 6.34 5.48</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ n_pat_with_med75_study: int [1:5] 58 64 68 50 63</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ mean_ae_site_med75    : num [1:5] 3.11 2.56 8.53 6.4 8.38</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ mean_ae_study_med75   : num [1:5] 7.03 6.21 5.26 5.21 5.34</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ n_pat_with_med75_study: int [1:5] 59 72 66 70 67</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ prob_low              : num [1:5] 0 0 1 1 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ df_eval         : tibble [5 × 11] (S3: tbl_df/tbl/data.frame)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ study_id              : chr [1:5] "A" "A" "A" "A" ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ site_number           : chr [1:5] "S0001" "S0002" "S0003" "S0004" ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ n_pat                 : int [1:5] 20 20 20 20 20</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ n_pat_with_med75      : num [1:5] 19 18 14 15 14</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ visit_med75           : Named num [1:5] 16 15 15 19 16</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ n_pat_with_med75      : num [1:5] 18 18 17 20 16</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ visit_med75           : Named num [1:5] 17 15 16 15 16</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..- attr(*, "names")= chr [1:5] "80%" "80%" "80%" "80%" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ mean_ae_site_med75    : num [1:5] 3 2.39 7.71 10.4 7.5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ mean_ae_study_med75   : num [1:5] 6.78 6.2 4.88 6.34 5.48</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ n_pat_with_med75_study: int [1:5] 58 64 68 50 63</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ mean_ae_site_med75    : num [1:5] 3.11 2.56 8.53 6.4 8.38</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ mean_ae_study_med75   : num [1:5] 7.03 6.21 5.26 5.21 5.34</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ n_pat_with_med75_study: int [1:5] 59 72 66 70 67</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ prob_low              : num [1:5] 0 0 1 1 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ prob_low_adj          : num [1:5] 0 0 1 1 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ prob_low_prob_ur      : num [1:5] 1 1 0 0 0</span>
@@ -238,11 +238,11 @@ original visit data for facilitated plotting using generic plot(x).</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 5 × 13</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   study_id site_number events_per_visit_site events visits n_pat prob_low</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> A        S0001                       0.173     71    410    20    0    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> A        S0002                       0.185     71    384    20    0    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> A        S0003                       0.538    190    353    20    0.996</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> A        S0004                       0.547    220    402    20    0.999</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> A        S0005                       0.447    170    380    20    0.917</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> A        S0001                       0.183     76    415    20    0    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> A        S0002                       0.186     75    403    20    0    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> A        S0003                       0.496    187    377    20    0.999</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> A        S0004                       0.453    180    397    20    0.987</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> A        S0005                       0.492    187    380    20    0.996</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 6 more variables: events_per_visit_study &lt;dbl&gt;, prob_low_adj &lt;dbl&gt;,</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   prob_low_prob_ur &lt;dbl&gt;, prob_high &lt;dbl&gt;, prob_high_adj &lt;dbl&gt;,</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   prob_high_prob_or &lt;dbl&gt;</span></span>
@@ -250,11 +250,11 @@ original visit data for facilitated plotting using generic plot(x).</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 5 × 15</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   study_id site_number events_per_visit_site events visits n_pat prob_low</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> A        S0001                       0.188     57    304    19    0    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> A        S0002                       0.159     43    270    18    0    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> A        S0003                       0.514    108    210    14    0.991</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> A        S0004                       0.547    156    285    15    0.999</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> A        S0005                       0.469    105    224    14    0.962</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> A        S0001                       0.183     56    306    18    0    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> A        S0002                       0.170     46    270    18    0    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> A        S0003                       0.533    145    272    17    1    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> A        S0004                       0.427    128    300    20    0.892</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> A        S0005                       0.523    134    256    16    0.996</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 8 more variables: events_per_visit_study &lt;dbl&gt;, prob_low_adj &lt;dbl&gt;,</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   prob_low_prob_ur &lt;dbl&gt;, prob_high &lt;dbl&gt;, prob_high_adj &lt;dbl&gt;,</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   prob_high_prob_or &lt;dbl&gt;, n_pat_with_med75 &lt;dbl&gt;, visit_med75 &lt;dbl&gt;</span></span>
@@ -271,11 +271,11 @@ original visit data for facilitated plotting using generic plot(x).</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># Ordered by: study_id, site_number</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   study_id site_number events_per_visit_site events visits n_pat prob_low</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> A        S0004                       0.547    220    402    20    0.999</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> A        S0003                       0.538    190    353    20    0.998</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> A        S0002                       0.185     71    384    20    0    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> A        S0001                       0.173     71    410    20    0    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> A        S0005                       0.447    170    380    20    0.93 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> A        S0003                       0.496    187    377    20    1    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> A        S0005                       0.492    187    380    20    0.999</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> A        S0001                       0.183     76    415    20    0.001</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> A        S0004                       0.453    180    397    20    0.982</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> A        S0002                       0.186     75    403    20    0    </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 6 more variables: events_per_visit_study &lt;dbl&gt;, prob_low_adj &lt;dbl&gt;,</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   prob_low_prob_ur &lt;dbl&gt;, prob_high &lt;dbl&gt;, prob_high_adj &lt;dbl&gt;,</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   prob_high_prob_or &lt;dbl&gt;</span></span>
@@ -285,11 +285,11 @@ original visit data for facilitated plotting using generic plot(x).</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># Ordered by: study_id, site_number</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   study_id site_number events_per_visit_site events visits n_pat prob_low</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> A        S0001                       0.188     57    304    19    0    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> A        S0002                       0.159     43    270    18    0    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> A        S0003                       0.514    108    210    14    0.993</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> A        S0005                       0.469    105    224    14    0.969</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> A        S0004                       0.547    156    285    15    0.999</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> A        S0003                       0.533    145    272    17    1    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> A        S0005                       0.523    134    256    16    0.999</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> A        S0004                       0.427    128    300    20    0.908</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> A        S0002                       0.170     46    270    18    0    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> A        S0001                       0.183     56    306    18    0    </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 8 more variables: events_per_visit_study &lt;dbl&gt;, prob_low_adj &lt;dbl&gt;,</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   prob_low_prob_ur &lt;dbl&gt;, prob_high &lt;dbl&gt;, prob_high_adj &lt;dbl&gt;,</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   prob_high_prob_or &lt;dbl&gt;, n_pat_with_med75 &lt;dbl&gt;, visit_med75 &lt;int&gt;</span></span>
