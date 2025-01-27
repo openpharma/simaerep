@@ -118,3 +118,18 @@ test_that("simaerep() with mult_corr = FALSE must not return adjusted probabilit
   expect_true(! "prob_high_adj" %in% colnames(aerep$df_eval))
 
 })
+
+
+#Newly Added
+test_that("simaerep() produces a warning when r is not equal to param_sim_sites$r",{
+  expect_warning(simaerep(df_visit_test,r=999))
+})
+
+test_that("simaerep() produces an error when visit_med75 and inframe are FALSE",{
+  expect_error(simaerep(df_visit_test,visit_med75=FALSE,inframe=FALSE),regexp = "visit_med75 parameter must be TRUE if inframe is FALSE")
+})
+
+test_that("simaerep() produces a message when the study parameter is NULL",{
+  x <- simaerep(df_visit_test)
+  expect_true(grepl('defaulting to study',evaluate_promise(plot.simaerep(x))$messages))
+})

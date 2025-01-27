@@ -144,7 +144,6 @@ sim_inframe <- function(df_visit, r = 1000, df_site = NULL) {
       # of eligible patients
       rnd = runif(n())
     )
-
   if (inherits(df_sim_prep, "tbl_Snowflake")) {
     # snowflake RANDOM() works differently than other backends and returns large
     # positive and negative integers. We normalize by using the min and max values

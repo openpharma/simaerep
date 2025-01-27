@@ -122,10 +122,13 @@ as.data.frame.orivisit <- function(x, ..., env = parent.frame()) {
     dim <- dim(df)
     df_summary <- summarise_df_visit(df)
 
-    if (! all.equal(df_summary, x$df_summary, tolerance = 1e-4)) stop.orivisit()
-    if (! all(dim == x$dim)) stop.orivisit()
+    if (! all.equal(df_summary, x$df_summary, tolerance = 1e-4)==TRUE){ # added ==TRUE to avoid an error when df_summary is different to x$df_summary
+      stop('df_summary does not equal x$df_summary')
+    }
+    if (! all(dim == x$dim)) {
+      stop('df dimensions are not equal to x dimensions')
   }
-
+  }
   return(df)
 }
 
