@@ -37,15 +37,15 @@ test_that("is_orivisit returns TRUE", {
 })
 
 
-test_that("as.data.frame.orivisit() stops when df_summary doesn't equal x$df_summary",{
+test_that("as.data.frame.orivisit() stops when df_summary doesn't equal x$df_summary", {
   x <- orivisit(df_visit_test)
-  x$df_summary$n_sites=10000
+  x$df_summary$n_sites <- 10000
   expect_error(as.data.frame.orivisit(x))
   })
 
 
-test_that("as.data.frame.orivisit() stops when df dimensions are not equal to x dimensions",{
+test_that("as.data.frame.orivisit() stops when df dimensions are not equal to x dimensions", {
   x <- orivisit(df_visit_test)
-  x$dim <- as.integer(c(300,300))
+  x$dim <- as.integer(c(300, 300))
   expect_error(as.data.frame.orivisit(x))
 })

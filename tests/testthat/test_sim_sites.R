@@ -106,7 +106,7 @@ test_that("prep_for_sim() - ae vector for site must match number of patients at 
 })
 
 ##Newly Added
-test_that("prob_lower_site_ae_vs_study_ae() returns NA when mean_ae_site is NA",{
+test_that("prob_lower_site_ae_vs_study_ae() returns NA when mean_ae_site is NA", {
   expect_true(is.na(prob_lower_site_ae_vs_study_ae(site_ae = c(5, 3, 3, 2, 1, 6),
                                                    study_ae = c(NA),
                                                    r = 1000,
@@ -115,7 +115,7 @@ test_that("prob_lower_site_ae_vs_study_ae() returns NA when mean_ae_site is NA",
 })
 
 
-test_that("poiss_test_site_ae_vs_study_ae() returns NA when mean_ae_site is NA",{
+test_that("poiss_test_site_ae_vs_study_ae() returns NA when mean_ae_site is NA", {
   expect_true(is.na(poiss_test_site_ae_vs_study_ae(site_ae = c(5, 3, 3, 2, 1, 6),
                                                    study_ae = c(NA),
                                                    visit_med75 = 10

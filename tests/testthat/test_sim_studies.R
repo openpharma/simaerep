@@ -138,24 +138,27 @@ test_that("get_ecd_values() - ecd values between 0 - 1", {
 })
 
 #New Tests
-test_that("sim_studies() should produce an error when the studies parameter is not NULL",{
-  expect_error(sim_studies(df_visit_test,df_site_test,studies = numeric(1)),
-               regexp="not all passed studies can be found in input data")
+test_that("sim_studies() should produce an error when the studies parameter is not NULL", {
+  expect_error(sim_studies(df_visit_test, df_site_test, studies = numeric(1)),
+               regexp = "not all passed studies can be found in input data")
 })
 
-test_that('get_ecd_values() produces a warning when there are NA values in df_sim_studies',{
-  df_sim_studies_test <- sim_studies(df_visit = df_visit_test,df_site = df_site_test)
-  df_sim_studies_test['pval'] = NA
+test_that("get_ecd_values() produces a warning when there are NA values in df_sim_studies", {
+  df_sim_studies_test <- sim_studies(df_visit = df_visit_test, df_site = df_site_test)
+  df_sim_studies_test["pval"] <- NA
   df_sim_sites_test <- sim_sites(df_site_test, df_visit_test, r = 100)
-  expect_warning(get_ecd_values(df_sim_studies_test,df_sim_sites = df_sim_sites_test,val_str = 'pval'),regexp = 'NA Values in Stats')
+  expect_warning(get_ecd_values(df_sim_studies_test, df_sim_sites = df_sim_sites_test, val_str = "pval"),
+                 regexp = "NA Values in Stats")
 })
 
-test_that('prob_lower_site_ae_vs_study_ae() produces a different output when parallel is TRUE',{
+test_that("prob_lower_site_ae_vs_study_ae() produces a different output when parallel is TRUE", {
   site_ae_test <- c(5, 3, 3, 2, 1, 6)
   study_ae_test <- c(9, 8, 7, 9, 6, 7, 8)
-  expect_true(prob_lower_site_ae_vs_study_ae(site_ae_test ,study_ae_test ,parallel = TRUE) != prob_lower_site_ae_vs_study_ae(site_ae_test,study_ae_test,parallel = FALSE))
+  expect_true(prob_lower_site_ae_vs_study_ae(site_ae_test, study_ae_test, parallel = TRUE) !=
+                prob_lower_site_ae_vs_study_ae(site_ae_test, study_ae_test, parallel = FALSE))
 })
 
-test_that("sim_studies() produces a different output when parallel is TRUE",{
-  expect_true(any(sim_studies(df_visit_test,df_site_test,parallel = TRUE)[['pval']] != sim_studies(df_visit_test,df_site_test,parallel = FALSE)[['pval']]))
+test_that("sim_studies() produces a different output when parallel is TRUE", {
+  expect_true(any(sim_studies(df_visit_test, df_site_test, parallel = TRUE)[["pval"]]
+                  != sim_studies(df_visit_test, df_site_test, parallel = FALSE)[["pval"]]))
 })

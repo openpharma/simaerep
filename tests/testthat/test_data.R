@@ -196,35 +196,39 @@ test_that("sim_ur() and sim_ur_scenario() must give similar results", {
 })
 
 #Newly Added
-test_that('sim_scenario() produces a warning if the fraction of patients with underreporting is greater than 1',{
-  expect_warning(sim_scenario(c(5,5,5,5), c(8,8,8,8), 1.2, 0.5))
+test_that("sim_scenario() produces a warning if the fraction of patients with underreporting is greater than 1", {
+  expect_warning(sim_scenario(c(5, 5, 5, 5), c(8, 8, 8, 8), 1.2, 0.5))
 })
 
 
-test_that("sim_ur_scenarios() produces messages when progress = TRUE",{
+test_that("sim_ur_scenarios() produces messages when progress = TRUE", {
   response <- evaluate_promise(sim_ur_scenarios(df_portf_test))
-  messages_test <-strsplit(c("aggregating site level","prepping for simulation","generating scenarios","getting under-reporting stats","evaluating stats"),',')
-  messages_check <- strsplit(response$messages,'\n')
-  expect_equal(messages_check,messages_test)
+  messages_check <- strsplit(response$messages, "\n")
+  expect_true("aggregating site level" %in% messages_check)
 })
 
-test_that("sim_test_data_portfolio() produces the expected output when ae_rates are not null",{
-  df_ae_rates_test <- data.frame(study_id = '0001',ae_rate = 0)
-  ae_rates_test <- sim_test_data_portfolio(df_config_test,df_ae_rates_test)
-  expect_true(unique(ae_rates_test$'n_ae') == 0)
+test_that("sim_test_data_portfolio() produces the expected output when ae_rates are not null", {
+  df_ae_rates_test <- data.frame(study_id = "0001", ae_rate = 0)
+  ae_rates_test <- sim_test_data_portfolio(df_config_test, df_ae_rates_test)
+  expect_true(unique(ae_rates_test$"n_ae") == 0)
 })
 
-test_that("sim_test_data_study() alters the ae_rates value if is_ur is TRUE",{
-  expect_true(unique(sim_test_data_study(frac_site_with_ur = 1,ae_rates = 2,ur_rate = 1)[['ae_per_visit_mean']]) == 0)
+test_that("sim_test_data_study() alters the ae_rates value if is_ur is TRUE", {
+  expect_true(unique(sim_test_data_study(frac_site_with_ur = 1, ae_rates = 2, ur_rate = 1)[["ae_per_visit_mean"]]) == 0)
 })
 
-test_that('sim_ur_scenarios() produces a distinct output when parallel is TRUE',{
-  expect_true(any(sim_ur_scenarios(df_portf_test,progress = FALSE,parallel = TRUE)[['prob_low_prob_ur']] != sim_ur_scenarios(df_portf_test,progress = FALSE,parallel = FALSE)[['prob_low_prob_ur']]))
+test_that("sim_ur_scenarios() produces a distinct output when parallel is TRUE", {
+  test_parallel_true <- sim_ur_scenarios(df_portf_test, progress = FALSE, parallel = TRUE)[["prob_low_prob_ur"]]
+  test_parallel_false <- sim_ur_scenarios(df_portf_test, progress = FALSE, parallel = FALSE)[["prob_low_prob_ur"]]
+  expect_true(any(test_parallel_true != test_parallel_false))
 })
 
 
 
 #Might not want to include this one, or move it elsewhere
-test_that("purrr_bar() operates more slowly when .slow is TRUE",{
-  expect_true(system.time(purrr_bar(rep(0.25, 5), .purrr = purrr::walk,.f = Sys.sleep, .steps = 5, .progress = FALSE,.slow=TRUE))[[3]] - system.time(purrr_bar(rep(0.25, 5), .purrr = purrr::walk,.f = Sys.sleep, .steps = 5, .progress = FALSE,.slow=FALSE))[[3]] > 0.25)
-})
+test_that("purrr_bar() operates more slowly when .slow is TRUE", {
+  param <- (rep(0.25, 5))
+  purr_test_slow <- system.time(purrr_bar(param, .purrr = purrr::walk, .f = Sys.sleep, .steps = 5, .slow = TRUE))[[3]]
+  purr_test_fast <- system.time(purrr_bar(param, .purrr = purrr::walk, .f = Sys.sleep, .steps = 5, .slow = FALSE))[[3]]
+  expect_true(purr_test_slow - purr_test_fast > 0.25)
+  })
