@@ -204,7 +204,7 @@ simaerep <- function(df_visit,
       check = check
     )
   } else {
-    stop("visit_med75 parameter mus be TRUE if inframe is FALSE")
+    stop("visit_med75 parameter must be TRUE if inframe is FALSE")
   }
 
   return(aerep)

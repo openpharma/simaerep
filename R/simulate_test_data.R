@@ -174,7 +174,11 @@ sim_scenario <- function(n_ae_site, n_ae_study, frac_pat_with_ur, ur_rate) {
     return(list(n_ae_site = n_ae_site, n_ae_study = n_ae_study))
   }
 
-  if (frac_pat_with_ur > 1) frac_pat_with_ur <- 1
+  if (frac_pat_with_ur > 1) {
+    frac_pat_with_ur <- 1
+    #Warning message if frac_pat_with_ur > 1
+    warning("Fraction of patients with underreporting is greater than 1.\n  The fraction has been changed to 1")
+  }
 
   n_pat_site <- length(n_ae_site)
   n_pat_study <- length(n_ae_study)

@@ -31,3 +31,9 @@ test_that("plot_visit_med75() must return ggplot object", {
 
   expect_true(all(c("gg", "ggplot") %in% class(p)))
 })
+#Newly Added
+test_that("plot_visit_med75() pastes a caption if verbose is TRUE", {
+  response <- evaluate_promise(plot_visit_med75(df_visit_test, df_site_test, study_id_str = "A", verbose = TRUE))
+  message_check <- response$output
+  expect_true(grepl("mean site ae of patients with visit_med75", message_check))
+})
