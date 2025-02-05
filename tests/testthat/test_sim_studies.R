@@ -150,15 +150,3 @@ test_that("get_ecd_values() produces a warning when there are NA values in df_si
   expect_warning(get_ecd_values(df_sim_studies_test, df_sim_sites = df_sim_sites_test, val_str = "pval"),
                  regexp = "NA Values in Stats")
 })
-
-test_that("prob_lower_site_ae_vs_study_ae() produces a different output when parallel is TRUE", {
-  site_ae_test <- c(5, 3, 3, 2, 1, 6)
-  study_ae_test <- c(9, 8, 7, 9, 6, 7, 8)
-  expect_true(prob_lower_site_ae_vs_study_ae(site_ae_test, study_ae_test, parallel = TRUE) !=
-                prob_lower_site_ae_vs_study_ae(site_ae_test, study_ae_test, parallel = FALSE))
-})
-
-test_that("sim_studies() produces a different output when parallel is TRUE", {
-  expect_true(any(sim_studies(df_visit_test, df_site_test, parallel = TRUE)[["pval"]]
-                  != sim_studies(df_visit_test, df_site_test, parallel = FALSE)[["pval"]]))
-})

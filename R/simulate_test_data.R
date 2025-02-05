@@ -54,12 +54,10 @@ sim_test_data_study <- function(n_pat = 1000,
       }
 
       f_sample_ae <- function(max_visit) {
-
         # extrapolate missing ae rates by extending last rate
         fill <- rep(ae_rates[length(ae_rates)], max_visit)
         fill[seq_along(ae_rates)] <- ae_rates
         ae_rates <- fill
-
         aes <- integer(0)
 
         for (i in seq(1, max_visit)) {
@@ -634,7 +632,6 @@ sim_test_data_portfolio <- function(df_config, df_ae_rates = NULL, parallel = FA
         ae_rates = map(.data$data, "ae_rate")
       ) %>%
       select(- "data")
-
     df_config <- df_config %>%
       inner_join(df_ae_rates, by = "study_id")
   }
@@ -685,7 +682,6 @@ sim_test_data_portfolio <- function(df_config, df_ae_rates = NULL, parallel = FA
       ),
     progress = progress
   )
-
   df_portf <- df_config_sim %>%
     unnest("sim") %>%
     select(- c("n_pat", "ae_rates")) %>%
@@ -700,7 +696,6 @@ sim_test_data_portfolio <- function(df_config, df_ae_rates = NULL, parallel = FA
       )
     ) %>%
     ungroup()
-
   return(df_portf)
 }
 

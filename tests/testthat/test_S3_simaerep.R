@@ -132,5 +132,5 @@ test_that("simaerep() produces an error when visit_med75 and inframe are FALSE",
 
 test_that("simaerep() produces a message when the study parameter is NULL", {
   x <- simaerep(df_visit_test)
-  expect_true(grepl("defaulting to study", evaluate_promise(plot.simaerep(x))$messages))
+  expect_message(plot.simaerep(x), regex = "study = NULL, defaulting to study:A")
 })
