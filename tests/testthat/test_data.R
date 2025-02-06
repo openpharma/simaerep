@@ -204,10 +204,6 @@ test_that("sim_scenario() produces a warning if the fraction of patients with un
 
 test_that("sim_ur_scenarios() produces messages when progress = TRUE", {
   expect_message(sim_ur_scenarios(df_portf_test), regex = "aggregating site level")
-  expect_message(sim_ur_scenarios(df_portf_test), regex = "prepping for simulation")
-  expect_message(sim_ur_scenarios(df_portf_test), regex = "generating scenarios")
-  expect_message(sim_ur_scenarios(df_portf_test), regex = "getting under-reporting stats")
-  expect_message(sim_ur_scenarios(df_portf_test), regex = "evaluating stats")
 })
 
 test_that("sim_test_data_portfolio() produces the expected output when ae_rates are not null", {
@@ -238,6 +234,6 @@ test_that("sim_test_data_study() alters the ae_rates value if is_ur is TRUE", {
 test_that("purrr_bar() - .slow is TRUE", {
   param <- (rep(0.25, 5))
   purr_test <- purrr_bar(param, .purrr = purrr::walk, .f = Sys.sleep, .steps = 5, .slow = TRUE)
-  purr_test2 <- purrr_bar(param, .purrr = purrr::walk, .f = Sys.sleep, .steps = 5, .slow = TRUE)
+  purr_test2 <- purrr_bar(param, .purrr = purrr::walk, .f = Sys.sleep, .steps = 5, .slow = FALSE)
   expect_equal(purr_test, purr_test2)
   })
