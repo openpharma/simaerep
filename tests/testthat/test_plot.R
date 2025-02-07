@@ -31,7 +31,7 @@ test_that("plot_visit_med75() must return ggplot object", {
 
   expect_true(all(c("gg", "ggplot") %in% class(p)))
 })
-#Newly Added
+
 test_that("plot_visit_med75() pastes a caption if verbose is TRUE", {
   cap <- paste(c(
     "purple line:          mean site ae of patients with visit_med75",

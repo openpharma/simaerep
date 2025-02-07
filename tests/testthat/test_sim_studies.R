@@ -137,7 +137,7 @@ test_that("get_ecd_values() - ecd values between 0 - 1", {
 
 })
 
-#New Tests
+
 test_that("sim_studies() should produce an error when the studies parameter is not NULL", {
   expect_error(sim_studies(df_visit_test, df_site_test, studies = numeric(1)),
                regexp = "not all passed studies can be found in input data")

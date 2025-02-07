@@ -120,7 +120,7 @@ test_that("simaerep() with mult_corr = FALSE must not return adjusted probabilit
 })
 
 
-#Newly Added
+
 test_that("simaerep() produces a warning when r is not equal to param_sim_sites$r", {
   expect_warning(simaerep(df_visit_test, r = 999))
 })

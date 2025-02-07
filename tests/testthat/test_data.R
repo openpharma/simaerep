@@ -195,7 +195,7 @@ test_that("sim_ur() and sim_ur_scenario() must give similar results", {
 
 })
 
-#Newly Added
+
 test_that("sim_scenario() produces a warning if the fraction of patients with underreporting is greater than 1", {
   expect_warning(sim_scenario(c(5, 5, 5, 5), c(8, 8, 8, 8), 1.2, 0.5),
                  "Fraction of patients with underreporting is greater than 1.\n  The fraction has been changed to 1")
