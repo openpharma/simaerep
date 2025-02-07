@@ -31,3 +31,16 @@ test_that("plot_visit_med75() must return ggplot object", {
 
   expect_true(all(c("gg", "ggplot") %in% class(p)))
 })
+
+test_that("plot_visit_med75() pastes a caption if verbose is TRUE", {
+  cap <- paste(c(
+    "purple line:          mean site ae of patients with visit_med75",
+    "grey line:            patient included",
+    "black dashed line:    patient excluded",
+    "dotted vertical line: visit_med75, 0.75 x median of maximum patient visits of site ",
+    "solid vertical line:  visit_med75 adjusted, increased to minimum maximum patient visit of included patients",
+    "dashed vertical line: maximum value for visit_med75 adjusted, 80% quantile of maximum patient visits of study",
+    ""
+  ), collapse = "\n")
+  expect_output(plot_visit_med75(df_visit_test, df_site_test, study_id_str = "A", verbose = TRUE), regex = cap)
+})

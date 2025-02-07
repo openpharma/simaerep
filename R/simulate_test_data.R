@@ -54,12 +54,10 @@ sim_test_data_study <- function(n_pat = 1000,
       }
 
       f_sample_ae <- function(max_visit) {
-
         # extrapolate missing ae rates by extending last rate
         fill <- rep(ae_rates[length(ae_rates)], max_visit)
         fill[seq_along(ae_rates)] <- ae_rates
         ae_rates <- fill
-
         aes <- integer(0)
 
         for (i in seq(1, max_visit)) {
@@ -174,7 +172,11 @@ sim_scenario <- function(n_ae_site, n_ae_study, frac_pat_with_ur, ur_rate) {
     return(list(n_ae_site = n_ae_site, n_ae_study = n_ae_study))
   }
 
-  if (frac_pat_with_ur > 1) frac_pat_with_ur <- 1
+  if (frac_pat_with_ur > 1) {
+    frac_pat_with_ur <- 1
+    #Warning message if frac_pat_with_ur > 1
+    warning("Fraction of patients with underreporting is greater than 1.\n  The fraction has been changed to 1")
+  }
 
   n_pat_site <- length(n_ae_site)
   n_pat_study <- length(n_ae_study)
@@ -630,7 +632,6 @@ sim_test_data_portfolio <- function(df_config, df_ae_rates = NULL, parallel = FA
         ae_rates = map(.data$data, "ae_rate")
       ) %>%
       select(- "data")
-
     df_config <- df_config %>%
       inner_join(df_ae_rates, by = "study_id")
   }
@@ -681,7 +682,6 @@ sim_test_data_portfolio <- function(df_config, df_ae_rates = NULL, parallel = FA
       ),
     progress = progress
   )
-
   df_portf <- df_config_sim %>%
     unnest("sim") %>%
     select(- c("n_pat", "ae_rates")) %>%
@@ -696,7 +696,6 @@ sim_test_data_portfolio <- function(df_config, df_ae_rates = NULL, parallel = FA
       )
     ) %>%
     ungroup()
-
   return(df_portf)
 }
 

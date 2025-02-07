@@ -37,6 +37,7 @@ summarise_df_visit <- function(df_visit) {
       n_visits = sum(.data$visit),
       n_aes = sum(.data$n_ae)
     )
+
 }
 
 get_str_var <- function(call, env) {
@@ -122,10 +123,10 @@ as.data.frame.orivisit <- function(x, ..., env = parent.frame()) {
     dim <- dim(df)
     df_summary <- summarise_df_visit(df)
 
-    if (! all.equal(df_summary, x$df_summary, tolerance = 1e-4)) stop.orivisit()
+    #all.equal produces either TRUE or a character string (instead of FALSE)
+    if (is.character(all.equal(df_summary, x$df_summary, tolerance = 1e-4))) stop.orivisit()
     if (! all(dim == x$dim)) stop.orivisit()
   }
-
   return(df)
 }
 

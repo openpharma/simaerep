@@ -136,3 +136,17 @@ test_that("get_ecd_values() - ecd values between 0 - 1", {
   expect_true(all(between(df_pval$pval_ecd, 0, 1)))
 
 })
+
+
+test_that("sim_studies() should produce an error when the studies parameter is not NULL", {
+  expect_error(sim_studies(df_visit_test, df_site_test, studies = numeric(1)),
+               regexp = "not all passed studies can be found in input data")
+})
+
+test_that("get_ecd_values() produces a warning when there are NA values in df_sim_studies", {
+  df_sim_studies_test <- sim_studies(df_visit = df_visit_test, df_site = df_site_test)
+  df_sim_studies_test["pval"] <- NA
+  df_sim_sites_test <- sim_sites(df_site_test, df_visit_test, r = 100)
+  expect_warning(get_ecd_values(df_sim_studies_test, df_sim_sites = df_sim_sites_test, val_str = "pval"),
+                 regexp = "NA Values in Stats")
+})

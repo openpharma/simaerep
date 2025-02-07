@@ -194,3 +194,46 @@ test_that("sim_ur() and sim_ur_scenario() must give similar results", {
   ))
 
 })
+
+
+test_that("sim_scenario() produces a warning if the fraction of patients with underreporting is greater than 1", {
+  expect_warning(sim_scenario(c(5, 5, 5, 5), c(8, 8, 8, 8), 1.2, 0.5),
+                 "Fraction of patients with underreporting is greater than 1.\n  The fraction has been changed to 1")
+})
+
+
+test_that("sim_ur_scenarios() produces messages when progress = TRUE", {
+  expect_message(sim_ur_scenarios(df_portf_test), regex = "aggregating site level")
+})
+
+test_that("sim_test_data_portfolio() produces the expected output when ae_rates are not null", {
+  df_ae_rates_test <- data.frame(study_id = "0001", visit = c(1, 2, 3), ae_rate = c(0.5, 0, 1))
+  ae_rates_test <- sim_test_data_portfolio(df_config_test, df_ae_rates_test)
+
+  ae_rates_test_sd <- ae_rates_test |>
+    filter(visit %in% c(1, 2)) |>
+    group_by(study_id, patnum) |>
+    summarise(stdev = sd(n_ae))
+  expect_true(unique(ae_rates_test_sd[["stdev"]]) == 0
+              & length(unique(ae_rates_test_sd[["stdev"]])) == 1)
+
+
+  ae_rates_test_sd <- ae_rates_test |>
+    filter(visit %in% c(2, 3)) |>
+    group_by(study_id, patnum) |>
+    summarise(stdev = sd(n_ae))
+
+  expect_true(any(! unique(ae_rates_test_sd[["stdev"]]) == 0))
+})
+
+test_that("sim_test_data_study() alters the ae_rates value if is_ur is TRUE", {
+  expect_true(unique(sim_test_data_study(frac_site_with_ur = 1, ae_rates = 2, ur_rate = 1)[["ae_per_visit_mean"]]) == 0)
+})
+
+
+test_that("purrr_bar() - .slow is TRUE", {
+  param <- (rep(0.25, 5))
+  purr_test <- purrr_bar(param, .purrr = purrr::walk, .f = Sys.sleep, .steps = 5, .slow = TRUE)
+  purr_test2 <- purrr_bar(param, .purrr = purrr::walk, .f = Sys.sleep, .steps = 5, .slow = FALSE)
+  expect_equal(purr_test, purr_test2)
+  })
