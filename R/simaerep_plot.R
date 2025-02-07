@@ -747,6 +747,7 @@ plot_study <- function(df_visit,
     labs(y = "Mean Cumulative AE Count per Site")
 
 
+
   # site plot -------------------------------------------------------------------
 
   df_mean_ae_dev_site <- df_mean_ae_dev_site %>%
