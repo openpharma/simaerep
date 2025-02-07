@@ -746,6 +746,14 @@ plot_study <- function(df_visit,
     theme(legend.position = "bottom") +
     labs(y = "Mean Cumulative AE Count per Site")
 
+<<<<<<< HEAD
+=======
+  # if (length(sites_ordered) == 0) {
+  #   message("no sites with P/FP ratio > 1")
+  #   return(p_study)
+  # }
+  #Don't think this can be triggered
+>>>>>>> 05cd807ec4bdbe10c072bc0876c53b576106e8ca
 
   # site plot -------------------------------------------------------------------
 
