@@ -21,7 +21,7 @@ test_that("sim_test_data_study() - negative values passed to ur_rate simulate ov
   df_visit <- sim_test_data_study(
     ur_rate = - 0.5,
     frac_site_with_ur = 0.05,
-    ae_per_visit_mean = ae_per_visit_mean_def
+    event_per_visit_mean = ae_per_visit_mean_def
   )
 
   ae_per_visit_mean_or <- df_visit %>%
@@ -39,7 +39,7 @@ test_that("simaerep() - under_only = FALSE return over-reporting statistics", {
   aerep <- simaerep(df_visit_test, under_only = FALSE)
 
   expect_true(all(
-    c("prob_high", "prob_high_adj", "prob_high_prob_or") %in% colnames(aerep$df_eval)
+    c("ae_prob_high", "ae_prob_high_adj", "ae_prob_high_prob_or") %in% colnames(aerep$df_eval)
   ))
 
 })
@@ -48,7 +48,7 @@ test_that(paste("simaerep() - under_only = FALSE - over-reporting must be zero w
                 "mean_ae_site_med75 == mean_ae_study_med75"), {
 
   df_visit <- sim_test_data_study(
-    ae_per_visit_mean = 0
+    event_per_visit_mean = 0
   ) %>%
   mutate(study_id = "A")
 
@@ -56,8 +56,8 @@ test_that(paste("simaerep() - under_only = FALSE - over-reporting must be zero w
 
   zeros <- aerep$df_eval %>%
     filter(mean_ae_study_med75 == mean_ae_site_med75) %>%
-    summarise(across(c(prob_low_prob_ur, prob_high_prob_or), sum)) %>%
-    summarise(across(c(prob_low_prob_ur, prob_high_prob_or), ~ . == 0)) %>%
+    summarise(across(c(ae_prob_low_prob_ur, ae_prob_high_prob_or), sum)) %>%
+    summarise(across(c(ae_prob_low_prob_ur, ae_prob_high_prob_or), ~ . == 0)) %>%
     unlist()
 
   expect_true(all(zeros))

@@ -104,18 +104,18 @@ test_that("plot.simaerep throws error when original visit data cannot be retriev
 test_that("simaerep() with mult_corr = FALSE must not return adjusted probabilities", {
 
   aerep <- simaerep(df_visit_test, mult_corr = FALSE)
-  expect_true(! "prob_low_adj" %in% colnames(aerep$df_eval))
+  expect_true(! "ae_prob_low_adj" %in% colnames(aerep$df_eval))
 
   aerep <- simaerep(df_visit_test, mult_corr = FALSE, under_only = FALSE)
-  expect_true(! "prob_low_adj" %in% colnames(aerep$df_eval))
-  expect_true(! "prob_high_adj" %in% colnames(aerep$df_eval))
+  expect_true(! "ae_prob_low_adj" %in% colnames(aerep$df_eval))
+  expect_true(! "ae_prob_high_adj" %in% colnames(aerep$df_eval))
 
   aerep <- simaerep(df_visit_test, mult_corr = FALSE, inframe = TRUE)
-  expect_true(! "prob_low_adj" %in% colnames(aerep$df_eval))
+  expect_true(! "ae_prob_low_adj" %in% colnames(aerep$df_eval))
 
   aerep <- simaerep(df_visit_test, mult_corr = FALSE, under_only = FALSE, inframe = TRUE)
-  expect_true(! "prob_low_adj" %in% colnames(aerep$df_eval))
-  expect_true(! "prob_high_adj" %in% colnames(aerep$df_eval))
+  expect_true(! "ae_prob_low_adj" %in% colnames(aerep$df_eval))
+  expect_true(! "ae_prob_high_adj" %in% colnames(aerep$df_eval))
 
 })
 
@@ -134,3 +134,42 @@ test_that("simaerep() produces a message when the study parameter is NULL", {
   x <- simaerep(df_visit_test)
   expect_message(plot.simaerep(x), regex = "study = NULL, defaulting to study:A")
 })
+
+test_that("simaerep() produces warning messages when provided with the wrong event_name inputs", {
+  expect_error(simaerep(df_visit = df_visit_events_test, event_names = "ae"),
+                        regexp = "Different number of event names (1) than expected (2)", fixed = TRUE)
+
+  df_visit_test_column <- df_visit_test |>
+    rename(n_pd = n_ae)
+  expect_error(simaerep(df_visit = df_visit_test_column),
+               regexp = "ae not found in df_visit", fixed = TRUE)
+
+  expect_error(simaerep(df_visit = df_visit_events_test, event_names = c("ae", "pd"), inframe = FALSE),
+               regexp = "Must only have one event if inframe is FALSE", fixed = TRUE)
+
+  df_visit_pd_test <- sim_test_data_study(
+    n_pat = 100,
+    n_sites = 5,
+    frac_site_with_ur = 0.4,
+    ur_rate = 0.6,
+    event_per_visit_mean = 0.4,
+    event_names = c("pd")
+  )
+  df_visit_pd_test$study_id <- "A"
+
+  expect_error(simaerep(df_visit = df_visit_pd_test, event_names = "pd", inframe = FALSE),
+               regexp = "Event_name must be 'ae' if inframe is FALSE", fixed = TRUE)
+})
+
+
+test_that("eval_sites throws the correct error when given multi-event data containing an NA", {
+
+df_site_events_test <- site_aggr(df_visit_events_test, event_names = c("ae", "pd"))
+
+df_sim_sites_events_test <-
+  sim_sites(df_site_events_test, df_visit_events_test, r = 100, event_names = c("ae", "pd"))
+df_sim_sites_events_test$ae_pval[1] <- NA
+
+
+expect_warning(eval_sites(df_sim_sites_events_test, event_names = c("ae", "pd")),
+               regexp = "study_id: A, site_number: S0001, a prob_low value contains NA", fixed = TRUE)})

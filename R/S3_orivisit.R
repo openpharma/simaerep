@@ -21,7 +21,10 @@ validate_orivisit <- function(x) {
 }
 
 
-summarise_df_visit <- function(df_visit) {
+summarise_df_visit <- function(df_visit, event_names = c("ae")) {
+  colsearch <- paste0("n_", event_names)
+  colname <- paste0("n_", event_names, "s") #nolint
+
   df_visit %>%
     group_by(
       .data$study_id,
@@ -35,16 +38,17 @@ summarise_df_visit <- function(df_visit) {
       n_sites = n_distinct(.data$site_number),
       n_patients = n_distinct(.data$patnum),
       n_visits = sum(.data$visit),
-      n_aes = sum(.data$n_ae)
+      across(all_of({colsearch}), sum, .names = "{colname}") #nolint
     )
-
 }
 
 get_str_var <- function(call, env) {
 
+
   str_call <- deparse(call)
 
   if (sum(str_length(str_call)) > 80) {
+
     return(NA)
   }
 
@@ -52,6 +56,7 @@ get_str_var <- function(call, env) {
   # env_has() will check custom env
 
   if (! exists(str_call) && ! rlang::env_has(env, str_call)) {
+
     return(NA)
   }
 
@@ -88,17 +93,21 @@ get_str_var <- function(call, env) {
 #'
 #' @rdname orivisit
 #' @export
-orivisit <- function(df_visit, call = NULL, env = parent.frame()) {
+orivisit <- function(df_visit, call = NULL, env = parent.frame(), event_names = c("ae")) {
+
+
 
   if (is.null(call)) {
+
     call <- rlang::enexpr(df_visit)
   }
 
   stopifnot(inherits(df_visit, "data.frame") | inherits(df_visit, "tbl"))
 
   dim <- dim(df_visit)
-  df_summary <- summarise_df_visit(df_visit)
+  df_summary <- summarise_df_visit(df_visit, event_names = event_names)
   str_call <- get_str_var(call, env)
+
 
   validate_orivisit(
     new_orivisit(

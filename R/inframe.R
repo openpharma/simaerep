@@ -45,12 +45,16 @@ prune_to_visit_med75_inframe <- function(df_visit, df_site) {
 #' df_sim <- sim_inframe(df_visit)
 #' df_eval <- eval_sites(df_sim)
 #' df_eval
-sim_inframe <- function(df_visit, r = 1000, df_site = NULL) {
+sim_inframe <- function(df_visit, r = 1000, df_site = NULL, event_names = c("ae")) {
+  colname <- paste0("n_", event_names)
+
+
 
   # db back-end, to not form ratios from integers
   df_visit <- df_visit %>%
     mutate(
-      n_ae = as.double(.data$n_ae),
+      across(as.double, .cols = all_of({
+        colname}), .names = "{colname}"),
       visit = as.double(.data$visit)
     )
 
@@ -66,22 +70,27 @@ sim_inframe <- function(df_visit, r = 1000, df_site = NULL) {
       )
   }
 
+
   # aggregate per patient to get max visits
   df_pat_aggr_pool <- pat_aggr(df_visit)
 
+  colname2 <- paste0(event_names, "_events")
+  colname3 <- paste0(colname2, "_per_visit_site_ori")
+
   # this implements visit_med75
   if (! is.null(df_site)) {
+
     df_visit_prune <- prune_to_visit_med75_inframe(df_visit, df_site)
 
     df_calc_ori <- df_visit_prune %>%
-      filter(visit == max(.data$visit, na.rm = TRUE), .by = c("patnum", "study_id")) %>%
+      filter(visit == max(.data$visit, na.rm = TRUE), .by = c("patnum", "study_id")) |>
       summarise(
-        events = sum(.data$n_ae),
+        across(.col = all_of({{colname}}), .fns = sum, .names = "{colname2}"),
         visits = sum(.data$visit),
         n_pat = n_distinct(.data$patnum),
-        events_per_visit_site_ori = sum(.data$n_ae, na.rm = TRUE) / sum(.data$visit, na.rm = TRUE),
         .by = c("study_id", "site_number")
-      )
+        ) |>
+      mutate(across(.cols = all_of(colname2), .fns = ~(.x / visits), .names = "{colname3}"))
 
     df_pat_aggr_site <- df_visit_prune %>%
       prune_to_visit_med75_inframe(df_site) %>%
@@ -90,17 +99,17 @@ sim_inframe <- function(df_visit, r = 1000, df_site = NULL) {
     remove(df_visit_prune)
 
   } else {
-    df_pat_aggr_site <- df_pat_aggr_pool
 
+    df_pat_aggr_site <- df_pat_aggr_pool
     df_calc_ori <- df_visit %>%
-      filter(visit == max(.data$visit, na.rm = TRUE), .by = c("patnum", "study_id")) %>%
+      filter(visit == max(.data$visit, na.rm = TRUE), .by = c("patnum", "study_id"))  %>%
       summarise(
-        events = sum(.data$n_ae),
+        across(.cols = all_of({{colname}}), .fns = sum, .names = "{colname2}"),
         visits = sum(.data$visit),
         n_pat = n_distinct(.data$patnum),
-        events_per_visit_site_ori = sum(.data$n_ae, na.rm = TRUE) / sum(.data$visit, na.rm = TRUE),
         .by = c("study_id", "site_number")
-      )
+      ) |>
+      mutate(across(.cols = all_of(colname2), .fns = ~(.x / visits), .names = "{colname3}"))
   }
 
   # for every max visit in the data add all eligible patients
@@ -133,7 +142,7 @@ sim_inframe <- function(df_visit, r = 1000, df_site = NULL) {
       by = c("study_id", "site_number"),
       relationship = "many-to-many"
     ) %>%
-  # add number of eligible patients from pool
+    # add number of eligible patients from pool
     left_join(
       df_visit_pat_pool %>%
         distinct(.data$study_id, .data$visit, .data$max_rwn),
@@ -170,41 +179,56 @@ sim_inframe <- function(df_visit, r = 1000, df_site = NULL) {
     ) %>%
     select(c("study_id", "site_number", "rep", patnum = "patnum_new", visit = "max_visit_per_pat"))
 
-
+  colname4 <- paste0(colname2, "_per_visit_rep")
   # add appropriate visit with cumulative event and visit count for every new patient
   df_calc <- df_sim %>%
     left_join(
       df_visit %>%
-        select(c("study_id", "patnum", "visit", "n_ae")),
+        select(c("study_id", "patnum", "visit", all_of(colname))),
       by = c("study_id", "patnum", "visit")
     ) %>%
     # calculate site level event rates for every repetition
     summarise(
-      events_per_visit_site_rep = sum(.data$n_ae, na.rm = TRUE) / sum(.data$visit, na.rm = TRUE),
+      across(.col = all_of(colname), .fns = ~sum(.x, na.rm = TRUE) / sum(visit, na.rm = TRUE), .names = "{colname4}"),
       .by = c("study_id", "rep", "site_number")
     )
+
+  colname5 <- paste0(event_names, "_prob_low") #nolint
+  colname6 <- paste0(event_names, "_per_visit_study") #nolint
+  colname7 <- paste0(event_names, "_per_visit_site") #nolint
+
+
+
+  join_temp <- df_calc %>%
+    left_join(
+      df_calc_ori,
+      by = c("study_id", "site_number"))
 
   # join original with simulations
   df_calc_aggr <- df_calc %>%
     left_join(
       df_calc_ori,
       by = c("study_id", "site_number")
-    ) %>%
+    ) |>
+
+    # calculate probability by comparing original stats with simulated stats
+    # how many times simulated value below original value
+
     summarise(
-      # calculate probability by comparing original stats with simulated stats
-      # how many times simulated value below original value
-      prob_low = sum(
-        ifelse(
-          .data$events_per_visit_site_rep <= .data$events_per_visit_site_ori,
-          1, 0
-          ),
-        na.rm = TRUE
-      ) / n(),
-      events_per_visit_study = mean(.data$events_per_visit_site_rep, na.rm = TRUE),
-      .by = c("study_id", "site_number", "events_per_visit_site_ori", "events",
-              "visits", "n_pat")
-    ) %>%
-    rename(events_per_visit_site = "events_per_visit_site_ori")
+      across(.col = all_of(colname4), .fns = ~mean(.x, na.rm = TRUE), .names = "{colname6}"),
+      .by = c("study_id", "site_number", all_of(colname2), all_of(colname3), "visits", "n_pat")
+    )
+  for (x in seq_along(colname3)){
+    temp <- join_temp |>
+      summarise("{colname5[x]}" := sum(ifelse(.data[[colname3[x]]] >= .data[[colname4[x]]], 1, 0))/ n(), #nolint
+                .by = c("study_id", "site_number", "visits", "n_pat")) |>
+      select(c("study_id", "site_number", 5))
+    df_calc_aggr <- df_calc_aggr |>
+      left_join(temp, by = c("study_id", "site_number"))
+  }
+
+  df_calc_aggr <- df_calc_aggr |>
+    dplyr::rename_with(.cols = all_of(colname3), ~ colname7[which(colname3 == .x)])
 
   return(df_calc_aggr)
 }

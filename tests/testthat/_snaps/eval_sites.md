@@ -5,16 +5,16 @@
     Condition
       Warning in `warning_na()`:
       
-      study_id: C, site_number: a, pval== NA
+      study_id: C, site_number: a, a prob_low value contains NA
       
-      study_id: C, site_number: b, pval== NA
+      study_id: C, site_number: b, a prob_low value contains NA
       
-      study_id: C, site_number: c, pval== NA
+      study_id: C, site_number: c, a prob_low value contains NA
       Warning in `warning_na()`:
       
-      study_id: C, site_number: a, prob_low== NA
+      study_id: C, site_number: a, a prob_low value contains NA
       
-      study_id: C, site_number: b, prob_low== NA
+      study_id: C, site_number: b, a prob_low value contains NA
       
-      study_id: C, site_number: c, prob_low== NA
+      study_id: C, site_number: c, a prob_low value contains NA
 

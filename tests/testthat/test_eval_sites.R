@@ -44,10 +44,10 @@ test_that("eval_sites() - check column names of returned data frame", {
 
   expect_true(
     c(
-      "pval_adj",
-      "pval_prob_ur",
-      "prob_low_adj",
-      "prob_low_prob_ur"
+      "ae_pval_adj",
+      "ae_pval_prob_ur",
+      "ae_prob_low_adj",
+      "ae_prob_low_prob_ur"
     ) %in% colnames(df_eval_test) %>%
       all()
   )

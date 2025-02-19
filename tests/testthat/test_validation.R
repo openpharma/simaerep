@@ -38,7 +38,7 @@ test_that(paste("validation requirement - under-reporting probability must",
     left_join(aerep$df_eval, by = c("study_id", "site_number")) %>%
     filter(is_ur)
 
-  correl <- cor.test(df_comp$ae_per_visit_mean, df_comp$prob_low_prob_ur)
+  correl <- cor.test(df_comp$ae_per_visit_mean, df_comp$ae_prob_low_prob_ur)
 
   expect_true(correl$statistic < 0)
   expect_true(correl$p.value < 0.05)

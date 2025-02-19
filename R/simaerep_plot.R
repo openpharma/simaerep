@@ -442,10 +442,13 @@ plot_study <- function(df_visit,
                        df_al = NULL,
                        n_sites = 16,
                        pval = FALSE,
-                       prob_col = "prob_low_prob_ur") {
+                       prob_col = "prob_low_prob_ur",
+                       event_names = c("ae")) {
 
+  colname <- paste0(event_names, "_per_visit_study")
+  colname2 <- paste0(event_names, "_per_visit_site")
   # TODO: parametrize scores, fix legend
-
+prob_col <- paste0(event_names, "_", prob_col)
   studies <- df_visit %>%
     distinct(.data$study_id) %>%
     pull(.data$study_id)
@@ -507,8 +510,8 @@ plot_study <- function(df_visit,
 
   # adjust to visit_med75 or alternative ---------------------------------------
 
-  if (all(c("events_per_visit_study", "events_per_visit_site") %in% colnames(df_eval))) {
-    col_mean_site <- "events_per_visit_site"
+  if (all(c(colname, colname2) %in% colnames(df_eval))) {
+    col_mean_site <- colname2
   } else {
     col_mean_site <- "mean_ae_site_med75"
   }
