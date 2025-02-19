@@ -33,19 +33,19 @@ if (getRversion() >= "2.15.1") {
 #'
 #' @rdname check_df_visit
 #' @export
-check_df_visit <- function(df_visit) {
+check_df_visit <- function(df_visit, event_names = "ae") {
 
   df_visit <- ungroup(df_visit)
-
+  colname <- paste0("n_", event_names)
   stopifnot(
-    all(c("study_id", "site_number", "patnum", "n_ae", "visit") %in% colnames(df_visit))
+    all(c("study_id", "site_number", "patnum", colname, "visit") %in% colnames(df_visit))
   )
 
   no_na_cols <- c(
     "study_id",
     "site_number",
     "patnum",
-    "n_ae",
+    colname,
     "visit"
   )
 
@@ -76,17 +76,18 @@ check_df_visit <- function(df_visit) {
     df_visit %>%
       summarise_at(
         vars(c(
-          "n_ae",
+          all_of(colname),
           "visit"
         )),
         ~ is.numeric(.)
       ) %>%
       unlist() %>%
       all() %>%
-      stopifnot("n_ae and visit columns must be numeric" = .)
+      stopifnot("event number and visit columns must be numeric" = .)
 
-    df_visit <- exp_implicit_missing_visits(df_visit)
-    df_visit <- aggr_duplicated_visits(df_visit)
+    df_visit <- exp_implicit_missing_visits(df_visit, event_names)
+    df_visit <- aggr_duplicated_visits(df_visit, event_names)
+
   }
 
   return(df_visit)
@@ -98,7 +99,8 @@ check_df_visit <- function(df_visit) {
 #' @return df_visit corrected
 #' @rdname aggr_duplicated_visits
 #' @export
-aggr_duplicated_visits <- function(df_visit) {
+aggr_duplicated_visits <- function(df_visit, event_names = "ae") {
+  colname <- paste0("n_", event_names)
   df_visit_out <- df_visit %>%
     group_by(
       .data$study_id,
@@ -106,7 +108,7 @@ aggr_duplicated_visits <- function(df_visit) {
       .data$patnum,
       .data$visit
     ) %>%
-    summarise(n_ae = max(.data$n_ae), .groups = "drop")
+    summarise(across(.cols = all_of(colname), .fns = ~max(.x), .names = "{colname}"), .groups = "drop")
 
   if (nrow(df_visit_out) < nrow(df_visit)) {
     warning("Duplicated visit entries for some patients detected and corrected.")
@@ -121,9 +123,9 @@ aggr_duplicated_visits <- function(df_visit) {
 #' @return df_visit corrected
 #' @rdname exp_implicit_missing_visits
 #' @export
-exp_implicit_missing_visits <- function(df_visit) {
+exp_implicit_missing_visits <- function(df_visit, event_names = "ae") {
 
-
+colname <- paste0("n_", event_names)
   df_complete <- df_visit %>%
     group_by(.data$study_id) %>%
     mutate(min_study_visit = min(.data$visit),
@@ -163,7 +165,7 @@ exp_implicit_missing_visits <- function(df_visit) {
     ) %>%
     group_by(.data$study_id, .data$site_number, .data$patnum) %>%
     arrange(.data$visit) %>%
-    fill("n_ae", .direction = "down") %>%
+    fill(all_of(colname), .direction = "down") %>%
     mutate(
       min_visit_pat = min(.data$min_visit_pat, na.rm = TRUE),
       max_visit_pat = max(.data$max_visit_pat, na.rm = TRUE)
@@ -175,12 +177,12 @@ exp_implicit_missing_visits <- function(df_visit) {
       .data$visit >= .data$min_study_visit &
       .data$visit <= .data$max_visit_pat
     ) %>%
-    mutate(n_ae = ifelse(is.na(.data$n_ae), 0, .data$n_ae)) %>%
+    mutate(across(.cols = all_of(colname), .fns = ~(ifelse(is.na(.x), 0, .x)), .names = "{colname}")) %>%
     select(c(
       "study_id",
       "site_number",
       "patnum",
-      "n_ae",
+      all_of(colname),
       "visit"
     )) %>%
     arrange(.data$study_id, .data$site_number, .data$patnum, .data$visit)
@@ -220,7 +222,9 @@ pat_aggr <- function(df_visit) {
 #' @param df_site dataframe as returned by site_aggr()
 #' @return dataframe
 #' @rdname get_site_mean_ae_dev
-get_site_mean_ae_dev <- function(df_visit, df_pat, df_site) {
+get_site_mean_ae_dev <- function(df_visit, df_pat, df_site, event_names = c("ae")) {
+  colname <- paste0("mean_", event_names, "_site") #nolint
+  colsearch <- paste0("n_", event_names) #nolint
 
   df_visit %>%
     left_join(df_pat, by = c("study_id", "site_number", "patnum")) %>%
@@ -230,10 +234,10 @@ get_site_mean_ae_dev <- function(df_visit, df_pat, df_site) {
       .data$max_visit_per_pat >= .data$visit_med75
     ) %>%
     group_by(.data$study_id, .data$site_number, .data$visit_med75, .data$visit) %>%
-    summarise(mean_ae_site = mean(.data$n_ae),
+    summarise(across(all_of(colsearch), mean, .names = "{colname}"),
               .groups = "drop")
-}
 
+}
 #' @title Get visit_med75.
 #' @description Internal function used by [site_aggr()][site_aggr()].
 #' @param df_pat dataframe as returned by [pat_aggr()][pat_aggr()]
@@ -388,24 +392,29 @@ get_visit_med75 <- function(df_pat,
 eval_sites <- function(df_sim_sites,
                         method = "BH",
                         under_only = TRUE,
+                        event_names = c("ae"),
                         ...) {
 
+colname1 <- paste0(event_names, "_per_visit_site")
+colname2 <- paste0(event_names, "_per_visit_study") #nolint
+colname3 <- paste0("study_site_", event_names, "_equal")
   df_out <- df_sim_sites
 
-  if ("pval" %in% colnames(df_out)) {
-
-    warning_na(df_out, "pval")
+  if (any(endsWith(colnames(df_out), suffix = "pval"))) {
+    col <- paste0(event_names, "_pval")
+    warning_na(df_out, col)
 
     df_out <- df_out %>%
-      p_adjust("pval", "_prob_ur", method = method)
+      p_adjust(paste0(event_names, "_pval"), "_prob_ur", method = method)
   }
 
-  if ("prob_low" %in% colnames(df_out)) {
 
-    warning_na(df_out, "prob_low")
+  if (any(endsWith(colnames(df_out), suffix = "prob_low"))) {
+    col <- paste0(event_names, "_prob_low")
+    warning_na(df_out, col)
 
     df_out <- df_out %>%
-      p_adjust("prob_low", "_prob_ur", method = method)
+      p_adjust(paste0(event_names, "_prob_low"), "_prob_ur", method = method)
 
 
     if (! under_only) {
@@ -414,21 +423,21 @@ eval_sites <- function(df_sim_sites,
           mutate(study_site_ae_equal = .data$mean_ae_site_med75 == .data$mean_ae_study_med75)
       } else {
         df_out <- df_out %>%
-          mutate(study_site_ae_equal = .data$events_per_visit_site == .data$events_per_visit_study)
+          mutate(across(.cols = all_of(colname1), .fns = ~(.x == colname2), .names = colname3))
       }
 
       df_out <- df_out %>%
         mutate(
-          prob_high = 1 - .data$prob_low,
-          # when study and site values are equl e.g. both zero, no over-reporting possible
-          prob_high = ifelse(
+          ae_prob_high = 1 - .data$ae_prob_low,
+          # when study and site values are equal e.g. both zero, no over-reporting possible
+          ae_prob_high = ifelse(
             .data$study_site_ae_equal,
             1,
-            .data$prob_high
+            .data$ae_prob_high
           )
         ) %>%
         select(- "study_site_ae_equal") %>%
-        p_adjust("prob_high", "_prob_or", method = method)
+        p_adjust("ae_prob_high", "_prob_or", method = method)
     }
 
   }
@@ -447,27 +456,26 @@ eval_sites <- function(df_sim_sites,
 
 #'@keywords internal
 p_adjust <- function(df, col, suffix, method = "BH") {
-
   col_adj <- paste0(col, "_adj")
-  col_suffix <- paste0(col, suffix)
+  col_suffix <- paste0(col, suffix) #nolint
 
   if (is.na(method) || is.null(method) || method %in% c("None", "none")) {
+
     df_out <- df %>%
       mutate(
-        !! as.name(col_suffix) := 1 - .data[[col]]
+        across(.cols = all_of(col), .fns = ~(1 - .x), .names = "{col_suffix}")
       )
 
     return(df_out)
   }
-
   if (inherits(df, "data.frame")) {
 
-  df_out <- df %>%
-    mutate(
-      !! as.name(col_adj) := p.adjust(.data[[col]], method = method),
-      !! as.name(col_suffix) := 1 - .data[[col_adj]],
-      .by = "study_id"
-    )
+    df_out <- df %>%
+      mutate(
+        across(.cols = all_of(col), .fns = ~p.adjust(.x, method = method), .names = "{col_adj}"),
+        across(.cols = all_of(col_adj), .fns = ~(1 - .x), .names = "{col_suffix}"),
+        .by = "study_id"
+      )
 
   } else {
     df_out <- p_adjust_bh_inframe(df, col, suffix)
@@ -484,10 +492,10 @@ warning_na <- function(df, col) {
 
   if (any_na) {
     warning_messages <- df %>%
-      filter(is.na(.data[[col]])) %>%
+      filter(if_any(any_of(col), is.na)) %>% #nolint
       mutate(
-        warning = paste0("\nstudy_id: ", .data$study_id, ", site_number: ", .data$site_number),
-        warning = paste0(.data$warning, ", ", col, "== NA")
+        warning = paste0("\nstudy_id: ", .data$study_id,
+                         ", site_number: ", .data$site_number, ", a prob_low value contains NA")
       ) %>%
       distinct() %>%
       pull(.data$warning) %>%
@@ -499,18 +507,20 @@ warning_na <- function(df, col) {
 
 get_any_na <- function(df, col) {
   # dbplyr throws a warning for not using na.rm = TRUE
+  col2 <- paste0(col, "_any_na")
+  #
   suppressWarnings({
-    df %>%
-      mutate(
-        any_na = ifelse(is.na(.data[[col]]), 1, 0)
-      ) %>%
+    any_na <- df %>%
+      mutate(across(
+        .cols = all_of(col), .fns = ~(ifelse(is.na(.x), 1, 0)), .names = "{col2}")
+      ) |>
       summarise(
-        any_na = sum(.data$any_na, na.rm = TRUE)
-      ) %>%
+        across(.cols = all_of(col2), .fns = ~sum(.x, na.rm = TRUE), .names = "{col2}")
+      ) |>
       mutate(
-        any_na = .data$any_na > 0
-      ) %>%
-      pull(.data$any_na)
+        across(.cols = all_of(col2), .fns = ~(.x > 0), .names = "{col2}"))
+if (length(col) > 1) return(any(any_na[col2]))
+  else return(any_na |> pull(.data[[col2]]))
   })
 }
 
@@ -572,6 +582,7 @@ get_ecd_values <- function(df_sim_studies, df_sim_sites, val_str) {
       }
   }
 
+
   df_ecd <- df_sim_studies %>%
     rename(val = !!as.symbol(val_str)) %>%
     select("study_id", "val") %>%
@@ -619,7 +630,9 @@ get_ecd_values <- function(df_sim_studies, df_sim_sites, val_str) {
 #' df_pat_pool
 #' @rdname pat_pool
 #' @export
-pat_pool <- function(df_visit, df_site) {
+pat_pool <- function(df_visit, df_site, event_names = "ae") {
+  colname <- paste0("n_", event_names) #nolint
+
   df_site <- df_site %>%
     group_by(.data$study_id) %>%
     mutate(max_visit_med75_study = max(.data$visit_med75))
@@ -630,8 +643,8 @@ pat_pool <- function(df_visit, df_site) {
     select(c("study_id",
            "patnum",
            "visit",
-           "n_ae")) %>%
-    nest(pat_pool = c("patnum", "visit", "n_ae"))
+           all_of(colname))) %>%
+    nest(pat_pool = c("patnum", "visit", all_of(colname)))
 }
 
 
@@ -657,6 +670,7 @@ pat_pool <- function(df_visit, df_site) {
 #' @export
 prob_lower_site_ae_vs_study_ae <- function(site_ae, study_ae, r = 1000, parallel = FALSE, under_only = TRUE) {
   # if there is only one site
+
   if (is.null(study_ae)) {
     prob_lower <- 1
     return(prob_lower)
@@ -698,6 +712,8 @@ prob_lower_site_ae_vs_study_ae <- function(site_ae, study_ae, r = 1000, parallel
     # '<=' includes all cases where mean_ae_site == 0 and me also == 0
     return(as.integer(ifelse(me <= mean_ae_site, 1, 0)))
   }
+
+
 
   df_sim <- tibble(seed = seq.int(1, r, 1)) %>%
     mutate(prob_lower = .f_map_int(.data$seed, .f = sim)) %>%
@@ -766,19 +782,23 @@ sim_sites <- function(df_site,
                       prob_lower = TRUE,
                       progress = TRUE,
                       check = TRUE,
-                      under_only = TRUE) {
+                      under_only = TRUE,
+                      event_names = "ae") {
+
   if (check) {
-    df_visit <- check_df_visit(df_visit)
+    df_visit <- check_df_visit(df_visit, event_names = event_names)
   }
 
-  df_sim_prep <- prep_for_sim(df_site, df_visit)
+  df_sim_prep <- prep_for_sim(df_site, df_visit, event_names = event_names)
 
   df_sim <- sim_after_prep(df_sim_prep,
                            r = r,
                            poisson_test = poisson_test,
                            prob_lower = prob_lower,
                            progress = progress,
-                           under_only = under_only)
+                           under_only = under_only,
+                           event_names = event_names)
+
 
   return(df_sim)
 }
@@ -807,9 +827,13 @@ sim_sites <- function(df_site,
 #'@rdname prep_for_sim
 #' @seealso \code{\link[simaerep]{sim_sites}}, \code{\link[simaerep]{sim_after_prep}}
 #'@export
-prep_for_sim <- function(df_site, df_visit) {
+prep_for_sim <- function(df_site, df_visit, event_names = "ae") {
+  colname <- paste0("n_", event_names, "_site") #nolint
+  colname2 <- paste0("n_", event_names, "_study")#nolint
+  colname3 <- paste0("n_", event_names)#nolint
 
-  df_pat_pool <- pat_pool(df_visit, df_site)
+  df_pat_pool <- pat_pool(df_visit, df_site, event_names = event_names)
+
 
   df_sim_prep <- df_visit %>%
     left_join(df_site, by = c("study_id", "site_number")) %>%
@@ -821,6 +845,7 @@ prep_for_sim <- function(df_site, df_visit) {
              .data$visit_med75) %>%
     summarise(patients = list(unique(.data$patnum)), .groups = "drop")
 
+
   df_sim_prep <- df_sim_prep %>%
     left_join(df_pat_pool, "study_id") %>%
     mutate(
@@ -828,19 +853,23 @@ prep_for_sim <- function(df_site, df_visit) {
         .data$pat_pool, .data$visit_med75,
         function(x, y) filter(x, .data$visit == y)
       ),
-      n_ae_site = map2(
+      n_event_site = map2(
         .data$pat_pool, .data$patients,
         function(x, y) filter(x, .data$patnum %in% y)
       ),
-      n_ae_study = map2(
+      n_event_study = map2(
         .data$pat_pool, .data$patients,
         function(x, y) filter(x, ! .data$patnum %in% y)
-      ),
-      n_ae_site = map(.data$n_ae_site, "n_ae"),
-      n_ae_study = map(.data$n_ae_study, "n_ae")
-    ) %>%
-    select(- c("patients", "pat_pool"))
+      ))
 
+for (x in (seq_along(event_names))){
+  df_sim_prep <- df_sim_prep |>
+    mutate("{colname[x]}" := map(.data$n_event_site, colname3[x]), #nolint
+           "{colname2[x]}" := map(.data$n_event_study, colname3[x])) #nolint
+}
+
+df_sim_prep <- df_sim_prep |>
+    select(- c("n_event_site", "n_event_study", "patients", "pat_pool"))
   return(df_sim_prep)
 
 }
@@ -878,30 +907,44 @@ sim_after_prep <- function(df_sim_prep,
                            poisson_test = FALSE,
                            prob_lower = TRUE,
                            progress = FALSE,
-                           under_only = TRUE) {
+                           under_only = TRUE,
+                           event_names = "ae") {
   df_sim <- df_sim_prep
 
+  colname <- paste0("n_", event_names, "_site")
+  colname2 <- paste0("n_", event_names, "_study")
+  colname3 <- paste0(event_names, "_pval") #nolint
+  colname4 <-  paste0(event_names, "_prob_low") #nolint
+
   if (poisson_test) {
-    df_sim <- df_sim %>%
-      mutate(pval = pmap_dbl(list(.data$n_ae_site, .data$n_ae_study, .data$visit_med75),
-                             poiss_test_site_ae_vs_study_ae))
+    for (x in seq_along(event_names)){
+      df_sim <- df_sim |>
+        mutate("{colname3[x]}" := pmap_dbl(list(.data[[colname[x]]], .data[[colname2[x]]], #nolint
+                                                .data$visit_med75), poiss_test_site_ae_vs_study_ae)) #nolint
+    }
   }
 
+
+
+
+
   if (prob_lower) {
-    with_progress_cnd(
-      df_sim <- df_sim %>%
-        mutate(
-          prob_low = purrr_bar(
-            .data$n_ae_site, .data$n_ae_study,
-            .purrr = map2_dbl,
-            .f = prob_lower_site_ae_vs_study_ae,
-            .f_args = list(r = r, under_only = under_only),
-            .steps = nrow(df_sim),
-            .progress = progress
-          )
-        ),
-      progress = progress
-    )
+    for (x in seq_along(event_names)) {
+      with_progress_cnd(
+        df_sim <- df_sim %>%
+          mutate(
+            "{colname4[x]}" := purrr_bar( #nolint
+              .data[[colname[x]]], .data[[colname2[x]]],
+              .purrr = map2_dbl,
+              .f = prob_lower_site_ae_vs_study_ae,
+              .f_args = list(r = r, under_only = under_only),
+              .steps = nrow(df_sim),
+              .progress = progress
+            )
+          ),
+        progress = progress
+      )
+    }
   }
 
   # clean
@@ -1080,10 +1123,13 @@ sim_studies <- function(df_visit,
                         keep_ae = FALSE,
                         min_n_pat_with_med75 = 1,
                         studies = NULL,
-                        .progress = TRUE
+                        .progress = TRUE,
+                        event_names = c("ae")
                         ) {
 
-  df_visit <- check_df_visit(df_visit)
+
+
+  df_visit <- check_df_visit(df_visit, event_names = event_names)
 
   df_config <- get_pat_pool_config(df_visit = df_visit,
                                    df_site = df_site,
@@ -1116,6 +1162,7 @@ sim_studies <- function(df_visit,
   # sim function will be called r times -----------------------
   sim <- function(r) {
     set.seed(r)
+
     df_config <- df_config %>%
       mutate(
         n_ae_site = map2(.data$pat_pool, .data$n_pat_with_med75,
@@ -1129,7 +1176,7 @@ sim_studies <- function(df_visit,
 
     if (poisson_test) {
       df_config <- df_config %>%
-        mutate(pval = pmap_dbl(list(.data$n_ae_site,
+        mutate(ae_pval = pmap_dbl(list(.data$n_ae_site,
                                .data$n_ae_study,
                                .data$visit_med75),
                                poiss_test_site_ae_vs_study_ae))
@@ -1137,7 +1184,7 @@ sim_studies <- function(df_visit,
 
     if (prob_lower) {
       df_config <- df_config %>%
-        mutate(prob_low = map2_dbl(.data$n_ae_site, .data$n_ae_study,
+        mutate(ae_prob_low = map2_dbl(.data$n_ae_site, .data$n_ae_study,
                                    prob_lower_site_ae_vs_study_ae,
                                    r = r_prob_lower,
                                    under_only = under_only))
@@ -1207,9 +1254,12 @@ sim_studies <- function(df_visit,
 #'@rdname site_aggr
 #'@export
 site_aggr <- function(df_visit,
-                      method = "med75_adj",
-                      min_pat_pool = 0.2,
-                      check = TRUE) {
+                       method = "med75_adj",
+                       min_pat_pool = 0.2,
+                       check = TRUE,
+                       event_names = c("ae")) {
+
+
 
   # Checks ----------------------------------------------------------
   stopifnot(
@@ -1234,10 +1284,11 @@ site_aggr <- function(df_visit,
   }
 
   if (check) {
-    df_visit <- check_df_visit(df_visit)
+    df_visit <- check_df_visit(df_visit, event_names = event_names)
   }
 
   # Aggregate on patient level---------------------------------------
+
 
   df_pat <- pat_aggr(df_visit)
 
@@ -1247,15 +1298,22 @@ site_aggr <- function(df_visit,
 
   # Calculate mean cumulative AE at med75 per Site ------------------
 
-  df_mean_ae_dev <- get_site_mean_ae_dev(df_visit, df_pat, df_site)
+  colname <- c()
+  colsearch <- c()
+  for (x in event_names){
+    colname <- c(colname, paste0("mean_", x, "_site_med75"))
+    colsearch <- c(colsearch, paste0("mean_", x, "_site"))
+  }
+
+
+  df_mean_ae_dev <- get_site_mean_ae_dev(df_visit, df_pat, df_site, event_names = event_names)
 
   df_mean_ae_med75 <- df_mean_ae_dev %>%
-    filter(.data$visit == .data$visit_med75) %>%
-    rename(mean_ae_site_med75 = "mean_ae_site") %>%
+    filter(.data$visit == .data$visit_med75)  |>
+    dplyr::rename_with(~ colname[which(colsearch == .x)], .cols = all_of(colsearch)) |>
     select(c("study_id",
-           "site_number",
-           "mean_ae_site_med75"))
-
+             "site_number",
+             all_of(colname)))
   # Add mean cumulative AE to site aggregate ----------------------
 
   df_site <- df_site %>%

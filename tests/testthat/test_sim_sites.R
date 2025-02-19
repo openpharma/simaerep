@@ -84,8 +84,8 @@ test_that("sim_sites() - returned dataframe must not contain NA", {
 
 test_that("sim_sites() - prob_low and pval must be between 0 - 1", {
 
-  expect_true(all(between(df_sim_sites_test$prob_low, 0, 1)))
-  expect_true(all(between(df_sim_sites_test$pval, 0, 1)))
+  expect_true(all(between(df_sim_sites_test$ae_prob_low, 0, 1)))
+  expect_true(all(between(df_sim_sites_test$ae_pval, 0, 1)))
 
 })
 

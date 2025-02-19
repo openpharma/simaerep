@@ -128,28 +128,43 @@ validate_simaerep <- function(x) {
 #'@rdname simaerep
 #'@export
 simaerep <- function(df_visit,
-                     r = 1000,
-                     check = TRUE,
-                     under_only = TRUE,
-                     visit_med75 = TRUE,
-                     inframe = FALSE,
-                     progress = TRUE,
-                     mult_corr = TRUE,
-                     param_site_aggr = list(
-                       method = "med75_adj",
-                       min_pat_pool = 0.2
-                     ),
-                     param_sim_sites = list(
-                       r = 1000,
-                       poisson_test = FALSE,
-                       prob_lower = TRUE
-                     ),
-                     param_eval_sites = list(
-                       method = "BH"
-                     ),
-                     env = parent.frame()) {
+                      r = 1000,
+                      check = TRUE,
+                      under_only = TRUE,
+                      visit_med75 = TRUE,
+                      inframe = FALSE,
+                      progress = TRUE,
+                      mult_corr = TRUE,
+                      param_site_aggr = list(
+                        method = "med75_adj",
+                        min_pat_pool = 0.2
+                      ),
+                      param_sim_sites = list(
+                        r = 1000,
+                        poisson_test = FALSE,
+                        prob_lower = TRUE
+                      ),
+                      param_eval_sites = list(
+                        method = "BH"
+                      ),
+                      env = parent.frame(),
+                      event_names = c("ae")
+) {
 
   call <- rlang::enexpr(df_visit)
+  if (ncol(df_visit) != 7 + 2 * length(event_names)) {
+    stop(paste0("Different number of event names (", length(event_names),
+                ") than expected (", (ncol(df_visit) - 7) / 2, ")"))
+  }
+  for (x in event_names) {
+    if (!(paste0("n_", x) %in% colnames(df_visit))) {
+      stop(paste0(x, " not found in df_visit"))
+      }
+
+  }
+
+
+
 
   # when two tbl objects passed automatically switch to inframe
   is_tbl_df_visit <- ! is.data.frame(df_visit) & inherits(df_visit, "tbl")
@@ -161,7 +176,7 @@ simaerep <- function(df_visit,
 
   # save visit call
   visit <- tryCatch({
-    visit <- orivisit(df_visit, call, env = env)
+    visit <- orivisit(df_visit, call, env = env, event_names = event_names)
     as.data.frame(visit)
     visit},
     error = function(e) df_visit
@@ -179,6 +194,12 @@ simaerep <- function(df_visit,
     if (r != param_sim_sites$r) {
       param_sim_sites$r <- r
       warning("r not equal param_sim_sites$r, overriding param_sim_sites$r")
+    }
+    if (length(event_names) != 1) {
+      stop("Must only have one event if inframe is FALSE")
+    }
+    if (! event_names == "ae") {
+      stop("Event_name must be 'ae' if inframe is FALSE")
     }
 
     aerep <- simaerep_visit_med75(
@@ -201,7 +222,8 @@ simaerep <- function(df_visit,
       param_site_aggr = param_site_aggr,
       param_eval_sites = param_eval_sites,
       env = env,
-      check = check
+      check = check,
+      event_names = event_names
     )
   } else {
     stop("visit_med75 parameter must be TRUE if inframe is FALSE")
@@ -243,30 +265,32 @@ simaerep <- function(df_visit,
 #'DBI::dbDisconnect(con)
 #'}
 simaerep_inframe <- function(df_visit,
-                             r = 1000,
-                             under_only = FALSE,
-                             visit_med75 = FALSE,
-                             check = TRUE,
-                             param_site_aggr = list(
-                               method = "med75_adj",
-                               min_pat_pool = 0.2
-                             ),
-                             param_eval_sites = list(
-                               method = "BH"
-                             ),
-                             env = parent.frame()) {
+                              r = 1000,
+                              under_only = FALSE,
+                              visit_med75 = FALSE,
+                              check = TRUE,
+                              param_site_aggr = list(
+                                method = "med75_adj",
+                                min_pat_pool = 0.2
+                              ),
+                              param_eval_sites = list(
+                                method = "BH"
+                              ),
+                              env = parent.frame(),
+                              event_names = c("ae")
+) {
 
   if (inherits(df_visit, "orivisit")) {
     visit <- df_visit
     df_visit <- as.data.frame(df_visit, env = env)
   } else {
     call <- rlang::enexpr(df_visit)
-    visit <- orivisit(df_visit, call, env = env)
+    visit <- orivisit(df_visit, call, env = env, event_names = event_names)
   }
 
   # check
   if (check) {
-    df_visit <- check_df_visit(df_visit)
+    df_visit <- check_df_visit(df_visit, event_names)
   }
 
   if (! visit_med75) {
@@ -278,14 +302,15 @@ simaerep_inframe <- function(df_visit,
     c(
       list(df_visit = df_visit),
       check = FALSE,
-      param_site_aggr
+      param_site_aggr,
+      list(event_names = event_names)
     )
   )
 
   if (visit_med75) {
-    df_sim_sites <- sim_inframe(df_visit, r = r, df_site = df_site)
+    df_sim_sites <- sim_inframe(df_visit, r = r, df_site = df_site, event_names = event_names)
   } else {
-    df_sim_sites <- sim_inframe(df_visit, r = r)
+    df_sim_sites <- sim_inframe(df_visit, r = r, event_names = event_names)
   }
 
   # evaluate
@@ -293,7 +318,8 @@ simaerep_inframe <- function(df_visit,
     eval_sites,
     c(
       list(df_sim_sites = df_sim_sites),
-      param_eval_sites
+      param_eval_sites,
+      list(event_names = event_names)
     )
   )
 
@@ -304,7 +330,7 @@ simaerep_inframe <- function(df_visit,
           select(- "n_pat"),
         by = c("study_id", "site_number")
       ) %>%
-      select(- "mean_ae_site_med75")
+      select(- paste0("mean_", event_names, "_site_med75"))
   }
 
   validate_simaerep(
@@ -344,6 +370,7 @@ simaerep_visit_med75 <- function(df_visit,
                      r = 1000) {
 
   if (inherits(df_visit, "orivisit")) {
+
     visit <- df_visit
     df_visit <- as.data.frame(df_visit, env = env)
   } else {

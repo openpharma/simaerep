@@ -23,6 +23,33 @@ df_visit2$study_id <- "B"
 
 df_visit_test <- dplyr::bind_rows(df_visit1, df_visit2)
 
+
+
+set.seed(1)
+
+df_visit3 <- sim_test_data_study(
+  n_pat = 100,
+  n_sites = 5,
+  frac_site_with_ur = 0.4,
+  ur_rate = 0.6,
+  event_per_visit_mean = c(0.5, 0.4),
+  event_names = c("ae", "pd")
+)
+
+df_visit3$study_id <- "A"
+
+set.seed(2)
+df_visit4 <- sim_test_data_study(n_pat = 100, n_sites = 5,
+                                 frac_site_with_ur = 0.2, ur_rate = 0.1,
+                                 event_per_visit_mean = c(0.5, 0.4), event_names = c("ae", "pd"))
+
+df_visit4$study_id <- "B"
+
+df_visit_events_test <- dplyr::bind_rows(df_visit3, df_visit4)
+
+
+
+
 df_site_test <- site_aggr(df_visit_test)
 
 df_sim_sites_test <- sim_sites(df_site_test, df_visit_test, r = 100)
@@ -30,7 +57,7 @@ df_sim_sites_test <- sim_sites(df_site_test, df_visit_test, r = 100)
 df_eval_test <- eval_sites(df_sim_sites_test)
 
 
-aerep_test <- simaerep(df_visit_test, param_sim_sites = list(r = 100))
+aerep_test <- simaerep(df_visit_test, param_sim_sites = list(r = 1000))
 visit_test <- orivisit(df_visit_test)
 
 # portfolio performance
@@ -115,6 +142,7 @@ df_visit_val <- bind_rows(
 
 usethis::use_data(
   df_visit_test,
+  df_visit_events_test,
   df_site_test,
   df_sim_sites_test,
   df_eval_test,
