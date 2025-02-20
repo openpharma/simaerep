@@ -423,10 +423,12 @@ colname3 <- paste0("study_site_", event_names, "_equal")
         df_out <- df_out %>%
           mutate(study_site_ae_equal = .data$mean_ae_site_med75 == .data$mean_ae_study_med75)
       } else {
+
         if (length(event_names) == 1) {
           df_out <- df_out |>
             mutate("{colname3}" := (colname1 == colname2)) #nolint
         } else {
+
         df_out <- df_out %>%
           mutate(across(.cols = all_of(colname1), .fns = ~(.x == colname2), .names = colname3))
         }
