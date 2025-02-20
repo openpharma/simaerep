@@ -220,6 +220,7 @@ pat_aggr <- function(df_visit) {
 #' @param df_visit dataframe
 #' @param df_pat dataframe as returned by pat_aggr()
 #' @param df_site dataframe as returned by site_aggr()
+#' @param event_names vector, contains the event names, default = "ae"
 #' @return dataframe
 #' @rdname get_site_mean_ae_dev
 get_site_mean_ae_dev <- function(df_visit, df_pat, df_site, event_names = c("ae")) {
@@ -364,12 +365,12 @@ get_visit_med75 <- function(df_pat,
 #'   \item{**visit_med75**}{median(max(visit)) * 0.75}
 #'   \item{**mean_ae_site_med75**}{mean AE at visit_med75 site level}
 #'   \item{**mean_ae_study_med75**}{mean AE at visit_med75 study level}
-#'   \item{**pval**}{p-value as returned by \code{\link[stats]{poisson.test}}}
-#'   \item{**prob_low**}{bootstrapped probability for having mean_ae_site_med75 or lower}
-#'   \item{**pval_adj**}{adjusted p-values}
-#'   \item{**prob_low_adj**}{adjusted bootstrapped probability for having mean_ae_site_med75 or lower}
-#'   \item{**pval_prob_ur**}{probability under-reporting as 1 - pval_adj, poisson.test (use as benchmark)}
-#'   \item{**prob_low_prob_ur**}{probability under-reporting as 1 - prob_low_adj, bootstrapped (use)}
+#'   \item{**ae_pval**}{p-value as returned by \code{\link[stats]{poisson.test}}}
+#'   \item{**ae_prob_low**}{bootstrapped probability for having mean_ae_site_med75 or lower}
+#'   \item{**ae_pval_adj**}{adjusted p-values}
+#'   \item{**ae_prob_low_adj**}{adjusted bootstrapped probability for having mean_ae_site_med75 or lower}
+#'   \item{**ae_pval_prob_ur**}{probability under-reporting as 1 - pval_adj, poisson.test (use as benchmark)}
+#'   \item{**ae_prob_low_prob_ur**}{probability under-reporting as 1 - prob_low_adj, bootstrapped (use)}
 #'
 #' }
 #' @examples
@@ -416,14 +417,21 @@ colname3 <- paste0("study_site_", event_names, "_equal")
     df_out <- df_out %>%
       p_adjust(paste0(event_names, "_prob_low"), "_prob_ur", method = method)
 
-
     if (! under_only) {
       if (any(str_detect(colnames(df_out), "med75"))) {
+
         df_out <- df_out %>%
           mutate(study_site_ae_equal = .data$mean_ae_site_med75 == .data$mean_ae_study_med75)
       } else {
+        if (length(event_names) == 1){
+          df_out <- df_out |>
+            mutate("{colname3}" := (colname1 == colname2))
+        }
+        else{
         df_out <- df_out %>%
           mutate(across(.cols = all_of(colname1), .fns = ~(.x == colname2), .names = colname3))
+        }
+
       }
 
       df_out <- df_out %>%
@@ -456,6 +464,8 @@ colname3 <- paste0("study_site_", event_names, "_equal")
 
 #'@keywords internal
 p_adjust <- function(df, col, suffix, method = "BH") {
+
+
   col_adj <- paste0(col, "_adj")
   col_suffix <- paste0(col, suffix) #nolint
 
@@ -478,7 +488,10 @@ p_adjust <- function(df, col, suffix, method = "BH") {
       )
 
   } else {
+
+
     df_out <- p_adjust_bh_inframe(df, col, suffix)
+
   }
 
   return(df_out)
@@ -486,13 +499,14 @@ p_adjust <- function(df, col, suffix, method = "BH") {
 }
 
 #'@keywords internal
+#'@importFrom dplyr if_any
 warning_na <- function(df, col) {
 
   any_na <- get_any_na(df, col)
 
   if (any_na) {
     warning_messages <- df %>%
-      filter(if_any(any_of(col), is.na)) %>% #nolint
+      filter(dplyr::if_any(any_of(col), is.na)) %>% #nolint
       mutate(
         warning = paste0("\nstudy_id: ", .data$study_id,
                          ", site_number: ", .data$site_number, ", a prob_low value contains NA")
@@ -564,8 +578,8 @@ if (length(col) > 1) return(any(any_na[col2]))
 #'   prob_lower = TRUE
 #' )
 #'
-#' get_ecd_values(df_sim_studies, df_sim_sites, "prob_low")
-#' get_ecd_values(df_sim_studies, df_sim_sites, "pval")
+#' get_ecd_values(df_sim_studies, df_sim_sites, "ae_prob_low")
+#' get_ecd_values(df_sim_studies, df_sim_sites, "ae_pval")
 #' @rdname get_ecd_values
 #' @export
 
@@ -612,6 +626,7 @@ get_ecd_values <- function(df_sim_studies, df_sim_sites, val_str) {
 #' patient data.
 #' @param df_visit dataframe, created by \code{\link[simaerep]{sim_sites}}
 #' @param df_site dataframe created by \code{\link[simaerep]{site_aggr}}
+#' @param event_names vector, contains the event names, default = "ae"
 #' @return dataframe with nested pat_pool column
 #' @examples
 #' df_visit <- sim_test_data_study(
@@ -735,6 +750,7 @@ prob_lower_site_ae_vs_study_ae <- function(site_ae, study_ae, r = 1000, parallel
 #' @param progress logical, display progress bar, Default = TRUE
 #' @param check, logical, perform data check and attempt repair with
 #' @param under_only compute under-reporting probabilities only, default = TRUE
+#' @param event_names vector, contains the event names, default = "ae"
 #'  [check_df_visit()][check_df_visit], computationally expensive on large data
 #'  sets. Default: TRUE
 #' @return dataframe with the following columns:
@@ -809,6 +825,7 @@ sim_sites <- function(df_site,
 #'  integers.
 #'@param df_visit dataframe, created by \code{\link[simaerep]{sim_sites}}
 #'@param df_site dataframe created by \code{\link[simaerep]{site_aggr}}
+#'@param event_names vector, contains the event names, default = "ae"
 #'@return dataframe
 #' @examples
 #' df_visit <- sim_test_data_study(
@@ -1078,6 +1095,7 @@ get_pat_pool_config <- function(df_visit, df_site, min_n_pat_with_med75 = 1) {
 #'   Default: FALSE
 #' @param studies vector with study names, Default: NULL
 #' @param .progress logical, show progress bar
+#' @param event_names vector, contains the event names, default = "ae"
 #' @details Here we simulate study replicates maintaining the same number of
 #'   sites, patients and visit_med75 by bootstrap resampling, then probabilities
 #'   for obtaining lower or same mean_ae count and p-values using poisson.test
@@ -1221,6 +1239,7 @@ sim_studies <- function(df_visit,
 #'@param check, logical, perform data check and attempt repair with
 #'  [check_df_visit()][check_df_visit], computationally expensive on large data
 #'  sets. Default: TRUE
+#'@param event_names vector, contains the event names, default = "ae"
 #'@details For determining the visit number at which we are going to evaluate AE
 #'  reporting we take the maximum visit of each patient at the site and take the
 #'  median. Then we multiply with 0.75 which will give us a cut-off point

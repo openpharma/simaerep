@@ -16,7 +16,8 @@ sim_studies(
   keep_ae = FALSE,
   min_n_pat_with_med75 = 1,
   studies = NULL,
-  .progress = TRUE
+  .progress = TRUE,
+  event_names = c("ae")
 )
 }
 \arguments{
@@ -48,6 +49,8 @@ site to simulate, Default: 1}
 \item{studies}{vector with study names, Default: NULL}
 
 \item{.progress}{logical, show progress bar}
+
+\item{event_names}{vector, contains the event names, default = "ae"}
 }
 \value{
 dataframe

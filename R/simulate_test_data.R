@@ -13,8 +13,9 @@
 #'   Default: 20
 #' @param max_visit_sd standard deviation of maximum number of visits of each
 #'   patient, Default: 4
-#' @param ae_per_visit_mean mean ae per visit per patient, Default: 0.5
-#' @param ae_rates vector with visit-specific ae rates, Default: Null
+#' @param event_per_visit_mean mean event per visit per patient, Default: 0.5
+#' @param event_rates vector with visit-specific event rates, Default: Null
+#' @param event_names vector, contains the event names, default = "ae"
 #' @return tibble with columns site_number, patnum, is_ur, max_visit_mean,
 #'   max_visit_sd, ae_per_visit_mean, visit, n_ae
 #' @details maximum visit number will be sampled from normal distribution with
@@ -29,7 +30,7 @@
 #'     frac_site_with_ur = 0.2, ur_rate = 0.5)
 #' df_visit[which(df_visit$patnum == "P000001"),]
 #' ae_rates <- c(0.7, rep(0.5, 8), rep(0.3, 5))
-#' sim_test_data_study(n_pat = 100, n_sites = 5, ae_rates = ae_rates)
+#' sim_test_data_study(n_pat = 100, n_sites = 5, event_rates = ae_rates)
 #' @rdname sim_test_data_study
 #' @export
 sim_test_data_study <- function(n_pat = 1000,
