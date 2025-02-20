@@ -10,7 +10,8 @@ sim_after_prep(
   poisson_test = FALSE,
   prob_lower = TRUE,
   progress = FALSE,
-  under_only = TRUE
+  under_only = TRUE,
+  event_names = "ae"
 )
 }
 \arguments{
@@ -25,7 +26,9 @@ sim_after_prep(
 
 \item{progress}{logical, display progress bar, Default = TRUE}
 
-\item{under_only}{compute under-reporting probabilities only, default = TRUE
+\item{under_only}{compute under-reporting probabilities only, default = TRUE}
+
+\item{event_names}{vector, contains the event names, default = "ae"
 \link[=check_df_visit]{check_df_visit()}, computationally expensive on large data
 sets. Default: TRUE}
 }

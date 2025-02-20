@@ -85,7 +85,7 @@ sim_inframe <- function(df_visit, r = 1000, df_site = NULL, event_names = c("ae"
     df_calc_ori <- df_visit_prune %>%
       filter(visit == max(.data$visit, na.rm = TRUE), .by = c("patnum", "study_id")) |>
       summarise(
-        across(.col = all_of({{colname}}), .fns = sum, .names = "{colname2}"),
+        across(.cols = all_of({{colname}}), .fns = sum, .names = "{colname2}"),
         visits = sum(.data$visit),
         n_pat = n_distinct(.data$patnum),
         .by = c("study_id", "site_number")
@@ -189,7 +189,7 @@ sim_inframe <- function(df_visit, r = 1000, df_site = NULL, event_names = c("ae"
     ) %>%
     # calculate site level event rates for every repetition
     summarise(
-      across(.col = all_of(colname), .fns = ~sum(.x, na.rm = TRUE) / sum(visit, na.rm = TRUE), .names = "{colname4}"),
+      across(.cols = all_of(colname), .fns = ~sum(.x, na.rm = TRUE) / sum(visit, na.rm = TRUE), .names = "{colname4}"),
       .by = c("study_id", "rep", "site_number")
     )
 
@@ -215,7 +215,7 @@ sim_inframe <- function(df_visit, r = 1000, df_site = NULL, event_names = c("ae"
     # how many times simulated value below original value
 
     summarise(
-      across(.col = all_of(colname4), .fns = ~mean(.x, na.rm = TRUE), .names = "{colname6}"),
+      across(.cols = all_of(colname4), .fns = ~mean(.x, na.rm = TRUE), .names = "{colname6}"),
       .by = c("study_id", "site_number", all_of(colname2), all_of(colname3), "visits", "n_pat")
     )
   for (x in seq_along(colname3)){
@@ -237,18 +237,21 @@ sim_inframe <- function(df_visit, r = 1000, df_site = NULL, event_names = c("ae"
 #'@keywords internal
 p_adjust_bh_inframe <- function(df_eval, col, suffix) {
 
+
   any_probx <- any(str_detect(colnames(df_eval), "probx_"))
 
   stopifnot("probx_ prefix in colnames(df_eval) not allowed" = ! any_probx)
 
   if (inherits(df_eval, "data.frame")) {
     fun_arrange <- arrange
+
   } else {
     fun_arrange <- window_order
   }
 
   col_adj <- paste0(col, "_adj")
   col_suffix <- paste0(col, suffix)
+
 
   df_out <- df_eval %>%
     mutate(probx = .data[[col]]) %>%

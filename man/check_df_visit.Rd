@@ -4,11 +4,13 @@
 \alias{check_df_visit}
 \title{Integrity check for df_visit.}
 \usage{
-check_df_visit(df_visit)
+check_df_visit(df_visit, event_names = "ae")
 }
 \arguments{
 \item{df_visit}{dataframe with columns: study_id, site_number, patnum, visit,
 n_ae}
+
+\item{event_names}{vector, contains the event names, default = "ae"}
 }
 \value{
 corrected df_visit

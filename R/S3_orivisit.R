@@ -69,6 +69,7 @@ get_str_var <- function(call, env) {
 #' @param df_visit dataframe with original visit data
 #' @param call optional, provide call, Default: NULL
 #' @param env optional, provide environment of original visit data, Default: parent.frame()
+#' @param event_names vector, contains the event names, default = "ae"
 #' @return orivisit object
 #' @details Saves variable name of original visit data, checks whether it can be
 #'   retrieved from parent environment and stores summary. Original data can be

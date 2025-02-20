@@ -4,7 +4,7 @@
 \alias{get_site_mean_ae_dev}
 \title{Get site mean ae development.}
 \usage{
-get_site_mean_ae_dev(df_visit, df_pat, df_site)
+get_site_mean_ae_dev(df_visit, df_pat, df_site, event_names = c("ae"))
 }
 \arguments{
 \item{df_visit}{dataframe}
@@ -12,6 +12,8 @@ get_site_mean_ae_dev(df_visit, df_pat, df_site)
 \item{df_pat}{dataframe as returned by pat_aggr()}
 
 \item{df_site}{dataframe as returned by site_aggr()}
+
+\item{event_names}{vector, contains the event names, default = "ae"}
 }
 \value{
 dataframe

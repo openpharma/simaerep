@@ -89,6 +89,7 @@ validate_simaerep <- function(x) {
 #'@param under_only Logical, compute under-reporting probabilities only.
 #'  Supersedes under_only parameter passed to [eval_sites()] and [sim_sites()].
 #'  Default: TRUE.
+#'@param event_names vector, contains the event names, default = "ae"
 #'@return A simaerep object.
 #'@details Executes [site_aggr()], [sim_sites()], and [eval_sites()] on original
 #'  visit data and stores all intermediate results. Stores lazy reference to
