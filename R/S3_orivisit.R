@@ -17,7 +17,7 @@ validate_orivisit <- function(x) {
   stopifnot(length(x$dim) == 2)
   inherits(x$df_summary, "data.frame") | inherits(x$df_summary, "tbl")
   stopifnot(is.character(x$str_call) | is.na(x$str_call))
-  return(x)
+  return(x) #nolint
 }
 
 
@@ -60,7 +60,7 @@ get_str_var <- function(call, env) {
     return(NA)
   }
 
-  return(str_call)
+  return(str_call) #nolint
 }
 
 #' @title create orivisit object

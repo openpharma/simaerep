@@ -99,7 +99,7 @@ sim_test_data_study <- function(n_pat = 1000,
           if (x == 1) (aes <- aes_temp)
           else (aes <- list(aes, aes_temp))
         }
-        return(aes)
+        return(aes) #nolint
       }
 
       event_per_visit_mean <- if (is.list(event_rates)) map(event_rates, mean) else (mean(event_rates))
@@ -129,7 +129,7 @@ sim_test_data_study <- function(n_pat = 1000,
 
     names(sim_pat) <- colname
 
-    return(sim_pat)
+    return(sim_pat) #nolint
   }
 
   tibble(patnum = seq(1, n_pat)) %>%
@@ -225,7 +225,7 @@ sim_scenario <- function(n_ae_site, n_ae_study, frac_pat_with_ur, ur_rate) {
     n_ae_study[1:max_ix_study] <- n_ae_study[1:max_ix_study] * (1 - ur_rate)
   }
 
-  return(list(n_ae_site = n_ae_site, n_ae_study = n_ae_study))
+  return(list(n_ae_site = n_ae_site, n_ae_study = n_ae_study)) #nolint
 }
 
 #' @title Simulate Under-Reporting Scenarios

@@ -59,7 +59,7 @@ validate_simaerep <- function(x) {
   stopifnot(is.list(x$param_sim_sites))
   stopifnot(is.list(x$param_eval_sites))
 
-  return(x)
+  return(x) #nolint
 }
 
 #'@title Create simaerep object

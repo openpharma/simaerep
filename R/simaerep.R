@@ -210,7 +210,7 @@ pat_aggr <- function(df_visit) {
     summarise(max_visit_per_pat = max(.data$visit),
               .groups = "drop")
 
-  return(df_pat)
+  return(df_pat) #nolint
 
 }
 
@@ -591,9 +591,9 @@ get_ecd_values <- function(df_sim_studies, df_sim_sites, val_str) {
   apply_ecdf <- function(.f, x) {
       if (suppressWarnings(is.na(.f))) {
         warning("NA Values in Stats")
-        return(NA)
+        return(NA) #nolint
       } else {
-        return(.f(x))
+        return(.f(x)) #nolint
       }
   }
 
@@ -615,7 +615,7 @@ get_ecd_values <- function(df_sim_studies, df_sim_sites, val_str) {
     ) %>%
     select(- ".ecdf")
 
-  return(ungroup(df_out))
+  return(ungroup(df_out)) #nolint
 }
 
 
@@ -726,7 +726,7 @@ prob_lower_site_ae_vs_study_ae <- function(site_ae, study_ae, r = 1000, parallel
     set.seed(seed)
     me <- mean(sample(pool, n_pat, replace = TRUE))
     # '<=' includes all cases where mean_ae_site == 0 and me also == 0
-    return(as.integer(ifelse(me <= mean_ae_site, 1, 0)))
+    return(as.integer(ifelse(me <= mean_ae_site, 1, 0))) #nolint
   }
 
 
@@ -1217,7 +1217,7 @@ sim_studies <- function(df_visit,
         mutate_at(vars(c("n_ae_site", "n_ae_study")), ~ map_chr(., paste, collapse = ","))
     }
 
-    return(ungroup(df_config))
+    return(ungroup(df_config)) #nolint
   }
 
   df_sim <- tibble(r = seq.int(1, r, 1)) %>%
@@ -1413,5 +1413,5 @@ poiss_test_site_ae_vs_study_ae <- function(site_ae,
     pval <- 1
   }
 
-  return(pval)
+  return(pval) #nolint
 }

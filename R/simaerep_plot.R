@@ -392,7 +392,7 @@ get_legend <- function(p) {
     leg <- leg[[1]]
   }
 
-  return(leg)
+  return(leg) #nolint
 }
 
 

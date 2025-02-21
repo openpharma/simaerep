@@ -279,7 +279,7 @@ p_adjust_bh_inframe <- function(df_eval, col, suffix) {
     ) %>%
     select(- starts_with("probx"))
 
-  return(df_out)
+  return(df_out) #nolint
 }
 
 
