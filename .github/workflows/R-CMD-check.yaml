@@ -24,6 +24,7 @@ jobs:
         shell: Rscript {0}
       - name: Check
         run: |
+          options(lintr.linter_file = "simaerep/lint.lintr")
           rcmdcheck::rcmdcheck(args = "--no-manual", error_on = "note")
-          simaerep:::lint_package()
+          lintr::lint_package()
         shell: Rscript {0}
