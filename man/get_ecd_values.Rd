@@ -54,6 +54,6 @@ df_sim_studies <- sim_studies(
   prob_lower = TRUE
 )
 
-get_ecd_values(df_sim_studies, df_sim_sites, "ae_prob_low")
-get_ecd_values(df_sim_studies, df_sim_sites, "ae_pval")
+get_ecd_values(df_sim_studies, df_sim_sites, "prob_low")
+get_ecd_values(df_sim_studies, df_sim_sites, "pval")
 }

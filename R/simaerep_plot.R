@@ -1,5 +1,5 @@
 # satisfy CMDcheck
-# https://stackoverflow.com/questions/9439256/how-can-i-handle-r-cmd-check-no-visible-binding-for-global-variable-notes-when # nolint
+# https://stackoverflow.com/questions/9439256/how-can-i-handle-r-cmd-check-no-visible-binding-for-global-variable-notes-when #nolint
 # TODO: possible to avoid by pre-processing outside ggplot() call and using aes_str() instead of aes()
 if (getRversion() >= "2.15.1") {
   utils::globalVariables(c(".", "color_prob_cut", "label", "max_x", "max_y", "mean_ae", "min_x",
@@ -392,7 +392,7 @@ get_legend <- function(p) {
     leg <- leg[[1]]
   }
 
-  return(leg) #nolint
+  return(leg)
 }
 
 
@@ -446,10 +446,19 @@ plot_study <- function(df_visit,
                        prob_col = "prob_low_prob_ur",
                        event_names = c("ae")) {
 
-  colname <- paste0(event_names, "_per_visit_study")
-  colname2 <- paste0(event_names, "_per_visit_site")
+
+  prob_col_temp <- prob_col
+  prob_col <- character()
+  colname <- character()
+  colname2 <- character()
+  for (event in event_names){
+    colname <- c(colname, ifelse(event == "ae", "events_per_visit_study", paste0(event, "_per_visit_study")))
+    colname2 <- c(colname2, ifelse(event == "ae", "events_per_visit_site", paste0(event, "_per_visit_site")))
+    prob_col <- c(prob_col, ifelse(event == "ae", prob_col_temp, paste0(event, "_", prob_col_temp)))
+  }
+
   # TODO: parametrize scores, fix legend
-prob_col <- paste0(event_names, "_", prob_col)
+
   studies <- df_visit %>%
     distinct(.data$study_id) %>%
     pull(.data$study_id)
@@ -510,7 +519,6 @@ prob_col <- paste0(event_names, "_", prob_col)
 
 
   # adjust to visit_med75 or alternative ---------------------------------------
-
   if (all(c(colname, colname2) %in% colnames(df_eval))) {
     col_mean_site <- colname2
   } else {
@@ -873,8 +881,8 @@ plot_visit_med75 <- function(df_visit,
   df_visit <- check_df_visit(df_visit) %>%
     filter(.data$study_id == study_id_str)
 
-  # to suppress warning about unused argument
-  df_site_deprecated <- df_site # nolint
+
+  df_site_deprecated <- df_site
 
   df_pat <- pat_aggr(df_visit)
 
@@ -986,7 +994,7 @@ plot_visit_med75 <- function(df_visit,
     ) +
     theme_minimal() +
     theme(plot.caption.position = "panel")
-  # nolint start
+
   cap <- paste(c(
     "purple line:          mean site ae of patients with visit_med75",
     "grey line:            patient included",
@@ -997,7 +1005,7 @@ plot_visit_med75 <- function(df_visit,
     "\n"
 
   ), collapse = "\n")
-  # nolint end
+
 
   if (verbose) {
     cat(cap)

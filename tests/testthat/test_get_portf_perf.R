@@ -25,7 +25,7 @@ test_that("sim_ur_scenarios() - check column names of returned data frame", {
       c("study_id", "site_number", "n_pat", "n_pat_with_med75",
         "visit_med75", "mean_ae_site_med75", "mean_ae_study_med75",
         "n_pat_with_med75_study", "extra_ur_sites", "frac_pat_with_ur",
-        "ur_rate", "ae_prob_low", "ae_prob_low_adj", "ae_prob_low_prob_ur") %in% colnames(df_scen_test)
+        "ur_rate", "prob_low", "prob_low_adj", "prob_low_prob_ur") %in% colnames(df_scen_test)
     )
   )
 })
@@ -43,9 +43,9 @@ test_that("get_portf_perf() - check column names of returned data frame", {
 test_that("get_portf_perf() must throw warning when NA values encountered", {
 
   df_scen_na <- df_scen_test %>%
-    bind_rows(
+    dplyr::bind_rows(
       df_scen_test %>%
-        mutate(ae_prob_low_prob_ur = NA,
+        mutate(prob_low_prob_ur = NA,
                site_number = paste("A", site_number))
     )
 

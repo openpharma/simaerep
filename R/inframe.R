@@ -74,8 +74,28 @@ sim_inframe <- function(df_visit, r = 1000, df_site = NULL, event_names = c("ae"
   # aggregate per patient to get max visits
   df_pat_aggr_pool <- pat_aggr(df_visit)
 
-  colname2 <- paste0(event_names, "_events")
-  colname3 <- paste0(colname2, "_per_visit_site_ori")
+  colname2 <- character()
+  colname5 <- character()
+
+
+  event_names_mod <- character()
+  for (event in event_names){
+    event_names_mod <- c(event_names_mod, ifelse(event == "ae", "events", event))
+  }
+
+  for (event in event_names){
+    if (event == "ae") {
+      colname2 <- c(colname2, "events")
+      colname5 <- c(colname5, "prob_low")
+    } else {
+      colname2 <- c(colname2, paste0(event, "_events"))
+      colname5 <- c(colname5, paste0(event, "_prob_low"))
+      }
+  }
+  colname3 <- paste0(event_names_mod, "_per_visit_site_ori")
+  colname4 <- paste0(event_names_mod, "_per_visit_rep")
+  colname6 <- paste0(event_names_mod, "_per_visit_study")
+  colname7 <- paste0(event_names_mod, "_per_visit_site")
 
   # this implements visit_med75
   if (! is.null(df_site)) {
@@ -83,13 +103,13 @@ sim_inframe <- function(df_visit, r = 1000, df_site = NULL, event_names = c("ae"
     df_visit_prune <- prune_to_visit_med75_inframe(df_visit, df_site)
 
     df_calc_ori <- df_visit_prune %>%
-      filter(visit == max(.data$visit, na.rm = TRUE), .by = c("patnum", "study_id")) |>
+      filter(visit == max(.data$visit, na.rm = TRUE), .by = c("patnum", "study_id")) %>%
       summarise(
         across(.cols = all_of({{colname}}), .fns = sum, .names = "{colname2}"),
         visits = sum(.data$visit),
         n_pat = n_distinct(.data$patnum),
         .by = c("study_id", "site_number")
-        ) |>
+        ) %>%
       mutate(across(.cols = all_of(colname2), .fns = ~(.x / visits), .names = "{colname3}"))
 
     df_pat_aggr_site <- df_visit_prune %>%
@@ -108,7 +128,7 @@ sim_inframe <- function(df_visit, r = 1000, df_site = NULL, event_names = c("ae"
         visits = sum(.data$visit),
         n_pat = n_distinct(.data$patnum),
         .by = c("study_id", "site_number")
-      ) |>
+      ) %>%
       mutate(across(.cols = all_of(colname2), .fns = ~(.x / visits), .names = "{colname3}"))
   }
 
@@ -179,7 +199,7 @@ sim_inframe <- function(df_visit, r = 1000, df_site = NULL, event_names = c("ae"
     ) %>%
     select(c("study_id", "site_number", "rep", patnum = "patnum_new", visit = "max_visit_per_pat"))
 
-  colname4 <- paste0(colname2, "_per_visit_rep")
+
   # add appropriate visit with cumulative event and visit count for every new patient
   df_calc <- df_sim %>%
     left_join(
@@ -193,9 +213,7 @@ sim_inframe <- function(df_visit, r = 1000, df_site = NULL, event_names = c("ae"
       .by = c("study_id", "rep", "site_number")
     )
 
-  colname5 <- paste0(event_names, "_prob_low") #nolint
-  colname6 <- paste0(event_names, "_per_visit_study") #nolint
-  colname7 <- paste0(event_names, "_per_visit_site") #nolint
+
 
 
 
@@ -209,7 +227,7 @@ sim_inframe <- function(df_visit, r = 1000, df_site = NULL, event_names = c("ae"
     left_join(
       df_calc_ori,
       by = c("study_id", "site_number")
-    ) |>
+    ) %>%
 
     # calculate probability by comparing original stats with simulated stats
     # how many times simulated value below original value
@@ -219,15 +237,15 @@ sim_inframe <- function(df_visit, r = 1000, df_site = NULL, event_names = c("ae"
       .by = c("study_id", "site_number", all_of(colname2), all_of(colname3), "visits", "n_pat")
     )
   for (x in seq_along(colname3)){
-    temp <- join_temp |>
-      summarise("{colname5[x]}" := sum(ifelse(.data[[colname3[x]]] >= .data[[colname4[x]]], 1, 0))/ n(), #nolint
-                .by = c("study_id", "site_number", "visits", "n_pat")) |>
+    temp <- join_temp %>%
+      summarise("{colname5[x]}" := sum(ifelse(.data[[colname3[x]]] >= .data[[colname4[x]]], 1, 0)) / n(),
+                .by = c("study_id", "site_number", "visits", "n_pat")) %>%
       select(c("study_id", "site_number", 5))
-    df_calc_aggr <- df_calc_aggr |>
+    df_calc_aggr <- df_calc_aggr %>%
       left_join(temp, by = c("study_id", "site_number"))
   }
 
-  df_calc_aggr <- df_calc_aggr |>
+  df_calc_aggr <- df_calc_aggr %>%
     dplyr::rename_with(.cols = all_of(colname3), ~ colname7[which(colname3 == .x)])
 
   return(df_calc_aggr)
@@ -279,7 +297,7 @@ p_adjust_bh_inframe <- function(df_eval, col, suffix) {
     ) %>%
     select(- starts_with("probx"))
 
-  return(df_out) #nolint
+  return(df_out)
 }
 
 

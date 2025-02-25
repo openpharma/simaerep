@@ -17,13 +17,13 @@ validate_orivisit <- function(x) {
   stopifnot(length(x$dim) == 2)
   inherits(x$df_summary, "data.frame") | inherits(x$df_summary, "tbl")
   stopifnot(is.character(x$str_call) | is.na(x$str_call))
-  return(x) #nolint
+  return(x)
 }
 
 
 summarise_df_visit <- function(df_visit, event_names = c("ae")) {
   colsearch <- paste0("n_", event_names)
-  colname <- paste0("n_", event_names, "s") #nolint
+  colname <- paste0("n_", event_names, "s")
 
   df_visit %>%
     group_by(
@@ -38,7 +38,8 @@ summarise_df_visit <- function(df_visit, event_names = c("ae")) {
       n_sites = n_distinct(.data$site_number),
       n_patients = n_distinct(.data$patnum),
       n_visits = sum(.data$visit),
-      across(all_of({colsearch}), sum, .names = "{colname}") #nolint
+      across(all_of({
+        colsearch}), sum, .names = "{colname}")
     )
 }
 
@@ -60,7 +61,7 @@ get_str_var <- function(call, env) {
     return(NA)
   }
 
-  return(str_call) #nolint
+  return(str_call)
 }
 
 #' @title create orivisit object
@@ -140,7 +141,7 @@ as.data.frame.orivisit <- function(x, ..., env = parent.frame()) {
   return(df)
 }
 
-stop.orivisit <- function(...) { #nolint
+stop.orivisit <- function(...) {
   err <- structure(
     list(
       message = paste(

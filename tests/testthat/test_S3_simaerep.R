@@ -136,10 +136,22 @@ test_that("simaerep() produces a message when the study parameter is NULL", {
 })
 
 test_that("simaerep() produces warning messages when provided with the wrong event_name inputs", {
+  set.seed(1)
+  df_visit3 <- sim_test_data_study(n_pat = 100, n_sites = 5,
+                                  frac_site_with_ur = 0.4, ur_rate = 0.6,
+                                  event_per_visit_mean = c(0.5, 0.4), event_names = c("ae", "pd"))
+  df_visit3$study_id <- "A"
+  set.seed(2)
+  df_visit4 <- sim_test_data_study(n_pat = 100, n_sites = 5,
+                                   frac_site_with_ur = 0.2, ur_rate = 0.1,
+                                   event_per_visit_mean = c(0.5, 0.4), event_names = c("ae", "pd"))
+  df_visit4$study_id <- "B"
+  df_visit_events_test <- dplyr::bind_rows(df_visit3, df_visit4)
+
   expect_error(simaerep(df_visit = df_visit_events_test, event_names = "ae"),
                         regexp = "Different number of event names (1) than expected (2)", fixed = TRUE)
 
-  df_visit_test_column <- df_visit_test |>
+  df_visit_test_column <- df_visit_test %>%
     rename(n_pd = n_ae)
   expect_error(simaerep(df_visit = df_visit_test_column),
                regexp = "ae not found in df_visit", fixed = TRUE)
@@ -163,12 +175,23 @@ test_that("simaerep() produces warning messages when provided with the wrong eve
 
 
 test_that("eval_sites throws the correct error when given multi-event data containing an NA", {
+  set.seed(1)
+  df_visit3 <- sim_test_data_study(n_pat = 100, n_sites = 5,
+                                   frac_site_with_ur = 0.4, ur_rate = 0.6,
+                                   event_per_visit_mean = c(0.5, 0.4), event_names = c("ae", "pd"))
+  df_visit3$study_id <- "A"
+  set.seed(2)
+  df_visit4 <- sim_test_data_study(n_pat = 100, n_sites = 5,
+                                   frac_site_with_ur = 0.2, ur_rate = 0.1,
+                                   event_per_visit_mean = c(0.5, 0.4), event_names = c("ae", "pd"))
+  df_visit4$study_id <- "B"
+  df_visit_events_test <- dplyr::bind_rows(df_visit3, df_visit4)
 
 df_site_events_test <- site_aggr(df_visit_events_test, event_names = c("ae", "pd"))
 
 df_sim_sites_events_test <-
   sim_sites(df_site_events_test, df_visit_events_test, r = 100, event_names = c("ae", "pd"))
-df_sim_sites_events_test$ae_pval[1] <- NA
+df_sim_sites_events_test$pval[1] <- NA
 
 
 expect_warning(eval_sites(df_sim_sites_events_test, event_names = c("ae", "pd")),

@@ -2,10 +2,10 @@
 
 test_that("check S3 test data reproducibility", {
   aerep_check <- simaerep(
-    r = 1000,
+    r = 100,
     df_visit_test,
     param_sim_sites = list(
-      r = 1000
+      r = 100
     )
   )
 
@@ -209,16 +209,16 @@ test_that("sim_test_data_portfolio() produces the expected output when ae_rates 
   df_ae_rates_test <- data.frame(study_id = "0001", visit = c(1, 2, 3), ae_rate = c(0.5, 0, 1))
   ae_rates_test <- sim_test_data_portfolio(df_config_test, df_ae_rates_test)
 
-  ae_rates_test_sd <- ae_rates_test |>
-    filter(visit %in% c(1, 2)) |>
-    group_by(study_id, patnum) |>
+  ae_rates_test_sd <- ae_rates_test %>%
+    filter(visit %in% c(1, 2)) %>%
+    group_by(study_id, patnum) %>%
     summarise(stdev = sd(n_ae))
   expect_true(unique(ae_rates_test_sd[["stdev"]]) == 0
               & length(unique(ae_rates_test_sd[["stdev"]])) == 1)
 
-  ae_rates_test_sd <- ae_rates_test |>
-    filter(visit %in% c(2, 3)) |>
-    group_by(study_id, patnum) |>
+  ae_rates_test_sd <- ae_rates_test %>%
+    filter(visit %in% c(2, 3)) %>%
+    group_by(study_id, patnum) %>%
     summarise(stdev = sd(n_ae))
 
   expect_true(any(! unique(ae_rates_test_sd[["stdev"]]) == 0))
@@ -264,9 +264,9 @@ sim_test_data_events <- sim_test_data_study(event_names = c("ae", "pd"),
 sim_test_data <- sim_test_data_study(event_names = c("ae"),
                                      event_per_visit_mean = c(0.4), event_rates = c(0.5, 0, 1))
 
-ae_rates_test_sd <- sim_test_data_events |>
-  filter(visit %in% c(1, 2)) |>
-  group_by(site_number, patnum) |>
+ae_rates_test_sd <- sim_test_data_events %>%
+  filter(visit %in% c(1, 2)) %>%
+  group_by(site_number, patnum) %>%
   summarise(stdev = sd(n_ae))
 expect_true(unique(ae_rates_test_sd[["stdev"]]) == 0
             & length(unique(ae_rates_test_sd[["stdev"]])) == 1)

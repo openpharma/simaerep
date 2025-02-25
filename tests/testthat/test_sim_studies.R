@@ -13,8 +13,8 @@ test_that("sim_studies() - returned dataframe expect no NA and prob_low/pval 0 -
   )
 
   expect_true(all(complete.cases(df_sim_study)))
-  expect_true(all(between(df_sim_study$ae_pval, 0, 1)))
-  expect_true(all(between(df_sim_study$ae_prob_low, 0, 1)))
+  expect_true(all(between(df_sim_study$pval, 0, 1)))
+  expect_true(all(between(df_sim_study$prob_low, 0, 1)))
 
 })
 
@@ -129,11 +129,11 @@ test_that("get_ecd_values() - ecd values between 0 - 1", {
     prob_lower = TRUE
   )
 
-  df_prob_low <- get_ecd_values(df_sim_studies, df_sim_sites_test, "ae_prob_low")
-  df_pval <- get_ecd_values(df_sim_studies, df_sim_sites_test, "ae_pval")
+  df_prob_low <- get_ecd_values(df_sim_studies, df_sim_sites_test, "prob_low")
+  df_pval <- get_ecd_values(df_sim_studies, df_sim_sites_test, "pval")
 
-  expect_true(all(between(df_prob_low$ae_prob_low_ecd, 0, 1)))
-  expect_true(all(between(df_pval$ae_pval_ecd, 0, 1)))
+  expect_true(all(between(df_prob_low$prob_low_ecd, 0, 1)))
+  expect_true(all(between(df_pval$pval_ecd, 0, 1)))
 
 })
 
@@ -145,8 +145,8 @@ test_that("sim_studies() should produce an error when the studies parameter is n
 
 test_that("get_ecd_values() produces a warning when there are NA values in df_sim_studies", {
   df_sim_studies_test <- sim_studies(df_visit = df_visit_test, df_site = df_site_test)
-  df_sim_studies_test["ae_pval"] <- NA
+  df_sim_studies_test["pval"] <- NA
   df_sim_sites_test <- sim_sites(df_site_test, df_visit_test, r = 100)
-  expect_warning(get_ecd_values(df_sim_studies_test, df_sim_sites = df_sim_sites_test, val_str = "ae_pval"),
+  expect_warning(get_ecd_values(df_sim_studies_test, df_sim_sites = df_sim_sites_test, val_str = "pval"),
                  regexp = "NA Values in Stats")
 })

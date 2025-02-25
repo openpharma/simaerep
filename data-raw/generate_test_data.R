@@ -142,7 +142,6 @@ df_visit_val <- bind_rows(
 
 usethis::use_data(
   df_visit_test,
-  df_visit_events_test,
   df_site_test,
   df_sim_sites_test,
   df_eval_test,

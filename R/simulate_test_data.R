@@ -43,6 +43,8 @@ sim_test_data_study <- function(n_pat = 1000,
                                  event_rates = c(NULL),
                                  event_names = list("ae")
 ) {
+
+
   if (length(event_names) != length(event_per_visit_mean)) {
     stop(paste0("Number of events named (", length(event_names),
                 ") doesn't equal the number of events per visit means submitted (", length(event_per_visit_mean), ")"))
@@ -60,10 +62,10 @@ sim_test_data_study <- function(n_pat = 1000,
   # construct patient ae sample function
   # supports constant and non-constant ae rates
   f_sim_pat <- function(vs_max, vs_sd, is_ur) {
-    colname <- c("visit", paste0(event_names, "_per_visit_mean"), paste0("n_", event_names))
+    colname <- c(paste0(event_names, "_per_visit_mean"), "visit",  paste0("n_", event_names))
     if (! any(c(is.null(event_rates), is.na(event_rates)))) {
       if (is_ur) {
-        event_rates <- event_rates * (1-ur_rate) # nolint
+        event_rates <- event_rates * (1 - ur_rate)
       }
 
       f_sample_ae <- function(max_visit) {
@@ -86,7 +88,7 @@ sim_test_data_study <- function(n_pat = 1000,
         event_rates <- fill
 
 
-        visit_num <- list(seq(1, max_visit)) #nolint
+        visit_num <- list(seq(1, max_visit))
 
         for (x in seq_along(event_names)){
 
@@ -99,7 +101,8 @@ sim_test_data_study <- function(n_pat = 1000,
           if (x == 1) (aes <- aes_temp)
           else (aes <- list(aes, aes_temp))
         }
-        return(aes) #nolint
+
+        return(aes)
       }
 
       event_per_visit_mean <- if (is.list(event_rates)) map(event_rates, mean) else (mean(event_rates))
@@ -107,11 +110,11 @@ sim_test_data_study <- function(n_pat = 1000,
     } else {
 
       if (is_ur) {
-        event_per_visit_mean <- event_per_visit_mean * (1-ur_rate) # nolint
+        event_per_visit_mean <- event_per_visit_mean * (1 - ur_rate)
       }
 
       f_sample_ae <- function(max_visit) {
-        event_per_visit_mean |>
+        event_per_visit_mean %>%
           map(rpois, n = max_visit)
       }
 
@@ -123,13 +126,12 @@ sim_test_data_study <- function(n_pat = 1000,
     )
 
 
-    sim_pat <- data.frame(visit = seq(1, length(aes[[1]])),
-                          event_per_visit_mean = as.list(event_per_visit_mean),
+    sim_pat <- data.frame(event_per_visit_mean = as.list(event_per_visit_mean),
+                          visit = seq(1, length(aes[[1]])),
                           n_ae = aes)
 
     names(sim_pat) <- colname
-
-    return(sim_pat) #nolint
+    return(sim_pat)
   }
 
   tibble(patnum = seq(1, n_pat)) %>%
@@ -177,8 +179,8 @@ sim_test_data_patient <- function(.f_sample_max_visit = function() rnorm(1, mean
   max_visit <- ifelse(max_visit < 1, 1, max_visit)
   aes <- .f_sample_ae_per_visit(max_visit)
 
-  if (is.list(aes)) (cum_aes <- aes |> map(cumsum))
-  else (cum_aes <- list(aes) |> map(cumsum))
+  if (is.list(aes)) (cum_aes <- aes %>% map(cumsum))
+  else (cum_aes <- list(aes) %>% map(cumsum))
   return(cum_aes)
 }
 
@@ -225,7 +227,7 @@ sim_scenario <- function(n_ae_site, n_ae_study, frac_pat_with_ur, ur_rate) {
     n_ae_study[1:max_ix_study] <- n_ae_study[1:max_ix_study] * (1 - ur_rate)
   }
 
-  return(list(n_ae_site = n_ae_site, n_ae_study = n_ae_study)) #nolint
+  return(list(n_ae_site = n_ae_site, n_ae_study = n_ae_study))
 }
 
 #' @title Simulate Under-Reporting Scenarios
@@ -487,7 +489,7 @@ sim_ur_scenarios <- function(df_portf,
 
   df_sim_sites <- bind_rows(ls_df_sim_sites)
 
-  df_sim_sites_ur0 <- df_sim_sites %>% #nolint
+  df_sim_sites_ur0 <- df_sim_sites %>%
     filter(.data$extra_ur_sites == 0,
            .data$frac_pat_with_ur == 0,
            .data$ur_rate == 0) %>%
@@ -909,7 +911,7 @@ get_config <- function(df_site,
 #' \code{\link{get_portf_perf}}
 #' @rdname get_portf_perf
 #' @export
-get_portf_perf <- function(df_scen, stat = "ae_prob_low_prob_ur", fpr = c(0.001, 0.01, 0.05)) {
+get_portf_perf <- function(df_scen, stat = "prob_low_prob_ur", fpr = c(0.001, 0.01, 0.05)) {
 
   if (anyNA(df_scen[[stat]])) {
     mes <- df_scen %>%
@@ -935,7 +937,7 @@ get_portf_perf <- function(df_scen, stat = "ae_prob_low_prob_ur", fpr = c(0.001,
 
   }
 
-  stat_at_0 <- df_scen %>% # nolint
+  stat_at_0 <- df_scen %>%
     filter(.data$ur_rate == 0, .data$frac_pat_with_ur == 0) %>%
     pull(.data[[stat]])
 

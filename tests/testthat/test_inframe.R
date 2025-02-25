@@ -17,21 +17,21 @@ test_that("inframe with and w/0 visit_med75 and default algorithm must flag same
 
   expect_equal(
     df_eval_med75 %>%
-      filter(ae_prob_low_prob_ur >= 0.95) %>%
+      filter(prob_low_prob_ur >= 0.95) %>%
       pull(site_number),
     df_eval_test %>%
       arrange(study_id, site_number) %>%
-      filter(ae_prob_low_prob_ur >= 0.95)  %>%
+      filter(prob_low_prob_ur >= 0.95)  %>%
       pull(site_number)
   )
 
   expect_equal(
     df_eval %>%
-      filter(ae_prob_low_prob_ur >= 0.95) %>%
+      filter(prob_low_prob_ur >= 0.95) %>%
       pull(site_number),
     df_eval_test %>%
       arrange(study_id, site_number) %>%
-      filter(ae_prob_low_prob_ur >= 0.95)  %>%
+      filter(prob_low_prob_ur >= 0.95)  %>%
       pull(site_number)
   )
 
@@ -43,7 +43,7 @@ test_that("inframe with visit_med75 same probabilities as default algorithm, tol
 
   df_eval_inframe <- df_eval_inframe %>%
     mutate(
-      mean_ae_site_med75 = ae_events / n_pat_with_med75
+      mean_ae_site_med75 = events / n_pat_with_med75
     )
 
   cols_equal <- c(
@@ -58,16 +58,16 @@ test_that("inframe with visit_med75 same probabilities as default algorithm, tol
 
   expect_true(
     all(near(
-      df_eval_inframe$ae_prob_low,
-      df_eval_default$ae_prob_low,
+      df_eval_inframe$prob_low,
+      df_eval_default$prob_low,
       0.1
     ))
   )
 
   expect_true(
     all(near(
-      df_eval_inframe$ae_prob_low_prob_ur,
-      df_eval_default$ae_prob_low_prob_ur,
+      df_eval_inframe$prob_low_prob_ur,
+      df_eval_default$prob_low_prob_ur,
       0.1
     ))
   )
@@ -92,21 +92,21 @@ test_that("simaerep_inframe and simaerep_visit_med75 must have similar results",
 
   expect_equal(
     df_eval_med75 %>%
-      filter(ae_prob_low_prob_ur >= 0.95) %>%
+      filter(prob_low_prob_ur >= 0.95) %>%
       pull(site_number),
     df_eval_test %>%
       arrange(study_id, site_number) %>%
-      filter(ae_prob_low_prob_ur >= 0.95)  %>%
+      filter(prob_low_prob_ur >= 0.95)  %>%
       pull(site_number)
   )
 
   expect_equal(
     df_eval %>%
-      filter(ae_prob_low_prob_ur >= 0.95) %>%
+      filter(prob_low_prob_ur >= 0.95) %>%
       pull(site_number),
     df_eval_test %>%
       arrange(study_id, site_number) %>%
-      filter(ae_prob_low_prob_ur >= 0.95)  %>%
+      filter(prob_low_prob_ur >= 0.95)  %>%
       pull(site_number)
   )
 
@@ -130,7 +130,7 @@ test_that("simaerep_inframe must have identical counts and flags with duckdb bac
   tbl_eval <- simaerep(tbl_visit, r = tbl_r, visit_med75 = FALSE)$df_eval
   tbl_eval_med75 <- simaerep(tbl_visit, r = tbl_r, visit_med75 = TRUE)$df_eval
 
-  cols_identical <- c("study_id", "site_number", "ae_events", "visits", "ae_per_visit_site")
+  cols_identical <- c("study_id", "site_number", "events", "visits", "events_per_visit_site")
 
 
   expect_equal(
@@ -153,23 +153,23 @@ test_that("simaerep_inframe must have identical counts and flags with duckdb bac
 
   expect_equal(
     df_eval_med75 %>%
-      filter(ae_prob_low_prob_ur >= 0.95) %>%
+      filter(prob_low_prob_ur >= 0.95) %>%
       pull(site_number),
     tbl_eval_med75 %>%
       dplyr::collect() %>%
       arrange(study_id, site_number) %>%
-      filter(ae_prob_low_prob_ur >= 0.95)  %>%
+      filter(prob_low_prob_ur >= 0.95)  %>%
       pull(site_number)
   )
 
   expect_equal(
     df_eval %>%
-      filter(ae_prob_low_prob_ur >= 0.95) %>%
+      filter(prob_low_prob_ur >= 0.95) %>%
       pull(site_number),
     tbl_eval %>%
       dplyr::collect() %>%
       arrange(study_id, site_number) %>%
-      filter(ae_prob_low_prob_ur >= 0.95)  %>%
+      filter(prob_low_prob_ur >= 0.95)  %>%
       pull(site_number)
   )
 
