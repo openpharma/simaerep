@@ -21,7 +21,7 @@ test_that("sim_test_data_study() - negative values passed to ur_rate simulate ov
   df_visit <- sim_test_data_study(
     ur_rate = - 0.5,
     frac_site_with_ur = 0.05,
-    event_per_visit_mean = ae_per_visit_mean_def
+    ae_per_visit_mean = ae_per_visit_mean_def
   )
 
   ae_per_visit_mean_or <- df_visit %>%
@@ -48,7 +48,7 @@ test_that(paste("simaerep() - under_only = FALSE - over-reporting must be zero w
                 "mean_ae_site_med75 == mean_ae_study_med75"), {
 
   df_visit <- sim_test_data_study(
-    event_per_visit_mean = 0
+    ae_per_visit_mean = 0
   ) %>%
   mutate(study_id = "A")
 

@@ -13,8 +13,8 @@
 #'   Default: 20
 #' @param max_visit_sd standard deviation of maximum number of visits of each
 #'   patient, Default: 4
-#' @param event_per_visit_mean mean event per visit per patient, Default: 0.5
-#' @param event_rates vector with visit-specific event rates, Default: Null
+#' @param ae_per_visit_mean mean event per visit per patient, Default: 0.5
+#' @param ae_rates vector with visit-specific event rates, Default: Null
 #' @param event_names vector, contains the event names, default = "ae"
 #' @return tibble with columns site_number, patnum, is_ur, max_visit_mean,
 #'   max_visit_sd, ae_per_visit_mean, visit, n_ae
@@ -30,7 +30,7 @@
 #'     frac_site_with_ur = 0.2, ur_rate = 0.5)
 #' df_visit[which(df_visit$patnum == "P000001"),]
 #' ae_rates <- c(0.7, rep(0.5, 8), rep(0.3, 5))
-#' sim_test_data_study(n_pat = 100, n_sites = 5, event_rates = ae_rates)
+#' sim_test_data_study(n_pat = 100, n_sites = 5, ae_rates = ae_rates)
 #' @rdname sim_test_data_study
 #' @export
 sim_test_data_study <- function(n_pat = 1000,
@@ -39,53 +39,53 @@ sim_test_data_study <- function(n_pat = 1000,
                                  ur_rate = 0,
                                  max_visit_mean = 20,
                                  max_visit_sd = 4,
-                                 event_per_visit_mean = c(0.5),
-                                 event_rates = c(NULL),
+                                 ae_per_visit_mean = c(0.5),
+                                 ae_rates = c(NULL),
                                  event_names = list("ae")
 ) {
 
 
-  if (length(event_names) != length(event_per_visit_mean)) {
+  if (length(event_names) != length(ae_per_visit_mean)) {
     stop(paste0("Number of events named (", length(event_names),
-                ") doesn't equal the number of events per visit means submitted (", length(event_per_visit_mean), ")"))
+                ") doesn't equal the number of events per visit means submitted (", length(ae_per_visit_mean), ")"))
   }
 
-  if (!(is.null(event_rates))) {
-    if (is.numeric(event_rates) && length(event_names) > 1) {
-      stop(paste0("Event_rates should be entered as a list (containing arrays) when the number of events is > 1"))
+  if (!(is.null(ae_rates))) {
+    if (is.numeric(ae_rates) && length(event_names) > 1) {
+      stop(paste0("ae_rates should be entered as a list (containing arrays) when the number of events is > 1"))
     }
-    if (is.list(event_rates) && length(event_rates) != length(event_names)) {
+    if (is.list(ae_rates) && length(ae_rates) != length(event_names)) {
       stop(paste0("Number of events named (", length(event_names),
-                                   ") doesn't equal the number of events rates submitted (", length(event_rates), ")"))
+                                   ") doesn't equal the number of events rates submitted (", length(ae_rates), ")"))
     }
     }
   # construct patient ae sample function
   # supports constant and non-constant ae rates
   f_sim_pat <- function(vs_max, vs_sd, is_ur) {
     colname <- c(paste0(event_names, "_per_visit_mean"), "visit",  paste0("n_", event_names))
-    if (! any(c(is.null(event_rates), is.na(event_rates)))) {
+    if (! any(c(is.null(ae_rates), is.na(ae_rates)))) {
       if (is_ur) {
-        event_rates <- event_rates * (1 - ur_rate)
+        ae_rates <- ae_rates * (1 - ur_rate)
       }
 
       f_sample_ae <- function(max_visit) {
 
         # extrapolate missing ae rates by extending last rate
-        if (is.list(event_rates)) {
+        if (is.list(ae_rates)) {
 
-          fill <- map(event_rates, .f = ~(rep(.x[length(.x)], max_visit)))
-          for (x in seq_along(event_rates)) {
+          fill <- map(ae_rates, .f = ~(rep(.x[length(.x)], max_visit)))
+          for (x in seq_along(ae_rates)) {
 
-            fill[[x]][seq_along(event_rates[[x]])] <- event_rates[[x]]
+            fill[[x]][seq_along(ae_rates[[x]])] <- ae_rates[[x]]
             }
           }else {
 
-            fill <- rep(event_rates[length(event_rates)], max_visit)
-        fill[seq_along(event_rates)] <- event_rates
+            fill <- rep(ae_rates[length(ae_rates)], max_visit)
+        fill[seq_along(ae_rates)] <- ae_rates
           }
 
 
-        event_rates <- fill
+        ae_rates <- fill
 
 
         visit_num <- list(seq(1, max_visit))
@@ -95,7 +95,7 @@ sim_test_data_study <- function(n_pat = 1000,
           aes_temp <- numeric(0)
 
           for (i in seq(1, max_visit)) {
-            ae <- rpois(1, ifelse(is.list(event_rates), event_rates[[x]][i], event_rates[i]))
+            ae <- rpois(1, ifelse(is.list(ae_rates), ae_rates[[x]][i], ae_rates[i]))
             aes_temp <- c(aes_temp, ae)
           }
           if (x == 1) (aes <- aes_temp)
@@ -105,16 +105,16 @@ sim_test_data_study <- function(n_pat = 1000,
         return(aes)
       }
 
-      event_per_visit_mean <- if (is.list(event_rates)) map(event_rates, mean) else (mean(event_rates))
+      ae_per_visit_mean <- if (is.list(ae_rates)) map(ae_rates, mean) else (mean(ae_rates))
 
     } else {
 
       if (is_ur) {
-        event_per_visit_mean <- event_per_visit_mean * (1 - ur_rate)
+        ae_per_visit_mean <- ae_per_visit_mean * (1 - ur_rate)
       }
 
       f_sample_ae <- function(max_visit) {
-        event_per_visit_mean %>%
+        ae_per_visit_mean %>%
           map(rpois, n = max_visit)
       }
 
@@ -126,7 +126,7 @@ sim_test_data_study <- function(n_pat = 1000,
     )
 
 
-    sim_pat <- data.frame(event_per_visit_mean = as.list(event_per_visit_mean),
+    sim_pat <- data.frame(ae_per_visit_mean = as.list(ae_per_visit_mean),
                           visit = seq(1, length(aes[[1]])),
                           n_ae = aes)
 
@@ -701,8 +701,8 @@ sim_test_data_portfolio <- function(df_config, df_ae_rates = NULL, parallel = FA
               n_sites = 1,
               max_visit_mean = max_visit_mean,
               max_visit_sd = max_visit_sd,
-              event_per_visit_mean = ae_per_visit_mean,
-              event_rates = ae_rates
+              ae_per_visit_mean = ae_per_visit_mean,
+              ae_rates = ae_rates
             ) %>%
               select(c(
                 "patnum", "visit", "n_ae"

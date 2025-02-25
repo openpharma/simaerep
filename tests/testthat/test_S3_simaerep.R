@@ -104,18 +104,18 @@ test_that("plot.simaerep throws error when original visit data cannot be retriev
 test_that("simaerep() with mult_corr = FALSE must not return adjusted probabilities", {
 
   aerep <- simaerep(df_visit_test, mult_corr = FALSE)
-  expect_true(! "ae_prob_low_adj" %in% colnames(aerep$df_eval))
+  expect_true(! "prob_low_adj" %in% colnames(aerep$df_eval))
 
   aerep <- simaerep(df_visit_test, mult_corr = FALSE, under_only = FALSE)
-  expect_true(! "ae_prob_low_adj" %in% colnames(aerep$df_eval))
-  expect_true(! "ae_prob_high_adj" %in% colnames(aerep$df_eval))
+  expect_true(! "prob_low_adj" %in% colnames(aerep$df_eval))
+  expect_true(! "prob_high_adj" %in% colnames(aerep$df_eval))
 
   aerep <- simaerep(df_visit_test, mult_corr = FALSE, inframe = TRUE)
-  expect_true(! "ae_prob_low_adj" %in% colnames(aerep$df_eval))
+  expect_true(! "prob_low_adj" %in% colnames(aerep$df_eval))
 
   aerep <- simaerep(df_visit_test, mult_corr = FALSE, under_only = FALSE, inframe = TRUE)
-  expect_true(! "ae_prob_low_adj" %in% colnames(aerep$df_eval))
-  expect_true(! "ae_prob_high_adj" %in% colnames(aerep$df_eval))
+  expect_true(! "prob_low_adj" %in% colnames(aerep$df_eval))
+  expect_true(! "prob_high_adj" %in% colnames(aerep$df_eval))
 
 })
 
@@ -139,12 +139,12 @@ test_that("simaerep() produces warning messages when provided with the wrong eve
   set.seed(1)
   df_visit3 <- sim_test_data_study(n_pat = 100, n_sites = 5,
                                   frac_site_with_ur = 0.4, ur_rate = 0.6,
-                                  event_per_visit_mean = c(0.5, 0.4), event_names = c("ae", "pd"))
+                                  ae_per_visit_mean = c(0.5, 0.4), event_names = c("ae", "pd"))
   df_visit3$study_id <- "A"
   set.seed(2)
   df_visit4 <- sim_test_data_study(n_pat = 100, n_sites = 5,
                                    frac_site_with_ur = 0.2, ur_rate = 0.1,
-                                   event_per_visit_mean = c(0.5, 0.4), event_names = c("ae", "pd"))
+                                   ae_per_visit_mean = c(0.5, 0.4), event_names = c("ae", "pd"))
   df_visit4$study_id <- "B"
   df_visit_events_test <- dplyr::bind_rows(df_visit3, df_visit4)
 
@@ -164,7 +164,7 @@ test_that("simaerep() produces warning messages when provided with the wrong eve
     n_sites = 5,
     frac_site_with_ur = 0.4,
     ur_rate = 0.6,
-    event_per_visit_mean = 0.4,
+    ae_per_visit_mean = 0.4,
     event_names = c("pd")
   )
   df_visit_pd_test$study_id <- "A"
@@ -178,12 +178,12 @@ test_that("eval_sites throws the correct error when given multi-event data conta
   set.seed(1)
   df_visit3 <- sim_test_data_study(n_pat = 100, n_sites = 5,
                                    frac_site_with_ur = 0.4, ur_rate = 0.6,
-                                   event_per_visit_mean = c(0.5, 0.4), event_names = c("ae", "pd"))
+                                   ae_per_visit_mean = c(0.5, 0.4), event_names = c("ae", "pd"))
   df_visit3$study_id <- "A"
   set.seed(2)
   df_visit4 <- sim_test_data_study(n_pat = 100, n_sites = 5,
                                    frac_site_with_ur = 0.2, ur_rate = 0.1,
-                                   event_per_visit_mean = c(0.5, 0.4), event_names = c("ae", "pd"))
+                                   ae_per_visit_mean = c(0.5, 0.4), event_names = c("ae", "pd"))
   df_visit4$study_id <- "B"
   df_visit_events_test <- dplyr::bind_rows(df_visit3, df_visit4)
 

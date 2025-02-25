@@ -226,7 +226,7 @@ test_that("sim_test_data_portfolio() produces the expected output when ae_rates 
 
 test_that("sim_test_data_study() alters the ae_rates value if is_ur is TRUE", {
   expect_true(unique(sim_test_data_study(frac_site_with_ur = 2,
-                                         event_rates = 2, ur_rate = 1)[["ae_per_visit_mean"]]) == 0)
+                                         ae_rates = 2, ur_rate = 1)[["ae_per_visit_mean"]]) == 0)
 })
 
 test_that("purrr_bar() - .slow is TRUE", {
@@ -238,14 +238,14 @@ test_that("purrr_bar() - .slow is TRUE", {
 
 test_that("sim_test_data_study() produces an error
           when the number of event names != the number of events per visit means", {
-          expect_error(sim_test_data_study(event_names = c("ae", "pd"), event_per_visit_mean = 0.5),
+          expect_error(sim_test_data_study(event_names = c("ae", "pd"), ae_per_visit_mean = 0.5),
 regexp = "Number of events named (2) doesn't equal the number of events per visit means submitted (1)",
                        fixed = TRUE)
           })
 
 test_that("sim_test_data_study() produces an error
           when the number of event names != the number of event rates submitted as a list", {
-          expect_error(sim_test_data_study(event_names = "ae", event_rates = list(0.3, 0.4)),
+          expect_error(sim_test_data_study(event_names = "ae", ae_rates = list(0.3, 0.4)),
                        regexp = "Number of events named (1) doesn't equal the number of events rates submitted (2)",
                        fixed = TRUE)
 })
@@ -253,16 +253,16 @@ test_that("sim_test_data_study() produces an error
 test_that("sim_test_data_study() produces an error
           when the number of event names > 1 and event rates are submitted as a vector", {
   expect_error(sim_test_data_study(event_names = c("ae", "pd"),
-                                   event_per_visit_mean = c(0.4, 0.4), event_rates = c(0.3, 0.4)),
-               regexp = "Event_rates should be entered as a list (containing arrays) when the number of events is > 1",
+                                   ae_per_visit_mean = c(0.4, 0.4), ae_rates = c(0.3, 0.4)),
+               regexp = "ae_rates should be entered as a list (containing arrays) when the number of events is > 1",
                fixed = TRUE)
 })
 
 test_that("sim_test_data_study() produces the expected output for n_ae, regardless of the number of other events", {
 sim_test_data_events <- sim_test_data_study(event_names = c("ae", "pd"),
-                                            event_per_visit_mean = c(0.4, 0.4), event_rates = list(c(0.5, 0, 1), 0.4))
+                                            ae_per_visit_mean = c(0.4, 0.4), ae_rates = list(c(0.5, 0, 1), 0.4))
 sim_test_data <- sim_test_data_study(event_names = c("ae"),
-                                     event_per_visit_mean = c(0.4), event_rates = c(0.5, 0, 1))
+                                     ae_per_visit_mean = c(0.4), ae_rates = c(0.5, 0, 1))
 
 ae_rates_test_sd <- sim_test_data_events %>%
   filter(visit %in% c(1, 2)) %>%
