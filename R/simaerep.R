@@ -395,6 +395,7 @@ eval_sites <- function(df_sim_sites,
                         under_only = TRUE,
                         event_names = c("ae"),
                         ...) {
+
 event_names_mod <- character()
 colname_pval <- character()
 colname_low <- character()
@@ -410,6 +411,7 @@ for (events in event_names){
 colname_site <- paste0(event_names_mod, "_per_visit_site")
 colname_study <- paste0(event_names_mod, "_per_visit_study")
 colname_eql <- paste0("study_site_", event_names, "_equal")
+
   df_out <- df_sim_sites
 
   if (any(endsWith(colnames(df_out), suffix = "pval"))) {
@@ -427,6 +429,7 @@ colname_eql <- paste0("study_site_", event_names, "_equal")
       p_adjust(colname_low, "_prob_ur", method = method)
 
     if (! under_only) {
+
       if (any(str_detect(colnames(df_out), "med75"))) {
 
         df_out <- df_out %>%
@@ -438,24 +441,27 @@ colname_eql <- paste0("study_site_", event_names, "_equal")
             mutate("{colname_eql}" := (colname_site == colname_study))
         } else {
 
-        df_out <- df_out %>%
-          mutate(across(.cols = all_of(colname_site), .fns = ~(.x == colname_study), .names = colname_eql))
-        }
-
+          for (y in seq_along(event_names)){
+            df_out <- df_out %>%
+              mutate("{colname_eql[y]}" := colname_site[y] == colname_study[y])
+              }
+            }
       }
 
-      df_out <- df_out %>%
-        mutate(
-          prob_high = 1 - .data$prob_low,
-          # when study and site values are equal e.g. both zero, no over-reporting possible
-          prob_high = ifelse(
-            .data$study_site_ae_equal,
-            1,
-            .data$prob_high
-          )
-        ) %>%
-        select(- "study_site_ae_equal") %>%
-        p_adjust("prob_high", "_prob_or", method = method)
+      colname_eql <- as.list(colname_eql)
+
+        df_out <- df_out %>%
+          mutate(across(.cols = all_of(colname_low), .fns = ~(1 - .x), .names = "{colname_high}"))
+
+        for (x in seq_along(event_names)){
+          df_out <- df_out %>%
+              mutate(
+                # when study and site values are equal e.g. both zero, no over-reporting possible
+                "{colname_high[x]}" := ifelse(.data[[as.character(colname_eql[x])]], 1, .data[[colname_high[x]]])) |>
+            select(- as.character(colname_eql[x])) %>%
+            p_adjust(colname_high[x], "_prob_or", method = method)
+        }
+
     }
 
   }
@@ -474,7 +480,6 @@ colname_eql <- paste0("study_site_", event_names, "_equal")
 
 #'@keywords internal
 p_adjust <- function(df, col, suffix, method = "BH") {
-
 
   col_adj <- paste0(col, "_adj")
   col_suffix <- paste0(col, suffix) #nolint
@@ -533,6 +538,7 @@ get_any_na <- function(df, col) {
   # dbplyr throws a warning for not using na.rm = TRUE
   col2 <- paste0(col, "_any_na")
   #
+
   suppressWarnings({
     any_na <- df %>%
       mutate(across(
@@ -543,6 +549,8 @@ get_any_na <- function(df, col) {
       ) %>%
       mutate(
         across(.cols = all_of(col2), .fns = ~(.x > 0), .names = "{col2}"))
+
+
 if (length(col) > 1) return(any(any_na[col2]))
   else return(any_na %>% pull(.data[[col2]]))
   })

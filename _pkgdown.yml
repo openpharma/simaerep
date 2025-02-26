@@ -64,6 +64,7 @@ reference:
   - sim_test_data_study
   - get_config
   - sim_test_data_portfolio
+  - sim_test_data_events
 - title: Test Functions
   desc: These functions are intented to check simaerep performance.
   contents:

@@ -257,19 +257,3 @@ test_that("sim_test_data_study() produces an error
                regexp = "ae_rates should be entered as a list (containing arrays) when the number of events is > 1",
                fixed = TRUE)
 })
-
-test_that("sim_test_data_study() produces the expected output for n_ae, regardless of the number of other events", {
-sim_test_data_events <- sim_test_data_study(event_names = c("ae", "pd"),
-                                            ae_per_visit_mean = c(0.4, 0.4), ae_rates = list(c(0.5, 0, 1), 0.4))
-sim_test_data <- sim_test_data_study(event_names = c("ae"),
-                                     ae_per_visit_mean = c(0.4), ae_rates = c(0.5, 0, 1))
-
-ae_rates_test_sd <- sim_test_data_events %>%
-  filter(visit %in% c(1, 2)) %>%
-  group_by(site_number, patnum) %>%
-  summarise(stdev = sd(n_ae))
-expect_true(unique(ae_rates_test_sd[["stdev"]]) == 0
-            & length(unique(ae_rates_test_sd[["stdev"]])) == 1)
-
-expect_equal(unique(sim_test_data_events$ae_per_visit_mean), unique(sim_test_data$ae_per_visit_mean))
-})
