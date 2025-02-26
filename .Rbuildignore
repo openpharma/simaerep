@@ -16,4 +16,4 @@
 ^data-raw$
 ^CRAN-SUBMISSION$
 ^\.tmp$
-^lint.lintr$
+^.lintr$

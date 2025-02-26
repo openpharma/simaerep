@@ -224,7 +224,7 @@ pat_aggr <- function(df_visit) {
 #' @return dataframe
 #' @rdname get_site_mean_ae_dev
 get_site_mean_ae_dev <- function(df_visit, df_pat, df_site, event_names = c("ae")) {
-  colname <- paste0("mean_", event_names, "_site")
+  colname <- paste0("mean_", event_names, "_site") #nolint
   colsearch <- paste0("n_", event_names)
 
   df_visit %>%
@@ -396,35 +396,35 @@ eval_sites <- function(df_sim_sites,
                         event_names = c("ae"),
                         ...) {
 event_names_mod <- character()
-colname4 <- character()
-colname5 <- character()
-colname6 <- character()
+colname_pval <- character()
+colname_low <- character()
+colname_high <- character()
 for (events in event_names){
   event_names_mod <- c(event_names_mod, ifelse(events == "ae", "events", events))
-  colname4 <- c(colname4, ifelse(events == "ae", "pval", paste0(events, "_pval")))
-  colname5 <- c(colname5, ifelse(events == "ae", "prob_low", paste0(events, "_prob_low")))
-  colname6 <- c(colname6, ifelse(events == "ae", "prob_high", paste0(events, "_prob_hig")))
+  colname_pval <- c(colname_pval, ifelse(events == "ae", "pval", paste0(events, "_pval")))
+  colname_low <- c(colname_low, ifelse(events == "ae", "prob_low", paste0(events, "_prob_low")))
+  colname_high <- c(colname_high, ifelse(events == "ae", "prob_high", paste0(events, "_prob_high")))
 }
 
 
-colname1 <- paste0(event_names_mod, "_per_visit_site")
-colname2 <- paste0(event_names_mod, "_per_visit_study")
-colname3 <- paste0("study_site_", event_names, "_equal")
+colname_site <- paste0(event_names_mod, "_per_visit_site")
+colname_study <- paste0(event_names_mod, "_per_visit_study")
+colname_eql <- paste0("study_site_", event_names, "_equal")
   df_out <- df_sim_sites
 
   if (any(endsWith(colnames(df_out), suffix = "pval"))) {
-    warning_na(df_out, colname4)
+    warning_na(df_out, colname_pval)
 
     df_out <- df_out %>%
-      p_adjust(colname4, "_prob_ur", method = method)
+      p_adjust(colname_pval, "_prob_ur", method = method)
   }
 
 
   if (any(endsWith(colnames(df_out), suffix = "prob_low"))) {
-    warning_na(df_out, colname5)
+    warning_na(df_out, colname_low)
 
     df_out <- df_out %>%
-      p_adjust(colname5, "_prob_ur", method = method)
+      p_adjust(colname_low, "_prob_ur", method = method)
 
     if (! under_only) {
       if (any(str_detect(colnames(df_out), "med75"))) {
@@ -435,11 +435,11 @@ colname3 <- paste0("study_site_", event_names, "_equal")
 
         if (length(event_names) == 1) {
           df_out <- df_out %>%
-            mutate("{colname3}" := (colname1 == colname2))
+            mutate("{colname_eql}" := (colname_site == colname_study))
         } else {
 
         df_out <- df_out %>%
-          mutate(across(.cols = all_of(colname1), .fns = ~(.x == colname2), .names = colname3))
+          mutate(across(.cols = all_of(colname_site), .fns = ~(.x == colname_study), .names = colname_eql))
         }
 
       }
@@ -477,7 +477,7 @@ p_adjust <- function(df, col, suffix, method = "BH") {
 
 
   col_adj <- paste0(col, "_adj")
-  col_suffix <- paste0(col, suffix)
+  col_suffix <- paste0(col, suffix) #nolint
 
   if (is.na(method) || is.null(method) || method %in% c("None", "none")) {
 
@@ -595,7 +595,7 @@ if (length(col) > 1) return(any(any_na[col2]))
 
 get_ecd_values <- function(df_sim_studies, df_sim_sites, val_str) {
 
-  possibly_ecdf <- possibly(ecdf, otherwise = NA)
+  possibly_ecdf <- possibly(ecdf, otherwise = NA) #nolint
 
   apply_ecdf <- function(.f, x) {
       if (suppressWarnings(is.na(.f))) {
@@ -855,9 +855,9 @@ sim_sites <- function(df_site,
 #' @seealso \code{\link[simaerep]{sim_sites}}, \code{\link[simaerep]{sim_after_prep}}
 #'@export
 prep_for_sim <- function(df_site, df_visit, event_names = "ae") {
-  colname <- paste0("n_", event_names, "_site")
-  colname2 <- paste0("n_", event_names, "_study")
-  colname3 <- paste0("n_", event_names)
+  colname_site <- paste0("n_", event_names, "_site") #nolint
+  colname_study <- paste0("n_", event_names, "_study") #nolint
+  colname_event <- paste0("n_", event_names)
 
   df_pat_pool <- pat_pool(df_visit, df_site, event_names = event_names)
 
@@ -891,8 +891,8 @@ prep_for_sim <- function(df_site, df_visit, event_names = "ae") {
 
 for (x in (seq_along(event_names))){
   df_sim_prep <- df_sim_prep %>%
-    mutate("{colname[x]}" := map(.data$n_event_site, colname3[x]),
-           "{colname2[x]}" := map(.data$n_event_study, colname3[x]))
+    mutate("{colname_site[x]}" := map(.data$n_event_site, colname_event[x]),
+           "{colname_study[x]}" := map(.data$n_event_study, colname_event[x]))
 }
 
 df_sim_prep <- df_sim_prep %>%
@@ -938,21 +938,21 @@ sim_after_prep <- function(df_sim_prep,
                            event_names = "ae") {
   df_sim <- df_sim_prep
 
-  colname <- paste0("n_", event_names, "_site")
-  colname2 <- paste0("n_", event_names, "_study")
-  colname3 <- character()
-  colname4 <- character()
+  colname_site <- paste0("n_", event_names, "_site")
+  colname_study <- paste0("n_", event_names, "_study")
+  colname_pval <- character()
+  colname_low <- character()
 
   for (event in event_names){
-    colname3 <- c(colname3, ifelse(event == "ae", "pval", paste0(event, "_pval")))
-    colname4 <- c(colname4, ifelse(event == "ae", "prob_low", paste0(event, "_prob_low")))
+    colname_pval <- c(colname_pval, ifelse(event == "ae", "pval", paste0(event, "_pval")))
+    colname_low <- c(colname_low, ifelse(event == "ae", "prob_low", paste0(event, "_prob_low")))
   }
 
 
   if (poisson_test) {
     for (x in seq_along(event_names)){
       df_sim <- df_sim %>%
-        mutate("{colname3[x]}" := pmap_dbl(list(.data[[colname[x]]], .data[[colname2[x]]],
+        mutate("{colname_pval[x]}" := pmap_dbl(list(.data[[colname_site[x]]], .data[[colname_study[x]]],
                                                 .data$visit_med75), poiss_test_site_ae_vs_study_ae))
     }
   }
@@ -966,8 +966,8 @@ sim_after_prep <- function(df_sim_prep,
       with_progress_cnd(
         df_sim <- df_sim %>%
           mutate(
-            "{colname4[x]}" := purrr_bar(
-              .data[[colname[x]]], .data[[colname2[x]]],
+            "{colname_low[x]}" := purrr_bar(
+              .data[[colname_site[x]]], .data[[colname_study[x]]],
               .purrr = map2_dbl,
               .f = prob_lower_site_ae_vs_study_ae,
               .f_args = list(r = r, under_only = under_only),

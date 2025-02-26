@@ -23,7 +23,7 @@ validate_orivisit <- function(x) {
 
 summarise_df_visit <- function(df_visit, event_names = c("ae")) {
   colsearch <- paste0("n_", event_names)
-  colname <- paste0("n_", event_names, "s")
+  colname <- paste0("n_", event_names, "s") #nolint
 
   df_visit %>%
     group_by(

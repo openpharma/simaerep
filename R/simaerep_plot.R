@@ -449,11 +449,13 @@ plot_study <- function(df_visit,
 
   prob_col_temp <- prob_col
   prob_col <- character()
-  colname <- character()
-  colname2 <- character()
+  colname_study <- character()
+  colname_site <- character()
   for (event in event_names){
-    colname <- c(colname, ifelse(event == "ae", "events_per_visit_study", paste0(event, "_per_visit_study")))
-    colname2 <- c(colname2, ifelse(event == "ae", "events_per_visit_site", paste0(event, "_per_visit_site")))
+    colname_study <- c(colname_study, ifelse(event == "ae", "events_per_visit_study",
+                                             paste0(event, "_per_visit_study")))
+    colname_site <- c(colname_site, ifelse(event == "ae", "events_per_visit_site",
+                                           paste0(event, "_per_visit_site")))
     prob_col <- c(prob_col, ifelse(event == "ae", prob_col_temp, paste0(event, "_", prob_col_temp)))
   }
 
@@ -519,8 +521,8 @@ plot_study <- function(df_visit,
 
 
   # adjust to visit_med75 or alternative ---------------------------------------
-  if (all(c(colname, colname2) %in% colnames(df_eval))) {
-    col_mean_site <- colname2
+  if (all(c(colname_study, colname_site) %in% colnames(df_eval))) {
+    col_mean_site <- colname_site
   } else {
     col_mean_site <- "mean_ae_site_med75"
   }
@@ -882,7 +884,6 @@ plot_visit_med75 <- function(df_visit,
     filter(.data$study_id == study_id_str)
 
 
-  df_site_deprecated <- df_site
 
   df_pat <- pat_aggr(df_visit)
 

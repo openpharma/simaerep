@@ -88,8 +88,6 @@ sim_test_data_study <- function(n_pat = 1000,
         ae_rates <- fill
 
 
-        visit_num <- list(seq(1, max_visit))
-
         for (x in seq_along(event_names)){
 
           aes_temp <- numeric(0)
@@ -489,7 +487,7 @@ sim_ur_scenarios <- function(df_portf,
 
   df_sim_sites <- bind_rows(ls_df_sim_sites)
 
-  df_sim_sites_ur0 <- df_sim_sites %>%
+  df_sim_sites_ur0 <- df_sim_sites %>% #nolint
     filter(.data$extra_ur_sites == 0,
            .data$frac_pat_with_ur == 0,
            .data$ur_rate == 0) %>%
@@ -937,7 +935,7 @@ get_portf_perf <- function(df_scen, stat = "prob_low_prob_ur", fpr = c(0.001, 0.
 
   }
 
-  stat_at_0 <- df_scen %>%
+  stat_at_0 <- df_scen %>% #nolint
     filter(.data$ur_rate == 0, .data$frac_pat_with_ur == 0) %>%
     pull(.data[[stat]])
 

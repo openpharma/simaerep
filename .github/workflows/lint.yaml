@@ -34,7 +34,6 @@ jobs:
       - name: Lint
         run: |
           install.packages(c("cyclocomp"))
-          options(lintr.linter_file = "simaerep/lint.lintr")
           lintr::lint_package()
         shell: Rscript {0}
         env:
