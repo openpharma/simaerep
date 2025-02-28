@@ -105,6 +105,21 @@ validate_simaerep <- function(x) {
 #' aerep <- simaerep(df_visit)
 #' aerep
 #' str(aerep)
+#'
+#'
+#' set.seed(1)
+#' df_visit3 <- sim_test_data_study(n_pat = 100, n_sites = 5,
+#'                                  frac_site_with_ur = 0.4, ur_rate = 0.6,
+#'                                  ae_per_visit_mean = c(0.4, 0.4), event_names = c("ae", "pd"))
+#' df_visit3$study_id <- "A"
+#' set.seed(2)
+#' df_visit4 <- sim_test_data_study(n_pat = 100, n_sites = 5,
+#'                                  frac_site_with_ur = 0.2, ur_rate = 0.1,
+#'                                  ae_per_visit_mean = c(0.4, 0.4), event_names = c("ae", "pd"))
+#' df_visit4$study_id <- "B"
+#' df_visit_events_test <- dplyr::bind_rows(df_visit3, df_visit4)
+#' aerep_events <- simaerep(df_visit_events_test, inframe = TRUE, event_names = c("ae", "pd"))
+#' aerep_events
 #' \donttest{
 #'   # In-frame table operations
 #'   simaerep(df_visit, inframe = TRUE, visit_med75 = FALSE, under_only = FALSE)$df_eval
@@ -153,6 +168,7 @@ simaerep <- function(df_visit,
 ) {
 
   call <- rlang::enexpr(df_visit)
+
   if (ncol(df_visit) != 7 + 2 * length(event_names)) {
     stop(paste0("Different number of event names (", length(event_names),
                 ") than expected (", (ncol(df_visit) - 7) / 2, ")"))
@@ -315,6 +331,7 @@ simaerep_inframe <- function(df_visit,
   }
 
   # evaluate
+
   df_eval <- do.call(
     eval_sites,
     c(
