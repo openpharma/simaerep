@@ -68,3 +68,24 @@ test_that("eval_sites throws the correct error when given multi-event data conta
   expect_warning(eval_sites(df_sim_sites_events_test, event_names = c("ae", "pd")),
                  regexp = "study_id: A, site_number: S0001, a prob_low value contains NA", fixed = TRUE)
   })
+
+test_that("eval_sites() produces the same prob_high output regardless of the number of events submitted", {
+  df_visit_events_test <- sim_test_data_events(event_names = c("ae", "pd"), ae_per_visit_mean = c(0.5, 0.4))
+  df_site_events_test <- site_aggr(df_visit_events_test, event_names = c("ae", "pd"))
+  df_sim_sites_events_test <-
+    sim_sites(df_site_events_test, df_visit_events_test, r = 100, event_names = c("ae", "pd")) |>
+    select(- c("n_pat_with_med75", "visit_med75", "mean_ae_site_med75",
+               "mean_ae_study_med75", "n_pat_with_med75_study", "mean_pd_site_med75", "mean_pd_study_med75"))
+  events <- eval_sites(df_sim_sites_events_test, event_names = c("ae", "pd"), under_only = FALSE)["prob_high"]
+
+  df_visit_check <- df_visit_events_test %>%
+    select(- c("pd_per_visit_mean", "n_pd"))
+  df_site_check <- site_aggr(df_visit_check, event_names = c("ae"))
+  df_sim_sites_check <-
+    sim_sites(df_site_check, df_visit_check, r = 100, event_names = c("ae")) |>
+    select(- c("n_pat_with_med75", "visit_med75", "mean_ae_site_med75",
+               "mean_ae_study_med75", "n_pat_with_med75_study"))
+  event <- eval_sites(df_sim_sites_check, event_names = c("ae"), under_only = FALSE)["prob_high"]
+
+  expect_equal(event, events)
+})

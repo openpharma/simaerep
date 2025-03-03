@@ -950,6 +950,9 @@ sim_after_prep <- function(df_sim_prep,
   colname_study <- paste0("n_", event_names, "_study")
   colname_pval <- character()
   colname_low <- character()
+  mean_site_med75 <- paste0("mean_", event_names, "_site_med75")
+  mean_study_med75 <- paste0("mean_", event_names, "_study_med75")
+
 
   for (event in event_names){
     colname_pval <- c(colname_pval, ifelse(event == "ae", "pval", paste0(event, "_pval")))
@@ -989,26 +992,28 @@ sim_after_prep <- function(df_sim_prep,
   }
 
   # clean
+
   df_sim <- df_sim %>%
-    mutate(mean_ae_site_med75 = map_dbl(.data$n_ae_site, mean),
+    mutate(
+           across(.cols = all_of(colname_site), .fns = ~map_dbl(.x, mean), .names = "{mean_site_med75}"),
            n_pat_with_med75_study = map_int(.data$n_ae_study, length),
            # replace empty vector with NA to silence warning
            n_ae_study = ifelse(.data$n_pat_with_med75_study == 0, NA, .data$n_ae_study),
-           mean_ae_study_med75 = map_dbl(.data$n_ae_study, mean)) %>%
+           across(.cols = all_of(colname_study), .fns = ~map_dbl(.x, mean), .names = "{mean_study_med75}")) %>%
     mutate(
         across(
           any_of(c("prob_low", "pval")),
           ~ ifelse(.data$n_pat_with_med75_study == 0, NA, .)
         )
     ) %>%
-    select(- c("n_ae_site", "n_ae_study")) %>%
+    select(- c(all_of(colname_site), all_of(colname_study))) %>%
     select(c("study_id",
            "site_number",
            "n_pat",
            "n_pat_with_med75",
            "visit_med75",
-           "mean_ae_site_med75",
-           "mean_ae_study_med75",
+           all_of(mean_site_med75),
+           all_of(mean_study_med75),
            "n_pat_with_med75_study"),
            dplyr::everything()) %>%
     ungroup()
