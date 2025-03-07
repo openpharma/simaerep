@@ -1040,6 +1040,7 @@ sim_ur <- function(df_visit, study_id, site_number, ur_rate) {
 #' @param event_names vector, contains the event names, default = "ae"
 #' @return tibble with columns site_number, patnum, is_ur, max_visit_mean,
 #'   max_visit_sd, visit, and event data (events_per_visit_mean and n_events)
+#' @export
 sim_test_data_events <- function(
     n_pat = 100,
     n_sites = 5,
