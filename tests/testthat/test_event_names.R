@@ -89,3 +89,160 @@ test_that("eval_sites() produces the same prob_high output regardless of the num
 
   expect_equal(event, events)
 })
+
+test_that("column names when using event_names as expected in df_eval", {
+
+  events <- c("ae", "y")
+
+  suffix <- c(
+    "_prob_low",
+    "_prob_low_adj"
+    ,"_prob_low_prob_ur",
+    "_prob_high",
+    "_prob_high_adj",
+    "_prob_high_prob_or"
+  )
+
+  cols_expected <- purrr::map(events, ~ paste0(., suffix)) %>%
+    unlist()
+
+  df_visit_events_test <- sim_test_data_events(event_names = events, ae_per_visit_mean = c(0.5, 0.4))
+
+  df_eval_events <- simaerep(
+    df_visit_events_test,
+    event_names = events,
+    under_only = FALSE,
+    inframe = TRUE,
+    mult_corr = TRUE,
+    visit_med75 = FALSE
+  )$df_eval
+
+  df_eval_events_med75 <- simaerep(
+    df_visit_events_test,
+    event_names = events,
+    under_only = FALSE,
+    inframe = TRUE,
+    mult_corr = TRUE,
+    visit_med75 = TRUE
+  )$df_eval
+
+
+  df_eval_events_no_mult <- simaerep(
+    df_visit_events_test,
+    event_names = events,
+    under_only = FALSE,
+    inframe = TRUE,
+    mult_corr = FALSE,
+    visit_med75 = FALSE
+  )$df_eval
+
+  df_eval_events_med75_no_mult <- simaerep(
+    df_visit_events_test,
+    event_names = events,
+    under_only = FALSE,
+    inframe = TRUE,
+    mult_corr = FALSE,
+    visit_med75 = TRUE
+  )$df_eval
+
+  expect_true(all(cols_expected %in% colnames(df_eval_events)))
+  expect_true(all(cols_expected %in% colnames(df_eval_events_med75)))
+
+  cols_expected_no_mult <- cols_expected[! str_detect(cols_expected, "_adj")]
+
+  expect_false(all(cols_expected %in% colnames(df_eval_events_no_mult)))
+  expect_false(all(cols_expected %in% colnames(df_eval_events_med75_no_mult)))
+
+  expect_true(all(cols_expected_no_mult %in% colnames(df_eval_events_no_mult)))
+  expect_true(all(cols_expected_no_mult %in% colnames(df_eval_events_med75_no_mult)))
+
+})
+
+
+test_that("plot.simaerep works with event_names", {
+
+  events <- c("ae", "y")
+
+  df_visit_events_test <- sim_test_data_events(event_names = events, ae_per_visit_mean = c(0.5, 0.4))
+
+  aerep <- simaerep(
+    df_visit_events_test,
+    event_names = events,
+    under_only = FALSE,
+    inframe = TRUE,
+    mult_corr = TRUE
+  )
+
+  expect_s3_class(plot(aerep, what = "ur", study = "A", event_names = "ae"), "ggplot")
+  expect_s3_class(plot(aerep, what = "ur", study = "A", event_names = "y"), "ggplot")
+  expect_s3_class(plot(aerep, what = "ur", study = "A"), "ggplot")
+
+  expect_s3_class(plot(aerep, what = "med75", study = "A"), "ggplot")
+
+})
+
+test_that("S3 orivisits works with event_names", {
+
+  events <- c("ae", "y")
+
+  df_visit_events_test <- sim_test_data_events(event_names = events, ae_per_visit_mean = c(0.5, 0.4))
+
+  aerep <- simaerep(
+    df_visit_events_test,
+    event_names = events,
+    under_only = FALSE,
+    inframe = TRUE,
+    mult_corr = TRUE
+  )
+
+  expect_s3_class(as.data.frame(aerep$visit), "data.frame")
+
+})
+
+test_that("event_names works with duckdb backend", {
+
+  events <- c("x", "y")
+
+  suffix <- c(
+    "_prob_low",
+    "_prob_low_adj"
+    ,"_prob_low_prob_ur",
+    "_prob_high",
+    "_prob_high_adj",
+    "_prob_high_prob_or"
+  )
+
+  cols_expected <- purrr::map(events, ~ paste0(., suffix)) %>%
+    unlist()
+
+  df_visit_events_test <- sim_test_data_events(event_names = events, ae_per_visit_mean = c(0.5, 0.4))
+
+  con <- DBI::dbConnect(duckdb::duckdb(), dbdir = ":memory:")
+  df_r <- tibble(rep = seq(1, 1000))
+
+  dplyr::copy_to(con, df_visit_events_test, "visit")
+  dplyr::copy_to(con, df_r, "r")
+
+  tbl_visit <- tbl(con, "visit")
+  tbl_r <- tbl(con, "r")
+
+  tbl_eval <- simaerep(
+    tbl_visit,
+    r = tbl_r,
+    visit_med75 = FALSE,
+    mult_corr = TRUE,
+    event_names = events
+  )$df_eval
+
+  tbl_eval_med75 <- simaerep(
+    tbl_visit,
+    r = tbl_r,
+    visit_med75 = TRUE,
+    mult_corr = TRUE,
+    event_names = events
+  )$df_eval
+
+  expect_true(all(cols_expected %in% colnames(tbl_eval)))
+  expect_true(all(cols_expected %in% colnames(tbl_eval_med75)))
+
+})
