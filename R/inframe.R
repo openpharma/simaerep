@@ -74,28 +74,25 @@ sim_inframe <- function(df_visit, r = 1000, df_site = NULL, event_names = c("ae"
   # aggregate per patient to get max visits
   df_pat_aggr_pool <- pat_aggr(df_visit)
 
-  colname_event <- character()
-  colname_low <- character()
+
+  colnames_event <- "events"
+  colnames_low <- "prob_low" #nolint
+  colnames_ori <- "events_per_visit_site_ori"
+  colnames_rep <- "events_per_visit_rep"
+  colnames_study <- "events_per_visit_study" #nolint
+  colnames_site <- "events_per_visit_site" #nolint
 
 
-  event_names_mod <- character()
-  for (event in event_names){
-    event_names_mod <- c(event_names_mod, ifelse(event == "ae", "events", event))
+  if (length(event_names) != 1) {
+    colnames_event <- paste0(event_names, "_events")
+    colnames_low <- paste0(event_names, "_prob_low")
+    colnames_ori <- paste0(event_names, "_per_visit_site_ori")
+    colnames_rep <- paste0(event_names, "_per_visit_rep")
+    colnames_study <- paste0(event_names, "_per_visit_study")
+    colnames_site <- paste0(event_names, "_per_visit_site")
   }
 
-  for (event in event_names){
-    if (event == "ae") {
-      colname_event <- c(colname_event, "events")
-      colname_low <- c(colname_low, "prob_low")
-    } else {
-      colname_event <- c(colname_event, paste0(event, "_events"))
-      colname_low <- c(colname_low, paste0(event, "_prob_low"))
-      }
-  }
-  colname_ori <- paste0(event_names_mod, "_per_visit_site_ori")
-  colname_rep <- paste0(event_names_mod, "_per_visit_rep")
-  colname_study <- paste0(event_names_mod, "_per_visit_study") #nolint
-  colname_site <- paste0(event_names_mod, "_per_visit_site") #nolint
+
 
   # this implements visit_med75
   if (! is.null(df_site)) {
@@ -105,12 +102,12 @@ sim_inframe <- function(df_visit, r = 1000, df_site = NULL, event_names = c("ae"
     df_calc_ori <- df_visit_prune %>%
       filter(visit == max(.data$visit, na.rm = TRUE), .by = c("patnum", "study_id")) %>%
       summarise(
-        across(.cols = all_of({{colname}}), .fns = sum, .names = "{colname_event}"),
+        across(.cols = all_of({{colname}}), .fns = sum, .names = "{colnames_event}"),
         visits = sum(.data$visit),
         n_pat = n_distinct(.data$patnum),
         .by = c("study_id", "site_number")
         ) %>%
-      mutate(across(.cols = all_of(colname_event), .fns = ~(.x / visits), .names = "{colname_ori}"))
+      mutate(across(.cols = all_of(colnames_event), .fns = ~(.x / visits), .names = "{colnames_ori}"))
 
     df_pat_aggr_site <- df_visit_prune %>%
       prune_to_visit_med75_inframe(df_site) %>%
@@ -119,17 +116,16 @@ sim_inframe <- function(df_visit, r = 1000, df_site = NULL, event_names = c("ae"
     remove(df_visit_prune)
 
   } else {
-
-    df_pat_aggr_site <- df_pat_aggr_pool
-    df_calc_ori <- df_visit %>%
-      filter(visit == max(.data$visit, na.rm = TRUE), .by = c("patnum", "study_id"))  %>%
-      summarise(
-        across(.cols = all_of({{colname}}), .fns = sum, .names = "{colname_event}"),
-        visits = sum(.data$visit),
-        n_pat = n_distinct(.data$patnum),
-        .by = c("study_id", "site_number")
-      ) %>%
-      mutate(across(.cols = all_of(colname_event), .fns = ~(.x / visits), .names = "{colname_ori}"))
+      df_pat_aggr_site <- df_pat_aggr_pool
+      df_calc_ori <- df_visit %>%
+        filter(visit == max(.data$visit, na.rm = TRUE), .by = c("patnum", "study_id"))  %>%
+        summarise(
+          across(.cols = all_of({{colname}}), .fns = sum, .names = "{colnames_event}"),
+          visits = sum(.data$visit),
+          n_pat = n_distinct(.data$patnum),
+          .by = c("study_id", "site_number")
+        ) %>%
+        mutate(across(.cols = all_of(colnames_event), .fns = ~(.x / visits), .names = "{colnames_ori}"))
   }
 
   # for every max visit in the data add all eligible patients
@@ -210,7 +206,7 @@ sim_inframe <- function(df_visit, r = 1000, df_site = NULL, event_names = c("ae"
     # calculate site level event rates for every repetition
     summarise(
       across(.cols = all_of(colname), .fns = ~sum(.x, na.rm = TRUE) / sum(visit, na.rm = TRUE),
-             .names = "{colname_rep}"),
+             .names = "{colnames_rep}"),
       .by = c("study_id", "rep", "site_number")
     )
 
@@ -234,12 +230,12 @@ sim_inframe <- function(df_visit, r = 1000, df_site = NULL, event_names = c("ae"
     # how many times simulated value below original value
 
     summarise(
-      across(.cols = all_of(colname_rep), .fns = ~mean(.x, na.rm = TRUE), .names = "{colname_study}"),
-      .by = c("study_id", "site_number", all_of(colname_event), all_of(colname_ori), "visits", "n_pat")
+      across(.cols = all_of(colnames_rep), .fns = ~mean(.x, na.rm = TRUE), .names = "{colnames_study}"),
+      .by = c("study_id", "site_number", all_of(colnames_event), all_of(colnames_ori), "visits", "n_pat")
     )
-  for (x in seq_along(colname_ori)){
+  for (x in seq_along(colnames_ori)){
     temp <- join_temp %>%
-      summarise("{colname_low[x]}" := sum(ifelse(.data[[colname_ori[x]]] >= .data[[colname_rep[x]]], 1, 0)) / n(),
+      summarise("{colnames_low[x]}" := sum(ifelse(.data[[colnames_ori[x]]] >= .data[[colnames_rep[x]]], 1, 0)) / n(),
                 .by = c("study_id", "site_number", "visits", "n_pat")) %>%
       select(c("study_id", "site_number", 5))
     df_calc_aggr <- df_calc_aggr %>%
@@ -247,14 +243,14 @@ sim_inframe <- function(df_visit, r = 1000, df_site = NULL, event_names = c("ae"
   }
 
   df_calc_aggr <- df_calc_aggr %>%
-    dplyr::rename_with(.cols = all_of(colname_ori), ~ colname_site[which(colname_ori == .x)])
+    dplyr::rename_with(.cols = all_of(colnames_ori), ~ colnames_site[which(colnames_ori == .x)])
 
   return(df_calc_aggr)
 }
 
 #' benjamini hochberg p value correction using table operations
 #'@keywords internal
-p_adjust_bh_inframe <- function(df_eval, col, suffix) {
+p_adjust_bh_inframe <- function(df_eval, cols, suffix) {
 
 
   any_probx <- any(str_detect(colnames(df_eval), "probx_"))
@@ -263,41 +259,47 @@ p_adjust_bh_inframe <- function(df_eval, col, suffix) {
 
   if (inherits(df_eval, "data.frame")) {
     fun_arrange <- arrange
-
   } else {
     fun_arrange <- window_order
   }
 
-  col_adj <- paste0(col, "_adj")
-  col_suffix <- paste0(col, suffix)
 
 
-  df_out <- df_eval %>%
-    mutate(probx = .data[[col]]) %>%
-    fun_arrange(.data$study_id, .data$probx) %>%
-    max_rank("probx", "probx_n_detected") %>%
-    mutate(
-      probx_min = min(ifelse(.data$probx == 0, NA, .data$probx), na.rm = TRUE),
-      .by = "study_id"
-    ) %>%
-    mutate(
-      probx_fp = .data$probx * n(),
-      probx_fp = ifelse(.data$probx_fp == 0, .data$probx_min / 10, .data$probx_fp)
-    ) %>%
-    mutate(
-      probx_p_vs_fp_ratio = .data$probx_n_detected / .data$probx_fp,
-      probx_p_vs_fp_ratio = ifelse(is.na(.data$probx_p_vs_fp_ratio),
-                                      0, .data$probx_p_vs_fp_ratio),
-      # it is possible to get ratios lower than one if p < expected fp
-      # this can happen by chance and is meaningless
-      probx_p_vs_fp_ratio = ifelse(.data$probx_p_vs_fp_ratio < 1, 1, .data$probx_p_vs_fp_ratio)
-    ) %>%
-    mutate(
-      !! as.name(col_adj) := 1 / .data$probx_p_vs_fp_ratio,
-      !! as.name(col_suffix) := 1 - .data[[col_adj]]
-    ) %>%
-    select(- starts_with("probx"))
 
+
+  df_out <- df_eval
+
+  for (col in cols) {
+    col_adj <- paste0(col, "_adj")
+    col_suffix <- paste0(col, suffix)
+
+    df_out <- df_out %>%
+      mutate(probx = .data[[col]]) %>%
+      fun_arrange(.data$study_id, .data$probx) %>%
+      max_rank("probx", "probx_n_detected") %>%
+      mutate(
+        probx_min = min(ifelse(.data$probx == 0, NA, .data$probx), na.rm = TRUE),
+        .by = "study_id"
+      ) %>%
+      mutate(
+        probx_fp = .data$probx * n(),
+        probx_fp = ifelse(.data$probx_fp == 0, .data$probx_min / 10, .data$probx_fp)
+      ) %>%
+      mutate(
+        probx_p_vs_fp_ratio = .data$probx_n_detected / .data$probx_fp,
+        probx_p_vs_fp_ratio = ifelse(is.na(.data$probx_p_vs_fp_ratio),
+                                        0, .data$probx_p_vs_fp_ratio),
+        # it is possible to get ratios lower than one if p < expected fp
+        # this can happen by chance and is meaningless
+        probx_p_vs_fp_ratio = ifelse(.data$probx_p_vs_fp_ratio < 1, 1, .data$probx_p_vs_fp_ratio)
+      ) %>%
+      mutate(
+        !! as.name(col_adj) := 1 / .data$probx_p_vs_fp_ratio,
+        !! as.name(col_suffix) := 1 - .data[[col_adj]]
+      ) %>%
+      select(- starts_with("probx"))
+
+}
   return(df_out)
 }
 

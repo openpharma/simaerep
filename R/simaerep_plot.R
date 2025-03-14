@@ -447,16 +447,14 @@ plot_study <- function(df_visit,
                        event_names = c("ae")) {
 
 
+  colnames_site <- "events_per_visit_site"
+  colnames_study <- "events_per_visit_study"
   prob_col_temp <- prob_col
-  prob_col <- character()
-  colname_study <- character()
-  colname_site <- character()
-  for (event in event_names){
-    colname_study <- c(colname_study, ifelse(event == "ae", "events_per_visit_study",
-                                             paste0(event, "_per_visit_study")))
-    colname_site <- c(colname_site, ifelse(event == "ae", "events_per_visit_site",
-                                           paste0(event, "_per_visit_site")))
-    prob_col <- c(prob_col, ifelse(event == "ae", prob_col_temp, paste0(event, "_", prob_col_temp)))
+  if (length(event_names) != 1 ||
+      !colnames(df_eval)[grep("prob_low_prob_ur", colnames(df_eval))][1] == "prob_low_prob_ur") {
+    colnames_site <- paste0(event_names, "_per_visit_site")
+    colnames_study <- paste0(event_names, "_per_visit_study")
+    prob_col <- paste0(event_names, "_", prob_col_temp)
   }
 
   # TODO: parametrize scores, fix legend
@@ -521,8 +519,8 @@ plot_study <- function(df_visit,
 
 
   # adjust to visit_med75 or alternative ---------------------------------------
-  if (all(c(colname_study, colname_site) %in% colnames(df_eval))) {
-    col_mean_site <- colname_site
+  if (all(c(colnames_study, colnames_site) %in% colnames(df_eval))) {
+    col_mean_site <- colnames_site
   } else {
     col_mean_site <- "mean_ae_site_med75"
   }

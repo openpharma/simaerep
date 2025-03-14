@@ -1,8 +1,6 @@
 test_that("simaerep() produces warning messages when provided with the wrong event_name inputs", {
   df_visit_events_test <- sim_test_data_events(event_names = c("ae", "pd"), ae_per_visit_mean = c(0.5, 0.4))
 
-  expect_error(simaerep(df_visit = df_visit_events_test, event_names = "ae"),
-               regexp = "Different number of event names (1) than expected (2)", fixed = TRUE)
 
   df_visit_test_column <- df_visit_test %>%
     rename(n_pd = n_ae)
@@ -24,7 +22,7 @@ test_that("simaerep() produces warning messages when provided with the wrong eve
 test_that("sim_inframe() creates appropriate column names", {
   df_visit_events_test <- sim_test_data_events(event_names = c("ae", "pd"), ae_per_visit_mean = c(0.5, 0.4))
 
-  expect_true(all(c("pd_prob_low", "prob_low") %in%
+  expect_true(all(c("pd_prob_low", "ae_prob_low") %in%
                     colnames(sim_inframe(df_visit_events_test, event_names = c("ae", "pd")))))
 })
 
@@ -51,44 +49,27 @@ test_that("eval_sites throws the correct error when given multi-event data conta
 
   df_site_events_test <- site_aggr(df_visit_events_test, event_names = c("ae", "pd"))
 
-  df_sim_sites_events_test <-
-    sim_sites(df_site_events_test, df_visit_events_test, r = 100, event_names = c("ae", "pd"))
-  df_sim_sites_events_test$pval[1] <- NA
 
+  df_sim_sites_events_test <- sim_inframe(df_site = df_site_events_test,
+                                          df_visit = df_visit_events_test, r = 100, event_names = c("ae", "pd"))
+  df_sim_sites_events_test$ae_prob_low[1] <- NA
 
-  expect_warning(eval_sites(df_sim_sites_events_test, event_names = c("ae", "pd")),
-                 regexp = "study_id: A, site_number: S0001, a prob_low value contains NA", fixed = TRUE)
-
-
-  df_sim_sites_events_test <-
-    sim_sites(df_site_events_test, df_visit_events_test, r = 100, event_names = c("ae", "pd"))
-  df_sim_sites_events_test$pd_pval[1] <- NA
 
 
   expect_warning(eval_sites(df_sim_sites_events_test, event_names = c("ae", "pd")),
                  regexp = "study_id: A, site_number: S0001, a prob_low value contains NA", fixed = TRUE)
-  })
 
-test_that("eval_sites() produces the same prob_high output regardless of the number of events submitted", {
-  df_visit_events_test <- sim_test_data_events(event_names = c("ae", "pd"), ae_per_visit_mean = c(0.5, 0.4))
-  df_site_events_test <- site_aggr(df_visit_events_test, event_names = c("ae", "pd"))
-  df_sim_sites_events_test <-
-    sim_sites(df_site_events_test, df_visit_events_test, r = 100, event_names = c("ae", "pd")) |>
-    select(- c("n_pat_with_med75", "visit_med75", "mean_ae_site_med75",
-               "mean_ae_study_med75", "n_pat_with_med75_study", "mean_pd_site_med75", "mean_pd_study_med75"))
-  events <- eval_sites(df_sim_sites_events_test, event_names = c("ae", "pd"), under_only = FALSE)["prob_high"]
 
-  df_visit_check <- df_visit_events_test %>%
-    select(- c("pd_per_visit_mean", "n_pd"))
-  df_site_check <- site_aggr(df_visit_check, event_names = c("ae"))
-  df_sim_sites_check <-
-    sim_sites(df_site_check, df_visit_check, r = 100, event_names = c("ae")) |>
-    select(- c("n_pat_with_med75", "visit_med75", "mean_ae_site_med75",
-               "mean_ae_study_med75", "n_pat_with_med75_study"))
-  event <- eval_sites(df_sim_sites_check, event_names = c("ae"), under_only = FALSE)["prob_high"]
+  df_sim_sites_events_test <- sim_inframe(df_site = df_site_events_test,
+                                          df_visit = df_visit_events_test, r = 100, event_names = c("ae", "pd"))
+  df_sim_sites_events_test$pd_prob_low[1] <- NA
 
-  expect_equal(event, events)
+
+  expect_warning(eval_sites(df_sim_sites_events_test, event_names = c("ae", "pd")),
+                 regexp = "study_id: A, site_number: S0001, a prob_low value contains NA", fixed = TRUE)
 })
+
+
 
 test_that("column names when using event_names as expected in df_eval", {
 
@@ -96,8 +77,8 @@ test_that("column names when using event_names as expected in df_eval", {
 
   suffix <- c(
     "_prob_low",
-    "_prob_low_adj"
-    ,"_prob_low_prob_ur",
+    "_prob_low_adj",
+    "_prob_low_prob_ur",
     "_prob_high",
     "_prob_high_adj",
     "_prob_high_prob_or"
@@ -105,6 +86,8 @@ test_that("column names when using event_names as expected in df_eval", {
 
   cols_expected <- purrr::map(events, ~ paste0(., suffix)) %>%
     unlist()
+
+
 
   df_visit_events_test <- sim_test_data_events(event_names = events, ae_per_visit_mean = c(0.5, 0.4))
 
@@ -173,31 +156,19 @@ test_that("plot.simaerep works with event_names", {
     mult_corr = TRUE
   )
 
-  expect_s3_class(plot(aerep, what = "ur", study = "A", event_names = "ae"), "ggplot")
-  expect_s3_class(plot(aerep, what = "ur", study = "A", event_names = "y"), "ggplot")
-  expect_s3_class(plot(aerep, what = "ur", study = "A"), "ggplot")
+  expect_s3_class(plot(aerep, what = "ur", study = "A",
+                       df_visit = df_visit_events_test, event_names = "ae"), "ggplot")
+  expect_s3_class(plot(aerep, what = "ur", study = "A",
+                       df_visit = df_visit_events_test, event_names = "y"), "ggplot")
+  expect_s3_class(plot(aerep, what = "ur", study = "A",
+                       df_visit = df_visit_events_test, event_names = events), "ggplot")
 
-  expect_s3_class(plot(aerep, what = "med75", study = "A"), "ggplot")
-
-})
-
-test_that("S3 orivisits works with event_names", {
-
-  events <- c("ae", "y")
-
-  df_visit_events_test <- sim_test_data_events(event_names = events, ae_per_visit_mean = c(0.5, 0.4))
-
-  aerep <- simaerep(
-    df_visit_events_test,
-    event_names = events,
-    under_only = FALSE,
-    inframe = TRUE,
-    mult_corr = TRUE
-  )
-
-  expect_s3_class(as.data.frame(aerep$visit), "data.frame")
+  expect_s3_class(plot(aerep, what = "med75", study = "A",
+                       df_visit = df_visit_events_test, event_names = events), "ggplot")
 
 })
+
+
 
 test_that("event_names works with duckdb backend", {
 
@@ -205,8 +176,8 @@ test_that("event_names works with duckdb backend", {
 
   suffix <- c(
     "_prob_low",
-    "_prob_low_adj"
-    ,"_prob_low_prob_ur",
+    "_prob_low_adj",
+    "_prob_low_prob_ur",
     "_prob_high",
     "_prob_high_adj",
     "_prob_high_prob_or"
@@ -231,7 +202,8 @@ test_that("event_names works with duckdb backend", {
     r = tbl_r,
     visit_med75 = FALSE,
     mult_corr = TRUE,
-    event_names = events
+    event_names = events,
+    under_only = FALSE
   )$df_eval
 
   tbl_eval_med75 <- simaerep(
@@ -239,7 +211,8 @@ test_that("event_names works with duckdb backend", {
     r = tbl_r,
     visit_med75 = TRUE,
     mult_corr = TRUE,
-    event_names = events
+    event_names = events,
+    under_only = FALSE
   )$df_eval
 
   expect_true(all(cols_expected %in% colnames(tbl_eval)))

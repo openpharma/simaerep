@@ -81,7 +81,7 @@ sim_test_data_study <- function(n_pat = 1000,
           }else {
 
             fill <- rep(ae_rates[length(ae_rates)], max_visit)
-        fill[seq_along(ae_rates)] <- ae_rates
+            fill[seq_along(ae_rates)] <- ae_rates
           }
 
 
@@ -107,14 +107,14 @@ sim_test_data_study <- function(n_pat = 1000,
 
     } else {
 
-      if (is_ur) {
-        ae_per_visit_mean <- ae_per_visit_mean * (1 - ur_rate)
-      }
+        if (is_ur) {
+          ae_per_visit_mean <- ae_per_visit_mean * (1 - ur_rate)
+        }
 
-      f_sample_ae <- function(max_visit) {
-        ae_per_visit_mean %>%
-          map(rpois, n = max_visit)
-      }
+        f_sample_ae <- function(max_visit) {
+          ae_per_visit_mean %>%
+            map(rpois, n = max_visit)
+        }
 
     }
 
@@ -1048,18 +1048,16 @@ sim_test_data_events <- function(
     ae_rates = c(NULL),
     event_names = list("ae")) {
 
-set.seed(1)
-df_visit3 <- sim_test_data_study(n_pat = 100, n_sites = n_sites,
-                                 frac_site_with_ur = 0.4, ur_rate = 0.6,
-                                 ae_per_visit_mean = ae_per_visit_mean, event_names = event_names)
-df_visit3$study_id <- "A"
-set.seed(2)
-df_visit4 <- sim_test_data_study(n_pat = 100, n_sites = n_sites,
-                                 frac_site_with_ur = 0.2, ur_rate = 0.1,
-                                 ae_per_visit_mean = ae_per_visit_mean, event_names = event_names)
-df_visit4$study_id <- "B"
-df_visit_events_test <- dplyr::bind_rows(df_visit3, df_visit4)
-return(df_visit_events_test)
+  set.seed(1)
+  df_visit3 <- sim_test_data_study(n_pat = 100, n_sites = n_sites,
+                                   frac_site_with_ur = 0.4, ur_rate = 0.6,
+                                   ae_per_visit_mean = ae_per_visit_mean, event_names = event_names)
+  df_visit3$study_id <- "A"
+  set.seed(2)
+  df_visit4 <- sim_test_data_study(n_pat = 100, n_sites = n_sites,
+                                   frac_site_with_ur = 0.2, ur_rate = 0.1,
+                                   ae_per_visit_mean = ae_per_visit_mean, event_names = event_names)
+  df_visit4$study_id <- "B"
+  df_visit_events_test <- dplyr::bind_rows(df_visit3, df_visit4)
+  return(df_visit_events_test)
 }
-
-sim_test_data_events()

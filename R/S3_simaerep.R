@@ -160,10 +160,6 @@ simaerep <- function(df_visit,
 
   call <- rlang::enexpr(df_visit)
 
-  if (ncol(df_visit) != 7 + 2 * length(event_names)) {
-    stop(paste0("Different number of event names (", length(event_names),
-                ") than expected (", (ncol(df_visit) - 7) / 2, ")"))
-  }
   for (x in event_names) {
     if (!(paste0("n_", x) %in% colnames(df_visit))) {
       stop(paste0(x, " not found in df_visit"))
@@ -185,7 +181,7 @@ simaerep <- function(df_visit,
   # save visit call
   visit <- tryCatch({
     visit <- orivisit(df_visit, call, env = env, event_names = event_names)
-    as.data.frame(visit)
+    as.data.frame(visit, event_names = event_names)
     visit},
     error = function(e) df_visit
   )
@@ -290,7 +286,7 @@ simaerep_inframe <- function(df_visit,
 
   if (inherits(df_visit, "orivisit")) {
     visit <- df_visit
-    df_visit <- as.data.frame(df_visit, env = env)
+    df_visit <- as.data.frame(df_visit, env = env, event_names = event_names)
   } else {
     call <- rlang::enexpr(df_visit)
     visit <- orivisit(df_visit, call, env = env, event_names = event_names)
@@ -455,6 +451,7 @@ simaerep_visit_med75 <- function(df_visit,
 #'   from parent environment, Default: NULL
 #' @param env optional, pass environment from which to retrieve original visit
 #'   data, Default: parent.frame()
+#' @param event_names vector, contains the event names, default = "ae"
 #' @return ggplot object
 #' @details see [plot_study()][plot_study] and
 #'   [plot_visit_med75()][plot_visit_med75]
@@ -482,7 +479,8 @@ plot.simaerep <- function(x,
                           what = "ur",
                           n_sites = 16,
                           df_visit = NULL,
-                          env = parent.frame()) {
+                          env = parent.frame(),
+                          event_names = "ae") {
 
   stopifnot(what %in% c("ur", "med75"))
 
@@ -504,7 +502,7 @@ plot.simaerep <- function(x,
   }
 
   if (is.null(df_visit)) {
-    df_visit <- as.data.frame(x$visit, env = env)
+    df_visit <- as.data.frame(x$visit, env = env, event_names = event_names)
   }
 
   p <- .f(df_visit, x, study, n_sites, ...)

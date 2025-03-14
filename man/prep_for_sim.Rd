@@ -4,14 +4,12 @@
 \alias{prep_for_sim}
 \title{Prepare data for simulation.}
 \usage{
-prep_for_sim(df_site, df_visit, event_names = "ae")
+prep_for_sim(df_site, df_visit)
 }
 \arguments{
 \item{df_site}{dataframe created by \code{\link[simaerep]{site_aggr}}}
 
 \item{df_visit}{dataframe, created by \code{\link[simaerep]{sim_sites}}}
-
-\item{event_names}{vector, contains the event names, default = "ae"}
 }
 \value{
 dataframe

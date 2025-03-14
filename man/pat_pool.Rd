@@ -4,14 +4,12 @@
 \alias{pat_pool}
 \title{Create a study specific patient pool for sampling}
 \usage{
-pat_pool(df_visit, df_site, event_names = "ae")
+pat_pool(df_visit, df_site)
 }
 \arguments{
 \item{df_visit}{dataframe, created by \code{\link[simaerep]{sim_sites}}}
 
 \item{df_site}{dataframe created by \code{\link[simaerep]{site_aggr}}}
-
-\item{event_names}{vector, contains the event names, default = "ae"}
 }
 \value{
 dataframe with nested pat_pool column

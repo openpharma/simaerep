@@ -44,10 +44,7 @@ summarise_df_visit <- function(df_visit, event_names = c("ae")) {
 }
 
 get_str_var <- function(call, env) {
-
-
   str_call <- deparse(call)
-
   if (sum(str_length(str_call)) > 80) {
 
     return(NA)
@@ -55,12 +52,10 @@ get_str_var <- function(call, env) {
 
   # exists() will search all envs up to global env
   # env_has() will check custom env
-
   if (! exists(str_call) && ! rlang::env_has(env, str_call)) {
 
     return(NA)
   }
-
   return(str_call)
 }
 
@@ -98,12 +93,9 @@ get_str_var <- function(call, env) {
 orivisit <- function(df_visit, call = NULL, env = parent.frame(), event_names = c("ae")) {
 
 
-
   if (is.null(call)) {
-
     call <- rlang::enexpr(df_visit)
   }
-
   stopifnot(inherits(df_visit, "data.frame") | inherits(df_visit, "tbl"))
 
   dim <- dim(df_visit)
@@ -121,7 +113,7 @@ orivisit <- function(df_visit, call = NULL, env = parent.frame(), event_names = 
 }
 
 #' @export
-as.data.frame.orivisit <- function(x, ..., env = parent.frame()) {
+as.data.frame.orivisit <- function(x, ..., env = parent.frame(), event_names = c("ae")) {
 
   if (is.na(x$str_call)) stop.orivisit()
   if (! exists(x$str_call, envir = env)) stop.orivisit()
@@ -132,7 +124,7 @@ as.data.frame.orivisit <- function(x, ..., env = parent.frame()) {
 
   if (! df_is_tbl) {
     dim <- dim(df)
-    df_summary <- summarise_df_visit(df)
+    df_summary <- summarise_df_visit(df, event_names)
 
     #all.equal produces either TRUE or a character string (instead of FALSE)
     if (is.character(all.equal(df_summary, x$df_summary, tolerance = 1e-4))) stop.orivisit()

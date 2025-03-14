@@ -12,8 +12,7 @@ sim_sites(
   prob_lower = TRUE,
   progress = TRUE,
   check = TRUE,
-  under_only = TRUE,
-  event_names = "ae"
+  under_only = TRUE
 )
 }
 \arguments{
@@ -31,9 +30,7 @@ sim_sites(
 
 \item{check, }{logical, perform data check and attempt repair with}
 
-\item{under_only}{compute under-reporting probabilities only, default = TRUE}
-
-\item{event_names}{vector, contains the event names, default = "ae"
+\item{under_only}{compute under-reporting probabilities only, default = TRUE
 \link[=check_df_visit]{check_df_visit()}, computationally expensive on large data
 sets. Default: TRUE}
 }
