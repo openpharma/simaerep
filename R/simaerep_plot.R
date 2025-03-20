@@ -408,6 +408,7 @@ get_legend <- function(p) {
 #' @param pval logical show p-value, Default:FALSE
 #' @param prob_col character, denotes probability column, Default: "prob_low_prob_ur"
 #' @param event_names vector, contains the event names, default = "ae"
+#' @param plot_event vector containing the events that should be plotted, default = "ae"
 #' @return ggplot
 #' @details Left panel shows mean AE reporting per site (lightblue and darkblue
 #'   lines) against mean AE reporting of the entire study (golden line). Single
@@ -437,24 +438,28 @@ get_legend <- function(p) {
 #' @export
 #' @import ggplot2
 plot_study <- function(df_visit,
-                       df_site,
-                       df_eval,
-                       study,
-                       df_al = NULL,
-                       n_sites = 16,
-                       pval = FALSE,
-                       prob_col = "prob_low_prob_ur",
-                       event_names = c("ae")) {
+                        df_site,
+                        df_eval,
+                        study,
+                        df_al = NULL,
+                        n_sites = 16,
+                        pval = FALSE,
+                        prob_col = "prob_low_prob_ur",
+                        event_names = c("ae"),
+                        plot_event = "ae") {
 
-
-  colnames_site <- "events_per_visit_site"
-  colnames_study <- "events_per_visit_study"
+  if (!plot_event %in% event_names) stop("plot_event (", plot_event, ") not found within event_names")
+  colname_site <- "events_per_visit_site"
+  colname_study <- "events_per_visit_study"
+  colname_event <- paste0("n_", plot_event)
+  colname_mean <- paste0("mean_", plot_event)
+  colname_prob_ur <- "pval_prob_ur"
   prob_col_temp <- prob_col
-  if (length(event_names) != 1 ||
-      !colnames(df_eval)[grep("prob_low_prob_ur", colnames(df_eval))][1] == "prob_low_prob_ur") {
-    colnames_site <- paste0(event_names, "_per_visit_site")
-    colnames_study <- paste0(event_names, "_per_visit_study")
-    prob_col <- paste0(event_names, "_", prob_col_temp)
+  if (length(event_names) != 1 || !colnames(df_eval)[grep(prob_col, colnames(df_eval))][1] == prob_col) {
+    colname_site <- paste0(plot_event, "_per_visit_site")
+    colname_study <- paste0(plot_event, "_per_visit_study")
+    prob_col <- paste0(plot_event, "_", prob_col_temp)
+    colname_prob_ur <- paste0(plot_event, "_pval_prob_ur")
   }
 
   # TODO: parametrize scores, fix legend
@@ -473,7 +478,7 @@ plot_study <- function(df_visit,
     filter(.data$study_id %in% study) %>%
     collect()
 
-  df_visit <- check_df_visit(df_visit)
+  df_visit <- check_df_visit(df_visit, event_names)
 
   df_site <- df_site %>%
     filter(.data$study_id %in% study) %>%
@@ -492,18 +497,18 @@ plot_study <- function(df_visit,
   } else {
     df_visit <- df_visit %>%
       left_join(select(df_al, c(
-                       "study_id",
-                       "site_number",
-                       "alert_level_site",
-                       "alert_level_study")))
+        "study_id",
+        "site_number",
+        "alert_level_site",
+        "alert_level_study")))
   }
 
 
   # fill in pvalues when missing --------------------------------------------
 
-  if (! "pval_prob_ur" %in% colnames(df_eval)) {
+  if (! colname_prob_ur %in% colnames(df_eval)) {
     df_eval <- df_eval %>%
-      mutate(pval_prob_ur = NA)
+      mutate("{colname_prob_ur}" := NA)
   }
 
   # make sure ids are character columns
@@ -519,8 +524,8 @@ plot_study <- function(df_visit,
 
 
   # adjust to visit_med75 or alternative ---------------------------------------
-  if (all(c(colnames_study, colnames_site) %in% colnames(df_eval))) {
-    col_mean_site <- colnames_site
+  if (all(c(colname_study, colname_site) %in% colnames(df_eval))) {
+    col_mean_site <- colname_site
   } else {
     col_mean_site <- "mean_ae_site_med75"
   }
@@ -590,7 +595,7 @@ plot_study <- function(df_visit,
              .data$n_pat,
              .data$visit,
              .data$alert_level_site) %>%
-    summarise(mean_ae = mean(.data$n_ae)) %>%
+    summarise("{colname_mean}" := mean(.data[[colname_event]])) %>%
     ungroup()
 
   df_mean_ae_dev_study <- df_visit %>%
@@ -611,15 +616,15 @@ plot_study <- function(df_visit,
              .data$visit,
              .data$n_pat,
              .data$n_pat_with_med75) %>%
-    summarise(mean_ae = mean(.data$n_ae)) %>%
+    summarise("{colname_mean}" := mean(.data[[colname_event]])) %>%
     ungroup()
 
   df_ae_dev_patient <- df_visit %>%
     select(c("study_id",
-           "site_number",
-           "patnum",
-           "visit",
-           "n_ae")) %>%
+             "site_number",
+             "patnum",
+             "visit",
+             all_of(colname_event))) %>%
     mutate(max_visit_per_pat = max(.data$visit)) %>%
     filter(.data$site_number %in% sites_ordered) %>%
     ungroup() %>%
@@ -656,9 +661,9 @@ plot_study <- function(df_visit,
 
   df_alert <- df_visit %>%
     select(c("study_id",
-           "site_number",
-           "alert_level_site",
-           "alert_level_study")) %>%
+             "site_number",
+             "alert_level_site",
+             "alert_level_study")) %>%
     distinct()
 
   if (! "n_pat_with_med75" %in% colnames(df_site)) {
@@ -668,20 +673,20 @@ plot_study <- function(df_visit,
   df_label <- df_mean_ae_dev_site %>%
     filter(.data$visit == .data[[col_visit]], .data$site_number %in% sites_ordered) %>%
     select(c("study_id",
-           "site_number",
-           "visit",
-           "mean_ae")) %>%
+             "site_number",
+             "visit",
+             all_of(colname_mean))) %>%
     left_join(df_site, by = c("study_id", "site_number")) %>%
     select(c("study_id",
-           "site_number",
-           "visit",
-           "mean_ae",
-           "n_pat",
-           "n_pat_with_med75")) %>%
+             "site_number",
+             "visit",
+             all_of(colname_mean),
+             "n_pat",
+             "n_pat_with_med75")) %>%
     left_join(
       select(df_eval, - any_of(c(
-              "n_pat",
-              "n_pat_with_med75")))
+        "n_pat",
+        "n_pat_with_med75")))
       , by = c("study_id", "site_number")
     ) %>%
     left_join(df_alert, by = c("study_id", "site_number")) %>%
@@ -689,13 +694,13 @@ plot_study <- function(df_visit,
       "study_id",
       "site_number",
       "visit",
-      "mean_ae",
+      (colname_mean),
       "n_pat",
       "n_pat_with_med75",
       prob_col,
       "prob_cut",
       "color_prob_cut",
-      "pval_prob_ur",
+      colname_prob_ur,
       "alert_level_site"
     ))) %>%
     mutate(
@@ -711,7 +716,7 @@ plot_study <- function(df_visit,
   # study plot -----------------------------------------------------------------
 
   max_visit_study <- max(df_mean_ae_dev_site$visit)
-  max_ae_study <- max(df_mean_ae_dev_site$mean_ae)
+  max_ae_study <- max(df_mean_ae_dev_site[[colname_mean]])
   n_pat <- unique(df_mean_ae_dev_study$n_pat)
   n_pat_with_med75 <- unique(df_mean_ae_dev_study$n_pat_with_med75)
   alert_level_study <- round(unique(df_visit$alert_level_study), 1)
@@ -723,40 +728,40 @@ plot_study <- function(df_visit,
   )
 
   p_study <- df_mean_ae_dev_site_no_alert %>%
-    ggplot(aes(visit, mean_ae), na.rm = TRUE) +
+    ggplot(aes(visit, .data[[colname_mean]]), na.rm = TRUE) +
     geom_line(aes(
       group = .data$site_number,
       color = color_prob_cut
     )) +
     geom_line(aes(
-        group = .data$site_number,
-        color = color_prob_cut
-      ),
-      data = df_mean_ae_dev_site_alert,
-      linewidth = 1
+      group = .data$site_number,
+      color = color_prob_cut
+    ),
+    data = df_mean_ae_dev_site_alert,
+    linewidth = 1
     ) +
     geom_line(aes(group = .data$study_id),
-      data = df_mean_ae_dev_study,
-      color = "gold3",
-      linewidth = 1,
-      alpha = 0.5
+              data = df_mean_ae_dev_study,
+              color = "gold3",
+              linewidth = 1,
+              alpha = 0.5
     ) +
     geom_point(
       data = df_label,
       color = "grey"
     ) +
     annotate("label",
-      x = 0.5 * max_visit_study,
-      y = 0.9 * max_ae_study,
-      label = alert_level_study,
-      color = color_alert_level_study,
-      na.rm = TRUE
+             x = 0.5 * max_visit_study,
+             y = 0.9 * max_ae_study,
+             label = alert_level_study,
+             color = color_alert_level_study,
+             na.rm = TRUE
     ) +
     labs(color = "Probability Under-Reporting") +
     scale_color_identity() +
     theme_minimal() +
     theme(legend.position = "bottom") +
-    labs(y = "Mean Cumulative AE Count per Site")
+    labs(y = paste0("Mean Cumulative ", toupper(plot_event), " Count per Site"))
 
 
 
@@ -767,28 +772,28 @@ plot_study <- function(df_visit,
     mutate(site_number = fct_relevel(.data$site_number, sites_ordered))
 
   max_visit <- max(df_ae_dev_patient$visit)
-  max_ae <- max(df_ae_dev_patient$n_ae)
+  max_ae <- max(df_ae_dev_patient[colname_event])
 
-  max_ae <- ifelse(max_ae < max(df_mean_ae_dev_study$mean_ae),
-    max(df_mean_ae_dev_study$mean_ae),
-    max_ae
+  max_ae <- ifelse(max_ae < max(df_mean_ae_dev_study[colname_mean]),
+                   max(df_mean_ae_dev_study[colname_mean]),
+                   max_ae
   )
 
   p_site <- df_ae_dev_patient %>%
-    ggplot(aes(visit, n_ae), na.rm = TRUE) +
+    ggplot(aes(visit, .data[[colname_event]]), na.rm = TRUE) +
     geom_line(aes(group = patnum),
-      color = "grey",
-      alpha = 0.5
+              color = "grey",
+              alpha = 0.5
     ) +
     geom_line(aes(
-        y = mean_ae,
-        color = color_prob_cut,
-        alpha = 0.5
-      ),
-      data = df_mean_ae_dev_site,
-      linewidth = 1
+      y = .data[[colname_mean]],
+      color = color_prob_cut,
+      alpha = 0.5
+    ),
+    data = df_mean_ae_dev_site,
+    linewidth = 1
     ) +
-    geom_line(aes(y = mean_ae),
+    geom_line(aes(y = .data[[colname_mean]]),
               data = df_mean_ae_dev_study,
               color = "gold3",
               linewidth = 1,
@@ -800,27 +805,28 @@ plot_study <- function(df_visit,
               na.rm = TRUE) +
     geom_label(aes(label = paste(round(.data[[prob_col]], 3) * 100, "%"),
                    color = color_prob_cut),
-              data = df_label,
-              x = 0.8 * max_visit,
-              y = 0.9 * max_ae,
-              na.rm = TRUE) +
+               data = df_label,
+               x = 0.8 * max_visit,
+               y = 0.9 * max_ae,
+               na.rm = TRUE) +
     geom_label(aes(label = .data$alert_level_site,
                    color = .data$color_alert_level),
-              data = df_label,
-              x = 0.5 * max_visit,
-              y = 0.9 * max_ae,
-              alpha = 0.5,
-              na.rm = TRUE
-              ) +
+               data = df_label,
+               x = 0.5 * max_visit,
+               y = 0.9 * max_ae,
+               alpha = 0.5,
+               na.rm = TRUE
+    ) +
     facet_wrap(~site_number) +
     scale_color_identity() +
     theme_minimal() +
     theme(legend.position = "none") +
-    labs(y = "Cumulative AE Count per Patient")
+    labs(y = paste0("Cumulative ", toupper(plot_event), " Count per Patient"))
+
 
   if (pval) {
     p_site <- p_site +
-      geom_label(aes(label = paste(round(pval_prob_ur, 3) * 100, "%")),
+      geom_label(aes(label = paste(round(.data[[colname_prob_ur]], 3) * 100, "%")),
                  data = df_label,
                  x = 0.8 * max_visit,
                  y = 0.7 * max_ae,
@@ -859,6 +865,7 @@ plot_study <- function(df_visit,
 #' @param study_id_str character, specify study in study_id column
 #' @param n_sites integer, Default: 6
 #' @param verbose logical, Default: TRUE
+#' @param plot_event vector containing the events that should be plotted, default = "ae"
 #' @inheritParams site_aggr
 #' @return ggplot
 #' @examples
@@ -876,17 +883,24 @@ plot_visit_med75 <- function(df_visit,
                              study_id_str,
                              n_sites = 6,
                              min_pat_pool = 0.2,
-                             verbose = TRUE) {
+                             verbose = TRUE,
+                             event_names = "ae",
+                             plot_event = "ae") {
+  if (!plot_event %in% event_names) stop("plot_event (", plot_event, ") not found within event_names")
 
-  df_visit <- check_df_visit(df_visit) %>%
+  colname_event <- paste0("n_", plot_event)
+  colname_mean <- paste0("mean_", plot_event) #nolint
+  colname_site <- paste0("mean_", plot_event, "_site") #nolint
+
+  df_visit <- check_df_visit(df_visit, event_names = event_names) %>%
     filter(.data$study_id == study_id_str)
 
 
 
   df_pat <- pat_aggr(df_visit)
 
-  df_site_min_med75 <- site_aggr(df_visit, method = "med75")
-  df_site_max_med75 <- site_aggr(df_visit, method = "med75_adj")
+  df_site_min_med75 <- site_aggr(df_visit, method = "med75", event_names = event_names)
+  df_site_max_med75 <- site_aggr(df_visit, method = "med75_adj", event_names = event_names)
 
   study_possible_max_visit <- df_pat %>%
     filter(.data$study_id == study_id_str) %>%
@@ -894,7 +908,7 @@ plot_visit_med75 <- function(df_visit,
     pull(.data$study_possible_max_visit) %>%
     round(0)
 
-  df_mean_ae_dev <- get_site_mean_ae_dev(df_visit, df_pat, df_site_max_med75)
+  df_mean_ae_dev <- get_site_mean_ae_dev(df_visit, df_pat, df_site_max_med75, event_names)
 
   df_plot <- df_site_min_med75 %>%
     rename(visit_med75_min = "visit_med75") %>%
@@ -941,21 +955,21 @@ plot_visit_med75 <- function(df_visit,
     max()
 
   ae_max <- df_plot %>%
-    .$n_ae %>%
+    .[colname_event] %>%
     max()
 
   df_mean_ae_dev <- df_mean_ae_dev %>%
     filter(.data$site_number %in% unique(df_plot$site_number))
 
   p <- df_plot %>%
-    ggplot(aes(visit, n_ae)) +
+    ggplot(aes(visit, .data[[colname_event]])) +
     geom_line(
       aes(group = patnum),
       data = filter(df_plot, .data$has_med75 == "yes"),
       color = "grey"
     ) +
     geom_line(
-      aes(y = .data$mean_ae_site, group = .data$site_number),
+      aes(y = .data[[colname_site]], group = .data$site_number),
       data = df_mean_ae_dev,
       color = "slateblue3",
       alpha = 0.5,
@@ -989,13 +1003,13 @@ plot_visit_med75 <- function(df_visit,
     facet_wrap(study_id ~ site_number) +
     labs(
       title = "Evaluation Point visit_med75",
-      y = "# Cumulated AEs"
+      y = paste0("# Cumulated ", toupper(plot_event), "s")
     ) +
     theme_minimal() +
     theme(plot.caption.position = "panel")
 
   cap <- paste(c(
-    "purple line:          mean site ae of patients with visit_med75",
+    paste0("purple line:          mean site ", plot_event, " of patients with visit_med75"),
     "grey line:            patient included",
     "black dashed line:    patient excluded",
     "dotted vertical line: visit_med75, 0.75 x median of maximum patient visits of site ",

@@ -13,7 +13,8 @@ plot_study(
   n_sites = 16,
   pval = FALSE,
   prob_col = "prob_low_prob_ur",
-  event_names = c("ae")
+  event_names = c("ae"),
+  plot_event = "ae"
 )
 }
 \arguments{
@@ -35,6 +36,8 @@ alert_level_study (optional), Default: NA}
 \item{prob_col}{character, denotes probability column, Default: "prob_low_prob_ur"}
 
 \item{event_names}{vector, contains the event names, default = "ae"}
+
+\item{plot_event}{vector containing the events that should be plotted, default = "ae"}
 }
 \value{
 ggplot

@@ -97,3 +97,21 @@ test_that("plot_study() produces plots for the top 16 sites if none meet the pro
   len <- length(tab[[6]][["children"]][[4]][["children"]][[1]][["children"]][["layout"]]$grobs)
   expect_true(len == 49)
 })
+
+test_that("plot_study() produces an error when an invalid plot_event is submitted", {
+  events <- c("ae", "y")
+  df_visit_events_test <- sim_test_data_events(event_names = events, ae_per_visit_mean = c(0.5, 0.4))
+  aerep <- simaerep(
+    df_visit = df_visit_events_test,
+    event_names = events,
+    under_only = FALSE,
+    inframe = TRUE,
+    mult_corr = TRUE
+  )
+  error <- "plot_event (x) not found within event_names"
+  expect_error(plot(aerep, what = "ur", study = "A", event_names = events, plot_event = "x"),
+               regexp = error, fixed = TRUE)
+  expect_error(plot(aerep, what = "med75", study = "A", event_names = events, plot_event = "x"),
+               regexp = error, fixed = TRUE)
+
+})

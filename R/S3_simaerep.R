@@ -181,7 +181,7 @@ simaerep <- function(df_visit,
   # save visit call
   visit <- tryCatch({
     visit <- orivisit(df_visit, call, env = env, event_names = event_names)
-    as.data.frame(visit, event_names = event_names)
+    as.data.frame(visit, event_names = event_names, env = env)
     visit},
     error = function(e) df_visit
   )
@@ -451,6 +451,7 @@ simaerep_visit_med75 <- function(df_visit,
 #'   from parent environment, Default: NULL
 #' @param env optional, pass environment from which to retrieve original visit
 #'   data, Default: parent.frame()
+#' @param plot_event vector containing the events that should be plotted, default = "ae"
 #' @param event_names vector, contains the event names, default = "ae"
 #' @return ggplot object
 #' @details see [plot_study()][plot_study] and
@@ -480,7 +481,8 @@ plot.simaerep <- function(x,
                           n_sites = 16,
                           df_visit = NULL,
                           env = parent.frame(),
-                          event_names = "ae") {
+                          event_names = "ae",
+                          plot_event = "ae") {
 
   stopifnot(what %in% c("ur", "med75"))
 
@@ -505,31 +507,46 @@ plot.simaerep <- function(x,
     df_visit <- as.data.frame(x$visit, env = env, event_names = event_names)
   }
 
-  p <- .f(df_visit, x, study, n_sites, ...)
+  p <- .f(df_visit, x, study, n_sites, event_names, plot_event, ...)
 
   return(p)
 
 }
 
-plot_simaerep_plot_study <- function(df_visit, x, study, n_sites, ...) {
-  plot_study(
-    df_visit = df_visit,
-    df_site = x$df_site,
-    df_eval = x$df_eval,
-    study = study,
-    n_sites = n_sites,
-    ...
+plot_simaerep_plot_study <- function(df_visit, x, study, n_sites, event_names = "ae", plot_event = "ae", ...) {
+  study_plot <- purrr::map((plot_event),
+                           function(event) {
+                             plot_study(
+                               df_visit = df_visit,
+                               df_site = x$df_site,
+                               df_eval = x$df_eval,
+                               study = study,
+                               n_sites = n_sites,
+                               event_names = event_names,
+                               plot_event = event,
+                               ...
+                            )
+                           }
   )
+
+  cowplot::plot_grid(plotlist = study_plot, nrow = length(plot_event))
 }
 
-plot_simaerep_plot_visit_med75 <- function(df_visit, x, study, n_sites, ...) {
-  plot_visit_med75(
-    df_visit = df_visit,
-    study_id_str = study,
-    n_sites = n_sites,
-    min_pat_pool = x$param_site_aggr$min_pat_pool,
-    ...
-  )
+plot_simaerep_plot_visit_med75 <- function(df_visit, x, study, n_sites, event_names = "ae", plot_event = "ae", ...) {
+  med75_plot <- purrr::map((plot_event),
+                           function(event) {
+                               plot_visit_med75(
+                               df_visit = df_visit,
+                               study_id_str = study,
+                               n_sites = n_sites,
+                               min_pat_pool = x$param_site_aggr$min_pat_pool,
+                               event_names = event_names,
+                               plot_event = event,
+                               ...
+                              )
+                            }
+                          )
+  cowplot::plot_grid(plotlist = med75_plot, nrow = length(plot_event))
 }
 
 #' @export

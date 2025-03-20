@@ -141,8 +141,7 @@ test_that("column names when using event_names as expected in df_eval", {
 
 })
 
-
-test_that("plot.simaerep works with event_names", {
+test_that("S3 orivisits works with event_names", {
 
   events <- c("ae", "y")
 
@@ -156,15 +155,30 @@ test_that("plot.simaerep works with event_names", {
     mult_corr = TRUE
   )
 
-  expect_s3_class(plot(aerep, what = "ur", study = "A",
-                       df_visit = df_visit_events_test, event_names = "ae"), "ggplot")
-  expect_s3_class(plot(aerep, what = "ur", study = "A",
-                       df_visit = df_visit_events_test, event_names = "y"), "ggplot")
-  expect_s3_class(plot(aerep, what = "ur", study = "A",
-                       df_visit = df_visit_events_test, event_names = events), "ggplot")
+  expect_s3_class(as.data.frame(aerep$visit, event_names = events), "data.frame")
 
-  expect_s3_class(plot(aerep, what = "med75", study = "A",
-                       df_visit = df_visit_events_test, event_names = events), "ggplot")
+})
+
+
+test_that("plot.simaerep works with event_names", {
+
+  events <- c("ae", "y")
+
+  df_visit_events_test <- sim_test_data_events(event_names = events, ae_per_visit_mean = c(0.5, 0.4))
+
+  aerep <- simaerep(
+    df_visit = df_visit_events_test,
+    event_names = events,
+    under_only = FALSE,
+    inframe = TRUE,
+    mult_corr = TRUE
+  )
+
+  expect_s3_class(plot(aerep, what = "ur", study = "A", event_names = events, plot_event = "ae"), "ggplot")
+  expect_s3_class(plot(aerep, what = "ur", study = "A", event_names = events, plot_event = "y"), "ggplot")
+  expect_s3_class(plot(aerep, what = "ur", study = "A", event_names = events), "ggplot")
+
+  expect_s3_class(plot(aerep, what = "med75", study = "A", event_names = events, plot_event = events), "ggplot")
 
 })
 
