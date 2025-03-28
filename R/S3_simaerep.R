@@ -233,6 +233,8 @@ simaerep <- function(df_visit,
     stop("visit_med75 parameter must be TRUE if inframe is FALSE")
   }
 
+  aerep$visit$event_names <- event_names
+
   return(aerep)
 
 }
@@ -452,7 +454,6 @@ simaerep_visit_med75 <- function(df_visit,
 #' @param env optional, pass environment from which to retrieve original visit
 #'   data, Default: parent.frame()
 #' @param plot_event vector containing the events that should be plotted, default = "ae"
-#' @param event_names vector, contains the event names, default = "ae"
 #' @return ggplot object
 #' @details see [plot_study()][plot_study] and
 #'   [plot_visit_med75()][plot_visit_med75]
@@ -481,7 +482,6 @@ plot.simaerep <- function(x,
                           n_sites = 16,
                           df_visit = NULL,
                           env = parent.frame(),
-                          event_names = "ae",
                           plot_event = "ae") {
 
   stopifnot(what %in% c("ur", "med75"))
@@ -502,18 +502,20 @@ plot.simaerep <- function(x,
 
     message(paste0("study = NULL, defaulting to study:", study))
   }
+  event_names <- x$visit$event_names
 
   if (is.null(df_visit)) {
     df_visit <- as.data.frame(x$visit, env = env, event_names = event_names)
   }
 
-  p <- .f(df_visit, x, study, n_sites, event_names, plot_event, ...)
+  p <- .f(df_visit, x, study, n_sites, plot_event, ...)
 
   return(p)
 
 }
 
-plot_simaerep_plot_study <- function(df_visit, x, study, n_sites, event_names = "ae", plot_event = "ae", ...) {
+plot_simaerep_plot_study <- function(df_visit, x, study, n_sites, plot_event = "ae", ...) {
+  event_names <- x$visit$event_names
   study_plot <- purrr::map((plot_event),
                            function(event) {
                              plot_study(
@@ -532,7 +534,8 @@ plot_simaerep_plot_study <- function(df_visit, x, study, n_sites, event_names = 
   cowplot::plot_grid(plotlist = study_plot, nrow = length(plot_event))
 }
 
-plot_simaerep_plot_visit_med75 <- function(df_visit, x, study, n_sites, event_names = "ae", plot_event = "ae", ...) {
+plot_simaerep_plot_visit_med75 <- function(df_visit, x, study, n_sites, plot_event = "ae", ...) {
+  event_names <- x$visit$event_names
   med75_plot <- purrr::map((plot_event),
                            function(event) {
                                plot_visit_med75(

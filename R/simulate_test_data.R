@@ -62,7 +62,7 @@ sim_test_data_study <- function(n_pat = 1000,
   # construct patient ae sample function
   # supports constant and non-constant ae rates
   f_sim_pat <- function(vs_max, vs_sd, is_ur) {
-    colname <- c(paste0(event_names, "_per_visit_mean"), "visit",  paste0("n_", event_names))
+    colnames <- c(paste0(event_names, "_per_visit_mean"), "visit",  paste0("n_", event_names))
     if (! any(c(is.null(ae_rates), is.na(ae_rates)))) {
       if (is_ur) {
         ae_rates <- ae_rates * (1 - ur_rate)
@@ -128,7 +128,7 @@ sim_test_data_study <- function(n_pat = 1000,
                           visit = seq(1, length(aes[[1]])),
                           n_ae = aes)
 
-    names(sim_pat) <- colname
+    names(sim_pat) <- colnames
     return(sim_pat)
   }
 

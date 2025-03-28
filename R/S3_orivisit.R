@@ -23,7 +23,7 @@ validate_orivisit <- function(x) {
 
 summarise_df_visit <- function(df_visit, event_names = c("ae")) {
   colsearch <- paste0("n_", event_names)
-  colname <- paste0("n_", event_names, "s") #nolint
+  colnames <- paste0("n_", event_names, "s") #nolint
 
   df_visit %>%
     group_by(
@@ -39,7 +39,7 @@ summarise_df_visit <- function(df_visit, event_names = c("ae")) {
       n_patients = n_distinct(.data$patnum),
       n_visits = sum(.data$visit),
       across(all_of({
-        colsearch}), sum, .names = "{colname}")
+        colsearch}), sum, .names = "{colnames}")
     )
 }
 

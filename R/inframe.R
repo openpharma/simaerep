@@ -46,7 +46,7 @@ prune_to_visit_med75_inframe <- function(df_visit, df_site) {
 #' df_eval <- eval_sites(df_sim)
 #' df_eval
 sim_inframe <- function(df_visit, r = 1000, df_site = NULL, event_names = c("ae")) {
-  colname <- paste0("n_", event_names)
+  colnames <- paste0("n_", event_names)
 
 
 
@@ -54,7 +54,7 @@ sim_inframe <- function(df_visit, r = 1000, df_site = NULL, event_names = c("ae"
   df_visit <- df_visit %>%
     mutate(
       across(as.double, .cols = all_of({
-        colname}), .names = "{colname}"),
+        colnames}), .names = "{colnames}"),
       visit = as.double(.data$visit)
     )
 
@@ -102,7 +102,7 @@ sim_inframe <- function(df_visit, r = 1000, df_site = NULL, event_names = c("ae"
     df_calc_ori <- df_visit_prune %>%
       filter(visit == max(.data$visit, na.rm = TRUE), .by = c("patnum", "study_id")) %>%
       summarise(
-        across(.cols = all_of({{colname}}), .fns = sum, .names = "{colnames_event}"),
+        across(.cols = all_of({{colnames}}), .fns = sum, .names = "{colnames_event}"),
         visits = sum(.data$visit),
         n_pat = n_distinct(.data$patnum),
         .by = c("study_id", "site_number")
@@ -120,7 +120,7 @@ sim_inframe <- function(df_visit, r = 1000, df_site = NULL, event_names = c("ae"
       df_calc_ori <- df_visit %>%
         filter(visit == max(.data$visit, na.rm = TRUE), .by = c("patnum", "study_id"))  %>%
         summarise(
-          across(.cols = all_of({{colname}}), .fns = sum, .names = "{colnames_event}"),
+          across(.cols = all_of({{colnames}}), .fns = sum, .names = "{colnames_event}"),
           visits = sum(.data$visit),
           n_pat = n_distinct(.data$patnum),
           .by = c("study_id", "site_number")
@@ -169,6 +169,7 @@ sim_inframe <- function(df_visit, r = 1000, df_site = NULL, event_names = c("ae"
       # of eligible patients
       rnd = runif(n())
     )
+
   if (inherits(df_sim_prep, "tbl_Snowflake")) {
     # snowflake RANDOM() works differently than other backends and returns large
     # positive and negative integers. We normalize by using the min and max values
@@ -200,12 +201,12 @@ sim_inframe <- function(df_visit, r = 1000, df_site = NULL, event_names = c("ae"
   df_calc <- df_sim %>%
     left_join(
       df_visit %>%
-        select(c("study_id", "patnum", "visit", all_of(colname))),
+        select(c("study_id", "patnum", "visit", all_of(colnames))),
       by = c("study_id", "patnum", "visit")
     ) %>%
     # calculate site level event rates for every repetition
     summarise(
-      across(.cols = all_of(colname), .fns = ~sum(.x, na.rm = TRUE) / sum(visit, na.rm = TRUE),
+      across(.cols = all_of(colnames), .fns = ~sum(.x, na.rm = TRUE) / sum(visit, na.rm = TRUE),
              .names = "{colnames_rep}"),
       .by = c("study_id", "rep", "site_number")
     )

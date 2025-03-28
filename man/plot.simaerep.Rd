@@ -12,7 +12,6 @@
   n_sites = 16,
   df_visit = NULL,
   env = parent.frame(),
-  event_names = "ae",
   plot_event = "ae"
 )
 }
@@ -34,8 +33,6 @@ from parent environment, Default: NULL}
 
 \item{env}{optional, pass environment from which to retrieve original visit
 data, Default: parent.frame()}
-
-\item{event_names}{vector, contains the event names, default = "ae"}
 
 \item{plot_event}{vector containing the events that should be plotted, default = "ae"}
 }

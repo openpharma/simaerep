@@ -34,12 +34,12 @@ dataframe with the following columns:
 \item{\strong{visit_med75}}{median(max(visit)) * 0.75}
 \item{\strong{mean_ae_site_med75}}{mean AE at visit_med75 site level}
 \item{\strong{mean_ae_study_med75}}{mean AE at visit_med75 study level}
-\item{\strong{ae_pval}}{p-value as returned by \code{\link[stats]{poisson.test}}}
-\item{\strong{ae_prob_low}}{bootstrapped probability for having mean_ae_site_med75 or lower}
-\item{\strong{ae_pval_adj}}{adjusted p-values}
-\item{\strong{ae_prob_low_adj}}{adjusted bootstrapped probability for having mean_ae_site_med75 or lower}
-\item{\strong{ae_pval_prob_ur}}{probability under-reporting as 1 - pval_adj, poisson.test (use as benchmark)}
-\item{\strong{ae_prob_low_prob_ur}}{probability under-reporting as 1 - prob_low_adj, bootstrapped (use)}
+\item{\strong{pval}}{p-value as returned by \code{\link[stats]{poisson.test}}}
+\item{\strong{prob_low}}{bootstrapped probability for having mean_ae_site_med75 or lower}
+\item{\strong{pval_adj}}{adjusted p-values}
+\item{\strong{prob_low_adj}}{adjusted bootstrapped probability for having mean_ae_site_med75 or lower}
+\item{\strong{pval_prob_ur}}{probability under-reporting as 1 - pval_adj, poisson.test (use as benchmark)}
+\item{\strong{prob_low_prob_ur}}{probability under-reporting as 1 - prob_low_adj, bootstrapped (use)}
 
 }
 }

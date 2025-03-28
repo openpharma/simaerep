@@ -36,16 +36,16 @@ if (getRversion() >= "2.15.1") {
 check_df_visit <- function(df_visit, event_names = "ae") {
 
   df_visit <- ungroup(df_visit)
-  colname <- paste0("n_", event_names)
+  colnames <- paste0("n_", event_names)
   stopifnot(
-    all(c("study_id", "site_number", "patnum", colname, "visit") %in% colnames(df_visit))
+    all(c("study_id", "site_number", "patnum", colnames, "visit") %in% colnames(df_visit))
   )
 
   no_na_cols <- c(
     "study_id",
     "site_number",
     "patnum",
-    colname,
+    colnames,
     "visit"
   )
 
@@ -76,7 +76,7 @@ check_df_visit <- function(df_visit, event_names = "ae") {
     df_visit %>%
       summarise_at(
         vars(c(
-          all_of(colname),
+          all_of(colnames),
           "visit"
         )),
         ~ is.numeric(.)
@@ -100,7 +100,7 @@ check_df_visit <- function(df_visit, event_names = "ae") {
 #' @rdname aggr_duplicated_visits
 #' @export
 aggr_duplicated_visits <- function(df_visit, event_names = "ae") {
-  colname <- paste0("n_", event_names)
+  colnames <- paste0("n_", event_names)
   df_visit_out <- df_visit %>%
     group_by(
       .data$study_id,
@@ -108,7 +108,7 @@ aggr_duplicated_visits <- function(df_visit, event_names = "ae") {
       .data$patnum,
       .data$visit
     ) %>%
-    summarise(across(.cols = all_of(colname), .fns = ~max(.x), .names = "{colname}"), .groups = "drop")
+    summarise(across(.cols = all_of(colnames), .fns = ~max(.x), .names = "{colnames}"), .groups = "drop")
 
   if (nrow(df_visit_out) < nrow(df_visit)) {
     warning("Duplicated visit entries for some patients detected and corrected.")
@@ -125,7 +125,7 @@ aggr_duplicated_visits <- function(df_visit, event_names = "ae") {
 #' @export
 exp_implicit_missing_visits <- function(df_visit, event_names = "ae") {
 
-  colname <- paste0("n_", event_names)
+  colnames <- paste0("n_", event_names)
   df_complete <- df_visit %>%
     group_by(.data$study_id) %>%
     mutate(min_study_visit = min(.data$visit),
@@ -165,7 +165,7 @@ exp_implicit_missing_visits <- function(df_visit, event_names = "ae") {
     ) %>%
     group_by(.data$study_id, .data$site_number, .data$patnum) %>%
     arrange(.data$visit) %>%
-    fill(all_of(colname), .direction = "down") %>%
+    fill(all_of(colnames), .direction = "down") %>%
     mutate(
       min_visit_pat = min(.data$min_visit_pat, na.rm = TRUE),
       max_visit_pat = max(.data$max_visit_pat, na.rm = TRUE)
@@ -177,12 +177,12 @@ exp_implicit_missing_visits <- function(df_visit, event_names = "ae") {
       .data$visit >= .data$min_study_visit &
       .data$visit <= .data$max_visit_pat
     ) %>%
-    mutate(across(.cols = all_of(colname), .fns = ~(ifelse(is.na(.x), 0, .x)), .names = "{colname}")) %>%
+    mutate(across(.cols = all_of(colnames), .fns = ~(ifelse(is.na(.x), 0, .x)), .names = "{colnames}")) %>%
     select(c(
       "study_id",
       "site_number",
       "patnum",
-      all_of(colname),
+      all_of(colnames),
       "visit"
     )) %>%
     arrange(.data$study_id, .data$site_number, .data$patnum, .data$visit)
@@ -224,7 +224,7 @@ pat_aggr <- function(df_visit) {
 #' @return dataframe
 #' @rdname get_site_mean_ae_dev
 get_site_mean_ae_dev <- function(df_visit, df_pat, df_site, event_names = c("ae")) {
-  colname <- paste0("mean_", event_names, "_site") #nolint
+  colnames <- paste0("mean_", event_names, "_site") #nolint
   colsearch <- paste0("n_", event_names)
 
   df_visit %>%
@@ -235,7 +235,7 @@ get_site_mean_ae_dev <- function(df_visit, df_pat, df_site, event_names = c("ae"
       .data$max_visit_per_pat >= .data$visit_med75
     ) %>%
     group_by(.data$study_id, .data$site_number, .data$visit_med75, .data$visit) %>%
-    summarise(across(all_of(colsearch), mean, .names = "{colname}"),
+    summarise(across(all_of(colsearch), mean, .names = "{colnames}"),
               .groups = "drop")
 
 }
@@ -366,12 +366,12 @@ get_visit_med75 <- function(df_pat,
 #'   \item{**visit_med75**}{median(max(visit)) * 0.75}
 #'   \item{**mean_ae_site_med75**}{mean AE at visit_med75 site level}
 #'   \item{**mean_ae_study_med75**}{mean AE at visit_med75 study level}
-#'   \item{**ae_pval**}{p-value as returned by \code{\link[stats]{poisson.test}}}
-#'   \item{**ae_prob_low**}{bootstrapped probability for having mean_ae_site_med75 or lower}
-#'   \item{**ae_pval_adj**}{adjusted p-values}
-#'   \item{**ae_prob_low_adj**}{adjusted bootstrapped probability for having mean_ae_site_med75 or lower}
-#'   \item{**ae_pval_prob_ur**}{probability under-reporting as 1 - pval_adj, poisson.test (use as benchmark)}
-#'   \item{**ae_prob_low_prob_ur**}{probability under-reporting as 1 - prob_low_adj, bootstrapped (use)}
+#'   \item{**pval**}{p-value as returned by \code{\link[stats]{poisson.test}}}
+#'   \item{**prob_low**}{bootstrapped probability for having mean_ae_site_med75 or lower}
+#'   \item{**pval_adj**}{adjusted p-values}
+#'   \item{**prob_low_adj**}{adjusted bootstrapped probability for having mean_ae_site_med75 or lower}
+#'   \item{**pval_prob_ur**}{probability under-reporting as 1 - pval_adj, poisson.test (use as benchmark)}
+#'   \item{**prob_low_prob_ur**}{probability under-reporting as 1 - prob_low_adj, bootstrapped (use)}
 #'
 #' }
 #' @examples
@@ -1304,7 +1304,7 @@ site_aggr <- function(df_visit,
 
   # Calculate mean cumulative AE at med75 per Site ------------------
 
-  colname <- paste0("mean_", event_names, "_site_med75")
+  colnames <- paste0("mean_", event_names, "_site_med75")
   colsearch <- paste0("mean_", event_names, "_site")
 
 
@@ -1313,10 +1313,10 @@ site_aggr <- function(df_visit,
 
   df_mean_ae_med75 <- df_mean_ae_dev %>%
     filter(.data$visit == .data$visit_med75)  %>%
-    dplyr::rename_with(~ colname[which(colsearch == .x)], .cols = all_of(colsearch)) %>%
+    dplyr::rename_with(~ colnames[which(colsearch == .x)], .cols = all_of(colsearch)) %>%
     select(c("study_id",
              "site_number",
-             all_of(colname)))
+             all_of(colnames)))
   # Add mean cumulative AE to site aggregate ----------------------
 
   df_site <- df_site %>%
