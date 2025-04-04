@@ -16,7 +16,9 @@ test_that("check S3 test data reproducibility", {
 
   visit_check <- orivisit(df_visit_test)
 
-  expect_equal(visit_check, visit_test)
+  expect_equal(visit_check$dim, visit_test$dim)
+  expect_equal(visit_check$df_summary, visit_test$df_summary)
+  expect_equal(visit_check$str_call, visit_test$str_call)
 
 })
 

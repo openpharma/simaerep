@@ -155,7 +155,7 @@ test_that("S3 orivisits works with event_names", {
     mult_corr = TRUE
   )
 
-  expect_s3_class(as.data.frame(aerep$visit, event_names = events), "data.frame")
+  expect_s3_class(as.data.frame(aerep$visit), "data.frame")
 
 })
 

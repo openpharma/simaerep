@@ -1,18 +1,19 @@
 
 
-new_orivisit <- function(dim, df_summary, str_call) {
+new_orivisit <- function(dim, df_summary, str_call, event_names = "ae") {
   structure(
     list(
       dim = dim,
       df_summary = df_summary,
-      str_call = str_call
+      str_call = str_call,
+      event_names = event_names
     ),
     class = "orivisit"
   )
 }
 
 validate_orivisit <- function(x) {
-  comp <- sort(attributes(x)$names) ==  sort(c("dim", "df_summary", "str_call"))
+  comp <- sort(attributes(x)$names) ==  sort(c("dim", "df_summary", "str_call", "event_names"))
   stopifnot(all(comp))
   stopifnot(length(x$dim) == 2)
   inherits(x$df_summary, "data.frame") | inherits(x$df_summary, "tbl")
@@ -107,20 +108,22 @@ orivisit <- function(df_visit, call = NULL, env = parent.frame(), event_names = 
     new_orivisit(
       dim,
       df_summary,
-      str_call
+      str_call,
+      event_names
     )
   )
 }
 
 #' @export
-as.data.frame.orivisit <- function(x, ..., env = parent.frame(), event_names = c("ae")) {
-
+as.data.frame.orivisit <- function(x, ..., env = parent.frame()) {
   if (is.na(x$str_call)) stop.orivisit()
   if (! exists(x$str_call, envir = env)) stop.orivisit()
 
   df <- rlang::env_get(env, x$str_call, inherit = TRUE)
 
   df_is_tbl <- ! inherits(df, "data.frame") & inherits(df, "tbl")
+
+  ifelse(is.null(x$event_names), event_names <- "ae", event_names <- x$event_names)
 
   if (! df_is_tbl) {
     dim <- dim(df)

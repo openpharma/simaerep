@@ -9,7 +9,8 @@ new_simaerep <- function(visit,
                          under_only,
                          param_site_aggr,
                          param_sim_sites,
-                         param_eval_sites) {
+                         param_eval_sites,
+                         event_names = "ae") {
 
   structure(
     list(
@@ -23,7 +24,8 @@ new_simaerep <- function(visit,
       under_only = under_only,
       param_site_aggr = param_site_aggr,
       param_sim_sites = param_sim_sites,
-      param_eval_sites = param_eval_sites
+      param_eval_sites = param_eval_sites,
+      event_names = event_names
     ),
     class = "simaerep"
   )
@@ -45,7 +47,8 @@ validate_simaerep <- function(x) {
       "under_only",
       "param_site_aggr",
       "param_sim_sites",
-      "param_eval_sites"
+      "param_eval_sites",
+      "event_names"
     )
   )
 
@@ -181,7 +184,7 @@ simaerep <- function(df_visit,
   # save visit call
   visit <- tryCatch({
     visit <- orivisit(df_visit, call, env = env, event_names = event_names)
-    as.data.frame(visit, event_names = event_names, env = env)
+    as.data.frame(visit, env = env)
     visit},
     error = function(e) df_visit
   )
@@ -233,7 +236,6 @@ simaerep <- function(df_visit,
     stop("visit_med75 parameter must be TRUE if inframe is FALSE")
   }
 
-  aerep$visit$event_names <- event_names
 
   return(aerep)
 
@@ -288,7 +290,7 @@ simaerep_inframe <- function(df_visit,
 
   if (inherits(df_visit, "orivisit")) {
     visit <- df_visit
-    df_visit <- as.data.frame(df_visit, env = env, event_names = event_names)
+    df_visit <- as.data.frame(df_visit, env = env)
   } else {
     call <- rlang::enexpr(df_visit)
     visit <- orivisit(df_visit, call, env = env, event_names = event_names)
@@ -352,7 +354,8 @@ simaerep_inframe <- function(df_visit,
       under_only = under_only,
       param_site_aggr = param_site_aggr,
       param_sim_sites = list(),
-      param_eval_sites = param_eval_sites
+      param_eval_sites = param_eval_sites,
+      event_names = event_names
     )
   )
 }
@@ -502,10 +505,9 @@ plot.simaerep <- function(x,
 
     message(paste0("study = NULL, defaulting to study:", study))
   }
-  event_names <- x$visit$event_names
 
   if (is.null(df_visit)) {
-    df_visit <- as.data.frame(x$visit, env = env, event_names = event_names)
+    df_visit <- as.data.frame(x$visit, env = env)
   }
 
   p <- .f(df_visit, x, study, n_sites, plot_event, ...)
@@ -515,7 +517,6 @@ plot.simaerep <- function(x,
 }
 
 plot_simaerep_plot_study <- function(df_visit, x, study, n_sites, plot_event = "ae", ...) {
-  event_names <- x$visit$event_names
   study_plot <- purrr::map((plot_event),
                            function(event) {
                              plot_study(
@@ -524,7 +525,7 @@ plot_simaerep_plot_study <- function(df_visit, x, study, n_sites, plot_event = "
                                df_eval = x$df_eval,
                                study = study,
                                n_sites = n_sites,
-                               event_names = event_names,
+                               event_names = x$event_names,
                                plot_event = event,
                                ...
                             )
@@ -535,7 +536,6 @@ plot_simaerep_plot_study <- function(df_visit, x, study, n_sites, plot_event = "
 }
 
 plot_simaerep_plot_visit_med75 <- function(df_visit, x, study, n_sites, plot_event = "ae", ...) {
-  event_names <- x$visit$event_names
   med75_plot <- purrr::map((plot_event),
                            function(event) {
                                plot_visit_med75(
@@ -543,7 +543,7 @@ plot_simaerep_plot_visit_med75 <- function(df_visit, x, study, n_sites, plot_eve
                                study_id_str = study,
                                n_sites = n_sites,
                                min_pat_pool = x$param_site_aggr$min_pat_pool,
-                               event_names = event_names,
+                               event_names = x$event_names,
                                plot_event = event,
                                ...
                               )
