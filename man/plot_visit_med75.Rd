@@ -10,7 +10,9 @@ plot_visit_med75(
   study_id_str,
   n_sites = 6,
   min_pat_pool = 0.2,
-  verbose = TRUE
+  verbose = TRUE,
+  event_names = "ae",
+  plot_event = "ae"
 )
 }
 \arguments{
@@ -26,6 +28,10 @@ plot_visit_med75(
 sampling. Determines maximum visit_med75 value see Details. Default: 0.2}
 
 \item{verbose}{logical, Default: TRUE}
+
+\item{event_names}{vector, contains the event names, default = "ae"}
+
+\item{plot_event}{vector containing the events that should be plotted, default = "ae"}
 }
 \value{
 ggplot

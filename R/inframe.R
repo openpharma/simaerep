@@ -45,12 +45,16 @@ prune_to_visit_med75_inframe <- function(df_visit, df_site) {
 #' df_sim <- sim_inframe(df_visit)
 #' df_eval <- eval_sites(df_sim)
 #' df_eval
-sim_inframe <- function(df_visit, r = 1000, df_site = NULL) {
+sim_inframe <- function(df_visit, r = 1000, df_site = NULL, event_names = c("ae")) {
+  colnames <- paste0("n_", event_names)
+
+
 
   # db back-end, to not form ratios from integers
   df_visit <- df_visit %>%
     mutate(
-      n_ae = as.double(.data$n_ae),
+      across(as.double, .cols = all_of({
+        colnames}), .names = "{colnames}"),
       visit = as.double(.data$visit)
     )
 
@@ -66,22 +70,44 @@ sim_inframe <- function(df_visit, r = 1000, df_site = NULL) {
       )
   }
 
+
   # aggregate per patient to get max visits
   df_pat_aggr_pool <- pat_aggr(df_visit)
 
+
+  colnames_event <- "events"
+  colnames_low <- "prob_low" #nolint
+  colnames_ori <- "events_per_visit_site_ori"
+  colnames_rep <- "events_per_visit_rep"
+  colnames_study <- "events_per_visit_study" #nolint
+  colnames_site <- "events_per_visit_site" #nolint
+
+
+  if (length(event_names) != 1) {
+    colnames_event <- paste0(event_names, "_events")
+    colnames_low <- paste0(event_names, "_prob_low")
+    colnames_ori <- paste0(event_names, "_per_visit_site_ori")
+    colnames_rep <- paste0(event_names, "_per_visit_rep")
+    colnames_study <- paste0(event_names, "_per_visit_study")
+    colnames_site <- paste0(event_names, "_per_visit_site")
+  }
+
+
+
   # this implements visit_med75
   if (! is.null(df_site)) {
+
     df_visit_prune <- prune_to_visit_med75_inframe(df_visit, df_site)
 
     df_calc_ori <- df_visit_prune %>%
       filter(visit == max(.data$visit, na.rm = TRUE), .by = c("patnum", "study_id")) %>%
       summarise(
-        events = sum(.data$n_ae),
+        across(.cols = all_of({{colnames}}), .fns = sum, .names = "{colnames_event}"),
         visits = sum(.data$visit),
         n_pat = n_distinct(.data$patnum),
-        events_per_visit_site_ori = sum(.data$n_ae, na.rm = TRUE) / sum(.data$visit, na.rm = TRUE),
         .by = c("study_id", "site_number")
-      )
+        ) %>%
+      mutate(across(.cols = all_of(colnames_event), .fns = ~(.x / visits), .names = "{colnames_ori}"))
 
     df_pat_aggr_site <- df_visit_prune %>%
       prune_to_visit_med75_inframe(df_site) %>%
@@ -90,17 +116,16 @@ sim_inframe <- function(df_visit, r = 1000, df_site = NULL) {
     remove(df_visit_prune)
 
   } else {
-    df_pat_aggr_site <- df_pat_aggr_pool
-
-    df_calc_ori <- df_visit %>%
-      filter(visit == max(.data$visit, na.rm = TRUE), .by = c("patnum", "study_id")) %>%
-      summarise(
-        events = sum(.data$n_ae),
-        visits = sum(.data$visit),
-        n_pat = n_distinct(.data$patnum),
-        events_per_visit_site_ori = sum(.data$n_ae, na.rm = TRUE) / sum(.data$visit, na.rm = TRUE),
-        .by = c("study_id", "site_number")
-      )
+      df_pat_aggr_site <- df_pat_aggr_pool
+      df_calc_ori <- df_visit %>%
+        filter(visit == max(.data$visit, na.rm = TRUE), .by = c("patnum", "study_id"))  %>%
+        summarise(
+          across(.cols = all_of({{colnames}}), .fns = sum, .names = "{colnames_event}"),
+          visits = sum(.data$visit),
+          n_pat = n_distinct(.data$patnum),
+          .by = c("study_id", "site_number")
+        ) %>%
+        mutate(across(.cols = all_of(colnames_event), .fns = ~(.x / visits), .names = "{colnames_ori}"))
   }
 
   # for every max visit in the data add all eligible patients
@@ -133,7 +158,7 @@ sim_inframe <- function(df_visit, r = 1000, df_site = NULL) {
       by = c("study_id", "site_number"),
       relationship = "many-to-many"
     ) %>%
-  # add number of eligible patients from pool
+    # add number of eligible patients from pool
     left_join(
       df_visit_pat_pool %>%
         distinct(.data$study_id, .data$visit, .data$max_rwn),
@@ -144,6 +169,7 @@ sim_inframe <- function(df_visit, r = 1000, df_site = NULL) {
       # of eligible patients
       rnd = runif(n())
     )
+
   if (inherits(df_sim_prep, "tbl_Snowflake")) {
     # snowflake RANDOM() works differently than other backends and returns large
     # positive and negative integers. We normalize by using the min and max values
@@ -175,14 +201,24 @@ sim_inframe <- function(df_visit, r = 1000, df_site = NULL) {
   df_calc <- df_sim %>%
     left_join(
       df_visit %>%
-        select(c("study_id", "patnum", "visit", "n_ae")),
+        select(c("study_id", "patnum", "visit", all_of(colnames))),
       by = c("study_id", "patnum", "visit")
     ) %>%
     # calculate site level event rates for every repetition
     summarise(
-      events_per_visit_site_rep = sum(.data$n_ae, na.rm = TRUE) / sum(.data$visit, na.rm = TRUE),
+      across(.cols = all_of(colnames), .fns = ~sum(.x, na.rm = TRUE) / sum(visit, na.rm = TRUE),
+             .names = "{colnames_rep}"),
       .by = c("study_id", "rep", "site_number")
     )
+
+
+
+
+
+  join_temp <- df_calc %>%
+    left_join(
+      df_calc_ori,
+      by = c("study_id", "site_number"))
 
   # join original with simulations
   df_calc_aggr <- df_calc %>%
@@ -190,28 +226,33 @@ sim_inframe <- function(df_visit, r = 1000, df_site = NULL) {
       df_calc_ori,
       by = c("study_id", "site_number")
     ) %>%
+
+    # calculate probability by comparing original stats with simulated stats
+    # how many times simulated value below original value
+
     summarise(
-      # calculate probability by comparing original stats with simulated stats
-      # how many times simulated value below original value
-      prob_low = sum(
-        ifelse(
-          .data$events_per_visit_site_rep <= .data$events_per_visit_site_ori,
-          1, 0
-          ),
-        na.rm = TRUE
-      ) / n(),
-      events_per_visit_study = mean(.data$events_per_visit_site_rep, na.rm = TRUE),
-      .by = c("study_id", "site_number", "events_per_visit_site_ori", "events",
-              "visits", "n_pat")
-    ) %>%
-    rename(events_per_visit_site = "events_per_visit_site_ori")
+      across(.cols = all_of(colnames_rep), .fns = ~mean(.x, na.rm = TRUE), .names = "{colnames_study}"),
+      .by = c("study_id", "site_number", all_of(colnames_event), all_of(colnames_ori), "visits", "n_pat")
+    )
+  for (x in seq_along(colnames_ori)){
+    temp <- join_temp %>%
+      summarise("{colnames_low[x]}" := sum(ifelse(.data[[colnames_ori[x]]] >= .data[[colnames_rep[x]]], 1, 0)) / n(),
+                .by = c("study_id", "site_number", "visits", "n_pat")) %>%
+      select(c("study_id", "site_number", 5))
+    df_calc_aggr <- df_calc_aggr %>%
+      left_join(temp, by = c("study_id", "site_number"))
+  }
+
+  df_calc_aggr <- df_calc_aggr %>%
+    dplyr::rename_with(.cols = all_of(colnames_ori), ~ colnames_site[which(colnames_ori == .x)])
 
   return(df_calc_aggr)
 }
 
 #' benjamini hochberg p value correction using table operations
 #'@keywords internal
-p_adjust_bh_inframe <- function(df_eval, col, suffix) {
+p_adjust_bh_inframe <- function(df_eval, cols, suffix) {
+
 
   any_probx <- any(str_detect(colnames(df_eval), "probx_"))
 
@@ -223,35 +264,43 @@ p_adjust_bh_inframe <- function(df_eval, col, suffix) {
     fun_arrange <- window_order
   }
 
-  col_adj <- paste0(col, "_adj")
-  col_suffix <- paste0(col, suffix)
 
-  df_out <- df_eval %>%
-    mutate(probx = .data[[col]]) %>%
-    fun_arrange(.data$study_id, .data$probx) %>%
-    max_rank("probx", "probx_n_detected") %>%
-    mutate(
-      probx_min = min(ifelse(.data$probx == 0, NA, .data$probx), na.rm = TRUE),
-      .by = "study_id"
-    ) %>%
-    mutate(
-      probx_fp = .data$probx * n(),
-      probx_fp = ifelse(.data$probx_fp == 0, .data$probx_min / 10, .data$probx_fp)
-    ) %>%
-    mutate(
-      probx_p_vs_fp_ratio = .data$probx_n_detected / .data$probx_fp,
-      probx_p_vs_fp_ratio = ifelse(is.na(.data$probx_p_vs_fp_ratio),
-                                      0, .data$probx_p_vs_fp_ratio),
-      # it is possible to get ratios lower than one if p < expected fp
-      # this can happen by chance and is meaningless
-      probx_p_vs_fp_ratio = ifelse(.data$probx_p_vs_fp_ratio < 1, 1, .data$probx_p_vs_fp_ratio)
-    ) %>%
-    mutate(
-      !! as.name(col_adj) := 1 / .data$probx_p_vs_fp_ratio,
-      !! as.name(col_suffix) := 1 - .data[[col_adj]]
-    ) %>%
-    select(- starts_with("probx"))
 
+
+
+  df_out <- df_eval
+
+  for (col in cols) {
+    col_adj <- paste0(col, "_adj")
+    col_suffix <- paste0(col, suffix)
+
+    df_out <- df_out %>%
+      mutate(probx = .data[[col]]) %>%
+      fun_arrange(.data$study_id, .data$probx) %>%
+      max_rank("probx", "probx_n_detected") %>%
+      mutate(
+        probx_min = min(ifelse(.data$probx == 0, NA, .data$probx), na.rm = TRUE),
+        .by = "study_id"
+      ) %>%
+      mutate(
+        probx_fp = .data$probx * n(),
+        probx_fp = ifelse(.data$probx_fp == 0, .data$probx_min / 10, .data$probx_fp)
+      ) %>%
+      mutate(
+        probx_p_vs_fp_ratio = .data$probx_n_detected / .data$probx_fp,
+        probx_p_vs_fp_ratio = ifelse(is.na(.data$probx_p_vs_fp_ratio),
+                                        0, .data$probx_p_vs_fp_ratio),
+        # it is possible to get ratios lower than one if p < expected fp
+        # this can happen by chance and is meaningless
+        probx_p_vs_fp_ratio = ifelse(.data$probx_p_vs_fp_ratio < 1, 1, .data$probx_p_vs_fp_ratio)
+      ) %>%
+      mutate(
+        !! as.name(col_adj) := 1 / .data$probx_p_vs_fp_ratio,
+        !! as.name(col_suffix) := 1 - .data[[col_adj]]
+      ) %>%
+      select(- starts_with("probx"))
+
+}
   return(df_out)
 }
 

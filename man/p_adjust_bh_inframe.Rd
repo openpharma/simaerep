@@ -4,7 +4,7 @@
 \alias{p_adjust_bh_inframe}
 \title{benjamini hochberg p value correction using table operations}
 \usage{
-p_adjust_bh_inframe(df_eval, col, suffix)
+p_adjust_bh_inframe(df_eval, cols, suffix)
 }
 \description{
 benjamini hochberg p value correction using table operations

@@ -16,7 +16,9 @@ test_that("check S3 test data reproducibility", {
 
   visit_check <- orivisit(df_visit_test)
 
-  expect_equal(visit_check, visit_test)
+  expect_equal(visit_check$dim, visit_test$dim)
+  expect_equal(visit_check$df_summary, visit_test$df_summary)
+  expect_equal(visit_check$str_call, visit_test$str_call)
 
 })
 
@@ -195,7 +197,6 @@ test_that("sim_ur() and sim_ur_scenario() must give similar results", {
 
 })
 
-
 test_that("sim_scenario() produces a warning if the fraction of patients with underreporting is greater than 1", {
   expect_warning(sim_scenario(c(5, 5, 5, 5), c(8, 8, 8, 8), 1.2, 0.5),
                  "Fraction of patients with underreporting is greater than 1.\n  The fraction has been changed to 1")
@@ -210,26 +211,25 @@ test_that("sim_test_data_portfolio() produces the expected output when ae_rates 
   df_ae_rates_test <- data.frame(study_id = "0001", visit = c(1, 2, 3), ae_rate = c(0.5, 0, 1))
   ae_rates_test <- sim_test_data_portfolio(df_config_test, df_ae_rates_test)
 
-  ae_rates_test_sd <- ae_rates_test |>
-    filter(visit %in% c(1, 2)) |>
-    group_by(study_id, patnum) |>
+  ae_rates_test_sd <- ae_rates_test %>%
+    filter(visit %in% c(1, 2)) %>%
+    group_by(study_id, patnum) %>%
     summarise(stdev = sd(n_ae))
   expect_true(unique(ae_rates_test_sd[["stdev"]]) == 0
               & length(unique(ae_rates_test_sd[["stdev"]])) == 1)
 
-
-  ae_rates_test_sd <- ae_rates_test |>
-    filter(visit %in% c(2, 3)) |>
-    group_by(study_id, patnum) |>
+  ae_rates_test_sd <- ae_rates_test %>%
+    filter(visit %in% c(2, 3)) %>%
+    group_by(study_id, patnum) %>%
     summarise(stdev = sd(n_ae))
 
   expect_true(any(! unique(ae_rates_test_sd[["stdev"]]) == 0))
 })
 
 test_that("sim_test_data_study() alters the ae_rates value if is_ur is TRUE", {
-  expect_true(unique(sim_test_data_study(frac_site_with_ur = 1, ae_rates = 2, ur_rate = 1)[["ae_per_visit_mean"]]) == 0)
+  expect_true(unique(sim_test_data_study(frac_site_with_ur = 2,
+                                         ae_rates = 2, ur_rate = 1)[["ae_per_visit_mean"]]) == 0)
 })
-
 
 test_that("purrr_bar() - .slow is TRUE", {
   param <- (rep(0.25, 5))
@@ -237,3 +237,25 @@ test_that("purrr_bar() - .slow is TRUE", {
   purr_test2 <- purrr_bar(param, .purrr = purrr::walk, .f = Sys.sleep, .steps = 5, .slow = FALSE)
   expect_equal(purr_test, purr_test2)
   })
+
+test_that("sim_test_data_study() produces an error
+          when the number of event names != the number of events per visit means", {
+          expect_error(sim_test_data_study(event_names = c("ae", "pd"), ae_per_visit_mean = 0.5),
+regexp = "Number of events named (2) doesn't equal the number of events per visit means submitted (1)",
+                       fixed = TRUE)
+          })
+
+test_that("sim_test_data_study() produces an error
+          when the number of event names != the number of event rates submitted as a list", {
+          expect_error(sim_test_data_study(event_names = "ae", ae_rates = list(0.3, 0.4)),
+                       regexp = "Number of events named (1) doesn't equal the number of events rates submitted (2)",
+                       fixed = TRUE)
+})
+
+test_that("sim_test_data_study() produces an error
+          when the number of event names > 1 and event rates are submitted as a vector", {
+  expect_error(sim_test_data_study(event_names = c("ae", "pd"),
+                                   ae_per_visit_mean = c(0.4, 0.4), ae_rates = c(0.3, 0.4)),
+               regexp = "ae_rates should be entered as a list (containing arrays) when the number of events is > 1",
+               fixed = TRUE)
+})

@@ -12,7 +12,8 @@ simaerep_inframe(
   check = TRUE,
   param_site_aggr = list(method = "med75_adj", min_pat_pool = 0.2),
   param_eval_sites = list(method = "BH"),
-  env = parent.frame()
+  env = parent.frame(),
+  event_names = c("ae")
 )
 }
 \arguments{
@@ -42,6 +43,8 @@ list(method = "BH").}
 
 \item{env}{Optional, provide environment of original visit data. Default:
 parent.frame().}
+
+\item{event_names}{vector, contains the event names, default = "ae"}
 }
 \description{
 simulate in dataframe
