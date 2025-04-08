@@ -896,7 +896,6 @@ plot_visit_med75 <- function(df_visit,
     filter(.data$study_id == study_id_str)
 
 
-
   df_pat <- pat_aggr(df_visit)
 
   df_site_min_med75 <- site_aggr(df_visit, method = "med75", event_names = event_names)
@@ -939,7 +938,7 @@ plot_visit_med75 <- function(df_visit,
 
   df_label <- df_plot %>%
     mutate(
-      n_pat_with_med75 = ifelse(is.na(.data$n_pat_with_med75), .data$n_pat, .data)
+      n_pat_with_med75 = ifelse(is.na(.data$n_pat_with_med75), .data$n_pat, .data$n_pat_with_med75)
     ) %>%
     select(c(
       "study_id",
