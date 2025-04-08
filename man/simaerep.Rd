@@ -16,7 +16,8 @@ simaerep(
   param_site_aggr = list(method = "med75_adj", min_pat_pool = 0.2),
   param_sim_sites = list(r = 1000, poisson_test = FALSE, prob_lower = TRUE),
   param_eval_sites = list(method = "BH"),
-  env = parent.frame()
+  env = parent.frame(),
+  event_names = c("ae")
 )
 }
 \arguments{
@@ -56,6 +57,8 @@ list(method = "BH").}
 
 \item{env}{Optional, provide environment of original visit data. Default:
 parent.frame().}
+
+\item{event_names}{vector, contains the event names, default = "ae"}
 }
 \value{
 A simaerep object.
@@ -79,6 +82,12 @@ df_visit$study_id <- "A"
 aerep <- simaerep(df_visit)
 aerep
 str(aerep)
+
+
+df_visit_events_test <- sim_test_data_events(n_pat = 100, n_sites = 5,
+                                 ae_per_visit_mean = c(0.4, 0.5), event_names = c("ae", "pd"))
+aerep_events <- simaerep(df_visit_events_test, inframe = TRUE,event_names = c("ae", "pd"))
+aerep_events
 \donttest{
   # In-frame table operations
   simaerep(df_visit, inframe = TRUE, visit_med75 = FALSE, under_only = FALSE)$df_eval

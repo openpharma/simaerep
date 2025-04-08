@@ -11,7 +11,8 @@
   what = "ur",
   n_sites = 16,
   df_visit = NULL,
-  env = parent.frame()
+  env = parent.frame(),
+  plot_event = "ae"
 )
 }
 \arguments{
@@ -32,6 +33,8 @@ from parent environment, Default: NULL}
 
 \item{env}{optional, pass environment from which to retrieve original visit
 data, Default: parent.frame()}
+
+\item{plot_event}{vector containing the events that should be plotted, default = "ae"}
 }
 \value{
 ggplot object

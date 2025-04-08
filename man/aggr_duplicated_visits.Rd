@@ -4,11 +4,13 @@
 \alias{aggr_duplicated_visits}
 \title{Aggregate duplicated visits.}
 \usage{
-aggr_duplicated_visits(df_visit)
+aggr_duplicated_visits(df_visit, event_names = "ae")
 }
 \arguments{
 \item{df_visit}{dataframe with columns: study_id, site_number, patnum, visit,
 n_ae}
+
+\item{event_names}{vector, contains the event names, default = "ae"}
 }
 \value{
 df_visit corrected

@@ -14,8 +14,8 @@
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="apple-touch-icon-60x60.png">
 <script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.4.2/css/all.min.css" rel="stylesheet">
-<link href="deps/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet">
+<script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Find Clinical Trial Sites Under-Reporting Adverse Events">
 <meta name="description" content="Monitoring of Adverse Event (AE) reporting in clinical trials is important for patient safety. Sites that are under-reporting AEs can be detected using Bootstrap-based simulations that simulate overall AE reporting. Based on the simulation an AE under-reporting probability is assigned to each site in a given trial (Koneswarakantha 2021 &lt;doi:10.1007/s40264-020-01011-5&gt;).">
 <meta property="og:description" content="Monitoring of Adverse Event (AE) reporting in clinical trials is important for patient safety. Sites that are under-reporting AEs can be detected using Bootstrap-based simulations that simulate overall AE reporting. Based on the simulation an AE under-reporting probability is assigned to each site in a given trial (Koneswarakantha 2021 &lt;doi:10.1007/s40264-020-01011-5&gt;).">
@@ -36,7 +36,7 @@
 
     <a class="navbar-brand me-2" href="index.html">simaerep</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -116,9 +116,11 @@
 <p>Koneswarakantha, B., Barmaz, Y., Ménard, T. et al. Follow-up on the Use of Advanced Analytics for Clinical Quality Assurance: Bootstrap Resampling to Enhance Detection of Adverse Event Under-Reporting. Drug Saf (2020). <a href="https://doi.org/10.1007/s40264-020-01011-5" class="external-link uri">https://doi.org/10.1007/s40264-020-01011-5</a></p>
 </div>
 <div class="section level2">
-<h2 id="tutorials">Tutorials<a class="anchor" aria-label="anchor" href="#tutorials"></a>
+<h2 id="ressources">Ressources<a class="anchor" aria-label="anchor" href="#ressources"></a>
 </h2>
 <ul>
+<li><a href="https://phuse.s3.eu-central-1.amazonaws.com/Archive/2024/Connect/EU/Strasbourg/PRE_AR04.pdf" class="external-link">Slides PHUSE conference</a></li>
+<li><a href="https://phuse.s3.eu-central-1.amazonaws.com/Archive/2024/Connect/EU/Strasbourg/PAP_AR04.pdf" class="external-link">Article PHUSE conference</a></li>
 <li><a href="https://vimeo.com/776275791?embedded=true&amp;source=vimeo_logo&amp;owner=189858368" class="external-link">video presentation 15 min</a></li>
 <li><a href="https://openpharma.github.io/simaerep/">Documentation with Vignettes</a></li>
 </ul>
@@ -127,6 +129,11 @@
 <h2 id="validation-report">Validation Report<a class="anchor" aria-label="anchor" href="#validation-report"></a>
 </h2>
 <p>Download as pdf in the <a href="https://github.com/openpharma/simaerep/releases" class="external-link">release section</a> generated using <a href="https://github.com/insightsengineering/thevalidatoR/" class="external-link">thevalidatoR</a>.</p>
+</div>
+<div class="section level2">
+<h2 id="gsmsimaerep">{gsm.simaerep}<a class="anchor" aria-label="anchor" href="#gsmsimaerep"></a>
+</h2>
+<p>We have created an extension <a href="https://github.com/IMPALA-Consortium/gsm.simaerep" class="external-link">gsm.simaerep</a> so that <code>simaerep</code> event reporting probabilities can be added to good statistical monitoring <a href="https://github.com/Gilead-BioStats/gsm.core" class="external-link">gsm.core</a> reports.</p>
 </div>
 <div class="section level2">
 <h2 id="application">Application<a class="anchor" aria-label="anchor" href="#application"></a>
@@ -400,7 +407,6 @@
   </main><aside class="col-md-3"><div class="links">
 <h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
-<li><a href="https://cloud.r-project.org/package=simaerep" class="external-link">View on CRAN</a></li>
 <li><a href="https://github.com/openpharma/simaerep/" class="external-link">Browse source code</a></li>
 </ul>
 </div>
@@ -449,7 +455,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
     </footer>

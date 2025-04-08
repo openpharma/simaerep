@@ -4,7 +4,13 @@
 \alias{site_aggr}
 \title{Aggregate from visit to site level.}
 \usage{
-site_aggr(df_visit, method = "med75_adj", min_pat_pool = 0.2, check = TRUE)
+site_aggr(
+  df_visit,
+  method = "med75_adj",
+  min_pat_pool = 0.2,
+  check = TRUE,
+  event_names = c("ae")
+)
 }
 \arguments{
 \item{df_visit}{dataframe with columns: study_id, site_number, patnum, visit,
@@ -19,6 +25,8 @@ sampling. Determines maximum visit_med75 value see Details. Default: 0.2}
 \item{check, }{logical, perform data check and attempt repair with
 \link[=check_df_visit]{check_df_visit()}, computationally expensive on large data
 sets. Default: TRUE}
+
+\item{event_names}{vector, contains the event names, default = "ae"}
 }
 \value{
 dataframe with the following columns: \describe{

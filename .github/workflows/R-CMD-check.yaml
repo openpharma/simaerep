@@ -9,7 +9,6 @@ on:
     branches:
       - master
       - dev
-
 name: R-CMD-check
 
 jobs:
@@ -20,12 +19,11 @@ jobs:
       - uses: r-lib/actions/setup-r@v2
       - name: Install dependencies
         run: |
-          install.packages(c("remotes", "rcmdcheck", "downlit"))
+          install.packages(c("remotes", "rcmdcheck", "downlit", "cyclocomp"))
           remotes::install_deps(dependencies = TRUE, upgrade = "never")
           devtools::install()
         shell: Rscript {0}
       - name: Check
         run: |
           rcmdcheck::rcmdcheck(args = "--no-manual", error_on = "note")
-          simaerep:::lint_package()
         shell: Rscript {0}

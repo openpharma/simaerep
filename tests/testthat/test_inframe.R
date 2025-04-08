@@ -132,6 +132,7 @@ test_that("simaerep_inframe must have identical counts and flags with duckdb bac
 
   cols_identical <- c("study_id", "site_number", "events", "visits", "events_per_visit_site")
 
+
   expect_equal(
     df_eval %>%
       select(all_of(cols_identical)),

@@ -35,3 +35,36 @@ test_that("is_orivisit returns TRUE", {
   expect_true(is_orivisit(visit_test))
   expect_false(is_orivisit(LETTERS))
 })
+
+
+test_that("as.data.frame.orivisit() stops when df_summary doesn't equal x$df_summary", {
+  x <- orivisit(df_visit_test)
+  x$df_summary$n_sites <- 10000
+  message <- paste(
+    "Could not find original visit data in parent environment.",
+    "Please pass original visit data to function call."
+  )
+  expect_error(as.data.frame.orivisit(x), regex = message)
+  #expect_message did not appear to work, so used expect_error instead
+  })
+
+
+test_that("as.data.frame.orivisit() stops when df dimensions are not equal to x dimensions", {
+  x <- orivisit(df_visit_test)
+  x$dim <- as.integer(c(300, 300))
+  message <- paste(
+    "Could not find original visit data in parent environment.",
+    "Please pass original visit data to function call."
+  )
+  expect_error(as.data.frame.orivisit(x), regex = message)
+})
+
+test_that("as.data.frame.orivisit() stops when str_call is not in the parent environment", {
+  x <- orivisit(df_visit_test)
+  x$str_call <- "df_visit_test2"
+  message <- paste(
+    "Could not find original visit data in parent environment.",
+    "Please pass original visit data to function call."
+  )
+  expect_error(as.data.frame.orivisit(x), regex = message)
+})

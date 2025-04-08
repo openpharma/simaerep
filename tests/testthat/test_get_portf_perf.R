@@ -43,7 +43,7 @@ test_that("get_portf_perf() - check column names of returned data frame", {
 test_that("get_portf_perf() must throw warning when NA values encountered", {
 
   df_scen_na <- df_scen_test %>%
-    bind_rows(
+    dplyr::bind_rows(
       df_scen_test %>%
         mutate(prob_low_prob_ur = NA,
                site_number = paste("A", site_number))

@@ -72,8 +72,12 @@ of Advanced Analytics for Clinical Quality Assurance: Bootstrap
 Resampling to Enhance Detection of Adverse Event Under-Reporting. Drug
 Saf (2020). <https://doi.org/10.1007/s40264-020-01011-5>
 
-## Tutorials
+## Ressources
 
+- [Slides PHUSE
+  conference](https://phuse.s3.eu-central-1.amazonaws.com/Archive/2024/Connect/EU/Strasbourg/PRE_AR04.pdf)
+- [Article PHUSE
+  conference](https://phuse.s3.eu-central-1.amazonaws.com/Archive/2024/Connect/EU/Strasbourg/PAP_AR04.pdf)
 - [video presentation 15
   min](https://vimeo.com/776275791?embedded=true&source=vimeo_logo&owner=189858368)
 - [Documentation with Vignettes](https://openpharma.github.io/simaerep/)
@@ -84,6 +88,14 @@ Download as pdf in the [release
 section](https://github.com/openpharma/simaerep/releases) generated
 using
 [thevalidatoR](https://github.com/insightsengineering/thevalidatoR/).
+
+## {gsm.simaerep}
+
+We have created an extension
+[gsm.simaerep](https://github.com/IMPALA-Consortium/gsm.simaerep) so
+that `simaerep` event reporting probabilities can be added to good
+statistical monitoring
+[gsm.core](https://github.com/Gilead-BioStats/gsm.core) reports.
 
 ## Application
 

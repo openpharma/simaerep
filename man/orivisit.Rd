@@ -4,7 +4,7 @@
 \alias{orivisit}
 \title{create orivisit object}
 \usage{
-orivisit(df_visit, call = NULL, env = parent.frame())
+orivisit(df_visit, call = NULL, env = parent.frame(), event_names = c("ae"))
 }
 \arguments{
 \item{df_visit}{dataframe with original visit data}
@@ -12,6 +12,8 @@ orivisit(df_visit, call = NULL, env = parent.frame())
 \item{call}{optional, provide call, Default: NULL}
 
 \item{env}{optional, provide environment of original visit data, Default: parent.frame()}
+
+\item{event_names}{vector, contains the event names, default = "ae"}
 }
 \value{
 orivisit object

@@ -26,7 +26,7 @@ suppressPackageStartupMessages(library(simaerep))
 
 # Introduction
 
-With the latest `0.6.0` release we have added an alternative version of the {simaerep} algorithm that was coded using solely `dbplyr` compatible table operations.
+With the `0.6.0` release we have added an alternative version of the {simaerep} algorithm that was coded using solely `dbplyr` compatible table operations.
 
 - expand the patients for each site `r` times
 - join each patient with a random eligible patient from same study
@@ -109,6 +109,38 @@ aerep_inframe_visit_med75 <- simaerep(
 )
 
 plot(aerep_inframe_visit_med75)
+```
+
+# Calculate Reporting Probabilities for Multiple Event Types
+
+We can also calculate the reporting probabilities for multiple event types. This is done by passing a list of event types to the `event_names` parameter.
+
+```{r}
+
+df_visit <- sim_test_data_study(
+  event_names = c("ae", "pd"),
+  ae_per_visit_mean = c(0.5, 0.4)
+)
+
+df_visit$study_id <- "A"
+
+df_visit %>%
+  head(5) %>%
+  knitr::kable()
+
+eventrep <- simaerep(df_visit, event_names = c("ae", "pd"), inframe = TRUE, visit_med75 = FALSE)
+
+eventrep$df_eval %>%
+  select(site_number, starts_with("ae_")) %>%
+  head(5) %>%
+  knitr::kable()
+
+
+eventrep$df_eval %>%
+  select(site_number, starts_with("pd_")) %>%
+  head(5) %>%
+  knitr::kable()
+
 ```
 
 

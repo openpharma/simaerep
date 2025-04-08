@@ -1,3 +1,8 @@
+# simaerep 0.7.0
+- event_names argument, allow to calculate multiple reporting probabilities at once https://github.com/openpharma/simaerep/issues/73
+- fix https://github.com/openpharma/simaerep/issues/82
+- increase unit test coverage
+
 # simaerep 0.6.1
 - set dplyr requirement to v1.1.0
 - fix validation report action
