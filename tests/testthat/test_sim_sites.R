@@ -41,6 +41,15 @@ test_that("poiss_test_site_ae_vs_study_ae() - no study AEs, single site scenario
   expect_true(pval == 1)
 })
 
+test_that("poiss_test_site_ae_vs_study_ae() - invalid AEs, expect pval == 1", {
+
+  pval <- poiss_test_site_ae_vs_study_ae(site_ae = c(Inf),
+                                         study_ae = c(Inf),
+                                         visit_med75 = 10)
+
+  expect_true(pval == 1)
+})
+
 
 test_that(
   paste("prob_lower_site_ae_vs_study_ae() - low number of AEs at site compared",
@@ -120,4 +129,42 @@ test_that("poiss_test_site_ae_vs_study_ae() returns NA when mean_ae_site is NA",
                                                    study_ae = c(NA),
                                                    visit_med75 = 10
   )))
+})
+
+
+test_that("warning when no patients with med75 found in study pool", {
+
+  set.seed(1)
+
+  df_visit1 <- sim_test_data_study(
+    n_pat = 100,
+    n_sites = 5,
+    frac_site_with_ur = 0.4,
+    ur_rate = 0.6,
+    max_visit_mean = 10,
+    max_visit_sd = 1
+  )
+
+  df_visit2 <- sim_test_data_study(
+    n_pat = 100,
+    n_sites = 1,
+    frac_site_with_ur = 0,
+    ur_rate = 0.6,
+    max_visit_mean = 30,
+    max_visit_sd = 1
+    ) %>%
+    mutate(
+      patnum = paste(patnum, "A"),
+    )
+
+  df_visit <- dplyr::bind_rows(df_visit1, df_visit2)
+
+  df_visit$study_id <- "A"
+
+  df_site <- site_aggr(df_visit)
+
+  df_prep <- prep_for_sim(df_site, df_visit)
+
+  expect_warning(sim_after_prep(df_prep), "No adequate patients found")
+
 })
