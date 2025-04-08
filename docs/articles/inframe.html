@@ -14,8 +14,8 @@
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.4.2/css/all.min.css" rel="stylesheet">
-<link href="../deps/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Inframe Simulation Using Table Operations">
 <!-- Global site tag (gtag.js) - Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=UA-123997499-2"></script><script>
   window.dataLayer = window.dataLayer || [];
@@ -33,7 +33,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">simaerep</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -98,9 +98,9 @@
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
-<p>With the latest <code>0.6.0</code> release we have added an
-alternative version of the {simaerep} algorithm that was coded using
-solely <code>dbplyr</code> compatible table operations.</p>
+<p>With the <code>0.6.0</code> release we have added an alternative
+version of the {simaerep} algorithm that was coded using solely
+<code>dbplyr</code> compatible table operations.</p>
 <ul>
 <li>expand the patients for each site <code>r</code> times</li>
 <li>join each patient with a random eligible patient from same
@@ -176,21 +176,21 @@ patient has been resampled according to its maximum visit.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">aerep_inframe</span><span class="op">$</span><span class="va">df_eval</span></span></code></pre></div>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 100 × 10</span></span></span>
-<span><span class="co">##    study_id site_number events_per_visit_site events visits n_pat prob_low</span></span>
-<span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> A        S0001                       0.279     50    179    10    0    </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> A        S0002                       0.281     59    210    10    0    </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> A        S0003                       0.291     55    189    10    0    </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> A        S0004                       0.312     59    189    10    0    </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> A        S0005                       0.297     58    195    10    0    </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> A        S0006                       0.493    100    203    10    0.569</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> A        S0007                       0.408     89    218    10    0.044</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> A        S0008                       0.559     95    170    10    0.922</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> A        S0009                       0.518    101    195    10    0.761</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">10</span> A        S0010                       0.470     87    185    10    0.385</span></span>
+<span><span class="co">##    study_id site_number events events_per_visit_site visits n_pat</span></span>
+<span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>                 <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> A        S0001           50                 0.279    179    10</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> A        S0002           59                 0.281    210    10</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> A        S0003           55                 0.291    189    10</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> A        S0004           59                 0.312    189    10</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> A        S0005           58                 0.297    195    10</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> A        S0006          100                 0.493    203    10</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> A        S0007           89                 0.408    218    10</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> A        S0008           95                 0.559    170    10</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> A        S0009          101                 0.518    195    10</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">10</span> A        S0010           87                 0.470    185    10</span></span>
 <span><span class="co">## <span style="color: #949494;"># ℹ 90 more rows</span></span></span>
-<span><span class="co">## <span style="color: #949494;"># ℹ 3 more variables: events_per_visit_study &lt;dbl&gt;, prob_low_adj &lt;dbl&gt;,</span></span></span>
-<span><span class="co">## <span style="color: #949494;">#   prob_low_prob_ur &lt;dbl&gt;</span></span></span></code></pre>
+<span><span class="co">## <span style="color: #949494;"># ℹ 4 more variables: events_per_visit_study &lt;dbl&gt;, prob_low &lt;dbl&gt;,</span></span></span>
+<span><span class="co">## <span style="color: #949494;">#   prob_low_adj &lt;dbl&gt;, prob_low_prob_ur &lt;dbl&gt;</span></span></span></code></pre>
 <p>We can also force the inframe method to use the visit_med75 this will
 pre-filter <code>df_visit</code>, which adds an extra step and decreases
 performance.</p>
@@ -207,6 +207,265 @@ performance.</p>
 <p><img src="inframe_files/figure-html/unnamed-chunk-6-1.png" width="700"></p>
 </div>
 <div class="section level2">
+<h2 id="calculate-reporting-probabilities-for-multiple-event-types">Calculate Reporting Probabilities for Multiple Event Types<a class="anchor" aria-label="anchor" href="#calculate-reporting-probabilities-for-multiple-event-types"></a>
+</h2>
+<p>We can also calculate the reporting probabilities for multiple event
+types. This is done by passing a list of event types to the
+<code>event_names</code> parameter.</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">df_visit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sim_test_data_study.html">sim_test_data_study</a></span><span class="op">(</span></span>
+<span>  event_names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ae"</span>, <span class="st">"pd"</span><span class="op">)</span>,</span>
+<span>  ae_per_visit_mean <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.5</span>, <span class="fl">0.4</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">df_visit</span><span class="op">$</span><span class="va">study_id</span> <span class="op">&lt;-</span> <span class="st">"A"</span></span>
+<span></span>
+<span><span class="va">df_visit</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<table class="table">
+<colgroup>
+<col width="6%">
+<col width="10%">
+<col width="5%">
+<col width="13%">
+<col width="11%">
+<col width="15%">
+<col width="15%">
+<col width="5%">
+<col width="4%">
+<col width="4%">
+<col width="7%">
+</colgroup>
+<thead><tr class="header">
+<th align="left">patnum</th>
+<th align="left">site_number</th>
+<th align="left">is_ur</th>
+<th align="right">max_visit_mean</th>
+<th align="right">max_visit_sd</th>
+<th align="right">ae_per_visit_mean</th>
+<th align="right">pd_per_visit_mean</th>
+<th align="right">visit</th>
+<th align="right">n_ae</th>
+<th align="right">n_pd</th>
+<th align="left">study_id</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">P000001</td>
+<td align="left">S0001</td>
+<td align="left">FALSE</td>
+<td align="right">20</td>
+<td align="right">4</td>
+<td align="right">0.5</td>
+<td align="right">0.4</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="left">A</td>
+</tr>
+<tr class="even">
+<td align="left">P000001</td>
+<td align="left">S0001</td>
+<td align="left">FALSE</td>
+<td align="right">20</td>
+<td align="right">4</td>
+<td align="right">0.5</td>
+<td align="right">0.4</td>
+<td align="right">2</td>
+<td align="right">2</td>
+<td align="right">1</td>
+<td align="left">A</td>
+</tr>
+<tr class="odd">
+<td align="left">P000001</td>
+<td align="left">S0001</td>
+<td align="left">FALSE</td>
+<td align="right">20</td>
+<td align="right">4</td>
+<td align="right">0.5</td>
+<td align="right">0.4</td>
+<td align="right">3</td>
+<td align="right">2</td>
+<td align="right">1</td>
+<td align="left">A</td>
+</tr>
+<tr class="even">
+<td align="left">P000001</td>
+<td align="left">S0001</td>
+<td align="left">FALSE</td>
+<td align="right">20</td>
+<td align="right">4</td>
+<td align="right">0.5</td>
+<td align="right">0.4</td>
+<td align="right">4</td>
+<td align="right">2</td>
+<td align="right">1</td>
+<td align="left">A</td>
+</tr>
+<tr class="odd">
+<td align="left">P000001</td>
+<td align="left">S0001</td>
+<td align="left">FALSE</td>
+<td align="right">20</td>
+<td align="right">4</td>
+<td align="right">0.5</td>
+<td align="right">0.4</td>
+<td align="right">5</td>
+<td align="right">2</td>
+<td align="right">1</td>
+<td align="left">A</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">eventrep</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/simaerep.html">simaerep</a></span><span class="op">(</span><span class="va">df_visit</span>, event_names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ae"</span>, <span class="st">"pd"</span><span class="op">)</span>, inframe <span class="op">=</span> <span class="cn">TRUE</span>, visit_med75 <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">eventrep</span><span class="op">$</span><span class="va">df_eval</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">site_number</span>, <span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">starts_with</a></span><span class="op">(</span><span class="st">"ae_"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<table class="table">
+<colgroup>
+<col width="11%">
+<col width="9%">
+<col width="16%">
+<col width="17%">
+<col width="11%">
+<col width="14%">
+<col width="18%">
+</colgroup>
+<thead><tr class="header">
+<th align="left">site_number</th>
+<th align="right">ae_events</th>
+<th align="right">ae_per_visit_site</th>
+<th align="right">ae_per_visit_study</th>
+<th align="right">ae_prob_low</th>
+<th align="right">ae_prob_low_adj</th>
+<th align="right">ae_prob_low_prob_ur</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">S0001</td>
+<td align="right">456</td>
+<td align="right">0.4835631</td>
+<td align="right">0.4999226</td>
+<td align="right">0.249</td>
+<td align="right">0.7323077</td>
+<td align="right">0.2676923</td>
+</tr>
+<tr class="even">
+<td align="left">S0002</td>
+<td align="right">511</td>
+<td align="right">0.5350785</td>
+<td align="right">0.5112042</td>
+<td align="right">0.842</td>
+<td align="right">0.9273684</td>
+<td align="right">0.0726316</td>
+</tr>
+<tr class="odd">
+<td align="left">S0003</td>
+<td align="right">458</td>
+<td align="right">0.4751037</td>
+<td align="right">0.4991961</td>
+<td align="right">0.147</td>
+<td align="right">0.7323077</td>
+<td align="right">0.2676923</td>
+</tr>
+<tr class="even">
+<td align="left">S0004</td>
+<td align="right">480</td>
+<td align="right">0.4994797</td>
+<td align="right">0.5010447</td>
+<td align="right">0.476</td>
+<td align="right">0.7323077</td>
+<td align="right">0.2676923</td>
+</tr>
+<tr class="odd">
+<td align="left">S0005</td>
+<td align="right">489</td>
+<td align="right">0.4817734</td>
+<td align="right">0.4995084</td>
+<td align="right">0.233</td>
+<td align="right">0.7323077</td>
+<td align="right">0.2676923</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">eventrep</span><span class="op">$</span><span class="va">df_eval</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">site_number</span>, <span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">starts_with</a></span><span class="op">(</span><span class="st">"pd_"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<table class="table">
+<colgroup>
+<col width="11%">
+<col width="9%">
+<col width="16%">
+<col width="17%">
+<col width="11%">
+<col width="14%">
+<col width="18%">
+</colgroup>
+<thead><tr class="header">
+<th align="left">site_number</th>
+<th align="right">pd_events</th>
+<th align="right">pd_per_visit_site</th>
+<th align="right">pd_per_visit_study</th>
+<th align="right">pd_prob_low</th>
+<th align="right">pd_prob_low_adj</th>
+<th align="right">pd_prob_low_prob_ur</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">S0001</td>
+<td align="right">334</td>
+<td align="right">0.3541888</td>
+<td align="right">0.3856405</td>
+<td align="right">0.050</td>
+<td align="right">0.4600000</td>
+<td align="right">0.5400000</td>
+</tr>
+<tr class="even">
+<td align="left">S0002</td>
+<td align="right">346</td>
+<td align="right">0.3623037</td>
+<td align="right">0.3824126</td>
+<td align="right">0.155</td>
+<td align="right">0.6200000</td>
+<td align="right">0.3800000</td>
+</tr>
+<tr class="odd">
+<td align="left">S0003</td>
+<td align="right">386</td>
+<td align="right">0.4004149</td>
+<td align="right">0.3879990</td>
+<td align="right">0.746</td>
+<td align="right">0.9666667</td>
+<td align="right">0.0333333</td>
+</tr>
+<tr class="even">
+<td align="left">S0004</td>
+<td align="right">384</td>
+<td align="right">0.3995838</td>
+<td align="right">0.3885390</td>
+<td align="right">0.727</td>
+<td align="right">0.9666667</td>
+<td align="right">0.0333333</td>
+</tr>
+<tr class="odd">
+<td align="left">S0005</td>
+<td align="right">382</td>
+<td align="right">0.3763547</td>
+<td align="right">0.3882680</td>
+<td align="right">0.279</td>
+<td align="right">0.6975000</td>
+<td align="right">0.3025000</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section level2">
 <h2 id="db">DB<a class="anchor" aria-label="anchor" href="#db"></a>
 </h2>
 <p>We can demonstrate the database-backend compatibility by using a
@@ -215,7 +474,7 @@ the number of replications we need to create a new table in our back-end
 that has one column with as many rows as the desired replications.</p>
 <p>A lazy reference to this table can then be passed to the
 <code>r</code> parameter.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">con</span> <span class="op">&lt;-</span> <span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbConnect.html" class="external-link">dbConnect</a></span><span class="op">(</span><span class="fu">duckdb</span><span class="fu">::</span><span class="fu"><a href="https://r.duckdb.org/reference/duckdb.html" class="external-link">duckdb</a></span><span class="op">(</span><span class="op">)</span>, dbdir <span class="op">=</span> <span class="st">":memory:"</span><span class="op">)</span></span>
 <span><span class="va">df_r</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>rep <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1000</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
@@ -229,29 +488,29 @@ that has one column with as many rows as the desired replications.</p>
 <span><span class="va">aerep</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/simaerep.html">simaerep</a></span><span class="op">(</span><span class="va">tbl_visit</span>, r <span class="op">=</span> <span class="va">tbl_r</span>, visit_med75 <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 <p>When inspecting <code>df_eval</code> we see that it is still a lazy
 table object.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">aerep</span><span class="op">$</span><span class="va">df_eval</span></span></code></pre></div>
 <pre><code><span><span class="co">## <span style="color: #949494;"># Source:     SQL [?? x 10]</span></span></span>
-<span><span class="co">## <span style="color: #949494;"># Database:   DuckDB v1.0.0 [koneswab@Darwin 23.6.0:R 4.4.1/:memory:]</span></span></span>
+<span><span class="co">## <span style="color: #949494;"># Database:   DuckDB v1.2.1 [koneswab@Darwin 23.6.0:R 4.4.1/:memory:]</span></span></span>
 <span><span class="co">## <span style="color: #949494;"># Ordered by: study_id, site_number</span></span></span>
-<span><span class="co">##    study_id site_number events_per_visit_site events visits n_pat prob_low</span></span>
-<span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> A        S0005                       0.297     58    195    10    0    </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> A        S0076                       0.399     75    188    10    0.05 </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> A        S0001                       0.279     50    179    10    0    </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> A        S0003                       0.291     55    189    10    0    </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> A        S0004                       0.312     59    189    10    0    </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> A        S0092                       0.507    113    223    10    0.658</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> A        S0090                       0.516     95    184    10    0.732</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> A        S0077                       0.520     90    173    10    0.732</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> A        S0017                       0.521     98    188    10    0.745</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">10</span> A        S0097                       0.523    103    197    10    0.761</span></span>
+<span><span class="co">##    study_id site_number events events_per_visit_site visits n_pat</span></span>
+<span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>                 <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> A        S0007          492                 0.489   <span style="text-decoration: underline;">1</span>006    50</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> A        S0001          456                 0.484    943    50</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> A        S0003          458                 0.475    964    50</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> A        S0016          467                 0.485    962    50</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> A        S0010          480                 0.498    964    50</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> A        S0004          480                 0.499    961    50</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> A        S0020          503                 0.527    955    50</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> A        S0012          457                 0.477    958    50</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> A        S0005          489                 0.482   <span style="text-decoration: underline;">1</span>015    50</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">10</span> A        S0017          497                 0.504    987    50</span></span>
 <span><span class="co">## <span style="color: #949494;"># ℹ more rows</span></span></span>
-<span><span class="co">## <span style="color: #949494;"># ℹ 3 more variables: events_per_visit_study &lt;dbl&gt;, prob_low_adj &lt;dbl&gt;,</span></span></span>
-<span><span class="co">## <span style="color: #949494;">#   prob_low_prob_ur &lt;dbl&gt;</span></span></span></code></pre>
+<span><span class="co">## <span style="color: #949494;"># ℹ 4 more variables: events_per_visit_study &lt;dbl&gt;, prob_low &lt;dbl&gt;,</span></span></span>
+<span><span class="co">## <span style="color: #949494;">#   prob_low_adj &lt;dbl&gt;, prob_low_prob_ur &lt;dbl&gt;</span></span></span></code></pre>
 <p>We can convert it to sql code. The <code>cte</code> option makes the
 sql code more readable.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sql_eval</span> <span class="op">&lt;-</span> <span class="fu">dbplyr</span><span class="fu">::</span><span class="fu"><a href="https://dbplyr.tidyverse.org/reference/sql_build.html" class="external-link">sql_render</a></span><span class="op">(</span><span class="va">aerep</span><span class="op">$</span><span class="va">df_eval</span>, sql_options <span class="op">=</span> <span class="fu">dbplyr</span><span class="fu">::</span><span class="fu"><a href="https://dbplyr.tidyverse.org/reference/sql_options.html" class="external-link">sql_options</a></span><span class="op">(</span>cte <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu">stringr</span><span class="fu">::</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_trunc.html" class="external-link">str_trunc</a></span><span class="op">(</span><span class="va">sql_eval</span>, <span class="fl">500</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## &lt;SQL&gt; WITH q01 AS (</span></span>
@@ -262,8 +521,10 @@ sql code more readable.</p>
 <span><span class="co">##     max_visit_mean,</span></span>
 <span><span class="co">##     max_visit_sd,</span></span>
 <span><span class="co">##     ae_per_visit_mean,</span></span>
+<span><span class="co">##     pd_per_visit_mean,</span></span>
 <span><span class="co">##     CAST(visit AS NUMERIC) AS visit,</span></span>
 <span><span class="co">##     CAST(n_ae AS NUMERIC) AS n_ae,</span></span>
+<span><span class="co">##     n_pd,</span></span>
 <span><span class="co">##     study_id</span></span>
 <span><span class="co">##   FROM visit</span></span>
 <span><span class="co">## ),</span></span>
@@ -277,55 +538,53 @@ sql code more readable.</p>
 <span><span class="co">##   FROM r</span></span>
 <span><span class="co">## ),</span></span>
 <span><span class="co">## q04 AS (</span></span>
-<span><span class="co">##   SELECT study_id, site_number, patnum, MAX(visit) AS max_visit_per_pat</span></span>
-<span><span class="co">##   FROM q01</span></span>
-<span><span class="co">##   GROUP BY study_i...</span></span></code></pre>
+<span><span class="co">##   SELECT study_id, site_number, patnum, MAX(visit) AS max_visit_per_...</span></span></code></pre>
 <p>We can take that code and wrap it in a <code>CREATE TABLE</code>
 statement</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sql_create</span> <span class="op">&lt;-</span> <span class="fu">glue</span><span class="fu">::</span><span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html" class="external-link">glue</a></span><span class="op">(</span><span class="st">"CREATE TABLE eval AS ({sql_eval})"</span><span class="op">)</span></span>
 <span><span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbExecute.html" class="external-link">dbExecute</a></span><span class="op">(</span><span class="va">con</span>, <span class="va">sql_create</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## [1] 100</span></span></code></pre>
+<pre><code><span><span class="co">## [1] 20</span></span></code></pre>
 <p>Retrieve the new table from the database.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tbl_eval</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/tbl.html" class="external-link">tbl</a></span><span class="op">(</span><span class="va">con</span>, <span class="st">"eval"</span><span class="op">)</span></span>
 <span><span class="va">tbl_eval</span></span></code></pre></div>
 <pre><code><span><span class="co">## <span style="color: #949494;"># Source:   table&lt;eval&gt; [?? x 10]</span></span></span>
-<span><span class="co">## <span style="color: #949494;"># Database: DuckDB v1.0.0 [koneswab@Darwin 23.6.0:R 4.4.1/:memory:]</span></span></span>
-<span><span class="co">##    study_id site_number events_per_visit_site events visits n_pat prob_low</span></span>
-<span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> A        S0010                       0.470     87    185    10    0.385</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> A        S0014                       0.505    103    204    10    0.654</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> A        S0023                       0.531    104    196    10    0.804</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> A        S0078                       0.543    107    197    10    0.859</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> A        S0029                       0.563    120    213    10    0.94 </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> A        S0061                       0.580    105    181    10    0.956</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> A        S0052                       0.431     81    188    10    0.132</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> A        S0055                       0.430     83    193    10    0.132</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> A        S0034                       0.432     79    183    10    0.149</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">10</span> A        S0071                       0.483     99    205    10    0.51 </span></span>
+<span><span class="co">## <span style="color: #949494;"># Database: DuckDB v1.2.1 [koneswab@Darwin 23.6.0:R 4.4.1/:memory:]</span></span></span>
+<span><span class="co">##    study_id site_number events events_per_visit_site visits n_pat</span></span>
+<span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>                 <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> A        S0006          516                 0.493   <span style="text-decoration: underline;">1</span>047    50</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> A        S0017          497                 0.504    987    50</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> A        S0016          467                 0.485    962    50</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> A        S0009          508                 0.542    937    50</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> A        S0010          480                 0.498    964    50</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> A        S0003          458                 0.475    964    50</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> A        S0014          493                 0.491   <span style="text-decoration: underline;">1</span>005    50</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> A        S0015          514                 0.511   <span style="text-decoration: underline;">1</span>006    50</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> A        S0011          443                 0.458    968    50</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">10</span> A        S0007          492                 0.489   <span style="text-decoration: underline;">1</span>006    50</span></span>
 <span><span class="co">## <span style="color: #949494;"># ℹ more rows</span></span></span>
-<span><span class="co">## <span style="color: #949494;"># ℹ 3 more variables: events_per_visit_study &lt;dbl&gt;, prob_low_adj &lt;dbl&gt;,</span></span></span>
-<span><span class="co">## <span style="color: #949494;">#   prob_low_prob_ur &lt;dbl&gt;</span></span></span></code></pre>
+<span><span class="co">## <span style="color: #949494;"># ℹ 4 more variables: events_per_visit_study &lt;dbl&gt;, prob_low &lt;dbl&gt;,</span></span></span>
+<span><span class="co">## <span style="color: #949494;">#   prob_low_adj &lt;dbl&gt;, prob_low_prob_ur &lt;dbl&gt;</span></span></span></code></pre>
 <p>We plot the results from the {simaerep} object.</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">aerep</span><span class="op">)</span></span></code></pre></div>
-<p><img src="inframe_files/figure-html/unnamed-chunk-12-1.png" width="700"></p>
+<p><img src="inframe_files/figure-html/unnamed-chunk-13-1.png" width="700"></p>
 <p>Or more efficiently by using <code><a href="../reference/plot_study.html">plot_study()</a></code> when we have
 already written the <code>simaerep</code> results into the database.
 Here we avoid that the results are being recalculated just for the sake
 of creating a plot. However this requires that we save
 <code>df_site</code> to the database as well.</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sql_site</span> <span class="op">&lt;-</span> <span class="fu">dbplyr</span><span class="fu">::</span><span class="fu"><a href="https://dbplyr.tidyverse.org/reference/sql_build.html" class="external-link">sql_render</a></span><span class="op">(</span><span class="va">aerep</span><span class="op">$</span><span class="va">df_site</span><span class="op">)</span></span>
 <span><span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbExecute.html" class="external-link">dbExecute</a></span><span class="op">(</span><span class="va">con</span>, <span class="fu">glue</span><span class="fu">::</span><span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html" class="external-link">glue</a></span><span class="op">(</span><span class="st">"CREATE TABLE site AS ({sql_site})"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## [1] 100</span></span></code></pre>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<pre><code><span><span class="co">## [1] 20</span></span></code></pre>
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tbl_site</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/tbl.html" class="external-link">tbl</a></span><span class="op">(</span><span class="va">con</span>, <span class="st">"site"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/plot_study.html">plot_study</a></span><span class="op">(</span><span class="va">tbl_visit</span>, <span class="va">tbl_site</span>, <span class="va">tbl_eval</span>, study <span class="op">=</span> <span class="st">"A"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="inframe_files/figure-html/unnamed-chunk-13-1.png" width="700"></p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<p><img src="inframe_files/figure-html/unnamed-chunk-14-1.png" width="700"></p>
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbDisconnect.html" class="external-link">dbDisconnect</a></span><span class="op">(</span><span class="va">con</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
@@ -334,15 +593,15 @@ of creating a plot. However this requires that we save
 <p>Here we perform some examplary tests to illustrate the increase
 in-memory calculation time of the inframe calculation method.</p>
 <p>This is the calculation time for the default settings</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="op">{</span><span class="fu"><a href="../reference/simaerep.html">simaerep</a></span><span class="op">(</span><span class="va">df_visit</span>, inframe <span class="op">=</span> <span class="cn">FALSE</span>, visit_med75 <span class="op">=</span> <span class="cn">TRUE</span>, under_only <span class="op">=</span> <span class="cn">TRUE</span>, progress <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">}</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##    user  system elapsed </span></span>
-<span><span class="co">##   0.852   0.011   0.864</span></span></code></pre>
+<span><span class="co">##   0.310   0.004   0.315</span></span></code></pre>
 <p>inframe calculation time is higher</p>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="op">{</span><span class="fu"><a href="../reference/simaerep.html">simaerep</a></span><span class="op">(</span><span class="va">df_visit</span>, inframe <span class="op">=</span> <span class="cn">TRUE</span>, visit_med75 <span class="op">=</span> <span class="cn">FALSE</span>, under_only <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">}</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##    user  system elapsed </span></span>
-<span><span class="co">##   2.028   0.046   2.078</span></span></code></pre>
+<span><span class="co">##   0.701   0.039   0.739</span></span></code></pre>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
@@ -355,7 +614,7 @@ in-memory calculation time of the inframe calculation method.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
     </footer>
