@@ -115,6 +115,8 @@ test_that("simaerep_inframe and simaerep_visit_med75 must have similar results",
 
 test_that("simaerep_inframe must have identical counts and flags with duckdb backend", {
 
+  skip_on_cran()
+
   df_eval_med75 <- simaerep(df_visit_test, inframe = TRUE, visit_med75 = TRUE)$df_eval
   df_eval <- simaerep(df_visit_test, inframe = TRUE, visit_med75 = FALSE)$df_eval
 
@@ -195,6 +197,9 @@ test_that("p.adjust result near p_adjust_bh_inframe", {
 })
 
 test_that("p.adjust result near p_adjust_bh_inframe with duckdb", {
+
+  skip_on_cran()
+
   x <- rnorm(50, mean = c(rep(0, 500), rep(3, 500)))
   p <- 2 * pnorm(sort(-abs(x)))
 

@@ -500,7 +500,8 @@ plot_study <- function(df_visit,
         "study_id",
         "site_number",
         "alert_level_site",
-        "alert_level_study")))
+        "alert_level_study")),
+        by = c("study_id", "site_number"))
   }
 
 

@@ -60,7 +60,7 @@ Koneswarakantha, B., Adyanthaya, R., Emerson, J. et al. An Open-Source R Package
 
 Koneswarakantha, B., Barmaz, Y., Ménard, T. et al. Follow-up on the Use of Advanced Analytics for Clinical Quality Assurance: Bootstrap Resampling to Enhance Detection of Adverse Event Under-Reporting. Drug Saf (2020). [https://doi.org/10.1007/s40264-020-01011-5](https://doi.org/10.1007/s40264-020-01011-5)
 
-## Ressources
+## Resources
 
 - [Slides PHUSE conference](https://phuse.s3.eu-central-1.amazonaws.com/Archive/2024/Connect/EU/Strasbourg/PRE_AR04.pdf)
 - [Article PHUSE conference](https://phuse.s3.eu-central-1.amazonaws.com/Archive/2024/Connect/EU/Strasbourg/PAP_AR04.pdf)

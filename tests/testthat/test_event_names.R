@@ -36,7 +36,8 @@ test_that("sim_test_data_study() produces the expected output for n_ae, regardle
   ae_rates_test_sd <- sim_test_data_events %>%
     filter(visit %in% c(1, 2)) %>%
     group_by(site_number, patnum) %>%
-    summarise(stdev = sd(n_ae))
+    summarise(stdev = sd(n_ae), .groups = "drop")
+
   expect_true(unique(ae_rates_test_sd[["stdev"]]) == 0
               & length(unique(ae_rates_test_sd[["stdev"]])) == 1)
 
@@ -178,13 +179,18 @@ test_that("plot.simaerep works with event_names", {
   expect_s3_class(plot(aerep, what = "ur", study = "A", plot_event = "y"), "ggplot")
   expect_s3_class(plot(aerep, what = "ur", study = "A", plot_event = events), "ggplot")
 
-  expect_s3_class(plot(aerep, what = "med75", study = "A", plot_event = events), "ggplot")
+  expect_s3_class(
+    plot(aerep, what = "med75", study = "A", plot_event = events, verbose = FALSE),
+    "ggplot"
+  )
 
 })
 
 
 
 test_that("event_names works with duckdb backend", {
+
+  skip_on_cran()
 
   events <- c("x", "y")
 
