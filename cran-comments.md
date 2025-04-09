@@ -1,5 +1,9 @@
 # submission simaerep v0.7.0
 
+## Resubmission
+
+- long running tests using duckdb are now skipped_on_cran
+
 ## Test Results
 
 No notes, warnings or errors

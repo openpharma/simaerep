@@ -72,7 +72,7 @@ of Advanced Analytics for Clinical Quality Assurance: Bootstrap
 Resampling to Enhance Detection of Adverse Event Under-Reporting. Drug
 Saf (2020). <https://doi.org/10.1007/s40264-020-01011-5>
 
-## Ressources
+## Resources
 
 - [Slides PHUSE
   conference](https://phuse.s3.eu-central-1.amazonaws.com/Archive/2024/Connect/EU/Strasbourg/PRE_AR04.pdf)
