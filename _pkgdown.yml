@@ -83,6 +83,7 @@ reference:
   - get_visit_med75
   - pat_aggr
   - get_site_mean_ae_dev
+  - get_cum_mean_event_dev
   - aggr_duplicated_visits
   - exp_implicit_missing_visits
   - prep_for_sim

@@ -115,3 +115,6 @@ test_that("plot_study() produces an error when an invalid plot_event is submitte
                regexp = error, fixed = TRUE)
 
 })
+
+
+

@@ -35,7 +35,8 @@ Imports:
     progressr,
     knitr,
     tibble,
-    dbplyr
+    dbplyr,
+    glue
 Suggests:
     testthat,
     devtools,

@@ -215,7 +215,7 @@ pat_aggr <- function(df_visit) {
 }
 
 #' @title Get site mean ae development.
-#' @description Internal function used by [site_aggr()][site_aggr()], [plot_visit_med75()][plot_visit_med75()],
+#' @description Internal function used by [site_aggr()][site_aggr()],
 #' returns mean AE development from visit 0 to visit_med75.
 #' @param df_visit dataframe
 #' @param df_pat dataframe as returned by pat_aggr()

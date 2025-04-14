@@ -186,7 +186,14 @@ test_that("plot.simaerep works with event_names", {
 
 })
 
+test_that("get_cum_mean_event_dev works with non-default event_names", {
 
+  events <- c("x", "y")
+  df_visit_events_test <- sim_test_data_events(event_names = events, ae_per_visit_mean = c(0.5, 0.4))
+  df_cum_mean_event_dev <- get_cum_mean_event_dev(df_visit_events_test, event_names = events)
+  expect_true(all(glue("cum_mean_dev_{events}") %in% colnames(df_cum_mean_event_dev)))
+
+})
 
 test_that("event_names works with duckdb backend", {
 

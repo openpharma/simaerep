@@ -170,9 +170,6 @@ simaerep <- function(df_visit,
 
   }
 
-
-
-
   # when two tbl objects passed automatically switch to inframe
   is_tbl_df_visit <- ! is.data.frame(df_visit) & inherits(df_visit, "tbl")
   is_tbl_r <- ! is.data.frame(r) & inherits(r, "tbl")
