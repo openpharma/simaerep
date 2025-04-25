@@ -251,8 +251,7 @@ sim_inframe <- function(df_visit, r = 1000, df_site = NULL, event_names = c("ae"
 
 #' benjamini hochberg p value correction using table operations
 #'@keywords internal
-p_adjust_bh_inframe <- function(df_eval, cols, suffix) {
-
+p_adjust_bh_inframe <- function(df_eval, cols) {
 
   any_probx <- any(str_detect(colnames(df_eval), "probx_"))
 
@@ -264,16 +263,9 @@ p_adjust_bh_inframe <- function(df_eval, cols, suffix) {
     fun_arrange <- window_order
   }
 
-
-
-
-
   df_out <- df_eval
 
   for (col in cols) {
-    col_adj <- paste0(col, "_adj")
-    col_suffix <- paste0(col, suffix)
-
     df_out <- df_out %>%
       mutate(probx = .data[[col]]) %>%
       fun_arrange(.data$study_id, .data$probx) %>%
@@ -295,8 +287,7 @@ p_adjust_bh_inframe <- function(df_eval, cols, suffix) {
         probx_p_vs_fp_ratio = ifelse(.data$probx_p_vs_fp_ratio < 1, 1, .data$probx_p_vs_fp_ratio)
       ) %>%
       mutate(
-        !! as.name(col_adj) := 1 / .data$probx_p_vs_fp_ratio,
-        !! as.name(col_suffix) := 1 - .data[[col_adj]]
+        !! as.name(col) := 1 / .data$probx_p_vs_fp_ratio,
       ) %>%
       select(- starts_with("probx"))
 

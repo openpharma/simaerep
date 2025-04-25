@@ -1,9 +1,9 @@
 # print.simaerep generic must print object description
 
     Code
-      print(aerep_test)
+      print(aerep)
     Output
       simaerep object:
-      Check aerep$df_eval prob_low_prob_ur column for under-reporting probabililty.
+      Check aerep$df_eval prob column for reporting probabililty.
       Plot results using plot() generic.
 

@@ -1,31 +1,35 @@
-# test data is automatically loaded, check ./data-raw/generate_test_data.R
+df_visit <- get_df_visit_test()
+aerep <- simaerep(df_visit)
 
 test_that("print.simaerep generic must print object description", {
-  expect_snapshot(print(aerep_test))
+  expect_snapshot(print(aerep))
 })
 
 test_that("is_simaerep returns TRUE", {
-  expect_true(is_simaerep(aerep_test))
+  expect_true(is_simaerep(aerep))
   expect_false(is_simaerep(LETTERS))
 })
 
 test_that("simaerep must retrieve original visit data from parent environment", {
-  aerep_new <- simaerep(df_visit_test, inframe = FALSE, visit_med75 = TRUE)
-  df_vs_env <- as.data.frame(aerep_new$visit)
-  expect_equal(df_vs_env, df_visit_test)
 
-  aerep_new <- simaerep(df_visit_test, inframe = TRUE, visit_med75 = TRUE)
-  df_vs_env <- as.data.frame(aerep_new$visit)
-  expect_equal(df_vs_env, df_visit_test)
+  df_visit <- get_df_visit_test()
 
-  aerep_new <- simaerep(df_visit_test, inframe = TRUE, visit_med75 = FALSE)
+  aerep_new <- simaerep(df_visit, inframe = FALSE, visit_med75 = TRUE)
   df_vs_env <- as.data.frame(aerep_new$visit)
-  expect_equal(df_vs_env, df_visit_test)
+  expect_equal(df_vs_env, df_visit)
+
+  aerep_new <- simaerep(df_visit, inframe = TRUE, visit_med75 = TRUE)
+  df_vs_env <- as.data.frame(aerep_new$visit)
+  expect_equal(df_vs_env, df_visit)
+
+  aerep_new <- simaerep(df_visit, inframe = TRUE, visit_med75 = FALSE)
+  df_vs_env <- as.data.frame(aerep_new$visit)
+  expect_equal(df_vs_env, df_visit)
 })
 
 test_that("simaerep - original dataframe unretrievable when called with slice", {
   aerep_new <- simaerep(
-    df_visit_test[df_visit_test$site_number != "S0001", ],
+    df_visit[df_visit$site_number != "S0001", ],
     inframe = FALSE,
     visit_med75 = TRUE
   )
@@ -33,7 +37,7 @@ test_that("simaerep - original dataframe unretrievable when called with slice", 
   expect_error(as.data.frame(aerep_new$visit), "Could not find original visit data")
 
   aerep_new <- simaerep(
-    df_visit_test[df_visit_test$site_number != "S0001", ],
+    df_visit[df_visit$site_number != "S0001", ],
     inframe = TRUE,
     visit_med75 = TRUE
   )
@@ -41,7 +45,7 @@ test_that("simaerep - original dataframe unretrievable when called with slice", 
   expect_error(as.data.frame(aerep_new$visit), "Could not find original visit data")
 
   aerep_new <- simaerep(
-    df_visit_test[df_visit_test$site_number != "S0001", ],
+    df_visit[df_visit$site_number != "S0001", ],
     inframe = TRUE,
     visit_med75 = FALSE
   )
@@ -50,44 +54,56 @@ test_that("simaerep - original dataframe unretrievable when called with slice", 
 })
 
 test_that("plot.simaerep with simaerep(mult_corr = FALSE)", {
-  aerep_new <- simaerep(df_visit_test, inframe = FALSE, visit_med75 = TRUE, mult_corr = FALSE)
+
+  df_visit <- get_df_visit_test()
+
+  aerep_new <- simaerep(df_visit, inframe = FALSE, visit_med75 = TRUE, mult_corr = FALSE)
   expect_s3_class(plot(aerep_new, what = "ur", study = "A"), "ggplot")
 
-  aerep_new <- simaerep(df_visit_test, inframe = TRUE, visit_med75 = TRUE, mult_corr = FALSE)
+  aerep_new <- simaerep(df_visit, inframe = TRUE, visit_med75 = TRUE, mult_corr = FALSE)
   expect_s3_class(plot(aerep_new, what = "ur", study = "A"), "ggplot")
 
-  aerep_new <- simaerep(df_visit_test, inframe = TRUE, visit_med75 = FALSE, mult_corr = FALSE)
+  aerep_new <- simaerep(df_visit, inframe = TRUE, visit_med75 = FALSE, mult_corr = FALSE)
   expect_s3_class(plot(aerep_new, what = "ur", study = "A"), "ggplot")
 })
 
 test_that("plot.simaerep with what='ur'", {
-  aerep_new <- simaerep(df_visit_test, inframe = FALSE, visit_med75 = TRUE)
+
+  df_visit <- get_df_visit_test()
+
+  aerep_new <- simaerep(df_visit, inframe = FALSE, visit_med75 = TRUE)
   expect_s3_class(plot(aerep_new, what = "ur", study = "A"), "ggplot")
 
-  aerep_new <- simaerep(df_visit_test, inframe = TRUE, visit_med75 = TRUE)
+  aerep_new <- simaerep(df_visit, inframe = TRUE, visit_med75 = TRUE)
   expect_s3_class(plot(aerep_new, what = "ur", study = "A"), "ggplot")
 
-  aerep_new <- simaerep(df_visit_test, inframe = TRUE, visit_med75 = FALSE)
+  aerep_new <- simaerep(df_visit, inframe = TRUE, visit_med75 = FALSE)
   expect_s3_class(plot(aerep_new, what = "ur", study = "A"), "ggplot")
 })
 
 test_that("plot.simaerep with what='med75'", {
-  aerep_new <- simaerep(df_visit_test, inframe = FALSE, visit_med75 = TRUE)
+
+  df_visit <- get_df_visit_test()
+
+  aerep_new <- simaerep(df_visit, inframe = FALSE, visit_med75 = TRUE)
   expect_s3_class(plot(aerep_new, what = "med75", study = "A", verbose = FALSE), "ggplot")
 
-  aerep_new <- simaerep(df_visit_test, inframe = TRUE, visit_med75 = TRUE)
+  aerep_new <- simaerep(df_visit, inframe = TRUE, visit_med75 = TRUE)
   expect_s3_class(plot(aerep_new, what = "med75", study = "A", verbose = FALSE), "ggplot")
 
-  aerep_new <- simaerep(df_visit_test, inframe = TRUE, visit_med75 = FALSE)
+  aerep_new <- simaerep(df_visit, inframe = TRUE, visit_med75 = FALSE)
   expect_s3_class(plot(aerep_new, what = "med75", study = "A", verbose = FALSE), "ggplot")
 })
 
 
 test_that("plot.simaerep throws error when original visit data cannot be retrieved", {
-  aerep <- simaerep(df_visit_test[df_visit_test$site_number != "S0001", ])
+
+  df_visit <- get_df_visit_test()
+
+  aerep <- simaerep(df_visit[df_visit$site_number != "S0001", ])
   expect_error(plot(aerep, study = "A"))
 
-  vs_filt <- df_visit_test[df_visit_test$site_number != "S0001", ]
+  vs_filt <- df_visit[df_visit$site_number != "S0001", ]
 
   # error is mitigated if original visit data is added to plot call
   expect_s3_class(
@@ -101,36 +117,19 @@ test_that("plot.simaerep throws error when original visit data cannot be retriev
   )
 })
 
-test_that("simaerep() with mult_corr = FALSE must not return adjusted probabilities", {
-
-  aerep <- simaerep(df_visit_test, mult_corr = FALSE)
-  expect_true(! "prob_low_adj" %in% colnames(aerep$df_eval))
-
-  aerep <- simaerep(df_visit_test, mult_corr = FALSE, under_only = FALSE)
-  expect_true(! "prob_low_adj" %in% colnames(aerep$df_eval))
-  expect_true(! "prob_high_adj" %in% colnames(aerep$df_eval))
-
-  aerep <- simaerep(df_visit_test, mult_corr = FALSE, inframe = TRUE)
-  expect_true(! "prob_low_adj" %in% colnames(aerep$df_eval))
-
-  aerep <- simaerep(df_visit_test, mult_corr = FALSE, under_only = FALSE, inframe = TRUE)
-  expect_true(! "prob_low_adj" %in% colnames(aerep$df_eval))
-  expect_true(! "prob_high_adj" %in% colnames(aerep$df_eval))
-
-})
-
-
 
 test_that("simaerep() produces a warning when r is not equal to param_sim_sites$r", {
-  expect_warning(simaerep(df_visit_test, r = 999))
+  expect_warning(simaerep(df_visit, r = 999))
 })
 
 test_that("simaerep() produces an error when visit_med75 and inframe are FALSE", {
-  expect_error(simaerep(df_visit_test, visit_med75 = FALSE, inframe = FALSE)
+  expect_error(simaerep(df_visit, visit_med75 = FALSE, inframe = FALSE)
                , regexp = "visit_med75 parameter must be TRUE if inframe is FALSE")
 })
 
 test_that("simaerep() produces a message when the study parameter is NULL", {
-  x <- simaerep(df_visit_test)
+  df_visit <- get_df_visit_test()
+  x <- simaerep(df_visit)
   expect_message(plot.simaerep(x), regex = "study = NULL, defaulting to study:A")
 })
+

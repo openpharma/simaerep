@@ -13,7 +13,8 @@ simaerep_inframe(
   param_site_aggr = list(method = "med75_adj", min_pat_pool = 0.2),
   param_eval_sites = list(method = "BH"),
   env = parent.frame(),
-  event_names = c("ae")
+  event_names = c("ae"),
+  mult_corr = FALSE
 )
 }
 \arguments{
@@ -45,6 +46,8 @@ list(method = "BH").}
 parent.frame().}
 
 \item{event_names}{vector, contains the event names, default = "ae"}
+
+\item{mult_corr}{Logical, multiplicity correction, Default: TRUE}
 }
 \description{
 simulate in dataframe

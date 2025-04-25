@@ -1,13 +1,13 @@
-# test data is automatically loaded, check ./data-raw/generate_test_data.R
-
+df_visit <- get_df_visit_test()
+df_site <- site_aggr(df_visit)
 
 test_that("site_aggr() must not return a grouped dataframe", {
-  expect_false(is_grouped_df(df_site_test))
+  expect_false(is_grouped_df(df_site))
 })
 
 
 test_that("site_aggr() - check column names of returned data frame", {
-  df_site <- site_aggr(df_visit_test)
+  df_site <- site_aggr(df_visit)
 
   expect_true(all(c(
     "study_id",
@@ -21,13 +21,13 @@ test_that("site_aggr() - check column names of returned data frame", {
 
 test_that("site_aggr() must return different results for method = 'med75_adj' and method = 'med75'", {
   # default
-  df_site_adj <- site_aggr(df_visit_test, method = "med75_adj")
+  df_site_adj <- site_aggr(df_visit, method = "med75_adj")
 
   # deprecated
-  df_site_old <- site_aggr(df_visit_test, method = "med75")
+  df_site_old <- site_aggr(df_visit, method = "med75")
 
   expect_false(identical(df_site_adj, df_site_old))
-  expect_equal(df_site_adj, df_site_test)
+  expect_equal(df_site_adj, df_site)
 })
 
 
@@ -91,3 +91,4 @@ test_that("site_aggr() - visitmed75 must not become greater than 0.8 percentile 
   # nolint end
 
 })
+

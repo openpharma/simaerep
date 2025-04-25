@@ -10,7 +10,8 @@ new_simaerep <- function(visit,
                          param_site_aggr,
                          param_sim_sites,
                          param_eval_sites,
-                         event_names = "ae") {
+                         event_names = "ae",
+                         mult_corr) {
 
   structure(
     list(
@@ -25,7 +26,8 @@ new_simaerep <- function(visit,
       param_site_aggr = param_site_aggr,
       param_sim_sites = param_sim_sites,
       param_eval_sites = param_eval_sites,
-      event_names = event_names
+      event_names = event_names,
+      mult_corr = mult_corr
     ),
     class = "simaerep"
   )
@@ -48,7 +50,8 @@ validate_simaerep <- function(x) {
       "param_site_aggr",
       "param_sim_sites",
       "param_eval_sites",
-      "event_names"
+      "event_names",
+      "mult_corr"
     )
   )
 
@@ -110,10 +113,17 @@ validate_simaerep <- function(x) {
 #' str(aerep)
 #'
 #'
-#' df_visit_events_test <- sim_test_data_events(n_pat = 100, n_sites = 5,
-#'                                  ae_per_visit_mean = c(0.4, 0.5), event_names = c("ae", "pd"))
-#' aerep_events <- simaerep(df_visit_events_test, inframe = TRUE,event_names = c("ae", "pd"))
+#' df_visit_events_test <- sim_test_data_events(
+#'   n_pat = 100,
+#'   n_sites = 5,
+#'   ae_per_visit_mean = c(0.4, 0.5),
+#'   event_names = c("ae", "pd")
+#' )
+#'
+#' aerep_events <- simaerep(df_visit_events_test, inframe = TRUE, event_names = c("ae", "pd"))
+#'
 #' aerep_events
+#'
 #' \donttest{
 #'   # In-frame table operations
 #'   simaerep(df_visit, inframe = TRUE, visit_med75 = FALSE, under_only = FALSE)$df_eval
@@ -186,6 +196,16 @@ simaerep <- function(df_visit,
     error = function(e) df_visit
   )
 
+  # multiple event_names only work for inframe method
+  if (length(event_names) > 1) {
+    inframe <- TRUE
+  }
+
+  # under only is only allowed for classic algo
+  if (inframe) {
+    under_only <- FALSE
+  }
+
   param_sim_sites$under_only <- under_only
   param_eval_sites$under_only <- under_only
 
@@ -199,9 +219,7 @@ simaerep <- function(df_visit,
       param_sim_sites$r <- r
       warning("r not equal param_sim_sites$r, overriding param_sim_sites$r")
     }
-    if (length(event_names) != 1) {
-      stop("Must only have one event if inframe is FALSE")
-    }
+
     if (! event_names == "ae") {
       stop("Event_name must be 'ae' if inframe is FALSE")
     }
@@ -214,7 +232,8 @@ simaerep <- function(df_visit,
       param_sim_sites = param_sim_sites,
       param_eval_sites = param_eval_sites,
       env = env,
-      check = check
+      check = check,
+      mult_corr = mult_corr
     )
 
   } else if (inframe) {
@@ -227,7 +246,8 @@ simaerep <- function(df_visit,
       param_eval_sites = param_eval_sites,
       env = env,
       check = check,
-      event_names = event_names
+      event_names = event_names,
+      mult_corr = mult_corr
     )
   } else {
     stop("visit_med75 parameter must be TRUE if inframe is FALSE")
@@ -282,7 +302,8 @@ simaerep_inframe <- function(df_visit,
                                 method = "BH"
                               ),
                               env = parent.frame(),
-                              event_names = c("ae")
+                              event_names = c("ae"),
+                              mult_corr = FALSE
 ) {
 
   if (inherits(df_visit, "orivisit")) {
@@ -325,7 +346,8 @@ simaerep_inframe <- function(df_visit,
     c(
       list(df_sim_sites = df_sim_sites),
       param_eval_sites,
-      list(event_names = event_names)
+      list(event_names = event_names),
+      list(visit_med75 = visit_med75)
     )
   )
 
@@ -337,6 +359,8 @@ simaerep_inframe <- function(df_visit,
         by = c("study_id", "site_number")
       ) %>%
       select(- paste0("mean_", event_names, "_site_med75"))
+  } else {
+
   }
 
   validate_simaerep(
@@ -352,7 +376,8 @@ simaerep_inframe <- function(df_visit,
       param_site_aggr = param_site_aggr,
       param_sim_sites = list(),
       param_eval_sites = param_eval_sites,
-      event_names = event_names
+      event_names = event_names,
+      mult_corr = mult_corr
     )
   )
 }
@@ -374,7 +399,8 @@ simaerep_visit_med75 <- function(df_visit,
                      progress = TRUE,
                      env = parent.frame(),
                      under_only = TRUE,
-                     r = 1000) {
+                     r = 1000,
+                     mult_corr = FALSE) {
 
   if (inherits(df_visit, "orivisit")) {
 
@@ -435,7 +461,8 @@ simaerep_visit_med75 <- function(df_visit,
       under_only = under_only,
       param_site_aggr = param_site_aggr,
       param_sim_sites = param_sim_sites,
-      param_eval_sites = param_eval_sites
+      param_eval_sites = param_eval_sites,
+      mult_corr = mult_corr
     )
   )
 }
@@ -524,6 +551,7 @@ plot_simaerep_plot_study <- function(df_visit, x, study, n_sites, plot_event = "
                                n_sites = n_sites,
                                event_names = x$event_names,
                                plot_event = event,
+                               mult_corr = x$mult_corr,
                                ...
                             )
                            }
@@ -555,7 +583,7 @@ print.simaerep <- function(x, ...) {
     paste(
       c(
         "simaerep object:",
-        "Check aerep$df_eval prob_low_prob_ur column for under-reporting probabililty.",
+        "Check aerep$df_eval prob column for reporting probabililty.",
         "Plot results using plot() generic."
       ),
       collapse = "\n"

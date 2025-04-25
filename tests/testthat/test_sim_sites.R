@@ -1,9 +1,10 @@
-# test data is automatically loaded, check ./data-raw/generate_test_data.R
 
+df_visit <- get_df_visit_test()
+df_site <- site_aggr(df_visit)
 
 test_that("pat_pool() - check column names and datatypes of returnes dataframe", {
 
-  df_pat_pool <- pat_pool(df_visit_test, df_site_test)
+  df_pat_pool <- pat_pool(df_visit, df_site)
 
   expect_equal(names(df_pat_pool), c("study_id", "pat_pool"))
 
@@ -101,7 +102,7 @@ test_that("sim_sites() - prob_low and pval must be between 0 - 1", {
 
 test_that("prep_for_sim() - ae vector for site must match number of patients at site", {
 
-  df_prep <- prep_for_sim(df_site_test, df_visit_test)
+  df_prep <- prep_for_sim(df_site_test, df_visit)
 
   df_prep %>%
     mutate(check = map2(

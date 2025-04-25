@@ -4,7 +4,7 @@
 \alias{get_portf_perf}
 \title{Get Portfolio Performance}
 \usage{
-get_portf_perf(df_scen, stat = "prob_low_prob_ur", fpr = c(0.001, 0.01, 0.05))
+get_portf_perf(df_scen, stat = "prob", fpr = c(0.001, 0.01, 0.05))
 }
 \arguments{
 \item{df_scen}{dataframe as returned by \code{\link{sim_ur_scenarios}}}

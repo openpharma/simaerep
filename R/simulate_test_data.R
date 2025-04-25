@@ -909,7 +909,7 @@ get_config <- function(df_site,
 #' \code{\link{get_portf_perf}}
 #' @rdname get_portf_perf
 #' @export
-get_portf_perf <- function(df_scen, stat = "prob_low_prob_ur", fpr = c(0.001, 0.01, 0.05)) {
+get_portf_perf <- function(df_scen, stat = "prob", fpr = c(0.001, 0.01, 0.05)) {
 
   if (anyNA(df_scen[[stat]])) {
     mes <- df_scen %>%

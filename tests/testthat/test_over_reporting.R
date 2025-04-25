@@ -3,13 +3,13 @@
 test_that(paste("prob_lower_site_ae_vs_study_ae() - high number of AEs at site",
                 "compared to study, expect prob_low < 1 when under_only = FALSE"), {
 
-                  prob_low <- prob_lower_site_ae_vs_study_ae(
-                    site_ae = c(9, 8, 7, 9, 6, 7, 8),
-                    study_ae = c(5, 3, 3, 2, 1, 6),
-                    under_only = FALSE
-                  )
+    prob_low <- prob_lower_site_ae_vs_study_ae(
+      site_ae = c(9, 8, 7, 9, 6, 7, 8),
+      study_ae = c(5, 3, 3, 2, 1, 6),
+      under_only = FALSE
+    )
 
-                  expect_true(prob_low < 1)
+    expect_true(prob_low < 1)
 
 })
 
@@ -34,15 +34,6 @@ test_that("sim_test_data_study() - negative values passed to ur_rate simulate ov
 })
 
 
-test_that("simaerep() - under_only = FALSE return over-reporting statistics", {
-
-  aerep <- simaerep(df_visit_test, under_only = FALSE)
-
-  expect_true(all(
-    c("prob_high", "prob_high_adj", "prob_high_prob_or") %in% colnames(aerep$df_eval)
-  ))
-
-})
 
 test_that(paste("simaerep() - under_only = FALSE - over-reporting must be zero when",
                 "mean_ae_site_med75 == mean_ae_study_med75"), {
@@ -55,11 +46,8 @@ test_that(paste("simaerep() - under_only = FALSE - over-reporting must be zero w
   aerep <- simaerep(df_visit, under_only = FALSE)
 
   zeros <- aerep$df_eval %>%
-    filter(mean_ae_study_med75 == mean_ae_site_med75) %>%
-    summarise(across(c(prob_low_prob_ur, prob_high_prob_or), sum)) %>%
-    summarise(across(c(prob_low_prob_ur, prob_high_prob_or), ~ . == 0)) %>%
-    unlist()
+    pull(prob)
 
-  expect_true(all(zeros))
+  expect_true(all(zeros == 0))
 
 })

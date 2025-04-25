@@ -84,10 +84,17 @@ aerep
 str(aerep)
 
 
-df_visit_events_test <- sim_test_data_events(n_pat = 100, n_sites = 5,
-                                 ae_per_visit_mean = c(0.4, 0.5), event_names = c("ae", "pd"))
-aerep_events <- simaerep(df_visit_events_test, inframe = TRUE,event_names = c("ae", "pd"))
+df_visit_events_test <- sim_test_data_events(
+  n_pat = 100,
+  n_sites = 5,
+  ae_per_visit_mean = c(0.4, 0.5),
+  event_names = c("ae", "pd")
+)
+
+aerep_events <- simaerep(df_visit_events_test, inframe = TRUE, event_names = c("ae", "pd"))
+
 aerep_events
+
 \donttest{
   # In-frame table operations
   simaerep(df_visit, inframe = TRUE, visit_med75 = FALSE, under_only = FALSE)$df_eval

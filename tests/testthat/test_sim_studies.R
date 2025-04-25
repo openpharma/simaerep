@@ -1,11 +1,11 @@
-# test data is automatically loaded, check ./data-raw/generate_test_data.R
-
+df_visit <- get_df_visit_test()
+df_site <- site_aggr(df_visit)
 
 test_that("sim_studies() - returned dataframe expect no NA and prob_low/pval 0 - 1", {
 
   df_sim_study <- sim_studies(
-    df_site = df_site_test,
-    df_visit = df_visit_test,
+    df_site = df_site,
+    df_visit = df_visit,
     r = 3,
     parallel = FALSE,
     poisson_test = TRUE,
@@ -22,8 +22,8 @@ test_that("sim_studies() - returned dataframe expect no NA and prob_low/pval 0 -
 test_that("sim_studies() with keep_ae = TRUE - retain individual site and study AE", {
 
   df_sim_study_keep <- sim_studies(
-    df_site = df_site_test,
-    df_visit = df_visit_test,
+    df_site = df_site,
+    df_visit = df_visit,
     r = 3,
     keep_ae = TRUE,
     parallel = FALSE,
@@ -38,8 +38,8 @@ test_that("sim_studies() with keep_ae = TRUE - retain individual site and study 
 test_that("sim_studies() - count of individual site and study AE must match other columns", {
 
   df_sim_study_keep <- sim_studies(
-    df_site = df_site_test,
-    df_visit = df_visit_test,
+    df_site = df_site,
+    df_visit = df_visit,
     r = 3,
     keep_ae = TRUE,
     parallel = FALSE,
@@ -56,8 +56,8 @@ test_that("sim_studies() - count of individual site and study AE must match othe
 test_that("sim_studies() - filter studies using studies parameter", {
 
   df_sim_study_spec <- sim_studies(
-    df_site = df_site_test,
-    df_visit = df_visit_test,
+    df_site = df_site,
+    df_visit = df_visit,
     r = 3,
     keep_ae = TRUE,
     parallel = FALSE,
@@ -73,8 +73,8 @@ test_that("sim_studies() - filter studies using studies parameter", {
 test_that("sim_studies() - all visit_med75 values per study must have the same size of pat_pool", {
 
   df_sim_study_spec <- sim_studies(
-    df_site = df_site_test,
-    df_visit = df_visit_test,
+    df_site = df_site,
+    df_visit = df_visit,
     r = 3,
     keep_ae = TRUE,
     parallel = FALSE,
@@ -99,8 +99,8 @@ test_that("sim_studies() - all visit_med75 values per study must have the same s
 test_that("sim_studies() - sampling must not repeat itself", {
 
   df_sim_study_spec <- sim_studies(
-    df_site = df_site_test,
-    df_visit = df_visit_test,
+    df_site = df_site,
+    df_visit = df_visit,
     r = 3,
     keep_ae = TRUE,
     parallel = FALSE,
@@ -121,8 +121,8 @@ test_that("get_ecd_values() - ecd values between 0 - 1", {
 
 
   df_sim_studies <- sim_studies(
-    df_site = df_site_test,
-    df_visit = df_visit_test,
+    df_site = df_site,
+    df_visit = df_visit,
     r = 3,
     parallel = FALSE,
     poisson_test = TRUE,
@@ -139,14 +139,14 @@ test_that("get_ecd_values() - ecd values between 0 - 1", {
 
 
 test_that("sim_studies() should produce an error when the studies parameter is not NULL", {
-  expect_error(sim_studies(df_visit_test, df_site_test, studies = numeric(1)),
+  expect_error(sim_studies(df_visit, df_site, studies = numeric(1)),
                regexp = "not all passed studies can be found in input data")
 })
 
 test_that("get_ecd_values() produces a warning when there are NA values in df_sim_studies", {
-  df_sim_studies_test <- sim_studies(df_visit = df_visit_test, df_site = df_site_test)
+  df_sim_studies_test <- sim_studies(df_visit = df_visit, df_site = df_site)
   df_sim_studies_test["pval"] <- NA
-  df_sim_sites_test <- sim_sites(df_site_test, df_visit_test, r = 100)
+  df_sim_sites_test <- sim_sites(df_site, df_visit, r = 100)
   expect_warning(get_ecd_values(df_sim_studies_test, df_sim_sites = df_sim_sites_test, val_str = "pval"),
                  regexp = "NA Values in Stats")
 })

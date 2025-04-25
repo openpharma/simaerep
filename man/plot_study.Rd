@@ -9,12 +9,12 @@ plot_study(
   df_site,
   df_eval,
   study,
-  df_al = NULL,
   n_sites = 16,
-  pval = FALSE,
-  prob_col = "prob_low_prob_ur",
+  prob_col = "prob",
   event_names = c("ae"),
-  plot_event = "ae"
+  plot_event = "ae",
+  mult_corr = FALSE,
+  delta = TRUE
 )
 }
 \arguments{
@@ -26,18 +26,17 @@ plot_study(
 
 \item{study}{study}
 
-\item{df_al}{dataframe containing study_id, site_number, alert_level_site,
-alert_level_study (optional), Default: NA}
-
 \item{n_sites}{integer number of most at risk sites, Default: 16}
-
-\item{pval}{logical show p-value, Default:FALSE}
 
 \item{prob_col}{character, denotes probability column, Default: "prob_low_prob_ur"}
 
 \item{event_names}{vector, contains the event names, default = "ae"}
 
 \item{plot_event}{vector containing the events that should be plotted, default = "ae"}
+
+\item{mult_corr}{Logical, multiplicity correction, Default: TRUE}
+
+\item{delta}{logical, show delta events on plot}
 }
 \value{
 ggplot
