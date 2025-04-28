@@ -900,7 +900,6 @@ plot_visit_med75 <- function(df_visit,
   df_visit <- check_df_visit(df_visit, event_names = event_names) %>%
     filter(.data$study_id == study_id_str)
 
-
   df_pat <- pat_aggr(df_visit)
 
   df_site_min_med75 <- site_aggr(df_visit, method = "med75", event_names = event_names)

@@ -43,7 +43,14 @@ test_that("sim_ur() and sim_ur_scenario() must give similar results", {
       sim_ur(study_id, site_number, ur_rate)
 
     df_vs_study %>%
-      simaerep(under_only = TRUE, progress = FALSE, check = FALSE) %>%
+      simaerep(
+        under_only = TRUE,
+        progress = FALSE,
+        check = FALSE,
+        inframe = FALSE,
+        visit_med75 = TRUE,
+        mult_corr = TRUE
+      ) %>%
       .$df_eval %>%
       filter(.data$site_number == .env$site_number)
   }

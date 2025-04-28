@@ -52,7 +52,7 @@ test_that(paste("validation requirement - visually inspect plotted AE under-repo
 
   skip_on_cran() # graphics engines on CRAN not always compatible
 
-  aerep <- simaerep(df_visit_val)
+  aerep <- simaerep(df_visit_val, under_only = TRUE, inframe = FALSE, mult_corr = TRUE)
 
   for (study in c("study_025", "study_050", "study_075", "study_100")) {
     # expect_snapshot_file will return different results on different systems

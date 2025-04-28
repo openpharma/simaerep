@@ -467,10 +467,18 @@ eval_sites <- function(df_sim_sites,
   # sql so it is best applied outside a loop
 
   if (! is.null(method)) {
+
+    # p_adjust expects to lift small p-values based on multiplicity
+    # for pro_cols: 0.95 = 95% = p-value 0.05, therefore we invert
+    # and invert back right after
+
     df_out <- df_out %>%
+      mutate(across(all_of(c(cols_prob_or, cols_prob_ur)), ~ 1 - .)) %>%
       p_adjust(cols_prob_or, method = method) %>%
-      p_adjust(cols_prob_ur, method = method)
+      p_adjust(cols_prob_ur, method = method) %>%
+      mutate(across(all_of(c(cols_prob_or, cols_prob_ur)), ~ 1 - .))
   }
+
 
   for (i in seq_along(cols_prob_low)) {
 
@@ -1268,7 +1276,7 @@ sim_studies <- function(df_visit,
 #'@description Calculates visit_med75, n_pat_with_med75 and mean_ae_site_med75
 #'@param df_visit dataframe with columns: study_id, site_number, patnum, visit,
 #'  n_ae
-#'@param method character, one of c("med75", "med75_adj") defining method for
+#'@param method character, one of c("med75", "med75_adj", "max") defining method for
 #'  defining evaluation point visit_med75 (see details), Default: "med75_adj"
 #'@param min_pat_pool, double, minimum ratio of available patients available for
 #'  sampling. Determines maximum visit_med75 value see Details. Default: 0.2
@@ -1284,7 +1292,8 @@ sim_studies <- function(df_visit,
 #'  take the highest visit number possible without excluding more patients from
 #'  the analysis. In order to ensure that the sampling pool for that visit is
 #'  large enough we limit the visit number by the 80% quantile of maximum visits
-#'  of all patients in the study.
+#'  of all patients in the study. "max" will determine site max visit, flag patients
+#'  that concluded max visit and count patients and patients that concluded max visit.
 #'@return dataframe with the following columns: \describe{
 #'  \item{**study_id**}{study identification} \item{**site_number**}{site
 #'  identification} \item{**n_pat**}{number of patients, site level}
@@ -1321,6 +1330,10 @@ site_aggr <- function(df_visit,
     method %in% c("med75", "med75_adj", "max")
   )
 
+  if (check) {
+    df_visit <- check_df_visit(df_visit, event_names = event_names)
+  }
+
   if (method == "max") {
 
     df_site <- df_visit %>%
@@ -1336,10 +1349,6 @@ site_aggr <- function(df_visit,
       )
 
     return(df_site)
-  }
-
-  if (check) {
-    df_visit <- check_df_visit(df_visit, event_names = event_names)
   }
 
   # Aggregate on patient level---------------------------------------
