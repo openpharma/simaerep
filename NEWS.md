@@ -1,5 +1,8 @@
 # simaerep 1.0.0
 - use get_cum_mean_event_dev() instead of get_site_mean_ae_dev() for plotting which does not rely on visit_med75 to reduce noise
+- eval_sites will combine over- and under-reporting probability into one column prob
+- eval_sites with inframe method will calculate delta events
+- new simaerep defaults inframe = TRUE, mult_corr = FALSE, visit_med75 = FALSE, under_only = FALSE
 
 # simaerep 0.7.0
 - event_names argument, allow to calculate multiple reporting probabilities at once https://github.com/openpharma/simaerep/issues/73

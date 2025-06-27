@@ -11,8 +11,10 @@
   what = "ur",
   n_sites = 16,
   df_visit = NULL,
+  df_site = NULL,
+  df_eval = NULL,
   env = parent.frame(),
-  plot_event = "ae"
+  plot_event = x$event_names[1]
 )
 }
 \arguments{

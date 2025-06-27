@@ -16,14 +16,20 @@ report](https://github.com/openpharma/simaerep/actions/workflows/validation.yml/
 release](https://www.r-pkg.org/badges/version/simaerep)](https://CRAN.R-project.org/package=simaerep)
 <!-- badges: end -->
 
-Simulate adverse event reporting in clinical trials with the goal of
-detecting under-reporting sites.
+Simulate subject-level event reporting of clinical trial sites with the
+goal of detecting over- and under-reporting.
 
-Monitoring of Adverse Event (AE) reporting in clinical trials is
-important for patient safety. We use bootstrap-based simulation to
-assign an AE under-reporting probability to each site in a clinical
-trial. The method is inspired by the ‘infer’ R package and Allen
-Downey’s blog article: [“There is only one
+Monitoring reporting rates of subject-level clinical events (e.g.
+adverse events, protocol deviations) reported by clinical trial sites is
+an important aspect of risk-based quality monitoring strategy. Sites
+that are under-reporting or over-reporting events can be detected using
+bootstrap simulations during which patients are redistributed between
+sites. Site-specific distributions of event reporting rates are
+generated that are used to assign probablilities to the observed
+reporting rates.
+
+The method is inspired by the ‘infer’ R package and Allen Downey’s blog
+article: [“There is only one
 test!”](http://allendowney.blogspot.com/2011/05/there-is-only-one-test.html).
 
 ## Installation
@@ -99,12 +105,14 @@ statistical monitoring
 
 ## Application
 
-Recommended Threshold: `aerep$dfeval$prob_low_prob_ur: 0.95`
+Calculate patient-level event reporting probabilities and the difference
+to the expected number of events on a simulated data set with 2
+under-reporting sites.
 
 ``` r
 
 suppressPackageStartupMessages(library(simaerep))
-suppressPackageStartupMessages(library(tidyverse))
+suppressPackageStartupMessages(library(dplyr))
 suppressPackageStartupMessages(library(knitr))
 
 set.seed(1)
@@ -112,93 +120,69 @@ set.seed(1)
 df_visit <- sim_test_data_study(
   n_pat = 1000, # number of patients in study
   n_sites = 100, # number of sites in study
-  frac_site_with_ur = 0.05, # fraction of sites under-reporting
-  ur_rate = 0.4, # rate of under-reporting
-  ae_per_visit_mean = 0.5 # mean AE per patient visit
+  ratio_out = 0.02, # ratio of sites with outlier
+  factor_event_rate = -0.5, # rate of under-reporting
+  # non-constant event rates based on gamma distribution
+  event_rates = (dgamma(seq(1, 20, 0.5), shape = 5, rate = 2) * 5) + 0.1,
+  max_visit = 20,
+  max_visit_sd = 10
 )
 
 df_visit$study_id <- "A"
 
 df_visit %>%
-  select(study_id, site_number, patnum, visit, n_ae) %>%
+  select(study_id, site_id, patient_id, visit, n_event) %>%
   head(25) %>%
   knitr::kable()
 ```
 
-| study_id | site_number | patnum  | visit | n_ae |
-|:---------|:------------|:--------|------:|-----:|
-| A        | S0001       | P000001 |     1 |    0 |
-| A        | S0001       | P000001 |     2 |    1 |
-| A        | S0001       | P000001 |     3 |    1 |
-| A        | S0001       | P000001 |     4 |    2 |
-| A        | S0001       | P000001 |     5 |    3 |
-| A        | S0001       | P000001 |     6 |    3 |
-| A        | S0001       | P000001 |     7 |    3 |
-| A        | S0001       | P000001 |     8 |    3 |
-| A        | S0001       | P000001 |     9 |    3 |
-| A        | S0001       | P000001 |    10 |    3 |
-| A        | S0001       | P000001 |    11 |    3 |
-| A        | S0001       | P000001 |    12 |    3 |
-| A        | S0001       | P000001 |    13 |    4 |
-| A        | S0001       | P000001 |    14 |    4 |
-| A        | S0001       | P000001 |    15 |    4 |
-| A        | S0001       | P000001 |    16 |    6 |
-| A        | S0001       | P000001 |    17 |    6 |
-| A        | S0001       | P000002 |     1 |    0 |
-| A        | S0001       | P000002 |     2 |    0 |
-| A        | S0001       | P000002 |     3 |    0 |
-| A        | S0001       | P000002 |     4 |    0 |
-| A        | S0001       | P000002 |     5 |    0 |
-| A        | S0001       | P000002 |     6 |    0 |
-| A        | S0001       | P000002 |     7 |    0 |
-| A        | S0001       | P000002 |     8 |    1 |
+| study_id | site_id | patient_id | visit | n_event |
+|:---------|:--------|:-----------|------:|--------:|
+| A        | S0001   | P000001    |     1 |       0 |
+| A        | S0001   | P000001    |     2 |       2 |
+| A        | S0001   | P000001    |     3 |       2 |
+| A        | S0001   | P000001    |     4 |       4 |
+| A        | S0001   | P000001    |     5 |       6 |
+| A        | S0001   | P000001    |     6 |       7 |
+| A        | S0001   | P000001    |     7 |       7 |
+| A        | S0001   | P000001    |     8 |       7 |
+| A        | S0001   | P000001    |     9 |       7 |
+| A        | S0001   | P000001    |    10 |       7 |
+| A        | S0001   | P000001    |    11 |       7 |
+| A        | S0001   | P000001    |    12 |       7 |
+| A        | S0001   | P000001    |    13 |       7 |
+| A        | S0001   | P000002    |     1 |       3 |
+| A        | S0001   | P000002    |     2 |       3 |
+| A        | S0001   | P000002    |     3 |       5 |
+| A        | S0001   | P000002    |     4 |       8 |
+| A        | S0001   | P000002    |     5 |       8 |
+| A        | S0001   | P000002    |     6 |       9 |
+| A        | S0001   | P000002    |     7 |       9 |
+| A        | S0001   | P000002    |     8 |       9 |
+| A        | S0001   | P000002    |     9 |       9 |
+| A        | S0001   | P000002    |    10 |       9 |
+| A        | S0001   | P000002    |    11 |       9 |
+| A        | S0001   | P000002    |    12 |       9 |
 
 ``` r
 
-aerep <- simaerep(df_visit)
 
-plot(aerep, study = "A")
+evrep <- simaerep(df_visit)
+
+plot(evrep, study = "A")
 ```
 
 <img src="man/figures/README-unnamed-chunk-2-1.png" width="100%" />
 
-*Left panel shows mean AE reporting per site (lightblue and darkblue
-lines) against mean AE reporting of the entire study (golden line).
-Single sites are plotted in descending order by AE under-reporting
-probability on the right panel in which grey lines denote cumulative AE
-count of single patients. Grey dots in the left panel plot indicate
-sites that were picked for single plotting. AE under-reporting
-probability of dark blue lines crossed threshold of 95%. Numbers in the
-upper left corner indicate the ratio of patients that have been used for
-the analysis against the total number of patients. Patients that have
-not been on the study long enough to reach the evaluation point
-(visit_med75, see introduction) will be ignored.*
-
-## Optimized Statistical Performance
-
-Following the recommendation of our latest [performance
-benchmark](https://openpharma.github.io/simaerep/articles/performance.html)
-statistical performance can be increased by using the
-[inframe](https://openpharma.github.io/simaerep/articles/inframe.html)
-algorithm without multiplicity correction.
-
-**Note that the plot is more noisy because no patients are excluded and
-only a few patients contribute to the event count at higher visits**
-
-Recommended Threshold: `aerep$dfeval$prob_low_prob_ur: 0.99`
-
-``` r
-aerep <- simaerep(
-  df_visit,
-  inframe = TRUE,
-  visit_med75 = FALSE,
-  mult_corr = FALSE
-)
-
-plot(aerep, study = "A")
-```
-
-<img src="man/figures/README-unnamed-chunk-3-1.png" width="100%" />
+*Left panel shows mean cumulative event reporting per site (blue lines)
+agains mean cumulative event reporting of the entire study (golden
+line). Sites with either high under-reporting (negative probabilities)
+or high over-reporting (positive probabilities) are marked by grey dots
+and plotted in additional panels on the right. N denotes the number of
+sites. Right panel shows individual sites with total patient cumulative
+counts as grey lines. N denotes the number of patients, the percentage
+the under- and over-reporting probability and 394 denotes the difference
+compared to the expected number of events.*
 
 ## In Database Calculation
 
@@ -223,19 +207,15 @@ tbl_visit <- tbl(con, "visit")
 tbl_r <- tbl(con, "r")
 
 
-aerep <- simaerep(
+evrep <- simaerep(
   tbl_visit,
-  r = tbl_r,
-  inframe = TRUE,
-  visit_med75 = FALSE,
-  mult_corr = FALSE
+  r = tbl_r
 )
 
-plot(aerep, df_visit = tbl_visit)
-#> study = NULL, defaulting to study:A
+plot(evrep, study = "A")
 ```
 
-<img src="man/figures/README-unnamed-chunk-4-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-3-1.png" width="100%" />
 
 ``` r
 

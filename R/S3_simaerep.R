@@ -7,9 +7,11 @@ new_simaerep <- function(visit,
                          visit_med75,
                          inframe,
                          under_only,
-                         event_names = "ae",
+                         event_names,
                          mult_corr,
-                         poisson_test) {
+                         poisson_test,
+                         col_names
+                         ) {
 
   structure(
     list(
@@ -23,7 +25,8 @@ new_simaerep <- function(visit,
       under_only = under_only,
       event_names = event_names,
       mult_corr = mult_corr,
-      poisson_test = poisson_test
+      poisson_test = poisson_test,
+      col_names = col_names
     ),
     class = "simaerep"
   )
@@ -45,7 +48,8 @@ validate_simaerep <- function(x) {
       "under_only",
       "event_names",
       "mult_corr",
-      "poisson_test"
+      "poisson_test",
+      "col_names"
     )
   )
 
@@ -55,6 +59,10 @@ validate_simaerep <- function(x) {
   stopifnot(is.data.frame(x$df_site) | inherits(x$df_site, "tbl"))
   stopifnot(is.data.frame(x$df_sim_sites) | inherits(x$df_sim_sites, "tbl"))
   stopifnot(is.data.frame(x$df_eval) | inherits(x$df_eval, "tbl"))
+
+  stopifnot(x$colnames[names(x$colnames) %in% c("study_id", "site_id")] %in% colnames(x$df_eval))
+  stopifnot(x$colnames[names(x$colnames) %in% c("study_id", "site_id")] %in% colnames(x$df_site))
+  stopifnot(x$colnames[names(x$colnames) %in% c("study_id", "site_id")] %in% colnames(x$df_sim_sites))
 
   return(x)
 }
@@ -70,19 +78,19 @@ validate_simaerep <- function(x) {
 #'  [check_df_visit()]. Computationally expensive on large data sets. Default:
 #'  TRUE.
 #'@param visit_med75 Logical, should evaluation point visit_med75 be used.
-#'  Default: TRUE.
+#'  Default: FALSE
 #'@param inframe Logical, only table operations to be used; does not require
-#'  visit_med75. Compatible with dbplyr supported database backends.
+#'  visit_med75. Compatible with dbplyr supported database backends.Default: TRUE
 #'@param mult_corr Logical, multiplicity correction, Default: TRUE
 #'@param progress Logical, display progress bar. Default: TRUE.
 #'@param env Optional, provide environment of original visit data. Default:
 #'  parent.frame().
 #'@param under_only Logical, compute under-reporting probabilities only.
 #'  Supersedes under_only parameter passed to [eval_sites()] and [sim_sites()].
-#'  Default: TRUE.
+#'  Default: FALSE
 #'@param poisson_test logical, compute p-value with poisson test, only supported
-#'by the classic algorithm using visit_med75.
-#'@param event_names vector, contains the event names, default = "ae"
+#'by the classic algorithm using visit_med75. Default: FALSE
+#'@param event_names vector, contains the event names, default = "event"
 #'@return A simaerep object.
 #'@details Executes [site_aggr()], [sim_sites()], and [eval_sites()] on original
 #'  visit data and stores all intermediate results. Stores lazy reference to
@@ -149,21 +157,46 @@ simaerep <- function(df_visit,
                       visit_med75 = FALSE,
                       inframe = TRUE,
                       progress = TRUE,
-                      mult_corr = FALSE,
+                      mult_corr = TRUE,
                       poisson_test = FALSE,
                       env = parent.frame(),
-                      event_names = c("ae")
+                      event_names = c("event"),
+                      col_names = list(
+                       study_id = "study_id",
+                       site_id = "site_id",
+                       patient_id = "patient_id",
+                       visit = "visit"
+                     )
 ) {
 
+  # catch call
   call <- rlang::enexpr(df_visit)
 
-  # save visit call
-  visit <- tryCatch({
-    visit <- orivisit(df_visit, call, env = env, event_names = event_names)
-    as.data.frame(visit, env = env)
-    visit},
-    error = function(e) df_visit
-  )
+  # correct event_names ----------------------------------------------------
+  # when only one event_name passed use data to determine event name
+  if (length(event_names) == 1) {
+    possible_event_names <- map_col_names(df_visit, col_names) %>%
+      select(any_of("n"), starts_with("n_")) %>%
+      colnames()
+
+    if (length(possible_event_names) == 1) {
+      event_names <- unlist(str_replace(possible_event_names, "^n_", ""))
+    }
+  }
+
+  for (x in event_names) {
+    if (!paste0("n_", x) %in% c(colnames(df_visit), names(col_names))) {
+      stop(paste0(x, " not found in df_visit"))
+    }
+  }
+
+  # get S3 orivisit ------------------------------------------------------
+
+  visit <- orivisit(df_visit, call, env = env, event_names = event_names, col_names)
+
+  as.data.frame(visit, env = env)
+
+  # correct method -------------------------------------------------------
 
   # when two tbl objects passed automatically switch to inframe
   is_tbl_df_visit <- ! is.data.frame(df_visit) & inherits(df_visit, "tbl")
@@ -171,12 +204,6 @@ simaerep <- function(df_visit,
 
   if (is_tbl_df_visit && is_tbl_r) {
     inframe <- TRUE
-  }
-
-  for (x in event_names) {
-    if (!(paste0("n_", x) %in% colnames(df_visit))) {
-      stop(paste0(x, " not found in df_visit"))
-      }
   }
 
   # multiple event_names only work for inframe method
@@ -194,11 +221,20 @@ simaerep <- function(df_visit,
     visit_med75 <- TRUE
   }
 
+  if (poisson_test) {
+    visit_med75 <- TRUE
+    under_only <- TRUE
+    inframe <- FALSE
+  }
+
   if (visit_med75 && ! inframe) {
 
-    if (! event_names == "ae") {
-      stop("Event_name must be 'ae' if inframe is FALSE")
-    }
+    event_names <- "ae"
+
+    stopifnot(
+      "inframe = FALSE, requires events in 'n_ae' columns" =
+      "n_ae" %in% colnames(df_visit)
+    )
 
     aerep <- simaerep_visit_med75(
       df_visit = visit,
@@ -208,7 +244,8 @@ simaerep <- function(df_visit,
       poisson_test = poisson_test,
       env = env,
       check = check,
-      mult_corr = mult_corr
+      mult_corr = mult_corr,
+      col_names = col_names
     )
 
   } else {
@@ -220,7 +257,8 @@ simaerep <- function(df_visit,
       env = env,
       check = check,
       event_names = event_names,
-      mult_corr = mult_corr
+      mult_corr = mult_corr,
+      col_names = col_names
     )
   }
 
@@ -266,15 +304,27 @@ simaerep_inframe <- function(df_visit,
                               check = TRUE,
                               env = parent.frame(),
                               event_names = c("ae"),
-                              mult_corr = FALSE
+                              mult_corr = FALSE,
+                              col_names = list(
+                               study_id = "study_id",
+                               site_id = "site_id",
+                               patient_id = "patient_id",
+                               visit = "visit"
+                              )
 ) {
-
   if (inherits(df_visit, "orivisit")) {
     visit <- df_visit
     df_visit <- as.data.frame(df_visit, env = env)
   } else {
     call <- rlang::enexpr(df_visit)
-    visit <- orivisit(df_visit, call, env = env, event_names = event_names)
+    visit <- orivisit(
+      df_visit,
+      call = call,
+      env = env,
+      event_names = event_names,
+      col_names = col_names
+    )
+    df_visit <- as.data.frame(visit, env = env)
   }
 
   # check --------------------------------------------
@@ -315,7 +365,8 @@ simaerep_inframe <- function(df_visit,
     df_sim_sites,
     method = eval_sites_method,
     under_only = under_only,
-    visit_med75 = visit_med75
+    visit_med75 = visit_med75,
+    event_names = event_names
   )
 
   # df_sim_sites df does not include visit_med75 stats
@@ -332,16 +383,17 @@ simaerep_inframe <- function(df_visit,
   validate_simaerep(
     new_simaerep(
       visit = visit,
-      df_site = df_site,
-      df_sim_sites = df_sim_sites,
-      df_eval = df_eval,
+      df_site = remap_col_names(df_site, col_names),
+      df_sim_sites = remap_col_names(df_sim_sites, col_names),
+      df_eval = remap_col_names(df_eval, col_names),
       r = r,
       visit_med75 = visit_med75,
       inframe = TRUE,
       under_only = under_only,
       event_names = event_names,
       mult_corr = mult_corr,
-      poisson_test = FALSE
+      poisson_test = FALSE,
+      col_names = col_names
     )
   )
 }
@@ -353,15 +405,24 @@ simaerep_visit_med75 <- function(df_visit,
                                  under_only = TRUE,
                                  r = 1000,
                                  mult_corr = FALSE,
-                                 poisson_test = FALSE) {
+                                 poisson_test = FALSE,
+                                 col_names = list(
+                                   study_id = "study_id",
+                                   site_id = "site_id",
+                                   patient_id = "patient_id",
+                                   visit = "visit"
+                                 )) {
 
   if (inherits(df_visit, "orivisit")) {
     visit <- df_visit
     df_visit <- as.data.frame(df_visit, env = env)
   } else {
     call <- rlang::enexpr(df_visit)
-    visit <- orivisit(df_visit, call, env = env)
+    visit <- orivisit(df_visit, call, env = env, col_names = col_names)
+    df_visit <- as.data.frame(visit, env = env)
   }
+
+  df_visit <- map_col_names(df_visit, col_names)
 
   # check
   if (check) {
@@ -399,15 +460,17 @@ simaerep_visit_med75 <- function(df_visit,
   validate_simaerep(
     new_simaerep(
       visit = visit,
-      df_site = df_site,
-      df_sim_sites = df_sim_sites,
-      df_eval = df_eval,
+      df_site = remap_col_names(df_site, col_names),
+      df_sim_sites = remap_col_names(df_sim_sites, col_names),
+      df_eval = remap_col_names(df_eval, col_names),
       r = r,
       visit_med75 = TRUE,
       inframe = FALSE,
       under_only = under_only,
       mult_corr = mult_corr,
-      poisson_test = poisson_test
+      poisson_test = poisson_test,
+      event_names = "ae",
+      col_names = col_names
     )
   )
 }
@@ -453,8 +516,10 @@ plot.simaerep <- function(x,
                           what = "ur",
                           n_sites = 16,
                           df_visit = NULL,
+                          df_site = NULL,
+                          df_eval = NULL,
                           env = parent.frame(),
-                          plot_event = "ae") {
+                          plot_event = x$event_names[1]) {
 
   stopifnot(what %in% c("ur", "med75"))
 
@@ -477,62 +542,126 @@ plot.simaerep <- function(x,
 
   if (is.null(df_visit)) {
     df_visit <- as.data.frame(x$visit, env = env)
+  } else {
+    df_visit <- map_col_names(df_visit, col_names = x$col_names)
   }
 
-  p <- .f(df_visit, x, study, n_sites, plot_event, ...)
+  if (is.null(df_eval)) {
+    df_eval <- map_col_names(x$df_eval, col_names = x$col_names)
+  } else {
+    df_eval <- map_col_names(df_eval, col_names = x$col_names)
+  }
+
+  if (is.null(df_site)) {
+    df_site <- map_col_names(x$df_site, col_names = x$col_names)
+  } else {
+    df_site <- map_col_names(df_site, col_names = x$col_names)
+  }
+
+  p <- .f(df_visit, x, study, n_sites, plot_event, df_eval = df_eval, df_site = df_site, ...)
 
   return(p)
 
 }
 
-plot_simaerep_plot_study <- function(df_visit, x, study, n_sites, plot_event = "ae", ...) {
-  study_plot <- purrr::map((plot_event),
-                           function(event) {
-                             plot_study(
-                               df_visit = df_visit,
-                               df_site = x$df_site,
-                               df_eval = x$df_eval,
-                               study = study,
-                               n_sites = n_sites,
-                               event_names = x$event_names,
-                               plot_event = event,
-                               mult_corr = x$mult_corr,
-                               ...
-                            )
-                           }
+plot_simaerep_plot_study <- function(df_visit,
+                                     x,
+                                     study,
+                                     n_sites,
+                                     plot_event,
+                                     df_eval,
+                                     df_site,
+                                     ...) {
+  study_plot <- purrr::map(
+     plot_event,
+     function(event) {
+       plot_study(
+         df_visit = df_visit,
+         df_site = df_site,
+         df_eval = df_eval,
+         study = study,
+         n_sites = n_sites,
+         event_names = x$event_names,
+         plot_event = event,
+         mult_corr = x$mult_corr,
+         ...
+      )
+     }
   )
 
   cowplot::plot_grid(plotlist = study_plot, nrow = length(plot_event))
 }
 
 plot_simaerep_plot_visit_med75 <- function(df_visit, x, study, n_sites, plot_event = "ae", ...) {
-  med75_plot <- purrr::map((plot_event),
-                           function(event) {
-                               plot_visit_med75(
-                               df_visit = df_visit,
-                               study_id_str = study,
-                               n_sites = n_sites,
-                               event_names = x$event_names,
-                               plot_event = event,
-                               ...
-                              )
-                            }
-                          )
+  med75_plot <- purrr::map(
+     plot_event,
+     function(event) {
+         plot_visit_med75(
+         df_visit = df_visit,
+         study_id_str = study,
+         n_sites = n_sites,
+         event_names = x$event_names,
+         plot_event = event,
+         ...
+        )
+      }
+  )
   cowplot::plot_grid(plotlist = med75_plot, nrow = length(plot_event))
 }
 
+#' Print method for simaerep objects
+#'
+#' @param x An object of class 'simaerep'
+#' @param ... Additional arguments passed to print (not used)
+#' @param n Number of rows to display from df_eval (default: 5)
+#'
 #' @export
-print.simaerep <- function(x, ...) {
-  cat(
-    paste(
-      c(
-        "simaerep object:",
-        "Check aerep$df_eval prob column for reporting probabililty.",
-        "Plot results using plot() generic."
-      ),
-      collapse = "\n"
+print.simaerep <- function(x, ..., n = 10) {
+  cat("simaerep object:\n")
+  cat("----------------\n")
+  cat("Plot results using plot() generic.\n")
+  cat('Full results available in "df_eval".\n\n')
+
+  cat("Summary:\n")
+
+  if (inherits(x$df_eval, "data.frame")){
+    cat(sprintf("Number of sites: %d\n", nrow(x$df_eval)))
+    cat(sprintf("Number of studies: %d\n\n", n_distinct(map_col_names(x$df_eval, x$col_names)$study_id)))
+  }
+
+  if (x$inframe) {
+    if (x$mult_corr) {
+      cat('Multiplicity correction applied to "*_prob" columns.\n\n')
+    }
+  } else {
+    cat('Classic algorithm used to calculate probabilities!!\n\n')
+    if (x$under_only) {
+      cat('Only under-reporting probability calculated !!!\n\n')
+    }
+
+    if (x$poisson_test & x$mult_corr) {
+      cat('Multiplicity correction applied to prob and pval columns.\n\n')
+    } else if (x$mult_corr) {
+      cat('Multiplicity correction applied to prob column.\n\n')
+    }
+
+  }
+
+
+  if (length(x$event_names) > 1) {
+    cat(
+      paste(
+        'Reporting probabilities calculated for:',
+        paste(x$event_names, collapse = ", "),
+        "\n\n"
+      )
     )
-  )
+  }
+
+  cat("First", n, "rows of df_eval:\n")
+  print(utils::head(x$df_eval, n))
+
+  invisible(x)
 }
 
 #' @title is simaerep class
@@ -544,3 +673,54 @@ print.simaerep <- function(x, ...) {
 is_simaerep <- function(x) {
   "simaerep" %in% class(x)
 }
+
+
+
+#'@keywords internal
+map_col_names <- function(df_visit,
+                          col_names) {
+
+  stopifnot(all(c("study_id", "site_id", "patient_id", "visit") %in% names(col_names)))
+
+  rename_cols <- c(
+    study_id = col_names[["study_id"]],
+    site_number = col_names[["site_id"]],
+    patnum = col_names[["patient_id"]],
+    visit = col_names[["visit"]],
+    unlist(
+      col_names[! names(col_names) %in% c("study_id", "site_id", "patient_id", "visit")]
+    )
+  )
+
+  df_visit <- df_visit %>%
+    rename(any_of(rename_cols))
+
+  return(df_visit)
+}
+
+#' renames internal simaerep col_names to externally applied colnames
+#'@keywords internal
+remap_col_names <- function(df, col_names) {
+
+  internal_col_names <- c(
+    "study_id",
+    "site_number",
+    "patnum",
+    "visit"
+  )
+
+  external_col_names <- c(
+    col_names["study_id"],
+    col_names["site_id"],
+    col_names["patient_id"],
+    col_names["visit"]
+  )
+
+  rename_cols <- setNames(internal_col_names, external_col_names)
+
+  df <- df %>%
+    rename(any_of(rename_cols))
+
+  return(df)
+}
+

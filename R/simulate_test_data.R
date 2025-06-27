@@ -5,152 +5,188 @@
 #'   sites.
 #' @param n_pat integer, number of patients, Default: 1000
 #' @param n_sites integer, number of sites, Default: 20
-#' @param frac_site_with_ur fraction of AE under-reporting sites, Default: 0
-#' @param ur_rate AE under-reporting rate, will lower mean ae per visit used to
-#'   simulate patients at sites flagged as AE-under-reporting. Negative Values
-#'   will simulate over-reporting., Default: 0
+#' @param ratio_out ratio of sites with outlier, Default: 0
+#' @param factor_event_rate event reporting rate factor for site outlier,
+#'   will modify mean event per visit rate used for outlier sites. Negative Values
+#'   will simulate under-reporting, positive values over-reporting,
+#'   e.g. -0.4 -> 40% under-reporting, +0.4 -> 40% over-reporting Default: 0
 #' @param max_visit_mean mean of the maximum number of visits of each patient,
 #'   Default: 20
 #' @param max_visit_sd standard deviation of maximum number of visits of each
 #'   patient, Default: 4
-#' @param ae_per_visit_mean mean event per visit per patient, Default: 0.5
-#' @param ae_rates vector with visit-specific event rates, Default: Null
-#' @param event_names vector, contains the event names, default = "ae"
-#' @return tibble with columns site_number, patnum, is_ur, max_visit_mean,
-#'   max_visit_sd, ae_per_visit_mean, visit, n_ae
+#' @param event_per_visit_mean mean event per visit per patient, Default: 0.5
+#' @param event_rates vector with visit-specific event rates, Default: Null
+#' @param event_names vector, contains the event names, default = "event"
+#' @param study_id character, Default: "A"
+#' @return tibble with columns site_id, patient_id, is_out, max_visit_mean,
+#'   max_visit_sd, event_per_visit_mean, visit, n_event
 #' @details maximum visit number will be sampled from normal distribution with
-#'   characteristics derived from max_visit_mean and max_visit_sd, while the ae
+#'   characteristics derived from max_visit_mean and max_visit_sd, while the events
 #'   per visit will be sampled from a poisson distribution described by
-#'   ae_per_visit_mean.
+#'   events_per_visit_mean.
 #' @examples
 #' set.seed(1)
+#' # no outlier
 #' df_visit <- sim_test_data_study(n_pat = 100, n_sites = 5)
-#' df_visit[which(df_visit$patnum == "P000001"),]
+#' df_visit[which(df_visit$patient_id == "P000001"),]
+#'
+#' # under-reporting outlier
 #' df_visit <- sim_test_data_study(n_pat = 100, n_sites = 5,
-#'     frac_site_with_ur = 0.2, ur_rate = 0.5)
-#' df_visit[which(df_visit$patnum == "P000001"),]
-#' ae_rates <- c(0.7, rep(0.5, 8), rep(0.3, 5))
-#' sim_test_data_study(n_pat = 100, n_sites = 5, ae_rates = ae_rates)
+#'     ratio_out = 0.2, factor_event_rate = -0.5)
+#' df_visit[which(df_visit$patient_id == "P000001"),]
+#'
+#' # non-constant event rates
+#' event_rates <- c(0.7, rep(0.5, 8), rep(0.3, 5))
+#' sim_test_data_study(n_pat = 100, n_sites = 5, event_rates = event_rates)
+#'
 #' @rdname sim_test_data_study
 #' @export
 sim_test_data_study <- function(n_pat = 1000,
                                  n_sites = 20,
-                                 frac_site_with_ur = 0,
-                                 ur_rate = 0,
+                                 ratio_out = 0,
+                                 factor_event_rate = 0,
                                  max_visit_mean = 20,
                                  max_visit_sd = 4,
-                                 ae_per_visit_mean = c(0.5),
-                                 ae_rates = c(NULL),
-                                 event_names = list("ae")
+                                 event_per_visit_mean = c(0.5),
+                                 event_rates = c(NULL),
+                                 event_names = list("event"),
+                                 study_id = "A"
 ) {
 
+  # check ---------------------------------------------------------------------
 
-  if (length(event_names) != length(ae_per_visit_mean)) {
-    stop(paste0("Number of events named (", length(event_names),
-                ") doesn't equal the number of events per visit means submitted (", length(ae_per_visit_mean), ")"))
-  }
+  if (!(is.null(event_rates))) {
 
-  if (!(is.null(ae_rates))) {
-    if (is.numeric(ae_rates) && length(event_names) > 1) {
-      stop(paste0("ae_rates should be entered as a list (containing arrays) when the number of events is > 1"))
+    if (is.numeric(event_rates) && length(event_names) > 1) {
+      stop(paste0("event_rates should be entered as a list (containing arrays) when the number of events is > 1"))
     }
-    if (is.list(ae_rates) && length(ae_rates) != length(event_names)) {
+
+    if (is.list(event_rates) && length(event_rates) != length(event_names)) {
       stop(paste0("Number of events named (", length(event_names),
-                                   ") doesn't equal the number of events rates submitted (", length(ae_rates), ")"))
+                                   ") doesn't equal the number of events rates submitted (", length(event_rates), ")"))
     }
-    }
-  # construct patient ae sample function
-  # supports constant and non-constant ae rates
-  f_sim_pat <- function(vs_max, vs_sd, is_ur) {
-    colnames <- c(paste0(event_names, "_per_visit_mean"), "visit",  paste0("n_", event_names))
-    if (! any(c(is.null(ae_rates), is.na(ae_rates)))) {
-      if (is_ur) {
-        ae_rates <- ae_rates * (1 - ur_rate)
-      }
+  } else {
 
-      f_sample_ae <- function(max_visit) {
-
-        # extrapolate missing ae rates by extending last rate
-        if (is.list(ae_rates)) {
-
-          fill <- map(ae_rates, .f = ~(rep(.x[length(.x)], max_visit)))
-          for (x in seq_along(ae_rates)) {
-
-            fill[[x]][seq_along(ae_rates[[x]])] <- ae_rates[[x]]
-            }
-          }else {
-
-            fill <- rep(ae_rates[length(ae_rates)], max_visit)
-            fill[seq_along(ae_rates)] <- ae_rates
-          }
-
-
-        ae_rates <- fill
-
-
-        for (x in seq_along(event_names)){
-
-          aes_temp <- numeric(0)
-
-          for (i in seq(1, max_visit)) {
-            ae <- rpois(1, ifelse(is.list(ae_rates), ae_rates[[x]][i], ae_rates[i]))
-            aes_temp <- c(aes_temp, ae)
-          }
-          if (x == 1) (aes <- aes_temp)
-          else (aes <- list(aes, aes_temp))
-        }
-
-        return(aes)
-      }
-
-      ae_per_visit_mean <- if (is.list(ae_rates)) map(ae_rates, mean) else (mean(ae_rates))
-
-    } else {
-
-        if (is_ur) {
-          ae_per_visit_mean <- ae_per_visit_mean * (1 - ur_rate)
-        }
-
-        f_sample_ae <- function(max_visit) {
-          ae_per_visit_mean %>%
-            map(rpois, n = max_visit)
-        }
-
+    if (length(event_names) != length(event_per_visit_mean)) {
+      stop(paste0("Number of events named (", length(event_names),
+                  ") doesn't equal the number of events per visit means submitted (", length(event_per_visit_mean), ")"))
     }
 
-    aes <- sim_test_data_patient(
-      .f_sample_max_visit = function(x) rnorm(1, mean = vs_max, sd = vs_sd),
-      .f_sample_ae_per_visit = f_sample_ae
-    )
-
-
-    sim_pat <- data.frame(ae_per_visit_mean = as.list(ae_per_visit_mean),
-                          visit = seq(1, length(aes[[1]])),
-                          n_ae = aes)
-
-    names(sim_pat) <- colnames
-    return(sim_pat)
   }
 
-  tibble(patnum = seq(1, n_pat)) %>%
-    mutate(patnum = str_pad(patnum, width = 6, side = "left", pad = "0"),
-           patnum = paste0("P", patnum),
-           site_number = seq(1, n_pat),
-           site_number = if (n_sites > 1) cut(.data$site_number, n_sites, labels = FALSE) else 1,
-           is_ur = ifelse(.data$site_number <= (max(.data$site_number) * frac_site_with_ur), TRUE, FALSE),
-           site_number = str_pad(.data$site_number, width = 4, side = "left", pad = "0"),
-           site_number = paste0("S", .data$site_number),
+  # construct a grid with one row per site
+  tibble(patient_id = seq(1, n_pat)) %>%
+    mutate(patient_id = str_pad(patient_id, width = 6, side = "left", pad = "0"),
+           patient_id = paste0("P", patient_id),
+           site_id = seq(1, n_pat),
+           site_id = if (n_sites > 1) cut(.data$site_id, n_sites, labels = FALSE) else 1,
+           is_out = ifelse(.data$site_id <= (max(.data$site_id) * ratio_out), TRUE, FALSE),
+           site_id = str_pad(.data$site_id, width = 4, side = "left", pad = "0"),
+           site_id = paste0("S", .data$site_id),
            max_visit_mean = max_visit_mean,
            max_visit_sd = max_visit_sd,
-           aes = pmap(list(.data$max_visit_mean,
-                           .data$max_visit_sd,
-                           .data$is_ur),
-                      f_sim_pat
+           # simulate patients per site
+           site_patient_events = pmap(
+             list(
+               .data$max_visit_mean,
+               .data$max_visit_sd,
+               .data$is_out
+             ),
+             function(x, y, z) sim_pat(x, y, z, event_per_visit_mean, event_rates, event_names, factor_event_rate)
            )
     ) %>%
-    unnest("aes")
+    unnest("site_patient_events") %>%
+    mutate(
+      study_id = .env$study_id
+    )
 
 }
+
+#' simulate patients and events for sites
+#' supports constant and non-constant ae rates
+#' @keywords internal
+sim_pat <- function(vs_max,
+                    vs_sd,
+                    is_out,
+                    event_per_visit_mean,
+                    event_rates,
+                    event_names,
+                    factor_event_rate) {
+
+  colnames <- c(paste0(event_names, "_per_visit_mean"), "visit",  paste0("n_", event_names))
+
+  if (! any(c(is.null(event_rates), is.na(event_rates)))) {
+
+    if (is_out & is.list(event_rates)) {
+      event_rates <- map(event_rates, ~ . * (1 + factor_event_rate))
+    }
+
+    if (is_out & ! is.list(event_rates)) {
+      event_rates <- event_rates * (1 + factor_event_rate)
+    }
+
+    f_sample_events <- function(max_visit) {
+
+      # extrapolate missing event rates by extending last rate
+      if (is.list(event_rates)) {
+
+        fill <- map(event_rates, .f = ~(rep(.x[length(.x)], max_visit)))
+        for (x in seq_along(event_rates)) {
+
+          fill[[x]][seq_along(event_rates[[x]])] <- event_rates[[x]]
+        }
+      }else {
+
+        fill <- rep(event_rates[length(event_rates)], max_visit)
+        fill[seq_along(event_rates)] <- event_rates
+      }
+
+      event_rates <- fill
+
+      for (x in seq_along(event_names)){
+
+        events_temp <- numeric(0)
+
+        for (i in seq(1, max_visit)) {
+          event <- rpois(1, ifelse(is.list(event_rates), event_rates[[x]][i], event_rates[i]))
+          events_temp <- c(events_temp, event)
+        }
+        if (x == 1) (events <- events_temp)
+        else (events <- list(events, events_temp))
+      }
+
+      return(events)
+    }
+
+    event_per_visit_mean <- if (is.list(event_rates)) map(event_rates, mean) else (mean(event_rates))
+
+  } else {
+
+    if (is_out) {
+      event_per_visit_mean <- event_per_visit_mean * (1 + factor_event_rate)
+    }
+
+    f_sample_events <- function(max_visit) {
+      event_per_visit_mean %>%
+        map(rpois, n = max_visit)
+    }
+
+  }
+
+  events <- sim_test_data_patient(
+    .f_sample_max_visit = function(x) rnorm(1, mean = vs_max, sd = vs_sd),
+    .f_sample_ae_per_visit = f_sample_events
+  )
+
+
+  sim_pat <- data.frame(event_per_visit_mean = as.list(event_per_visit_mean),
+                        visit = seq(1, length(events[[1]])),
+                        n_ae = events)
+
+  names(sim_pat) <- colnames
+  return(sim_pat)
+}
+
 
 #' @title simulate patient ae reporting test data
 #' @description helper function for [sim_test_data_study()][sim_test_data_study()]
@@ -699,11 +735,11 @@ sim_test_data_portfolio <- function(df_config, df_ae_rates = NULL, parallel = FA
               n_sites = 1,
               max_visit_mean = max_visit_mean,
               max_visit_sd = max_visit_sd,
-              ae_per_visit_mean = ae_per_visit_mean,
-              ae_rates = ae_rates
+              event_per_visit_mean = ae_per_visit_mean,
+              event_rates = ae_rates
             ) %>%
               select(c(
-                "patnum", "visit", "n_ae"
+                "patient_id", "visit", "n_event"
               ))
           },
           .progress = progress,
@@ -723,7 +759,7 @@ sim_test_data_portfolio <- function(df_config, df_ae_rates = NULL, parallel = FA
     mutate(
       # patnums need to be made site exclusive
       patnum = str_pad(
-        dense_rank(paste0(.data$site_number, .data$patnum)),
+        dense_rank(paste0(.data$site_number, .data$patient_id)),
         width = 4,
         side = "left",
         pad = "0"
@@ -983,7 +1019,7 @@ get_portf_perf <- function(df_scen, stat = "prob", fpr = c(0.001, 0.01, 0.05)) {
 #'@export
 #'@examples
 #' df_visit <- sim_test_data_study(n_pat = 100, n_sites = 10,
-#'                                  frac_site_with_ur = 0.4, ur_rate = 0.6)
+#'                                  ratio_out = 0.4, factor_event_rate = 0.6)
 #'
 #' df_visit$study_id <- "A"
 #'
@@ -996,6 +1032,8 @@ get_portf_perf <- function(df_scen, stat = "prob", fpr = c(0.001, 0.01, 0.05)) {
 #' df_visit[df_visit$site_number == "S0001" & df_visit$patnum == "P000001",]$n_ae
 #'
 sim_ur <- function(df_visit, study_id, site_number, ur_rate) {
+
+  df_visit <- remap_col_names(df_visit)
 
   df_visit <- df_visit %>%
     mutate(n_ae = as.numeric(.data$n_ae))

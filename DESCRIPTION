@@ -1,6 +1,6 @@
 Package: simaerep
-Title: Find Clinical Trial Sites Under-Reporting Adverse Events
-Version: 0.7.0
+Title: Detect Clinical Trial Sites Over- or Under-Reporting Clinical Events
+Version: 1.0.0
 Authors@R: c(
     person(given = "Bjoern",
            family = "Koneswarakantha",
@@ -10,11 +10,14 @@ Authors@R: c(
     person("F. Hoffmann-La Roche Ltd",
            role = c("cph"))
   )
-Description: Monitoring of Adverse Event (AE) reporting in clinical trials is 
-  important for patient safety. Sites that are under-reporting AEs can be detected 
-  using Bootstrap-based simulations that simulate overall AE reporting. Based on the 
-  simulation an AE under-reporting probability is assigned to each site in a 
-  given trial (Koneswarakantha 2021 <doi:10.1007/s40264-020-01011-5>).
+Description: Monitoring reporting rates of subject-level clinical events (e.g.
+  adverse events, protocol deviations) reported by clinical trial sites is an
+  important aspect of risk-based quality monitoring strategy. Sites that are 
+  under-reporting or over-reporting events can be detected using bootstrap
+  simulations during which patients are redistributed between sites. Site-specific
+  distributions of event reporting rates  are generated that are used to assign
+  probablilities to the observed reporting rates.
+  (Koneswarakantha 2024 <doi:10.1007/s43441-024-00631-8>).
 URL: https://openpharma.github.io/simaerep/, https://github.com/openpharma/simaerep/
 License: MIT + file LICENSE
 Encoding: UTF-8

@@ -8,16 +8,16 @@ simaerep(
   df_visit,
   r = 1000,
   check = TRUE,
-  under_only = TRUE,
-  visit_med75 = TRUE,
-  inframe = FALSE,
+  under_only = FALSE,
+  visit_med75 = FALSE,
+  inframe = TRUE,
   progress = TRUE,
   mult_corr = TRUE,
-  param_site_aggr = list(method = "med75_adj", min_pat_pool = 0.2),
-  param_sim_sites = list(r = 1000, poisson_test = FALSE, prob_lower = TRUE),
-  param_eval_sites = list(method = "BH"),
+  poisson_test = FALSE,
   env = parent.frame(),
-  event_names = c("ae")
+  event_names = c("event"),
+  col_names = list(study_id = "study_id", site_id = "site_id", patient_id = "patient_id",
+    visit = "visit")
 )
 }
 \arguments{
@@ -34,31 +34,25 @@ TRUE.}
 
 \item{under_only}{Logical, compute under-reporting probabilities only.
 Supersedes under_only parameter passed to \code{\link[=eval_sites]{eval_sites()}} and \code{\link[=sim_sites]{sim_sites()}}.
-Default: TRUE.}
+Default: FALSE}
 
 \item{visit_med75}{Logical, should evaluation point visit_med75 be used.
-Default: TRUE.}
+Default: FALSE}
 
 \item{inframe}{Logical, only table operations to be used; does not require
-visit_med75. Compatible with dbplyr supported database backends.}
+visit_med75. Compatible with dbplyr supported database backends.Default: TRUE}
 
 \item{progress}{Logical, display progress bar. Default: TRUE.}
 
 \item{mult_corr}{Logical, multiplicity correction, Default: TRUE}
 
-\item{param_site_aggr}{List of parameters passed to \code{\link[=site_aggr]{site_aggr()}}. Default:
-list(method = "med75_adj", min_pat_pool = 0.2).}
-
-\item{param_sim_sites}{List of parameters passed to \code{\link[=sim_sites]{sim_sites()}}. Default:
-list(r = 1000, poisson_test = FALSE, prob_lower = TRUE).}
-
-\item{param_eval_sites}{List of parameters passed to \code{\link[=eval_sites]{eval_sites()}}. Default:
-list(method = "BH").}
+\item{poisson_test}{logical, compute p-value with poisson test, only supported
+by the classic algorithm using visit_med75. Default: FALSE}
 
 \item{env}{Optional, provide environment of original visit data. Default:
 parent.frame().}
 
-\item{event_names}{vector, contains the event names, default = "ae"}
+\item{event_names}{vector, contains the event names, default = "event"}
 }
 \value{
 A simaerep object.
@@ -83,6 +77,12 @@ aerep <- simaerep(df_visit)
 aerep
 str(aerep)
 
+# simaerep classic algorithm
+
+aerep <- simaerep(df_visit, inframe = FALSE, under_only = TRUE, mult_corr = TRUE)
+str(aerep)
+
+# multiple events
 
 df_visit_events_test <- sim_test_data_events(
   n_pat = 100,
@@ -90,6 +90,8 @@ df_visit_events_test <- sim_test_data_events(
   ae_per_visit_mean = c(0.4, 0.5),
   event_names = c("ae", "pd")
 )
+
+df_visit_events_test
 
 aerep_events <- simaerep(df_visit_events_test, inframe = TRUE, event_names = c("ae", "pd"))
 

@@ -33,7 +33,7 @@ if (getRversion() >= "2.15.1") {
 #'
 #' @rdname check_df_visit
 #' @export
-check_df_visit <- function(df_visit, event_names = "ae") {
+check_df_visit <- function(df_visit, event_names = c("event")) {
 
   df_visit <- ungroup(df_visit)
   colnames <- paste0("n_", event_names)
@@ -53,7 +53,7 @@ check_df_visit <- function(df_visit, event_names = "ae") {
     unlist()
 
   if (any(cols_na)) {
-    stop(paste("NA detected in columns:", paste(no_na_cols[cols_na], collapse = ",")))
+    stop(paste("NA detected in columns:", paste(no_na_cols[cols_na], collapse = ", ")))
   }
 
   df_visit %>%
@@ -485,26 +485,23 @@ eval_sites <- function(df_sim_sites,
     # we correct for an edge case in which the quantitative count of
     # events between site and study is equal which can happen when
     # both are zero.
-    if (length(cols_prob_low) == 1) {
-      event = "ae"
-      event_rate <- "events"
+
+    # inframe and classic algorithms have different columnn names
+    inframe <- ! any(str_detect(colnames(df_out), "med75"))
+
+    if (! inframe) {
+      col_quant_event_site <- "mean_ae_site_med75"
+      col_quant_event_study <- "mean_ae_study_med75"
     } else {
       event <- stringr::str_split_1(cols_prob_low[i], "_")[1]
-      event_rate <- event
+      col_quant_event_site <- paste0(event, "_per_visit_site")
+      col_quant_event_study <- paste0(event, "_per_visit_study")
+      col_event_delta <- paste0(event, "_delta")
     }
 
     col_prob_or <- cols_prob_or[i]
     col_prob_ur <- cols_prob_ur[i]
     col_prob <- cols_prob[i]
-    col_event_delta <- paste0(event, "_delta")
-
-    if (any(str_detect(colnames(df_out), "_site_med75"))) {
-      col_quant_event_site <- paste0("mean_", event, "_site_med75")
-      col_quant_event_study <- paste0("mean_", event, "_study_med75")
-    } else {
-      col_quant_event_site <- paste0(event_rate, "_per_visit_site")
-      col_quant_event_study <- paste0(event_rate, "_per_visit_study")
-    }
 
     df_out <- df_out %>%
       mutate(
@@ -522,7 +519,7 @@ eval_sites <- function(df_sim_sites,
         )
 
     # when not relying on med75 we can calculate delta_event for each site
-    if (! visit_med75) {
+    if (! visit_med75 & inframe) {
       df_out <- df_out %>%
         mutate(
           "{col_event_delta}" := (.data[[col_quant_event_site]] * .data[["visits"]]) -

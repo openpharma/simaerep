@@ -70,29 +70,15 @@ sim_inframe <- function(df_visit, r = 1000, df_site = NULL, event_names = c("ae"
       )
   }
 
-
   # aggregate per patient to get max visits
   df_pat_aggr_pool <- pat_aggr(df_visit)
 
-
-  colnames_event <- "events"
-  colnames_low <- "prob_low" #nolint
-  colnames_ori <- "events_per_visit_site_ori"
-  colnames_rep <- "events_per_visit_rep"
-  colnames_study <- "events_per_visit_study" #nolint
-  colnames_site <- "events_per_visit_site" #nolint
-
-
-  if (length(event_names) != 1) {
-    colnames_event <- paste0(event_names, "_events")
-    colnames_low <- paste0(event_names, "_prob_low")
-    colnames_ori <- paste0(event_names, "_per_visit_site_ori")
-    colnames_rep <- paste0(event_names, "_per_visit_rep")
-    colnames_study <- paste0(event_names, "_per_visit_study")
-    colnames_site <- paste0(event_names, "_per_visit_site")
-  }
-
-
+  colnames_event <- paste0(event_names, "_events")
+  colnames_low <- paste0(event_names, "_prob_low")
+  colnames_ori <- paste0(event_names, "_per_visit_site_ori")
+  colnames_rep <- paste0(event_names, "_per_visit_rep")
+  colnames_study <- paste0(event_names, "_per_visit_study")
+  colnames_site <- paste0(event_names, "_per_visit_site")
 
   # this implements visit_med75
   if (! is.null(df_site)) {

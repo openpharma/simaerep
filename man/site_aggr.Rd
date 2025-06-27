@@ -16,7 +16,7 @@ site_aggr(
 \item{df_visit}{dataframe with columns: study_id, site_number, patnum, visit,
 n_ae}
 
-\item{method}{character, one of c("med75", "med75_adj") defining method for
+\item{method}{character, one of c("med75", "med75_adj", "max") defining method for
 defining evaluation point visit_med75 (see details), Default: "med75_adj"}
 
 \item{min_pat_pool, }{double, minimum ratio of available patients available for
@@ -49,7 +49,8 @@ evaluate we take the minimum of all maximum visits hence ensuring that we
 take the highest visit number possible without excluding more patients from
 the analysis. In order to ensure that the sampling pool for that visit is
 large enough we limit the visit number by the 80\% quantile of maximum visits
-of all patients in the study.
+of all patients in the study. "max" will determine site max visit, flag patients
+that concluded max visit and count patients and patients that concluded max visit.
 }
 \examples{
 df_visit <- sim_test_data_study(

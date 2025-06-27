@@ -17,7 +17,7 @@ many rows as desired repetitions. Default: 1000.}
 \item{df_site, }{dataframe as returned be \code{\link[=site_aggr]{site_aggr()}}, Will switch to visit_med75.
 Default: NULL}
 
-\item{event_names}{vector, contains the event names, default = "ae"}
+\item{event_names}{vector, contains the event names, default = "event"}
 }
 \description{
 Calculate prob_lower for study sites using table operations

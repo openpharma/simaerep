@@ -14,18 +14,19 @@ test_that(paste("prob_lower_site_ae_vs_study_ae() - high number of AEs at site",
 })
 
 
-test_that("sim_test_data_study() - negative values passed to ur_rate simulate over-reporting", {
+test_that("sim_test_data_study() - positive values passed to factor_event_rate simulate over-reporting", {
 
   ae_per_visit_mean_def <- 0.5
 
   df_visit <- sim_test_data_study(
-    ur_rate = - 0.5,
-    frac_site_with_ur = 0.05,
-    ae_per_visit_mean = ae_per_visit_mean_def
+    factor_event_rate = +0.5,
+    ratio_out = 0.05,
+    event_per_visit_mean = ae_per_visit_mean_def,
+    event_names = "ae"
   )
 
   ae_per_visit_mean_or <- df_visit %>%
-    filter(is_ur) %>%
+    filter(is_out) %>%
     pull(ae_per_visit_mean) %>%
     unique()
 

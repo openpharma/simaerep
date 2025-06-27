@@ -10,11 +10,11 @@ simaerep_inframe(
   under_only = FALSE,
   visit_med75 = FALSE,
   check = TRUE,
-  param_site_aggr = list(method = "med75_adj", min_pat_pool = 0.2),
-  param_eval_sites = list(method = "BH"),
   env = parent.frame(),
   event_names = c("ae"),
-  mult_corr = FALSE
+  mult_corr = FALSE,
+  col_names = list(study_id = "study_id", site_id = "site_id", patient_id = "patient_id",
+    visit = "visit")
 )
 }
 \arguments{
@@ -27,25 +27,19 @@ many rows as desired repetitions. Default: 1000.}
 
 \item{under_only}{Logical, compute under-reporting probabilities only.
 Supersedes under_only parameter passed to \code{\link[=eval_sites]{eval_sites()}} and \code{\link[=sim_sites]{sim_sites()}}.
-Default: TRUE.}
+Default: FALSE}
 
 \item{visit_med75}{Logical, should evaluation point visit_med75 be used.
-Default: TRUE.}
+Default: FALSE}
 
 \item{check}{Logical, perform data check and attempt repair with
 \code{\link[=check_df_visit]{check_df_visit()}}. Computationally expensive on large data sets. Default:
 TRUE.}
 
-\item{param_site_aggr}{List of parameters passed to \code{\link[=site_aggr]{site_aggr()}}. Default:
-list(method = "med75_adj", min_pat_pool = 0.2).}
-
-\item{param_eval_sites}{List of parameters passed to \code{\link[=eval_sites]{eval_sites()}}. Default:
-list(method = "BH").}
-
 \item{env}{Optional, provide environment of original visit data. Default:
 parent.frame().}
 
-\item{event_names}{vector, contains the event names, default = "ae"}
+\item{event_names}{vector, contains the event names, default = "event"}
 
 \item{mult_corr}{Logical, multiplicity correction, Default: TRUE}
 }

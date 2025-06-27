@@ -12,7 +12,8 @@ plot_visit_med75(
   min_pat_pool = 0.2,
   verbose = TRUE,
   event_names = "ae",
-  plot_event = "ae"
+  plot_event = "ae",
+  ...
 )
 }
 \arguments{

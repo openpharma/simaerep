@@ -1,20 +1,29 @@
 
 
-new_orivisit <- function(dim, df_summary, str_call, event_names = "ae") {
+new_orivisit <- function(dim, df_summary, str_call, event_names, col_names) {
   structure(
     list(
       dim = dim,
       df_summary = df_summary,
       str_call = str_call,
-      event_names = event_names
+      event_names = event_names,
+      col_names = col_names
     ),
     class = "orivisit"
   )
 }
 
 validate_orivisit <- function(x) {
-  comp <- sort(attributes(x)$names) ==  sort(c("dim", "df_summary", "str_call", "event_names"))
-  stopifnot(all(comp))
+
+  expected_attributes <- c(
+    "dim",
+    "df_summary",
+    "str_call",
+    "event_names",
+    "col_names"
+  )
+
+  stopifnot(all(sort(attributes(x)$names) ==  sort(expected_attributes)))
   stopifnot(length(x$dim) == 2)
   inherits(x$df_summary, "data.frame") | inherits(x$df_summary, "tbl")
   stopifnot(is.character(x$str_call) | is.na(x$str_call))
@@ -91,7 +100,11 @@ get_str_var <- function(call, env) {
 #'
 #' @rdname orivisit
 #' @export
-orivisit <- function(df_visit, call = NULL, env = parent.frame(), event_names = c("ae")) {
+orivisit <- function(df_visit,
+                     call = NULL,
+                     env = parent.frame(),
+                     event_names,
+                     col_names) {
 
 
   if (is.null(call)) {
@@ -99,17 +112,19 @@ orivisit <- function(df_visit, call = NULL, env = parent.frame(), event_names = 
   }
   stopifnot(inherits(df_visit, "data.frame") | inherits(df_visit, "tbl"))
 
+  df_visit <- map_col_names(df_visit, col_names)
+
   dim <- dim(df_visit)
   df_summary <- summarise_df_visit(df_visit, event_names = event_names)
   str_call <- get_str_var(call, env)
-
 
   validate_orivisit(
     new_orivisit(
       dim,
       df_summary,
       str_call,
-      event_names
+      event_names,
+      col_names
     )
   )
 }
@@ -119,15 +134,14 @@ as.data.frame.orivisit <- function(x, ..., env = parent.frame()) {
   if (is.na(x$str_call)) stop.orivisit()
   if (! exists(x$str_call, envir = env)) stop.orivisit()
 
-  df <- rlang::env_get(env, x$str_call, inherit = TRUE)
+  df <- rlang::env_get(env, x$str_call, inherit = TRUE) %>%
+    map_col_names(x$col_names)
 
   df_is_tbl <- ! inherits(df, "data.frame") & inherits(df, "tbl")
 
-  ifelse(is.null(x$event_names), event_names <- "ae", event_names <- x$event_names)
-
   if (! df_is_tbl) {
     dim <- dim(df)
-    df_summary <- summarise_df_visit(df, event_names)
+    df_summary <- summarise_df_visit(df, x$event_names)
 
     #all.equal produces either TRUE or a character string (instead of FALSE)
     if (is.character(all.equal(df_summary, x$df_summary, tolerance = 1e-4))) stop.orivisit()

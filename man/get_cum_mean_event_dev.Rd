@@ -16,7 +16,7 @@ n_ae.}
 
 \item{group}{character, grouping variable, one of: c("site_number", "study_id")}
 
-\item{event_names}{vector, contains the event names, default = "ae"}
+\item{event_names}{vector, contains the event names, default = "event"}
 }
 \description{
 Calculate average increase of events per visit and cumulative average increase.

@@ -20,10 +20,10 @@ will be made.}
 
 \item{under_only}{Logical, compute under-reporting probabilities only.
 Supersedes under_only parameter passed to \code{\link[=eval_sites]{eval_sites()}} and \code{\link[=sim_sites]{sim_sites()}}.
-Default: TRUE.}
+Default: FALSE}
 
 \item{visit_med75}{Logical, should evaluation point visit_med75 be used.
-Default: TRUE.}
+Default: FALSE}
 
 \item{...}{use to pass r_sim_sites parameter to eval_sites_deprecated()}
 }

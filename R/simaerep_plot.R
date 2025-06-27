@@ -514,44 +514,17 @@ plot_study <- function(df_visit,
                         mult_corr = FALSE,
                         delta = TRUE) {
 
-  if (!plot_event %in% event_names) stop("plot_event (", plot_event, ") not found within event_names")
-
-  if (! "n_pat_with_med75" %in% colnames(df_site)) {
-    df_site$n_pat_with_med75 <- df_site$n_pat
-  }
-
-  if (! "n_pat_with_med75" %in% colnames(df_eval)) {
-    df_eval$n_pat_with_med75 <- df_eval$n_pat
-  }
-
-  colname_site <- "events_per_visit_site"
-  colname_study <- "events_per_visit_study"
-  colname_event <- paste0("n_", plot_event)
-  colname_mean <- paste0("cum_mean_dev_", plot_event)
-  colname_delta <- paste0(plot_event, "_delta")
-  prob_col_temp <- prob_col
-
-  if (length(event_names) != 1 || !colnames(df_eval)[grep(prob_col, colnames(df_eval))][1] == prob_col) {
-    colname_site <- paste0(plot_event, "_per_visit_site")
-    colname_study <- paste0(plot_event, "_per_visit_study")
-    prob_col <- paste0(plot_event, "_", prob_col_temp)
-  }
+  # filter studies -----------------------------------------------------------
 
   studies <- df_visit %>%
     distinct(.data$study_id) %>%
     pull(.data$study_id)
 
   stopifnot(study %in% studies)
-  stopifnot(study %in% studies)
-  stopifnot(study %in% studies)
-
-  # filter studies -----------------------------------------------------------
 
   df_visit <- df_visit %>%
     filter(.data$study_id %in% study) %>%
     collect()
-
-  df_visit <- check_df_visit(df_visit, event_names)
 
   df_site <- df_site %>%
     filter(.data$study_id %in% study) %>%
@@ -572,6 +545,37 @@ plot_study <- function(df_visit,
   df_site <- df_site %>%
     mutate_at(vars(c("study_id", "site_number")), as.character)
 
+
+  # prep -----------------------------------------------------------
+
+  if (!plot_event %in% event_names) stop("plot_event (", plot_event, ") not found within event_names")
+
+  if (! "n_pat_with_med75" %in% colnames(df_site)) {
+    df_site$n_pat_with_med75 <- df_site$n_pat
+  }
+
+  if (! "n_pat_with_med75" %in% colnames(df_eval)) {
+    df_eval$n_pat_with_med75 <- df_eval$n_pat
+  }
+
+  colname_site <- "events_per_visit_site"
+  colname_study <- "events_per_visit_study"
+  colname_event <- paste0("n_", plot_event)
+  colname_mean <- paste0("cum_mean_dev_", plot_event)
+  colname_delta <- paste0(plot_event, "_delta")
+
+  if (length(event_names) != 1 || !colnames(df_eval)[grep(prob_col, colnames(df_eval))][1] == prob_col) {
+    colname_site <- paste0(plot_event, "_per_visit_site")
+    colname_study <- paste0(plot_event, "_per_visit_study")
+    prob_col <- paste0(plot_event, "_", prob_col)
+  }
+
+  if (prob_col == "pval") {
+    df_eval <- df_eval %>%
+      mutate(
+        pval = 1 - pval
+      )
+  }
 
   # adjust to visit_med75 or alternative ---------------------------------------
   if (all(c(colname_study, colname_site) %in% colnames(df_eval))) {
@@ -606,17 +610,17 @@ plot_study <- function(df_visit,
 
   # ordered sites -------------------------------------------------------------
 
-  if (mult_corr) {
-    thresh <- 0.5
-    breaks <- c(0, 0.5, 0.75, 0.95, ifelse(max(abs(df_eval[[prob_col]]), na.rm = TRUE) > 0.95,
+  if (mult_corr && prob_col != "pval") {
+    thresh <- 0.75
+    breaks <- c(0, 0.75, 0.95, ifelse(max(abs(df_eval[[prob_col]]), na.rm = TRUE) > 0.95,
                                            max(abs(df_eval[[prob_col]]), na.rm = TRUE) + 0.1,
                                            NA))
-    } else {
-    thresh <- 0.9
-    breaks <- c(0, 0.9, 0.95, 0.99, ifelse(max(abs(df_eval[[prob_col]]), na.rm = TRUE) > 0.99,
+  } else {
+   thresh <- 0.9
+   breaks <- c(0, 0.9, 0.95, 0.99, ifelse(max(abs(df_eval[[prob_col]]), na.rm = TRUE) > 0.99,
                                            max(abs(df_eval[[prob_col]]), na.rm = TRUE) + 0.1,
                                            NA))
-    }
+  }
 
   n_site_ur_gr_0p5 <- df_eval %>%
     filter(abs(.data[[prob_col]]) > thresh) %>%
@@ -738,7 +742,7 @@ plot_study <- function(df_visit,
     df_label$label <- paste("N: ", df_label$n_pat)
   }
 
-  if (delta & colname_delta %in% colnames(df_label)) {
+  if (delta & colname_delta %in% colnames(df_eval)) {
     df_label <- df_label %>%
       left_join(
         df_eval %>%
@@ -749,7 +753,7 @@ plot_study <- function(df_visit,
 
     # study plot -----------------------------------------------------------------
 
-  max_visit_study <- max(df_mean_ae_dev_site$visit)
+  max_visit_study <- max(df_mean_ae_dev_study$visit)
   max_ae_study <- max(df_mean_ae_dev_site[[colname_mean]])
 
   p_study <- df_mean_ae_dev_site_no_alert %>%
@@ -775,6 +779,12 @@ plot_study <- function(df_visit,
       data = df_label,
       color = "grey"
     ) +
+    annotate(
+      "text",
+      label = paste("N:", nrow(df_eval)),
+      x = 0.2 * max_visit_study,
+      y = 0.9 * max_ae_study,
+    ) +
     labs(color = "Probability Under-Reporting") +
     scale_color_identity() +
     theme_minimal() +
@@ -787,12 +797,8 @@ plot_study <- function(df_visit,
     filter(.data$site_number %in% sites_ordered) %>%
     mutate(site_number = fct_relevel(.data$site_number, sites_ordered))
 
-  max_visit <- max(df_ae_dev_patient$visit)
-  max_ae <- max(df_ae_dev_patient[colname_event])
-
-  max_ae <- ifelse(max_ae < max(df_mean_ae_dev_study[colname_mean]),
-                   max(df_mean_ae_dev_study[colname_mean]),
-                   max_ae)
+  max_visit <- max_visit_study
+  max_ae <- max(c(df_ae_dev_patient[[colname_event]], df_mean_ae_dev_study[[colname_mean]]))
 
   p_site <- df_ae_dev_patient %>%
     ggplot(aes(visit, .data[[colname_event]]), na.rm = TRUE) +
@@ -832,11 +838,11 @@ plot_study <- function(df_visit,
 
   if (delta & colname_delta %in% colnames(df_label)) {
     p_site <- p_site +
-      geom_label(aes(label = paste(round(.data[[colname_delta]], 1), "\u0394"),
+      geom_label(aes(label = paste(round(.data[[colname_delta]], 0), "\u0394"),
                      color = color_prob_cut),
                  data = df_label,
                  x = 0.8 * max_visit,
-                 y = 0.8 * max_ae,
+                 y = 0.1 * max_ae,
                  na.rm = TRUE)
   }
 
@@ -890,7 +896,8 @@ plot_visit_med75 <- function(df_visit,
                              min_pat_pool = 0.2,
                              verbose = TRUE,
                              event_names = "ae",
-                             plot_event = "ae") {
+                             plot_event = "ae",
+                             ...) {
   if (!plot_event %in% event_names) stop("plot_event (", plot_event, ") not found within event_names")
 
   colname_event <- paste0("n_", plot_event)
