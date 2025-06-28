@@ -1,5 +1,3 @@
-# test file creation
-
 --- 
 title: "simaerep and Patient Discontinuity"
 output:
