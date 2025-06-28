@@ -1,1 +1,15 @@
 # test file creation
+
+--- 
+title: "simaerep and Patient Discontinuity"
+output:
+  html_document:
+    toc: true
+    toc_depth: 3
+    toc_float: true
+    number_sections: true
+    code_folding: show
+    collapse: false
+editor_options:
+  chunk_output_type: console
+---
