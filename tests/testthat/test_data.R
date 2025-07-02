@@ -14,7 +14,7 @@ test_that("sim_ur() ae_count as expected for max patient visits", {
     sim_ur(study_id = "A", site_number = "S0001", ur_rate = 0.5) %>%
     filter(visit == max(visit), .by = c("study_id", "site_number", "patnum")) %>%
     filter(site_number == "S0001", study_id == "A") %>%
-    pull(n_event) %>%
+    pull(n_ae) %>%
     sum()
 
   expect_true(n_ae_test == n_ae_0p5 * 2)
