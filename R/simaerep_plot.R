@@ -581,7 +581,7 @@ plot_study <- function(df_visit,
   if (all(c(colname_study, colname_site) %in% colnames(df_eval))) {
     col_mean_site <- colname_site
   } else {
-    col_mean_site <- "mean_ae_site_med75"
+    col_mean_site <- glue("mean_{event_names}_site_med75")
   }
 
   if ("visit_med75" %in% colnames(df_site)) {

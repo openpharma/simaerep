@@ -49,8 +49,8 @@ max_visit_sd, event_per_visit_mean, visit, n_event
 }
 \description{
 evenly distributes a number of given patients across a number of
-given sites. Then simulates ae development of each patient reducing the
-number of reported AEs for patients distributed to AE-under-reporting
+given sites. Then simulates event reporting of each patient reducing the
+number of reported events for patients distributed to event-under-reporting
 sites.
 }
 \details{

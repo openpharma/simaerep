@@ -40,14 +40,14 @@ test_that(paste("simaerep() - under_only = FALSE - over-reporting must be zero w
                 "mean_ae_site_med75 == mean_ae_study_med75"), {
 
   df_visit <- sim_test_data_study(
-    ae_per_visit_mean = 0
+    event_per_visit_mean = 0
   ) %>%
   mutate(study_id = "A")
 
   aerep <- simaerep(df_visit, under_only = FALSE)
 
   zeros <- aerep$df_eval %>%
-    pull(prob)
+    pull(event_prob)
 
   expect_true(all(zeros == 0))
 

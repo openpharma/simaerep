@@ -14,9 +14,12 @@ test_that("simaerep must retrieve original visit data from parent environment", 
 
   df_visit <- get_df_visit_test()
 
-  aerep_new <- simaerep(df_visit, inframe = FALSE, visit_med75 = TRUE)
+  df_visit_classic <- df_visit %>%
+    rename(n_ae = "n_event")
+
+  aerep_new <- simaerep(df_visit_classic, inframe = FALSE)
   df_vs_env <- as.data.frame(aerep_new$visit)
-  expect_equal(df_vs_env, df_visit)
+  expect_equal(df_vs_env, df_visit_classic)
 
   aerep_new <- simaerep(df_visit, inframe = TRUE, visit_med75 = TRUE)
   df_vs_env <- as.data.frame(aerep_new$visit)
@@ -28,16 +31,18 @@ test_that("simaerep must retrieve original visit data from parent environment", 
 })
 
 test_that("simaerep - original dataframe unretrievable when called with slice", {
+
+  df_visit <- get_df_visit_test()
+
   aerep_new <- simaerep(
-    df_visit[df_visit$site_number != "S0001", ],
-    inframe = FALSE,
-    visit_med75 = TRUE
+    df_visit[df_visit$site_id != "S0001", ],
+    inframe = FALSE
   )
 
   expect_error(as.data.frame(aerep_new$visit), "Could not find original visit data")
 
   aerep_new <- simaerep(
-    df_visit[df_visit$site_number != "S0001", ],
+    df_visit[df_visit$site_id != "S0001", ],
     inframe = TRUE,
     visit_med75 = TRUE
   )
@@ -45,7 +50,7 @@ test_that("simaerep - original dataframe unretrievable when called with slice", 
   expect_error(as.data.frame(aerep_new$visit), "Could not find original visit data")
 
   aerep_new <- simaerep(
-    df_visit[df_visit$site_number != "S0001", ],
+    df_visit[df_visit$site_id != "S0001", ],
     inframe = TRUE,
     visit_med75 = FALSE
   )
@@ -78,8 +83,10 @@ test_that("plot.simaerep with what='ur'", {
   expect_s3_class(plot(aerep_new, what = "ur", study = "A"), "ggplot")
 
   aerep_new <- simaerep(df_visit, inframe = TRUE, visit_med75 = FALSE)
-  expect_s3_class(plot(aerep_new, what = "ur", study = "A"), "ggplot")
+  expect_s3_class(plot(aerep_new, what = "ur", study = "A", delta = FALSE), "ggplot")
+  expect_s3_class(plot(aerep_new, what = "ur", study = "A", delta = TRUE), "ggplot")
 })
+
 
 test_that("plot.simaerep with what='med75'", {
 
@@ -93,6 +100,19 @@ test_that("plot.simaerep with what='med75'", {
 
   aerep_new <- simaerep(df_visit, inframe = TRUE, visit_med75 = FALSE)
   expect_s3_class(plot(aerep_new, what = "med75", study = "A", verbose = FALSE), "ggplot")
+
+  cap <- paste(c(
+    "purple line:          mean site event of patients with visit_med75",
+    "grey line:            patient included",
+    "black dashed line:    patient excluded",
+    "dotted vertical line: visit_med75, 0.75 x median of maximum patient visits of site ",
+    "solid vertical line:  visit_med75 adjusted, increased to minimum maximum patient visit of included patients",
+    "dashed vertical line: maximum value for visit_med75 adjusted, 80% quantile of maximum patient visits of study",
+    ""
+  ), collapse = "\n")
+
+  expect_output(plot(aerep_new, what = "med75", study = "A", verbose = TRUE), regex = cap)
+
 })
 
 
@@ -100,10 +120,10 @@ test_that("plot.simaerep throws error when original visit data cannot be retriev
 
   df_visit <- get_df_visit_test()
 
-  aerep <- simaerep(df_visit[df_visit$site_number != "S0001", ])
+  aerep <- simaerep(df_visit[df_visit$site_id != "S0001", ])
   expect_error(plot(aerep, study = "A"))
 
-  vs_filt <- df_visit[df_visit$site_number != "S0001", ]
+  vs_filt <- df_visit[df_visit$site_id != "S0001", ]
 
   # error is mitigated if original visit data is added to plot call
   expect_s3_class(

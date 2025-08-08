@@ -4,7 +4,14 @@
 \alias{orivisit}
 \title{create orivisit object}
 \usage{
-orivisit(df_visit, call = NULL, env = parent.frame(), event_names, col_names)
+orivisit(
+  df_visit,
+  call = NULL,
+  env = parent.frame(),
+  event_names = c("event"),
+  col_names = list(study_id = "study_id", site_id = "site_id", patient_id = "patient_id",
+    visit = "visit")
+)
 }
 \arguments{
 \item{df_visit}{dataframe with original visit data}

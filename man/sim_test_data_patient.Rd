@@ -2,22 +2,22 @@
 % Please edit documentation in R/simulate_test_data.R
 \name{sim_test_data_patient}
 \alias{sim_test_data_patient}
-\title{simulate patient ae reporting test data}
+\title{simulate patient event reporting test data}
 \usage{
 sim_test_data_patient(
   .f_sample_max_visit = function() rnorm(1, mean = 20, sd = 4),
-  .f_sample_ae_per_visit = function(max_visit) rpois(max_visit, 0.5)
+  .f_sample_event_per_visit = function(max_visit) rpois(max_visit, 0.5)
 )
 }
 \arguments{
-\item{.f_sample_max_visit}{function used to sample the maximum number of aes,
+\item{.f_sample_max_visit}{function used to sample the maximum number of events,
 Default: function() rnorm(1, mean = 20, sd = 4)}
 
-\item{.f_sample_ae_per_visit}{function used to sample the aes for each visit,
+\item{.f_sample_event_per_visit}{function used to sample the events for each visit,
 Default: function(x) rpois(x, 0.5)}
 }
 \value{
-vector containing cumulative aes
+vector containing cumulative events
 }
 \description{
 helper function for \code{\link[=sim_test_data_study]{sim_test_data_study()}}
@@ -28,7 +28,7 @@ helper function for \code{\link[=sim_test_data_study]{sim_test_data_study()}}
 \examples{
 replicate(5, sim_test_data_patient())
 replicate(5, sim_test_data_patient(
-    .f_sample_ae_per_visit = function(x) rpois(x, 1.2))
+    .f_sample_event_per_visit = function(x) rpois(x, 1.2))
   )
 replicate(5, sim_test_data_patient(
     .f_sample_max_visit = function() rnorm(1, mean = 5, sd = 5))

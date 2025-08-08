@@ -4,37 +4,36 @@
 \alias{sim_ur}
 \title{simulate under-reporting}
 \usage{
-sim_ur(df_visit, study_id, site_number, ur_rate)
+sim_ur(df_visit, study_id, site_id, ur_rate)
 }
 \arguments{
 \item{df_visit, }{dataframe}
 
 \item{study_id, }{character}
 
-\item{site_number, }{character}
+\item{site_id, }{character}
 
 \item{ur_rate, }{double}
 }
 \description{
-we remove a fraction of AEs from a specific site
+we remove a fraction of events from a specific site
 }
 \details{
-we determine the absolute number of AEs per patient for removal.
+we determine the absolute number of events per patient for removal.
 Then them remove them at the first visit.
 We intentionally allow fractions
 }
 \examples{
-df_visit <- sim_test_data_study(n_pat = 100, n_sites = 10,
-                                 frac_site_with_ur = 0.4, ur_rate = 0.6)
+df_visit <- sim_test_data_study(n_pat = 100, n_sites = 10, study_id = "A",
+                                 ratio_out = 0.4, factor_event_rate = 0.6)
 
-df_visit$study_id <- "A"
 
-df_ur <- sim_ur(df_visit, "A", site_number = "S0001", ur_rate = 0.35)
+df_ur <- sim_ur(df_visit, "A", site_id = "S0001", ur_rate = 0.35)
 
-# Example cumulated AE for first patient with 35\% under-reporting
-df_ur[df_ur$site_number == "S0001" & df_ur$patnum == "P000001",]$n_ae
+# Example cumulated event for first patient with 35\% under-reporting
+df_ur[df_ur$site_id == "S0001" & df_ur$patient_id == "P000001",]$n_event
 
-# Example cumulated AE for first patient with no under-reporting
-df_visit[df_visit$site_number == "S0001" & df_visit$patnum == "P000001",]$n_ae
+# Example cumulated event for first patient with no under-reporting
+df_visit[df_visit$site_id == "S0001" & df_visit$patient_id == "P000001",]$n_event
 
 }

@@ -19,6 +19,7 @@
 #' @importFrom dplyr group_by_at n is_grouped_df everything one_of lag any_of across
 #' @importFrom dplyr lead tbl cross_join join_by union_all cume_dist slice_sample
 #' @importFrom dplyr percent_rank all_of starts_with collect near coalesce contains
+#' @importFrom dplyr rename_with
 #' @importFrom tidyr tibble unnest nest fill
 #' @importFrom knitr kable
 #' @importFrom tibble tibble

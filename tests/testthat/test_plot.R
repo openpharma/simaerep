@@ -1,9 +1,7 @@
 # test data is automatically loaded from R/sysdata.rda, check ./data-raw/generate_test_data.R
 
 df_visit <- get_df_visit_test()
-df_site <- site_aggr(df_visit)
-df_sim_sites <- sim_sites(df_site, df_visit, r = 100)
-df_eval <- eval_sites(df_sim_sites)
+evrep <- simaerep(df_visit)
 
 test_that("plot_sim_demo() must return ggplot object", {
   p <- plot_sim_examples(size_dots = 4, size_raster_label = 10)
@@ -16,38 +14,6 @@ test_that("plot_sim_demo() must return ggplot object", {
 })
 
 
-
-
-test_that("plot_studies() must return ggplot object", {
-
-  p <- plot_study(df_visit, df_site_test, df_eval, study = "A", delta = FALSE)
-  p
-  p <- plot_study(df_visit, df_site_test, df_eval, study = "B", delta = FALSE)
-  p
-
-  expect_true(all(c("gg", "ggplot") %in% class(p)))
-})
-
-
-test_that("plot_visit_med75() must return ggplot object", {
-
-  p <- plot_visit_med75(df_visit, df_site_test, study_id_str = "A", verbose = FALSE)
-
-  expect_true(all(c("gg", "ggplot") %in% class(p)))
-})
-
-test_that("plot_visit_med75() pastes a caption if verbose is TRUE", {
-  cap <- paste(c(
-    "purple line:          mean site ae of patients with visit_med75",
-    "grey line:            patient included",
-    "black dashed line:    patient excluded",
-    "dotted vertical line: visit_med75, 0.75 x median of maximum patient visits of site ",
-    "solid vertical line:  visit_med75 adjusted, increased to minimum maximum patient visit of included patients",
-    "dashed vertical line: maximum value for visit_med75 adjusted, 80% quantile of maximum patient visits of study",
-    ""
-  ), collapse = "\n")
-  expect_output(plot_visit_med75(df_visit, df_site_test, study_id_str = "A", verbose = TRUE), regex = cap)
-})
 
 test_that("plot_sim_example() includes titles when title = TRUE", {
   plot_test <- plot_sim_example(title = TRUE)
@@ -65,9 +31,9 @@ test_that("plot_sim_example() includes titles when title = TRUE", {
 
 })
 
-test_that("plot_study() produces an error when an invalid plot_event is submitted", {
+test_that("plot.simaerep produces an error when an invalid plot_event is submitted", {
   events <- c("ae", "y")
-  df_visit_events_test <- sim_test_data_events(event_names = events, ae_per_visit_mean = c(0.5, 0.4))
+  df_visit_events_test <- sim_test_data_events(event_names = events, event_per_visit_mean = c(0.5, 0.4))
   aerep <- simaerep(
     df_visit = df_visit_events_test,
     event_names = events,

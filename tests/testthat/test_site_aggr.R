@@ -1,4 +1,4 @@
-df_visit <- get_df_visit_test()
+df_visit <- get_df_visit_test_mapped()
 df_site <- site_aggr(df_visit)
 
 test_that("site_aggr() must not return a grouped dataframe", {
@@ -38,8 +38,8 @@ test_that("site_aggr() - visitmed75 must not become greater than 0.8 percentile 
   df_visit1 <- sim_test_data_study(
     n_pat = 18,
     n_sites = 3,
-    frac_site_with_ur = 0.4,
-    ur_rate = 0.2,
+    factor_event_rate = - 0.4,
+    ratio_out = 0.2,
     max_visit_sd = 2,
     max_visit_mean = 20
   )
@@ -47,15 +47,15 @@ test_that("site_aggr() - visitmed75 must not become greater than 0.8 percentile 
   df_visit2 <- sim_test_data_study(
     n_pat = 9,
     n_sites = 3,
-    frac_site_with_ur = 0.4,
-    ur_rate = 0.2,
+    factor_event_rate = - 0.4,
+    ratio_out = 0.2,
     max_visit_sd = 2,
     max_visit_mean = 5
   )
 
 
-  df_visit1$patnum <- paste0("A", df_visit1$patnum)
-  df_visit2$patnum <- paste0("B", df_visit2$patnum)
+  df_visit1$patient_id <- paste0("A", df_visit1$patient_id)
+  df_visit2$patient_id <- paste0("B", df_visit2$patient_id)
 
   df_visit <- bind_rows(df_visit1, df_visit2)
 
@@ -63,15 +63,20 @@ test_that("site_aggr() - visitmed75 must not become greater than 0.8 percentile 
   df_visit3 <- sim_test_data_study(
     n_pat = 60,
     n_sites = 3,
-    frac_site_with_ur = 0.4,
-    ur_rate = 0.2,
+    factor_event_rate = - 0.4,
+    ratio_out = 0.2,
     max_visit_sd = 2,
     max_visit_mean = 10
   )
 
-  df_visit3$site_number <- paste0("C", df_visit3$site_number)
+  df_visit3$site_id <- paste0("C", df_visit3$site_id)
 
-  df_visit <- bind_rows(df_visit, df_visit3)
+  df_visit <- bind_rows(df_visit, df_visit3) %>%
+    rename(
+      patnum = patient_id,
+      site_number = site_id,
+      n_ae = n_event
+    )
 
   df_visit$study_id <- "A"
 
@@ -85,10 +90,6 @@ test_that("site_aggr() - visitmed75 must not become greater than 0.8 percentile 
     round()
 
   testthat::expect_true(max(df_site$visit_med75) <= study_qup8_max_visit)
-
-  # nolint start
-  # plot_visit_med75(df_visit, df_site, study_id_str = "A", n_site = 6)
-  # nolint end
 
 })
 

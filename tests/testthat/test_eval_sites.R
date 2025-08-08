@@ -1,6 +1,7 @@
 # test data is automatically loaded, check ./data-raw/generate_test_data.R
 
-df_visit <- get_df_visit_test()
+df_visit <- get_df_visit_test_mapped()
+
 df_site <- site_aggr(df_visit)
 df_sim_sites <- sim_sites(df_site, df_visit, r = 100)
 df_eval <- eval_sites(df_sim_sites)
@@ -61,3 +62,4 @@ test_that("eval_sites() - check column names of returned data frame", {
   )
 
 })
+

@@ -1,6 +1,9 @@
 
-df_visit <- get_df_visit_test()
-df_site <- site_aggr(df_visit)
+df_visit <- get_df_visit_test_mapped()
+
+df_site <- df_visit %>%
+  site_aggr()
+
 
 test_that("pat_pool() - check column names and datatypes of returnes dataframe", {
 
@@ -140,8 +143,8 @@ test_that("warning when no patients with med75 found in study pool", {
   df_visit1 <- sim_test_data_study(
     n_pat = 100,
     n_sites = 5,
-    frac_site_with_ur = 0.4,
-    ur_rate = 0.6,
+    ratio_out = 0.4,
+    factor_event_rate = - 0.6,
     max_visit_mean = 10,
     max_visit_sd = 1
   )
@@ -149,20 +152,25 @@ test_that("warning when no patients with med75 found in study pool", {
   df_visit2 <- sim_test_data_study(
     n_pat = 100,
     n_sites = 1,
-    frac_site_with_ur = 0,
-    ur_rate = 0.6,
+    ratio_out = 0,
+    factor_event_rate = - 0.6,
     max_visit_mean = 30,
     max_visit_sd = 1
     ) %>%
     mutate(
-      patnum = paste(patnum, "A"),
+      patient_id = paste(patient_id, "A"),
     )
 
-  df_visit <- dplyr::bind_rows(df_visit1, df_visit2)
+  df_visit <- dplyr::bind_rows(df_visit1, df_visit2) %>%
+    rename(
+      patnum = patient_id,
+      site_number = site_id,
+      n_ae = n_event
+    )
 
   df_visit$study_id <- "A"
 
-  df_site <- site_aggr(df_visit)
+  df_site <- site_aggr(df_visit, event_names = "ae")
 
   df_prep <- prep_for_sim(df_site, df_visit)
 

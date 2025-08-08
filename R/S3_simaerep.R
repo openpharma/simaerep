@@ -175,6 +175,7 @@ simaerep <- function(df_visit,
   # correct event_names ----------------------------------------------------
   # when only one event_name passed use data to determine event name
   if (length(event_names) == 1) {
+
     possible_event_names <- map_col_names(df_visit, col_names) %>%
       select(any_of("n"), starts_with("n_")) %>%
       colnames()
@@ -192,9 +193,12 @@ simaerep <- function(df_visit,
 
   # get S3 orivisit ------------------------------------------------------
 
-  visit <- orivisit(df_visit, call, env = env, event_names = event_names, col_names)
-
-  as.data.frame(visit, env = env)
+  visit <- tryCatch({
+    visit <- orivisit(df_visit, call, env = env, event_names = event_names, col_names = col_names)
+    as.data.frame(visit, env = env)
+    visit},
+    error = function(e) df_visit
+  )
 
   # correct method -------------------------------------------------------
 
@@ -229,14 +233,7 @@ simaerep <- function(df_visit,
 
   if (visit_med75 && ! inframe) {
 
-    event_names <- "ae"
-
-    stopifnot(
-      "inframe = FALSE, requires events in 'n_ae' columns" =
-      "n_ae" %in% colnames(df_visit)
-    )
-
-    aerep <- simaerep_visit_med75(
+    aerep <- simaerep_classic(
       df_visit = visit,
       under_only = under_only,
       r = r,
@@ -245,6 +242,7 @@ simaerep <- function(df_visit,
       env = env,
       check = check,
       mult_corr = mult_corr,
+      event_names = event_names,
       col_names = col_names
     )
 
@@ -312,9 +310,13 @@ simaerep_inframe <- function(df_visit,
                                visit = "visit"
                               )
 ) {
+
   if (inherits(df_visit, "orivisit")) {
     visit <- df_visit
-    df_visit <- as.data.frame(df_visit, env = env)
+
+    df_visit <- as.data.frame(df_visit, env = env) %>%
+      map_col_names(visit$col_names)
+
   } else {
     call <- rlang::enexpr(df_visit)
     visit <- orivisit(
@@ -324,7 +326,9 @@ simaerep_inframe <- function(df_visit,
       event_names = event_names,
       col_names = col_names
     )
-    df_visit <- as.data.frame(visit, env = env)
+
+    df_visit <- df_visit %>%
+      map_col_names(visit$col_names)
   }
 
   # check --------------------------------------------
@@ -342,7 +346,6 @@ simaerep_inframe <- function(df_visit,
   df_site <- site_aggr(
     df_visit,
     method = site_aggr_method,
-    check = FALSE,
     event_names = event_names
   )
 
@@ -398,7 +401,7 @@ simaerep_inframe <- function(df_visit,
   )
 }
 
-simaerep_visit_med75 <- function(df_visit,
+simaerep_classic <- function(df_visit,
                                  check = TRUE,
                                  progress = TRUE,
                                  env = parent.frame(),
@@ -406,6 +409,7 @@ simaerep_visit_med75 <- function(df_visit,
                                  r = 1000,
                                  mult_corr = FALSE,
                                  poisson_test = FALSE,
+                                 event_names = "event",
                                  col_names = list(
                                    study_id = "study_id",
                                    site_id = "site_id",
@@ -413,26 +417,42 @@ simaerep_visit_med75 <- function(df_visit,
                                    visit = "visit"
                                  )) {
 
+
   if (inherits(df_visit, "orivisit")) {
     visit <- df_visit
-    df_visit <- as.data.frame(df_visit, env = env)
+    df_visit <- as.data.frame(df_visit, env = env) %>%
+      map_col_names(visit$col_names)
   } else {
     call <- rlang::enexpr(df_visit)
     visit <- orivisit(df_visit, call, env = env, col_names = col_names)
-    df_visit <- as.data.frame(visit, env = env)
+    df_visit <- df_visit %>%
+      map_col_names(visit$col_names)
   }
 
   df_visit <- map_col_names(df_visit, col_names)
 
   # check
   if (check) {
-    df_visit <- check_df_visit(df_visit)
+    df_visit <- check_df_visit(df_visit, event_names = event_names)
   }
+
+  # event_names correction --------------------------------------------
+
+  stopifnot(
+    "event_names must be length == 1 for classic (inframe = FALSE) algorithm" =
+     length(event_names) == 1
+  )
+
+  df_visit <- df_visit %>%
+    rename(n_ae = glue("n_{event_names}"))
+
+
+  # classic -----------------------------------------------------------
 
   df_site <- site_aggr(
     df_visit,
     method = "med75_adj",
-    check = FALSE
+    event_names = "ae"
   )
 
   df_sim_sites <- sim_sites(
@@ -440,8 +460,7 @@ simaerep_visit_med75 <- function(df_visit,
     df_visit = df_visit,
     r = r,
     poisson_test = poisson_test,
-    under_only = under_only,
-    check = FALSE
+    under_only = under_only
   )
 
   if (mult_corr) {
@@ -457,19 +476,35 @@ simaerep_visit_med75 <- function(df_visit,
     visit_med75 = TRUE
   )
 
+  # revert column names ---------------------------------------------
+
+  df_site <- df_site %>%
+    dplyr::rename_with(~ stringr::str_replace(., "ae", event_names)) %>%
+    remap_col_names(col_names)
+
+  df_sim_sites <- df_sim_sites %>%
+    dplyr::rename_with(~ stringr::str_replace(., "ae", event_names)) %>%
+    remap_col_names(col_names)
+
+  df_eval <- df_eval %>%
+    dplyr::rename_with(~ stringr::str_replace(., "ae", event_names)) %>%
+    remap_col_names(col_names)
+
+  # construct simearep object ---------------------------------------
+
   validate_simaerep(
     new_simaerep(
       visit = visit,
-      df_site = remap_col_names(df_site, col_names),
-      df_sim_sites = remap_col_names(df_sim_sites, col_names),
-      df_eval = remap_col_names(df_eval, col_names),
+      df_site = df_site,
+      df_sim_sites = df_sim_sites,
+      df_eval = df_eval,
       r = r,
       visit_med75 = TRUE,
       inframe = FALSE,
       under_only = under_only,
       mult_corr = mult_corr,
       poisson_test = poisson_test,
-      event_names = "ae",
+      event_names = event_names,
       col_names = col_names
     )
   )
@@ -528,20 +563,10 @@ plot.simaerep <- function(x,
     "med75" = plot_simaerep_plot_visit_med75
   )
 
-  if (is.null(study)) {
-
-    studies <- x$df_eval %>%
-      distinct(.data$study_id) %>%
-      pull(.data$study_id) %>%
-      sort()
-
-    study <- studies[1]
-
-    message(paste0("study = NULL, defaulting to study:", study))
-  }
 
   if (is.null(df_visit)) {
-    df_visit <- as.data.frame(x$visit, env = env)
+    df_visit <- as.data.frame(x$visit, env = env) %>%
+      map_col_names(x$col_names)
   } else {
     df_visit <- map_col_names(df_visit, col_names = x$col_names)
   }
@@ -556,6 +581,17 @@ plot.simaerep <- function(x,
     df_site <- map_col_names(x$df_site, col_names = x$col_names)
   } else {
     df_site <- map_col_names(df_site, col_names = x$col_names)
+  }
+
+  if (is.null(study)) {
+    studies <- df_eval %>%
+      distinct(.data$study_id) %>%
+      pull(.data$study_id) %>%
+      sort()
+
+    study <- studies[1]
+
+    message(paste0("study = NULL, defaulting to study:", study))
   }
 
   p <- .f(df_visit, x, study, n_sites, plot_event, df_eval = df_eval, df_site = df_site, ...)
@@ -640,7 +676,6 @@ print.simaerep <- function(x, ..., n = 10) {
     }
 
     if (x$poisson_test & x$mult_corr) {
-      cat('Multiplicity correction applied to prob and pval columns.\n\n')
     } else if (x$mult_corr) {
       cat('Multiplicity correction applied to prob column.\n\n')
     }
@@ -700,23 +735,18 @@ map_col_names <- function(df_visit,
 
 #' renames internal simaerep col_names to externally applied colnames
 #'@keywords internal
-remap_col_names <- function(df, col_names) {
+remap_col_names <- function(df,col_names) {
 
   internal_col_names <- c(
-    "study_id",
-    "site_number",
-    "patnum",
-    "visit"
+    study_id = "study_id",
+    site_id = "site_number",
+    patient_id = "patnum",
+    visit = "visit"
   )
 
-  external_col_names <- c(
-    col_names["study_id"],
-    col_names["site_id"],
-    col_names["patient_id"],
-    col_names["visit"]
-  )
+  rename_cols <- setNames(internal_col_names, col_names[names(internal_col_names)])
 
-  rename_cols <- setNames(internal_col_names, external_col_names)
+  stopifnot(all(names(internal_col_names) %in% names(col_names)))
 
   df <- df %>%
     rename(any_of(rename_cols))

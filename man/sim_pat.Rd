@@ -3,7 +3,7 @@
 \name{sim_pat}
 \alias{sim_pat}
 \title{simulate patients and events for sites
-supports constant and non-constant ae rates}
+supports constant and non-constant event rates}
 \usage{
 sim_pat(
   vs_max,
@@ -17,6 +17,6 @@ sim_pat(
 }
 \description{
 simulate patients and events for sites
-supports constant and non-constant ae rates
+supports constant and non-constant event rates
 }
 \keyword{internal}

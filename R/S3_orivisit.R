@@ -103,8 +103,14 @@ get_str_var <- function(call, env) {
 orivisit <- function(df_visit,
                      call = NULL,
                      env = parent.frame(),
-                     event_names,
-                     col_names) {
+                     event_names = c("event"),
+                     col_names = list(
+                         study_id = "study_id",
+                         site_id = "site_id",
+                         patient_id = "patient_id",
+                         visit = "visit"
+                       )
+                     ) {
 
 
   if (is.null(call)) {
@@ -134,19 +140,23 @@ as.data.frame.orivisit <- function(x, ..., env = parent.frame()) {
   if (is.na(x$str_call)) stop.orivisit()
   if (! exists(x$str_call, envir = env)) stop.orivisit()
 
-  df <- rlang::env_get(env, x$str_call, inherit = TRUE) %>%
-    map_col_names(x$col_names)
+  df <- rlang::env_get(env, x$str_call, inherit = TRUE)
 
   df_is_tbl <- ! inherits(df, "data.frame") & inherits(df, "tbl")
 
   if (! df_is_tbl) {
-    dim <- dim(df)
-    df_summary <- summarise_df_visit(df, x$event_names)
+
+    df_check <- df %>%
+      map_col_names(col_names = x$col_names)
+
+    dim <- dim(df_check)
+    df_summary <- summarise_df_visit(df_check, x$event_names)
 
     #all.equal produces either TRUE or a character string (instead of FALSE)
     if (is.character(all.equal(df_summary, x$df_summary, tolerance = 1e-4))) stop.orivisit()
     if (! all(dim == x$dim)) stop.orivisit()
   }
+
   return(df)
 }
 
@@ -165,19 +175,56 @@ stop.orivisit <- function(...) {
   stop(err)
 }
 
-#' @export
-print.orivisit <- function(x, ...) {
-  cat(
-    paste(
-      c(
-        "orivisit object:",
-        "Stores lazy reference to original visit data, use as.data.frame() to retrieve."
-      ),
-      collapse = "\n"
-    )
-  )
 
+
+#' Print method for orivisit objects
+#'
+#' @param x An object of class 'orivisit'
+#' @param ... Additional arguments passed to print (not used)
+#' @param n Number of rows to display from the data frame (default: 10)
+#'
+#' @export
+print.orivisit <- function(x, ..., n = 10) {
+  cat("orivisit object:\n")
+  cat("----------------\n")
+  cat("Stores lazy reference to original visit data.\n")
+  cat('Full data available via as.data.frame(x).\n\n')
+
+  cat("Summary:\n")
+
+  if (!is.null(x$df_summary) && inherits(x$df_summary, "data.frame")) {
+    cat(sprintf("Number of studies: %d\n", x$df_summary$n_studies))
+    cat(sprintf("Number of sites: %d\n", x$df_summary$n_sites))
+    cat(sprintf("Number of patients: %d\n", x$df_summary$n_patients))
+    cat(sprintf("Number of visits: %d\n", x$df_summary$n_visits))
+    cat(sprintf("Number of events: %d\n\n", x$df_summary$n_events))
+  }
+
+  cat(sprintf("Data dimensions: %d rows × %d columns\n", x$dim[1], x$dim[2]))
+  cat(sprintf("Data source: %s\n", x$str_call))
+
+  if (length(x$event_names) > 1) {
+    cat(
+      paste(
+        'Event types:',
+        paste(x$event_names, collapse = ", "),
+        "\n"
+      )
+    )
+  } else {
+    cat(sprintf("Event type: %s\n", x$event_names))
+  }
+
+  cat("\nColumn mappings:\n")
+  cat(sprintf("  study_id: %s\n", x$col_names$study_id))
+  cat(sprintf("  site_id: %s\n", x$col_names$site_id))
+  cat(sprintf("  patient_id: %s\n", x$col_names$patient_id))
+  cat(sprintf("  visit: %s\n", x$col_names$visit))
+
+
+  invisible(x)
 }
+
 
 #' @title is orivisit class
 #' @description internal function

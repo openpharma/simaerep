@@ -4,7 +4,7 @@
 \alias{check_df_visit}
 \title{Integrity check for df_visit.}
 \usage{
-check_df_visit(df_visit, event_names = "ae")
+check_df_visit(df_visit, event_names = c("event"))
 }
 \arguments{
 \item{df_visit}{dataframe with columns: study_id, site_number, patnum, visit,
