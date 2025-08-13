@@ -407,8 +407,12 @@ get_legend <- function(p) {
 #' @export
 #' @examples
 #'
-#' df_visit <- sim_test_data_study(n_pat = 1000, n_sites = 10)
-#' df_visit$study_id <- "A"
+#' df_visit <- sim_test_data_study(n_pat = 1000, n_sites = 10) %>%
+#'   dplyr::rename(
+#'     site_number = site_id,
+#'     patnum = patient_id,
+#'     n_ae = n_event
+#'   )
 #'
 #' get_cum_mean_event_dev(df_visit)
 #' get_cum_mean_event_dev(df_visit, group = "study_id")
@@ -488,20 +492,30 @@ get_cum_mean_event_dev <- function(
 #'   reach the evaluation point (visit_med75) will be ignored.
 #' @examples
 #' \donttest{
-#' df_visit <- sim_test_data_study(n_pat = 1000, n_sites = 10,
-#'     frac_site_with_ur = 0.2, ur_rate = 0.15, max_visit_sd = 8)
+#' df_visit <- sim_test_data_study(
+#'   n_pat = 100,
+#'   n_sites = 5,
+#'   ratio_out = 0.4,
+#'   factor_event_rate = 0.6
+#'   ) %>%
+#'   # internal functions require internal column names
+#'   dplyr::rename(
+#'     n_ae = n_event,
+#'     site_number = site_id,
+#'     patnum = patient_id
+#'   )
 #'
-#' df_visit$study_id <- "A"
 #' df_site <- site_aggr(df_visit)
 #'
 #' df_sim_sites <- sim_sites(df_site, df_visit, r = 100)
 #'
 #' df_eval <- eval_sites(df_sim_sites)
 #'
-#' plot_study(df_visit, df_site, df_eval, study = "A")
+#' simaerep:::plot_study(df_visit, df_site, df_eval, study = "A")
+#'
 #' }
 #' @rdname plot_study
-#' @export
+#' @keywords internal
 #' @import ggplot2
 plot_study <- function(df_visit,
                         df_site,
@@ -573,7 +587,7 @@ plot_study <- function(df_visit,
   if (prob_col == "pval") {
     df_eval <- df_eval %>%
       mutate(
-        pval = 1 - pval
+        pval = 1 - .data$pval
       )
   }
 
@@ -838,7 +852,7 @@ plot_study <- function(df_visit,
 
   if (delta & colname_delta %in% colnames(df_label)) {
     p_site <- p_site +
-      geom_label(aes(label = paste(round(.data[[colname_delta]], 0), "\u0394"),
+      geom_label(aes(label = paste(round(.data[[colname_delta]], 0), "delta"),
                      color = color_prob_cut),
                  data = df_label,
                  x = 0.8 * max_visit,
@@ -877,18 +891,27 @@ plot_study <- function(df_visit,
 #' @param n_sites integer, Default: 6
 #' @param verbose logical, Default: TRUE
 #' @param plot_event vector containing the events that should be plotted, default = "ae"
+#' @param ... not used
 #' @inheritParams site_aggr
 #' @return ggplot
 #' @examples
-#' df_visit <- sim_test_data_study(n_pat = 120, n_sites = 6,
-#'     frac_site_with_ur = 0.4, ur_rate = 0.6)
+#' df_visit <- sim_test_data_study(
+#'   n_pat = 120,
+#'   n_sites = 6,
+#'   ratio_out = 0.4,
+#'   factor_event_rate = - 0.6
+#'  ) %>%
+#'  dplyr::rename(
+#'   site_number = site_id,
+#'   patnum = patient_id,
+#'   n_ae = n_event
+#'  )
 #'
-#' df_visit$study_id <- "A"
 #' df_site <- site_aggr(df_visit)
 #'
-#' plot_visit_med75(df_visit, df_site, study_id_str = "A", n_site = 6)
+#' simaerep:::plot_visit_med75(df_visit, df_site, study_id_str = "A", n_site = 6)
 #' @rdname plot_visit_med75
-#' @export
+#' @keywords internal
 plot_visit_med75 <- function(df_visit,
                              df_site = NULL,
                              study_id_str,

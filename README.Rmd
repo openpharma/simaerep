@@ -101,10 +101,9 @@ df_visit <- sim_test_data_study(
   # non-constant event rates based on gamma distribution
   event_rates = (dgamma(seq(1, 20, 0.5), shape = 5, rate = 2) * 5) + 0.1,
   max_visit = 20,
-  max_visit_sd = 10
+  max_visit_sd = 10,
+  study_id = "A"
 )
-
-df_visit$study_id <- "A"
 
 df_visit %>%
   select(study_id, site_id, patient_id, visit, n_event) %>%
@@ -117,7 +116,7 @@ evrep <- simaerep(df_visit, mult_corr = TRUE)
 plot(evrep, study = "A")
 ```
 
-*Left panel shows mean cumulative event reporting per site (blue lines) agains mean cumulative event reporting of the entire study (golden line). Sites with either high under-reporting (negative probabilities) or high over-reporting (positive probabilities) are marked by grey dots and plotted in additional panels on the right. N denotes the number of sites. Right panel shows individual sites with total patient cumulative counts as grey lines. N denotes the number of patients, the percentage the under- and over-reporting probability and \u0394 denotes the difference compared to the expected number of events.*
+*Left panel shows mean cumulative event reporting per site (blue lines) against mean cumulative event reporting of the entire study (golden line). Sites with either high under-reporting (negative probabilities) or high over-reporting (positive probabilities) are marked by grey dots and plotted in additional panels on the right. N denotes the number of sites. Right panel shows individual sites with total patient cumulative counts as grey lines. N denotes the number of patients, the percentage the under- and over-reporting probability and \u0394 denotes the difference compared to the expected number of events.*
 
 
 ## In Database Calculation

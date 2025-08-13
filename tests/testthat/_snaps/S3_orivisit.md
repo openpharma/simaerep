@@ -15,7 +15,7 @@
       Number of visits: 3890
       Number of events: 1741
       
-      Data dimensions: 3890 rows × 9 columns
+      Data dimensions: 3890 rows x 9 columns
       Data source: df_visit
       Event type: event
       

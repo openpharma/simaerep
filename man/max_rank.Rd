@@ -28,14 +28,15 @@ df <- tibble::tibble(s = c(1, 2, 2, 2, 5, 10)) \%>\%
  )
 
 df \%>\%
- max_rank("s", "max_rank")
+ simaerep:::max_rank("s", "max_rank")
 \donttest{
 # Database
 con <- DBI::dbConnect(duckdb::duckdb(), dbdir = ":memory:")
 
 dplyr::copy_to(con, df, "df")
-max_rank(dplyr::tbl(con, "df"), "s", "max_rank")
+simaerep:::max_rank(dplyr::tbl(con, "df"), "s", "max_rank")
 
 DBI::dbDisconnect(con)
 }
 }
+\keyword{internal}

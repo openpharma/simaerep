@@ -80,7 +80,7 @@ validate_simaerep <- function(x) {
 #'@param visit_med75 Logical, should evaluation point visit_med75 be used.
 #'  Default: FALSE
 #'@param inframe Logical, only table operations to be used; does not require
-#'  visit_med75. Compatible with dbplyr supported database backends.Default: TRUE
+#'  visit_med75. Compatible with dbplyr supported database backends. Default: TRUE
 #'@param mult_corr Logical, multiplicity correction, Default: TRUE
 #'@param progress Logical, display progress bar. Default: TRUE.
 #'@param env Optional, provide environment of original visit data. Default:
@@ -91,65 +91,79 @@ validate_simaerep <- function(x) {
 #'@param poisson_test logical, compute p-value with poisson test, only supported
 #'by the classic algorithm using visit_med75. Default: FALSE
 #'@param event_names vector, contains the event names, default = "event"
-#'@return A simaerep object.
-#'@details Executes [site_aggr()], [sim_sites()], and [eval_sites()] on original
+#'@param col_names named list, indicate study_id, site_id, patient_id and visit
+#'column in df_visit input dataframe. Default: list(
+#'study_id = "study_id",
+#'site_id = "site_id",
+#'patient_id = "patient_id",
+#'visit = "visit"
+#')
+#'@return A simaerep object. Results are contained in the attached df_eval dataframe.
+#'
+#' | Column Name               | Description                                  | Type     |
+#' |---------------------------|----------------------------------------------|----------|
+#' | study_id                  | The study ID                                 | Character|
+#' | site_id.                  | The site ID                                  | Character|
+#' | (event)_count             | Site event count                             | Numeric  |
+#' | (event)_per_visit_site    | Site Ratio of event count divided by visits  | Numeric  |
+#' | visits                    | Site visit count                             | Numeric  |
+#' | n_pat                     | Site patient count                           | Numeric  |
+#' | (event)_per_visit_study   | Simulated study ratio                        | Numeric  |
+#' | (event)_prob              | Site event ratio probability from -1 to 1    | Numeric  |
+#' | (event)_delta             | Difference expected vs reported events       | Numeric  |
+#'
+#' @details Executes [site_aggr()], [sim_sites()], and [eval_sites()] on original
 #'  visit data and stores all intermediate results. Stores lazy reference to
 #'  original visit data for facilitated plotting using generic plot(x).
 #' @examples
 #' df_visit <- sim_test_data_study(
 #'   n_pat = 100,
 #'   n_sites = 5,
-#'   frac_site_with_ur = 0.4,
-#'   ur_rate = 0.6
+#'   ratio_out = 0.4,
+#'   factor_event_rate = - 0.6
 #' )
-#' df_visit$study_id <- "A"
-#' aerep <- simaerep(df_visit)
-#' aerep
-#' str(aerep)
+#'
+#' evrep <- simaerep(df_visit)
+#' evrep
+#' str(evrep)
 #'
 #' # simaerep classic algorithm
 #'
-#' aerep <- simaerep(df_visit, inframe = FALSE, under_only = TRUE, mult_corr = TRUE)
-#' str(aerep)
+#' evrep <- simaerep(df_visit, inframe = FALSE, under_only = TRUE, mult_corr = TRUE)
+#' evrep
 #'
 #' # multiple events
 #'
-#' df_visit_events_test <- sim_test_data_events(
+#' df_visit_events_test <- sim_test_data_study(
 #'   n_pat = 100,
 #'   n_sites = 5,
-#'   ae_per_visit_mean = c(0.4, 0.5),
+#'   ratio_out = 0.4,
+#'   factor_event_rate = - 0.6,
+#'   event_per_visit_mean = c(0.5, 0.3),
 #'   event_names = c("ae", "pd")
 #' )
 #'
-#' df_visit_events_test
+#' evsrep <- simaerep(df_visit_events_test, inframe = TRUE, event_names = c("ae", "pd"))
 #'
-#' aerep_events <- simaerep(df_visit_events_test, inframe = TRUE, event_names = c("ae", "pd"))
-#'
-#' aerep_events
+#' evsrep
 #'
 #' \donttest{
-#'   # In-frame table operations
-#'   simaerep(df_visit, inframe = TRUE, visit_med75 = FALSE, under_only = FALSE)$df_eval
-#'   simaerep(df_visit, inframe = TRUE, visit_med75 = TRUE, under_only = FALSE)$df_eval
-#'   # Database example
-#'   con <- DBI::dbConnect(duckdb::duckdb(), dbdir = ":memory:")
-#'   df_r <- tibble::tibble(rep = seq(1, 1000))
-#'   dplyr::copy_to(con, df_visit, "visit")
-#'   dplyr::copy_to(con, df_r, "r")
-#'   tbl_visit <- dplyr::tbl(con, "visit")
-#'   tbl_r <- dplyr::tbl(con, "r")
-#'   simaerep(tbl_visit, r = tbl_r, inframe = TRUE, visit_med75 = FALSE, under_only = FALSE)$df_eval
-#'   simaerep(tbl_visit, r = tbl_r, inframe = TRUE, visit_med75 = TRUE, under_only = FALSE)$df_eval
-#'   DBI::dbDisconnect(con)
+#'# Database example
+#'con <- DBI::dbConnect(duckdb::duckdb(), dbdir = ":memory:")
+#'df_r <- tibble::tibble(rep = seq(1, 1000))
+#'dplyr::copy_to(con, df_visit, "visit")
+#'dplyr::copy_to(con, df_r, "r")
+#'tbl_visit <- dplyr::tbl(con, "visit")
+#'tbl_r <- dplyr::tbl(con, "r")
+#'simaerep(tbl_visit, r = tbl_r)
+#'DBI::dbDisconnect(con)
 #' }
-#'@seealso [site_aggr()], [sim_sites()], [eval_sites()], [orivisit()],
-#'  [plot.simaerep()]
 #'@export
-#'@seealso [site_aggr()][site_aggr], [sim_sites()][sim_sites],
-#'  [eval_sites()][eval_sites], [orivisit()][orivisit],
-#'  [plot.simaerep()][plot.simaerep]
+#'@seealso [site_aggr][site_aggr], [sim_sites][sim_sites],
+#'  [eval_sites][eval_sites], [orivisit][orivisit],
+#'  [plot.simaerep][plot.simaerep], [print.simaerep][print.simaerep],
+#'  [simaerep_inframe][simaerep_inframe]
 #'@rdname simaerep
-#'@export
 simaerep <- function(df_visit,
                       r = 1000,
                       check = TRUE,
@@ -264,44 +278,15 @@ simaerep <- function(df_visit,
 
 }
 
-#' simulate in dataframe
-#' @inheritParams simaerep
-#' @keywords internal
+#' @rdname simaerep
 #' @export
-#' @examples
-#' df_visit <- sim_test_data_study(
-#'  n_pat = 100,
-#'  n_sites = 5,
-#'  frac_site_with_ur = 0.4,
-#'  ur_rate = 0.6
-#' )
-#' df_visit$study_id <- "A"
-#'
-#' simaerep_inframe(df_visit)
-#' simaerep_inframe(df_visit, visit_med75 = TRUE)$df_eval
-#'\donttest{
-#'# Database
-#'con <- DBI::dbConnect(duckdb::duckdb(), dbdir = ":memory:")
-#'df_r <- tibble::tibble(rep = seq(1, 1000))
-#'
-#'dplyr::copy_to(con, df_visit, "visit")
-#'dplyr::copy_to(con, df_r, "r")
-#'
-#'tbl_visit <- dplyr::tbl(con, "visit")
-#'tbl_r <- dplyr::tbl(con, "r")
-#'
-#'simaerep_inframe(tbl_visit, r = tbl_r)$df_eval
-#'simaerep_inframe(tbl_visit, r = tbl_r, visit_med75 = TRUE)$df_eval
-#'
-#'DBI::dbDisconnect(con)
-#'}
 simaerep_inframe <- function(df_visit,
                               r = 1000,
                               under_only = FALSE,
                               visit_med75 = FALSE,
                               check = TRUE,
                               env = parent.frame(),
-                              event_names = c("ae"),
+                              event_names = c("event"),
                               mult_corr = FALSE,
                               col_names = list(
                                study_id = "study_id",
@@ -401,6 +386,8 @@ simaerep_inframe <- function(df_visit,
   )
 }
 
+#' @rdname simaerep
+#' @export
 simaerep_classic <- function(df_visit,
                                  check = TRUE,
                                  progress = TRUE,
@@ -532,35 +519,30 @@ simaerep_classic <- function(df_visit,
 #' df_visit <- sim_test_data_study(
 #'   n_pat = 100,
 #'   n_sites = 5,
-#'   frac_site_with_ur = 0.4,
-#'   ur_rate = 0.6
+#'   ratio_out = 0.4,
+#'   factor_event_rate = - 0.6
 #' )
 #'
-#' df_visit$study_id <- "A"
+#' evrep <- simaerep(df_visit)
 #'
-#' aerep <- simaerep(df_visit)
-#'
-#' plot(aerep, what = "ur", study = "A")
-#' plot(aerep, what = "med75", study = "A")
+#' plot(evrep, what = "prob", study = "A")
+#' plot(evrep, what = "med75", study = "A")
 #' }
 #' @rdname plot.simaerep
 #' @export
 plot.simaerep <- function(x,
                           ...,
                           study = NULL,
-                          what = "ur",
+                          what = "prob",
                           n_sites = 16,
                           df_visit = NULL,
-                          df_site = NULL,
-                          df_eval = NULL,
                           env = parent.frame(),
                           plot_event = x$event_names[1]) {
 
-  stopifnot(what %in% c("ur", "med75"))
-
   .f <- switch(what,
-    "ur" = plot_simaerep_plot_study,
-    "med75" = plot_simaerep_plot_visit_med75
+    "prob" = plot_simaerep_plot_study,
+    "med75" = plot_simaerep_plot_visit_med75,
+    stop('what must be either "prob" or med75')
   )
 
 
@@ -571,17 +553,8 @@ plot.simaerep <- function(x,
     df_visit <- map_col_names(df_visit, col_names = x$col_names)
   }
 
-  if (is.null(df_eval)) {
-    df_eval <- map_col_names(x$df_eval, col_names = x$col_names)
-  } else {
-    df_eval <- map_col_names(df_eval, col_names = x$col_names)
-  }
-
-  if (is.null(df_site)) {
-    df_site <- map_col_names(x$df_site, col_names = x$col_names)
-  } else {
-    df_site <- map_col_names(df_site, col_names = x$col_names)
-  }
+  df_eval <- map_col_names(x$df_eval, col_names = x$col_names)
+  df_site <- map_col_names(x$df_site, col_names = x$col_names)
 
   if (is.null(study)) {
     studies <- df_eval %>%
@@ -704,7 +677,7 @@ print.simaerep <- function(x, ..., n = 10) {
 #' @param x object
 #' @return logical
 #' @rdname is_simaerep
-#' @export
+#' @keywords internal
 is_simaerep <- function(x) {
   "simaerep" %in% class(x)
 }

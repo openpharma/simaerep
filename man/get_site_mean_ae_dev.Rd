@@ -22,3 +22,4 @@ dataframe
 Internal function used by \code{\link[=site_aggr]{site_aggr()}},
 returns mean AE development from visit 0 to visit_med75.
 }
+\keyword{internal}

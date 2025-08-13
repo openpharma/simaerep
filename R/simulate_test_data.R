@@ -76,8 +76,8 @@ sim_test_data_study <- function(n_pat = 1000,
 
   # construct a grid with one row per site
   tibble(patient_id = seq(1, n_pat)) %>%
-    mutate(patient_id = str_pad(patient_id, width = 6, side = "left", pad = "0"),
-           patient_id = paste0("P", patient_id),
+    mutate(patient_id = str_pad(.data$patient_id, width = 6, side = "left", pad = "0"),
+           patient_id = paste0("P", .data$patient_id),
            site_id = seq(1, n_pat),
            site_id = if (n_sites > 1) cut(.data$site_id, n_sites, labels = FALSE) else 1,
            is_out = ifelse(.data$site_id <= (max(.data$site_id) * ratio_out), TRUE, FALSE),
@@ -272,8 +272,6 @@ sim_test_data_patient <- function(.f_sample_max_visit = function() rnorm(1, mean
 #'  \code{\link{sim_test_data_study}}
 #'  \code{\link{get_config}}
 #'  \code{\link{sim_test_data_portfolio}}
-#'  \code{\link{sim_ur_scenarios}}
-#'  \code{\link{get_portf_perf}}
 #' @rdname sim_test_data_portfolio
 #' @export
 sim_test_data_portfolio <- function(df_config, df_event_rates = NULL, parallel = FALSE, progress = TRUE) {
@@ -434,8 +432,6 @@ sim_test_data_portfolio <- function(df_config, df_event_rates = NULL, parallel =
 #'  \code{\link{sim_test_data_study}}
 #'  \code{\link{get_config}}
 #'  \code{\link{sim_test_data_portfolio}}
-#'  \code{\link{sim_ur_scenarios}}
-#'  \code{\link{get_portf_perf}}
 #'@rdname get_config
 #'@export
 get_config <- function(df_site,
@@ -538,7 +534,7 @@ sim_ur <- function(df_visit, study_id, site_id, ur_rate) {
   # convert back to cumulative count
   df_visit_site_rem <- df_visit_site %>%
     mutate(
-      n_event_pat = max(ifelse(visit == max(visit), n_event, 0)),
+      n_event_pat = max(ifelse(visit == max(.data$visit), .data$n_event, 0)),
       n_event_rem = .data$n_event - lag(.data$n_event),
       n_event_rem = ifelse(
         .data$visit == 1,
@@ -548,7 +544,7 @@ sim_ur <- function(df_visit, study_id, site_id, ur_rate) {
       .by = "patient_id"
     ) %>%
     mutate(
-      n_event = ifelse(n_event < 0, 0, n_event)
+      n_event = ifelse(.data$n_event < 0, 0, .data$n_event)
     ) %>%
     select(- "n_event_rem", - "n_event_pat")
 

@@ -16,3 +16,4 @@ dataframe
 Internal function used by \code{\link[=site_aggr]{site_aggr()}} and
 \code{\link[=plot_visit_med75]{plot_visit_med75()}}, adds the maximum visit for each patient.
 }
+\keyword{internal}

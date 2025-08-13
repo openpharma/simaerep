@@ -28,8 +28,8 @@ prune_to_visit_med75_inframe <- function(df_visit, df_site) {
 }
 
 
-#' Calculate prob_lower for study sites using table operations
-#'@export
+#' Calculate prob for study sites using table operations
+#'@keywords internal
 #'@inheritParams simaerep
 #'@param df_site, dataframe as returned be [site_aggr()], Will switch to visit_med75.
 #'Default: NULL
@@ -37,14 +37,16 @@ prune_to_visit_med75_inframe <- function(df_visit, df_site) {
 #' df_visit <- sim_test_data_study(
 #'   n_pat = 100,
 #'   n_sites = 5,
-#'   frac_site_with_ur = 0.4,
-#'   ur_rate = 0.6
+#'   ratio_out = 0.4,
+#'   factor_event_rate = - 0.6
+#' ) %>%
+#' dplyr::rename(
+#'   site_number = site_id,
+#'   patnum = patient_id,
+#'   n_ae = n_event
 #' )
-#' df_visit$study_id <- "A"
 #'
-#' df_sim <- sim_inframe(df_visit)
-#' df_eval <- eval_sites(df_sim)
-#' df_eval
+#' df_sim <- simaerep:::sim_inframe(df_visit)
 sim_inframe <- function(df_visit, r = 1000, df_site = NULL, event_names = c("ae")) {
   colnames <- paste0("n_", event_names)
 
@@ -292,7 +294,7 @@ p_adjust_bh_inframe <- function(df_eval, cols) {
 #' this is needed for hochberg p value adjustment. We need to assign higher
 #' rank when multiple sites have same p value
 #'
-#' @export
+#' @keywords internal
 #' @examples
 #'
 #'df <- tibble::tibble(s = c(1, 2, 2, 2, 5, 10)) %>%
@@ -301,13 +303,13 @@ p_adjust_bh_inframe <- function(df_eval, cols) {
 #'  )
 #'
 #'df %>%
-#'  max_rank("s", "max_rank")
+#'  simaerep:::max_rank("s", "max_rank")
 #'\donttest{
 #'# Database
 #'con <- DBI::dbConnect(duckdb::duckdb(), dbdir = ":memory:")
 #'
 #'dplyr::copy_to(con, df, "df")
-#'max_rank(dplyr::tbl(con, "df"), "s", "max_rank")
+#'simaerep:::max_rank(dplyr::tbl(con, "df"), "s", "max_rank")
 #'
 #'DBI::dbDisconnect(con)
 #'}

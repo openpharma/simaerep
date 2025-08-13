@@ -2,7 +2,7 @@
 % Please edit documentation in R/inframe.R
 \name{sim_inframe}
 \alias{sim_inframe}
-\title{Calculate prob_lower for study sites using table operations}
+\title{Calculate prob for study sites using table operations}
 \usage{
 sim_inframe(df_visit, r = 1000, df_site = NULL, event_names = c("ae"))
 }
@@ -20,18 +20,21 @@ Default: NULL}
 \item{event_names}{vector, contains the event names, default = "event"}
 }
 \description{
-Calculate prob_lower for study sites using table operations
+Calculate prob for study sites using table operations
 }
 \examples{
 df_visit <- sim_test_data_study(
   n_pat = 100,
   n_sites = 5,
-  frac_site_with_ur = 0.4,
-  ur_rate = 0.6
+  ratio_out = 0.4,
+  factor_event_rate = - 0.6
+) \%>\%
+dplyr::rename(
+  site_number = site_id,
+  patnum = patient_id,
+  n_ae = n_event
 )
-df_visit$study_id <- "A"
 
-df_sim <- sim_inframe(df_visit)
-df_eval <- eval_sites(df_sim)
-df_eval
+df_sim <- simaerep:::sim_inframe(df_visit)
 }
+\keyword{internal}

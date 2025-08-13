@@ -8,8 +8,9 @@
 - use test helper functions to generate data for unit testing
 - reuse saved test data for regression testing towards earlier simaerep versions
 - pass alternative column names in df_visit input data to simaerep via col_names argument and preserve names in simaerep results
-- improved print output for simaerep and orivist S3 objects
+- improved print output for simaerep and orivisit S3 objects
 - adapt validation unit tests to include event over and under reporting
+- minimize the number of exported functions
 
 # simaerep 0.7.0
 - event_names argument, allow to calculate multiple reporting probabilities at once https://github.com/openpharma/simaerep/issues/73

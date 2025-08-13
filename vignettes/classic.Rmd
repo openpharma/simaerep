@@ -114,7 +114,7 @@ plot(evrep_pval, prob_col = "pval", study = "A")
 
 
 
-# Maintaining Reproducibililty
+# Maintaining Reproducibility
 
 We take several measures to ensure consistent results between `simaerep` versions using unit tests.
 

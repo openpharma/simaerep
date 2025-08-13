@@ -29,8 +29,12 @@ earlier visits and not shift the mean independently.
 }
 \examples{
 
-df_visit <- sim_test_data_study(n_pat = 1000, n_sites = 10)
-df_visit$study_id <- "A"
+df_visit <- sim_test_data_study(n_pat = 1000, n_sites = 10) \%>\%
+  dplyr::rename(
+    site_number = site_id,
+    patnum = patient_id,
+    n_ae = n_event
+  )
 
 get_cum_mean_event_dev(df_visit)
 get_cum_mean_event_dev(df_visit, group = "study_id")

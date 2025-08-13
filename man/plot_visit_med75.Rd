@@ -33,6 +33,8 @@ sampling. Determines maximum visit_med75 value see Details. Default: 0.2}
 \item{event_names}{vector, contains the event names, default = "ae"}
 
 \item{plot_event}{vector containing the events that should be plotted, default = "ae"}
+
+\item{...}{not used}
 }
 \value{
 ggplot
@@ -42,11 +44,20 @@ Plots cumulative AEs against visits for patients at sites of
 given study and compares against visit_med75.
 }
 \examples{
-df_visit <- sim_test_data_study(n_pat = 120, n_sites = 6,
-    frac_site_with_ur = 0.4, ur_rate = 0.6)
+df_visit <- sim_test_data_study(
+  n_pat = 120,
+  n_sites = 6,
+  ratio_out = 0.4,
+  factor_event_rate = - 0.6
+ ) \%>\%
+ dplyr::rename(
+  site_number = site_id,
+  patnum = patient_id,
+  n_ae = n_event
+ )
 
-df_visit$study_id <- "A"
 df_site <- site_aggr(df_visit)
 
-plot_visit_med75(df_visit, df_site, study_id_str = "A", n_site = 6)
+simaerep:::plot_visit_med75(df_visit, df_site, study_id_str = "A", n_site = 6)
 }
+\keyword{internal}

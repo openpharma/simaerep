@@ -2,6 +2,8 @@
 % Please edit documentation in R/S3_simaerep.R
 \name{simaerep}
 \alias{simaerep}
+\alias{simaerep_inframe}
+\alias{simaerep_classic}
 \title{Create simaerep object}
 \usage{
 simaerep(
@@ -16,6 +18,33 @@ simaerep(
   poisson_test = FALSE,
   env = parent.frame(),
   event_names = c("event"),
+  col_names = list(study_id = "study_id", site_id = "site_id", patient_id = "patient_id",
+    visit = "visit")
+)
+
+simaerep_inframe(
+  df_visit,
+  r = 1000,
+  under_only = FALSE,
+  visit_med75 = FALSE,
+  check = TRUE,
+  env = parent.frame(),
+  event_names = c("event"),
+  mult_corr = FALSE,
+  col_names = list(study_id = "study_id", site_id = "site_id", patient_id = "patient_id",
+    visit = "visit")
+)
+
+simaerep_classic(
+  df_visit,
+  check = TRUE,
+  progress = TRUE,
+  env = parent.frame(),
+  under_only = TRUE,
+  r = 1000,
+  mult_corr = FALSE,
+  poisson_test = FALSE,
+  event_names = "event",
   col_names = list(study_id = "study_id", site_id = "site_id", patient_id = "patient_id",
     visit = "visit")
 )
@@ -40,7 +69,7 @@ Default: FALSE}
 Default: FALSE}
 
 \item{inframe}{Logical, only table operations to be used; does not require
-visit_med75. Compatible with dbplyr supported database backends.Default: TRUE}
+visit_med75. Compatible with dbplyr supported database backends. Default: TRUE}
 
 \item{progress}{Logical, display progress bar. Default: TRUE.}
 
@@ -53,9 +82,28 @@ by the classic algorithm using visit_med75. Default: FALSE}
 parent.frame().}
 
 \item{event_names}{vector, contains the event names, default = "event"}
+
+\item{col_names}{named list, indicate study_id, site_id, patient_id and visit
+column in df_visit input dataframe. Default: list(
+study_id = "study_id",
+site_id = "site_id",
+patient_id = "patient_id",
+visit = "visit"
+)}
 }
 \value{
-A simaerep object.
+A simaerep object. Results are contained in the attached df_eval dataframe.\tabular{lll}{
+   Column Name \tab Description \tab Type \cr
+   study_id \tab The study ID \tab Character \cr
+   site_id. \tab The site ID \tab Character \cr
+   (event)_count \tab Site event count \tab Numeric \cr
+   (event)_per_visit_site \tab Site Ratio of event count divided by visits \tab Numeric \cr
+   visits \tab Site visit count \tab Numeric \cr
+   n_pat \tab Site patient count \tab Numeric \cr
+   (event)_per_visit_study \tab Simulated study ratio \tab Numeric \cr
+   (event)_prob \tab Site event ratio probability from -1 to 1 \tab Numeric \cr
+   (event)_delta \tab Difference expected vs reported events \tab Numeric \cr
+}
 }
 \description{
 Simulate AE under-reporting probabilities.
@@ -69,55 +117,49 @@ original visit data for facilitated plotting using generic plot(x).
 df_visit <- sim_test_data_study(
   n_pat = 100,
   n_sites = 5,
-  frac_site_with_ur = 0.4,
-  ur_rate = 0.6
+  ratio_out = 0.4,
+  factor_event_rate = - 0.6
 )
-df_visit$study_id <- "A"
-aerep <- simaerep(df_visit)
-aerep
-str(aerep)
+
+evrep <- simaerep(df_visit)
+evrep
+str(evrep)
 
 # simaerep classic algorithm
 
-aerep <- simaerep(df_visit, inframe = FALSE, under_only = TRUE, mult_corr = TRUE)
-str(aerep)
+evrep <- simaerep(df_visit, inframe = FALSE, under_only = TRUE, mult_corr = TRUE)
+evrep
 
 # multiple events
 
-df_visit_events_test <- sim_test_data_events(
+df_visit_events_test <- sim_test_data_study(
   n_pat = 100,
   n_sites = 5,
-  ae_per_visit_mean = c(0.4, 0.5),
+  ratio_out = 0.4,
+  factor_event_rate = - 0.6,
+  event_per_visit_mean = c(0.5, 0.3),
   event_names = c("ae", "pd")
 )
 
-df_visit_events_test
+evsrep <- simaerep(df_visit_events_test, inframe = TRUE, event_names = c("ae", "pd"))
 
-aerep_events <- simaerep(df_visit_events_test, inframe = TRUE, event_names = c("ae", "pd"))
-
-aerep_events
+evsrep
 
 \donttest{
-  # In-frame table operations
-  simaerep(df_visit, inframe = TRUE, visit_med75 = FALSE, under_only = FALSE)$df_eval
-  simaerep(df_visit, inframe = TRUE, visit_med75 = TRUE, under_only = FALSE)$df_eval
-  # Database example
-  con <- DBI::dbConnect(duckdb::duckdb(), dbdir = ":memory:")
-  df_r <- tibble::tibble(rep = seq(1, 1000))
-  dplyr::copy_to(con, df_visit, "visit")
-  dplyr::copy_to(con, df_r, "r")
-  tbl_visit <- dplyr::tbl(con, "visit")
-  tbl_r <- dplyr::tbl(con, "r")
-  simaerep(tbl_visit, r = tbl_r, inframe = TRUE, visit_med75 = FALSE, under_only = FALSE)$df_eval
-  simaerep(tbl_visit, r = tbl_r, inframe = TRUE, visit_med75 = TRUE, under_only = FALSE)$df_eval
-  DBI::dbDisconnect(con)
+# Database example
+con <- DBI::dbConnect(duckdb::duckdb(), dbdir = ":memory:")
+df_r <- tibble::tibble(rep = seq(1, 1000))
+dplyr::copy_to(con, df_visit, "visit")
+dplyr::copy_to(con, df_r, "r")
+tbl_visit <- dplyr::tbl(con, "visit")
+tbl_r <- dplyr::tbl(con, "r")
+simaerep(tbl_visit, r = tbl_r)
+DBI::dbDisconnect(con)
 }
 }
 \seealso{
-\code{\link[=site_aggr]{site_aggr()}}, \code{\link[=sim_sites]{sim_sites()}}, \code{\link[=eval_sites]{eval_sites()}}, \code{\link[=orivisit]{orivisit()}},
-\code{\link[=plot.simaerep]{plot.simaerep()}}
-
-\link[=site_aggr]{site_aggr()}, \link[=sim_sites]{sim_sites()},
-\link[=eval_sites]{eval_sites()}, \link[=orivisit]{orivisit()},
-\link[=plot.simaerep]{plot.simaerep()}
+\link{site_aggr}, \link{sim_sites},
+\link{eval_sites}, \link{orivisit},
+\link{plot.simaerep}, \link{print.simaerep},
+\link{simaerep_inframe}
 }

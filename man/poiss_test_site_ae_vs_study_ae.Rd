@@ -17,19 +17,19 @@ poiss_test_site_ae_vs_study_ae(site_ae, study_ae, visit_med75)
 pval
 }
 \description{
-Internal function used by \code{\link[=sim_sites]{sim_sites()}}.
+Internal function used by \link[=sim_sites]{simaerep}.
 }
 \details{
 sets pvalue=1 if mean AE site is greater than mean AE study or ttest gives error
 }
 \examples{
-poiss_test_site_ae_vs_study_ae(
+simaerep:::poiss_test_site_ae_vs_study_ae(
    site_ae = c(5, 3, 3, 2, 1, 6),
    study_ae = c(9, 8, 7, 9, 6, 7, 8),
    visit_med75 = 10
 )
 
-poiss_test_site_ae_vs_study_ae(
+simaerep:::poiss_test_site_ae_vs_study_ae(
    site_ae = c(11, 9, 8, 6, 3),
    study_ae = c(9, 8, 7, 9, 6, 7, 8),
    visit_med75 = 10
@@ -38,3 +38,4 @@ poiss_test_site_ae_vs_study_ae(
 \seealso{
 \code{\link[=sim_sites]{sim_sites()}}
 }
+\keyword{internal}

@@ -33,12 +33,13 @@ Internal function used by \code{\link[=sim_sites]{sim_sites()}}
 sets pvalue=1 if mean AE site is greater than mean AE study
 }
 \examples{
-prob_lower_site_ae_vs_study_ae(
+simaerep:::prob_lower_site_ae_vs_study_ae(
   site_ae = c(5, 3, 3, 2, 1, 6),
   study_ae = c(9, 8, 7, 9, 6, 7, 8),
   parallel = FALSE
 )
 }
 \seealso{
-\code{\link[purrr]{safely}}
+\code{\link[=sim_sites]{sim_sites()}}
 }
+\keyword{internal}

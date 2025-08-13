@@ -3,7 +3,6 @@ AEs
 Adyanthaya
 Analytics
 BDBDBD
-BH
 Barmaz
 Boeringer
 Downey's
@@ -15,16 +14,16 @@ Hoffmann
 Inframe
 Ingelheim
 Innov
+InputCumCount
 Lifecycle
-Modelling
 Ménard
 PHUSE
 RBQM
 Regul
+Reproducibility
 Saf
 TP
 Ther
-Uncompliant
 Zink
 ae
 aes
@@ -46,7 +45,6 @@ df
 doi
 dplyr
 ecd
-ecdf
 et
 eval
 examplary
@@ -64,6 +62,7 @@ iterable
 iterables
 iteratively
 lightblue
+mult
 multisession
 normalisation
 normalise
@@ -72,8 +71,10 @@ openpharma
 optionable
 orivisit
 patnum
+perf
 pkgdown
 poisson
+portf
 pre
 progressbar
 purrr
@@ -95,7 +96,6 @@ tpr
 ttest
 unadjusted
 uncompliant
-underdispersion
 ur
 workproduct
 zi

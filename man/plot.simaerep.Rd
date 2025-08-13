@@ -8,11 +8,9 @@
   x,
   ...,
   study = NULL,
-  what = "ur",
+  what = "prob",
   n_sites = 16,
   df_visit = NULL,
-  df_site = NULL,
-  df_eval = NULL,
   env = parent.frame(),
   plot_event = x$event_names[1]
 )
@@ -53,15 +51,13 @@ see \link[=plot_study]{plot_study()} and
 df_visit <- sim_test_data_study(
   n_pat = 100,
   n_sites = 5,
-  frac_site_with_ur = 0.4,
-  ur_rate = 0.6
+  ratio_out = 0.4,
+  factor_event_rate = - 0.6
 )
 
-df_visit$study_id <- "A"
+evrep <- simaerep(df_visit)
 
-aerep <- simaerep(df_visit)
-
-plot(aerep, what = "ur", study = "A")
-plot(aerep, what = "med75", study = "A")
+plot(evrep, what = "prob", study = "A")
+plot(evrep, what = "med75", study = "A")
 }
 }

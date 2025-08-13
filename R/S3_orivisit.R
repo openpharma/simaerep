@@ -72,10 +72,8 @@ get_str_var <- function(call, env) {
 #' @title create orivisit object
 #' @description Internal S3 object, stores lazy reference to original visit
 #'   data.
-#' @param df_visit dataframe with original visit data
 #' @param call optional, provide call, Default: NULL
-#' @param env optional, provide environment of original visit data, Default: parent.frame()
-#' @param event_names vector, contains the event names, default = "ae"
+#' @inheritParams simaerep
 #' @return orivisit object
 #' @details Saves variable name of original visit data, checks whether it can be
 #'   retrieved from parent environment and stores summary. Original data can be
@@ -85,11 +83,9 @@ get_str_var <- function(call, env) {
 #' df_visit <- sim_test_data_study(
 #'   n_pat = 100,
 #'   n_sites = 5,
-#'   frac_site_with_ur = 0.4,
-#'   ur_rate = 0.6
-#' )
-#'
-#' df_visit$study_id <- "A"
+#'   ratio_out = 0.4,
+#'   factor_event_rate = - 0.6
+#' )#'
 #'
 #' visit <- orivisit(df_visit)
 #'
@@ -200,7 +196,7 @@ print.orivisit <- function(x, ..., n = 10) {
     cat(sprintf("Number of events: %d\n\n", x$df_summary$n_events))
   }
 
-  cat(sprintf("Data dimensions: %d rows × %d columns\n", x$dim[1], x$dim[2]))
+  cat(sprintf("Data dimensions: %d rows x %d columns\n", x$dim[1], x$dim[2]))
   cat(sprintf("Data source: %s\n", x$str_call))
 
   if (length(x$event_names) > 1) {
@@ -231,7 +227,7 @@ print.orivisit <- function(x, ..., n = 10) {
 #' @param x object
 #' @rdname is_orivisit
 #' @return logical
-#' @export
+#' @keywords internal
 is_orivisit <- function(x) {
   "orivisit" %in% class(x)
 }

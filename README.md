@@ -25,7 +25,7 @@ an important aspect of risk-based quality monitoring strategy. Sites
 that are under-reporting or over-reporting events can be detected using
 bootstrap simulations during which patients are redistributed between
 sites. Site-specific distributions of event reporting rates are
-generated that are used to assign probablilities to the observed
+generated that are used to assign probabilities to the observed
 reporting rates.
 
 The method is inspired by the ‘infer’ R package and Allen Downey’s blog
@@ -125,10 +125,9 @@ df_visit <- sim_test_data_study(
   # non-constant event rates based on gamma distribution
   event_rates = (dgamma(seq(1, 20, 0.5), shape = 5, rate = 2) * 5) + 0.1,
   max_visit = 20,
-  max_visit_sd = 10
+  max_visit_sd = 10,
+  study_id = "A"
 )
-
-df_visit$study_id <- "A"
 
 df_visit %>%
   select(study_id, site_id, patient_id, visit, n_event) %>%
@@ -167,7 +166,7 @@ df_visit %>%
 ``` r
 
 
-evrep <- simaerep(df_visit)
+evrep <- simaerep(df_visit, mult_corr = TRUE)
 
 plot(evrep, study = "A")
 ```
@@ -175,7 +174,7 @@ plot(evrep, study = "A")
 <img src="man/figures/README-unnamed-chunk-2-1.png" width="100%" />
 
 *Left panel shows mean cumulative event reporting per site (blue lines)
-agains mean cumulative event reporting of the entire study (golden
+against mean cumulative event reporting of the entire study (golden
 line). Sites with either high under-reporting (negative probabilities)
 or high over-reporting (positive probabilities) are marked by grey dots
 and plotted in additional panels on the right. N denotes the number of
@@ -205,7 +204,6 @@ dplyr::copy_to(con, df_r, "r")
 
 tbl_visit <- tbl(con, "visit")
 tbl_r <- tbl(con, "r")
-
 
 evrep <- simaerep(
   tbl_visit,

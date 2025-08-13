@@ -136,9 +136,9 @@ test_that("plot.simaerep works with event_names", {
     mult_corr = TRUE
   )
 
-  expect_s3_class(plot(aerep, what = "ur", study = "A", plot_event = "ae"), "ggplot")
-  expect_s3_class(plot(aerep, what = "ur", study = "A", plot_event = "y"), "ggplot")
-  expect_s3_class(plot(aerep, what = "ur", study = "A", plot_event = events), "ggplot")
+  expect_s3_class(plot(aerep, what = "prob", study = "A", plot_event = "ae"), "ggplot")
+  expect_s3_class(plot(aerep, what = "prob", study = "A", plot_event = "y"), "ggplot")
+  expect_s3_class(plot(aerep, what = "prob", study = "A", plot_event = events), "ggplot")
 
   expect_s3_class(
     plot(aerep, what = "med75", study = "A", plot_event = events, verbose = FALSE),

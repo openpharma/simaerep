@@ -58,16 +58,27 @@ reach the evaluation point (visit_med75) will be ignored.
 }
 \examples{
 \donttest{
-df_visit <- sim_test_data_study(n_pat = 1000, n_sites = 10,
-    frac_site_with_ur = 0.2, ur_rate = 0.15, max_visit_sd = 8)
+df_visit <- sim_test_data_study(
+  n_pat = 100,
+  n_sites = 5,
+  ratio_out = 0.4,
+  factor_event_rate = 0.6
+  ) \%>\%
+  # internal functions require internal column names
+  dplyr::rename(
+    n_ae = n_event,
+    site_number = site_id,
+    patnum = patient_id
+  )
 
-df_visit$study_id <- "A"
 df_site <- site_aggr(df_visit)
 
 df_sim_sites <- sim_sites(df_site, df_visit, r = 100)
 
 df_eval <- eval_sites(df_sim_sites)
 
-plot_study(df_visit, df_site, df_eval, study = "A")
+simaerep:::plot_study(df_visit, df_site, df_eval, study = "A")
+
 }
 }
+\keyword{internal}

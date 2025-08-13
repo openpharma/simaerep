@@ -85,7 +85,7 @@ replicate(
    3,
    sim_test_data_patient(
     .f_sample_max_visit = function() rnorm(1, mean = 20, sd = 4),
-    .f_sample_ae_per_visit = function(max_visit) rpois(max_visit, 0.5)
+    .f_sample_event_per_visit = function(max_visit) rpois(max_visit, 0.5)
   )
 )
 
@@ -149,7 +149,7 @@ evrep
 plot(evrep, study = "A")
 ```
 
-*Left panel shows mean cumulative event reporting per site (blue lines) agains mean cumulative event reporting of the entire study (golden line). Sites with either high under-reporting (negative probabilities) or high over-reporting (positive probabilities) are marked by grey dots and plotted in additional panels on the right. N denotes the number of sites. Right panel shows individual sites with total patient cumulative counts as grey lines. N denotes the number of patients, the percentage the under- and over-reporting probability and \u0394 denotes the difference compared to the expected number of events.*
+*Left panel shows mean cumulative event reporting per site (blue lines) against mean cumulative event reporting of the entire study (golden line). Sites with either high under-reporting (negative probabilities) or high over-reporting (positive probabilities) are marked by grey dots and plotted in additional panels on the right. N denotes the number of sites. Right panel shows individual sites with total patient cumulative counts as grey lines. N denotes the number of patients, the percentage the under- and over-reporting probability and \u0394 denotes the difference compared to the expected number of events.*
 
 ### Illustrate Probability Scoring
 
@@ -199,10 +199,9 @@ df_visit <- sim_test_data_study(
     (dgamma(seq(1, 20, 0.5), shape = 4, rate = 2) * 5) + 0.05
   ),
   max_visit = 20,
-  max_visit_sd = 10
+  max_visit_sd = 10,
+  study_id = "A"
 )
-
-df_visit$study_id <- "A"
 
 df_visit %>%
   select(site_id, patient_id, visit, n_x, n_y)

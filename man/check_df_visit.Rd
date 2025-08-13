@@ -25,11 +25,14 @@ duplicated visits.
 df_visit <- sim_test_data_study(
   n_pat = 100,
   n_sites = 5,
-  frac_site_with_ur = 0.4,
-  ur_rate = 0.6
-)
-
-df_visit$study_id <- "A"
+  ratio_out = 0.4,
+  factor_event_rate = 0.6
+  ) \%>\%
+  # internal functions require internal column names
+  dplyr::rename(
+    site_number = site_id,
+    patnum = patient_id
+  )
 
 df_visit_filt <- df_visit \%>\%
   dplyr::filter(visit != 3)
@@ -42,3 +45,7 @@ df_visit_corr <- check_df_visit(dplyr::bind_rows(df_visit, df_visit))
 nrow(df_visit_corr) == nrow(df_visit)
 
 }
+\seealso{
+\link[=simaerep]{simaerep}
+}
+\keyword{internal}

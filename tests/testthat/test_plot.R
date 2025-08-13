@@ -42,7 +42,7 @@ test_that("plot.simaerep produces an error when an invalid plot_event is submitt
     mult_corr = TRUE
   )
   error <- "plot_event (x) not found within event_names"
-  expect_error(plot(aerep, what = "ur", study = "A", plot_event = "x"),
+  expect_error(plot(aerep, what = "prob", study = "A", plot_event = "x"),
                regexp = error, fixed = TRUE)
   expect_error(plot(aerep, what = "med75", study = "A", plot_event = "x"),
                regexp = error, fixed = TRUE)

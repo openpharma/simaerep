@@ -21,3 +21,4 @@ dataframe
 \description{
 Internal function used by \code{\link[=site_aggr]{site_aggr()}}.
 }
+\keyword{internal}

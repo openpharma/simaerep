@@ -16,7 +16,7 @@ Description: Monitoring reporting rates of subject-level clinical events (e.g.
   under-reporting or over-reporting events can be detected using bootstrap
   simulations during which patients are redistributed between sites. Site-specific
   distributions of event reporting rates  are generated that are used to assign
-  probablilities to the observed reporting rates.
+  probabilities to the observed reporting rates.
   (Koneswarakantha 2024 <doi:10.1007/s43441-024-00631-8>).
 URL: https://openpharma.github.io/simaerep/, https://github.com/openpharma/simaerep/
 License: MIT + file LICENSE

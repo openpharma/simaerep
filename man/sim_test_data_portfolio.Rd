@@ -74,6 +74,4 @@ df_portf
 \code{\link{sim_test_data_study}}
 \code{\link{get_config}}
 \code{\link{sim_test_data_portfolio}}
-\code{\link{sim_ur_scenarios}}
-\code{\link{get_portf_perf}}
 }

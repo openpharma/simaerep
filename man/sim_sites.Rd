@@ -49,17 +49,21 @@ dataframe with the following columns:
 \description{
 Collects the number of AEs of all eligible patients that
 meet visit_med75 criteria of site. Then  calculates poisson.test pvalue and
-bootstrapped probability of having a lower mean value.
+bootstrapped probability of having a lower mean value. Used by \code{\link[=simaerep_classic]{simaerep_classic()}}
 }
 \examples{
 df_visit <- sim_test_data_study(
-   n_pat = 100,
-   n_sites = 5,
-   frac_site_with_ur = 0.4,
-   ur_rate = 0.2
-)
-
-df_visit$study_id <- "A"
+  n_pat = 100,
+  n_sites = 5,
+  ratio_out = 0.4,
+  factor_event_rate = 0.6
+  ) \%>\%
+  # internal functions require internal column names
+  dplyr::rename(
+    n_ae = n_event,
+    site_number = site_id,
+    patnum = patient_id
+  )
 
 df_site <- site_aggr(df_visit)
 
@@ -76,4 +80,5 @@ df_sim_sites \%>\%
 \code{\link[simaerep]{poiss_test_site_ae_vs_study_ae}},
 \code{\link[simaerep]{sim_sites}},
 \code{\link[simaerep]{prep_for_sim}}
+\code{\link[simaerep]{simaerep_classic}}
 }

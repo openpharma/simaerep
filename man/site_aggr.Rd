@@ -33,7 +33,8 @@ criterion, site level} \item{\strong{mean_ae_site_med75}}{mean AE at visit_med75
 site level} }
 }
 \description{
-Calculates visit_med75, n_pat_with_med75 and mean_ae_site_med75
+Calculates visit_med75, n_pat_with_med75 and mean_ae_site_med75.
+Used by \code{\link[=simaerep_classic]{simaerep_classic()}}
 }
 \details{
 For determining the visit number at which we are going to evaluate AE
@@ -51,14 +52,21 @@ that concluded max visit and count patients and patients that concluded max visi
 df_visit <- sim_test_data_study(
   n_pat = 100,
   n_sites = 5,
-  frac_site_with_ur = 0.4,
-  ur_rate = 0.6
-)
-
-df_visit$study_id <- "A"
+  ratio_out = 0.4,
+  factor_event_rate = 0.6
+  ) \%>\%
+  # internal functions require internal column names
+  dplyr::rename(
+    n_ae = n_event,
+    site_number = site_id,
+    patnum = patient_id
+  )
 
 df_site <- site_aggr(df_visit)
 
 df_site \%>\%
   knitr::kable(digits = 2)
+}
+\seealso{
+\code{\link[=simaerep_classic]{simaerep_classic()}}
 }
