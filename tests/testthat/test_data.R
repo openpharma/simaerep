@@ -100,6 +100,23 @@ test_that(paste("sim_test_data_study() produces an error",
 
 })
 
+test_that(paste("sim_test_data_study() non constant event rates for two event names"), {
+
+  event_rates_ae <- c(0.7, rep(0.5, 8), rep(0.3, 5))
+  event_rates_pd <- c(0.3, rep(0.4, 8), rep(0.1, 5))
+
+  df_visit <- sim_test_data_study(
+   n_pat = 100,
+   n_sites = 5,
+   ratio_out = 0.25,
+   event_names = c("ae", "pd"),
+   event_rates = list(event_rates_ae, event_rates_pd)
+  )
+
+  expect_true(all(c("n_ae", "n_pd") %in% colnames(df_visit)))
+
+})
+
 test_that(paste("sim_test_data_study() produces an error",
           "when the number of event names != the number of event rates submitted as a list"), {
 

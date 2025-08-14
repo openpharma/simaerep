@@ -46,8 +46,16 @@ test_that("as.data.frame.orivisit() stops when df_summary doesn't equal x$df_sum
     "Could not find original visit data in parent environment.",
     "Please pass original visit data to function call."
   )
+
   expect_error(as.data.frame.orivisit(x), regex = message)
-  #expect_message did not appear to work, so used expect_error instead
+
+  x <- orivisit(df_visit)
+
+  x$df_summary <- x$df_summary %>%
+    select(- n_events)
+
+  expect_error(as.data.frame.orivisit(x), regex = message)
+
 })
 
 

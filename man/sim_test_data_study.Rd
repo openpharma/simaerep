@@ -12,8 +12,8 @@ sim_test_data_study(
   max_visit_mean = 20,
   max_visit_sd = 4,
   event_per_visit_mean = c(0.5),
-  event_rates = c(NULL),
-  event_names = list("event"),
+  event_rates = NULL,
+  event_names = c("event"),
   study_id = "A"
 )
 }
@@ -37,7 +37,7 @@ patient, Default: 4}
 
 \item{event_per_visit_mean}{mean event per visit per patient, Default: 0.5}
 
-\item{event_rates}{vector with visit-specific event rates, Default: Null}
+\item{event_rates}{list or vector with visit-specific event rates, Default: Null}
 
 \item{event_names}{vector, contains the event names, default = "event"}
 
@@ -73,5 +73,16 @@ df_visit[which(df_visit$patient_id == "P000001"),]
 # non-constant event rates
 event_rates <- c(0.7, rep(0.5, 8), rep(0.3, 5))
 sim_test_data_study(n_pat = 100, n_sites = 5, event_rates = event_rates)
+
+# non-constant event rates for two event types
+event_rates_ae <- c(0.7, rep(0.5, 8), rep(0.3, 5))
+event_rates_pd <- c(0.3, rep(0.4, 8), rep(0.1, 5))
+
+sim_test_data_study(
+n_pat = 100,
+n_sites = 5,
+event_names = c("ae", "pd"),
+event_rates = list(event_rates_ae, event_rates_pd)
+)
 
 }

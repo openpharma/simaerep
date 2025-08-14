@@ -13,7 +13,7 @@
       Number of sites: 5
       Number of patients: 100
       Number of visits: 3890
-      Number of events: 1741
+      Number of event : 1741
       
       Data dimensions: 3890 rows x 9 columns
       Data source: df_visit

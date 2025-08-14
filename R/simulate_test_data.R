@@ -15,7 +15,7 @@
 #' @param max_visit_sd standard deviation of maximum number of visits of each
 #'   patient, Default: 4
 #' @param event_per_visit_mean mean event per visit per patient, Default: 0.5
-#' @param event_rates vector with visit-specific event rates, Default: Null
+#' @param event_rates list or vector with visit-specific event rates, Default: Null
 #' @param event_names vector, contains the event names, default = "event"
 #' @param study_id character, Default: "A"
 #' @return tibble with columns site_id, patient_id, is_out, max_visit_mean,
@@ -39,6 +39,17 @@
 #' event_rates <- c(0.7, rep(0.5, 8), rep(0.3, 5))
 #' sim_test_data_study(n_pat = 100, n_sites = 5, event_rates = event_rates)
 #'
+#' # non-constant event rates for two event types
+#' event_rates_ae <- c(0.7, rep(0.5, 8), rep(0.3, 5))
+#' event_rates_pd <- c(0.3, rep(0.4, 8), rep(0.1, 5))
+#'
+#'sim_test_data_study(
+#' n_pat = 100,
+#' n_sites = 5,
+#' event_names = c("ae", "pd"),
+#' event_rates = list(event_rates_ae, event_rates_pd)
+#')
+#'
 #' @rdname sim_test_data_study
 #' @export
 sim_test_data_study <- function(n_pat = 1000,
@@ -48,8 +59,8 @@ sim_test_data_study <- function(n_pat = 1000,
                                  max_visit_mean = 20,
                                  max_visit_sd = 4,
                                  event_per_visit_mean = c(0.5),
-                                 event_rates = c(NULL),
-                                 event_names = list("event"),
+                                 event_rates = NULL,
+                                 event_names = c("event"),
                                  study_id = "A"
 ) {
 
@@ -115,7 +126,6 @@ sim_pat <- function(vs_max,
   colnames <- c(paste0(event_names, "_per_visit_mean"), "visit",  paste0("n_", event_names))
 
   if (! any(c(is.null(event_rates), is.na(event_rates)))) {
-
     if (is_out & is.list(event_rates)) {
       event_rates <- map(event_rates, ~ . * (1 + factor_event_rate))
     }

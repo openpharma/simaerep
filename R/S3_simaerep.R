@@ -201,7 +201,7 @@ simaerep <- function(df_visit,
 
   for (x in event_names) {
     if (!paste0("n_", x) %in% c(colnames(df_visit), names(col_names))) {
-      stop(paste0(x, " not found in df_visit"))
+      stop(paste0("n_", x, " not found in df_visit"))
     }
   }
 
@@ -649,6 +649,7 @@ print.simaerep <- function(x, ..., n = 10) {
     }
 
     if (x$poisson_test & x$mult_corr) {
+      cat('Multiplicity correction applied to prob and pval column.\n\n')
     } else if (x$mult_corr) {
       cat('Multiplicity correction applied to prob column.\n\n')
     }

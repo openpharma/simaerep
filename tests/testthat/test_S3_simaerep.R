@@ -2,7 +2,12 @@ df_visit <- get_df_visit_test()
 aerep <- simaerep(df_visit)
 
 test_that("print.simaerep generic must print object description", {
-  expect_snapshot(print(aerep))
+  expect_snapshot(aerep)
+
+  # classic
+  evrep <- simaerep(df_visit, inframe = FALSE)
+  expect_snapshot(evrep)
+
 })
 
 test_that("is_simaerep returns TRUE", {
@@ -58,6 +63,13 @@ test_that("simaerep - original dataframe unretrievable when called with slice", 
   expect_error(as.data.frame(aerep_new$visit), "Could not find original visit data")
 })
 
+test_that("simaerep() - poisson test", {
+  df_visit <- get_df_visit_test()
+  evrep <- simaerep(df_visit, poisson_test = TRUE)
+  expect_snapshot(evrep)
+  expect_s3_class(plot(evrep, prob_col = "pval"), "ggplot")
+})
+
 test_that("plot.simaerep with simaerep(mult_corr = FALSE)", {
 
   df_visit <- get_df_visit_test()
@@ -72,7 +84,7 @@ test_that("plot.simaerep with simaerep(mult_corr = FALSE)", {
   expect_s3_class(plot(aerep_new, what = "prob", study = "A"), "ggplot")
 })
 
-test_that("plot.simaerep with what='ur'", {
+test_that("plot.simaerep with what='prob'", {
 
   df_visit <- get_df_visit_test()
 
@@ -138,9 +150,15 @@ test_that("plot.simaerep throws error when original visit data cannot be retriev
 })
 
 
-test_that("simaerep() produces a message when the study parameter is NULL", {
+test_that("plot.simaerep() produces a message when the study parameter is NULL", {
   df_visit <- get_df_visit_test()
   x <- simaerep(df_visit)
   expect_message(plot.simaerep(x), regex = "study = NULL, defaulting to study:A")
+})
+
+test_that("plot.simaerep() with no reporting outlier", {
+  df_visit <- sim_test_data_study(ratio_out = 0)
+  evrep <- simaerep(df_visit)
+  expect_s3_class(plot(evrep, study = "A"), "ggplot")
 })
 

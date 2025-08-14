@@ -426,10 +426,6 @@ eval_sites <- function(df_sim_sites,
 
   }
 
-  if (! any(endsWith(colnames(df_out), suffix = "prob_low"))) {
-    return(df_out)
-  }
-
   # under_only is only allowed for the classic algorithm
   # it can only run with one event_type with a predictable column name
   if (under_only) {

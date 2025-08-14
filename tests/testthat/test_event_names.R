@@ -122,7 +122,7 @@ test_that("S3 orivisits works with event_names", {
 })
 
 
-test_that("plot.simaerep works with event_names", {
+test_that("plot.simaerep, print.simaerep and print.orivisit work with event_names", {
 
   events <- c("ae", "y")
 
@@ -135,6 +135,9 @@ test_that("plot.simaerep works with event_names", {
     inframe = TRUE,
     mult_corr = TRUE
   )
+
+  expect_snapshot(aerep)
+  expect_snapshot(aerep$visit)
 
   expect_s3_class(plot(aerep, what = "prob", study = "A", plot_event = "ae"), "ggplot")
   expect_s3_class(plot(aerep, what = "prob", study = "A", plot_event = "y"), "ggplot")
@@ -159,6 +162,19 @@ test_that("get_cum_mean_event_dev works with non-default event_names", {
 
   df_cum_mean_event_dev <- get_cum_mean_event_dev(df_visit_events_test, event_names = events)
   expect_true(all(glue("cum_mean_dev_{events}") %in% colnames(df_cum_mean_event_dev)))
+
+})
+
+test_that("simaerep produces error when invalid event names passed", {
+
+  events <- c("x", "y")
+
+  df_visit_events_test <- sim_test_data_events(event_names = events, event_per_visit_mean = c(0.5, 0.4))
+
+  expect_error(
+    simaerep(df_visit_events_test, event_names = c("x", "bar")),
+    regexp = "n_bar not found in df_visit"
+  )
 
 })
 

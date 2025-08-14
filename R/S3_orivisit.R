@@ -149,8 +149,13 @@ as.data.frame.orivisit <- function(x, ..., env = parent.frame()) {
     df_summary <- summarise_df_visit(df_check, x$event_names)
 
     #all.equal produces either TRUE or a character string (instead of FALSE)
-    if (is.character(all.equal(df_summary, x$df_summary, tolerance = 1e-4))) stop.orivisit()
-    if (! all(dim == x$dim)) stop.orivisit()
+    if (is.character(all.equal(df_summary, x$df_summary, tolerance = 1e-4))) {
+      stop.orivisit() # covr mistake catch with browser()
+    }
+
+    if (! all(dim == x$dim)){
+      stop.orivisit() # covr mistake catch with browser()
+    }
   }
 
   return(df)
@@ -193,8 +198,14 @@ print.orivisit <- function(x, ..., n = 10) {
     cat(sprintf("Number of sites: %d\n", x$df_summary$n_sites))
     cat(sprintf("Number of patients: %d\n", x$df_summary$n_patients))
     cat(sprintf("Number of visits: %d\n", x$df_summary$n_visits))
-    cat(sprintf("Number of events: %d\n\n", x$df_summary$n_events))
+
+    for (event in x$event_names) {
+      cat(sprintf("Number of %s : %d\n", event, x$df_summary[[paste0("n_", event, "s")]]))
+    }
+
   }
+
+  cat("\n")
 
   cat(sprintf("Data dimensions: %d rows x %d columns\n", x$dim[1], x$dim[2]))
   cat(sprintf("Data source: %s\n", x$str_call))
