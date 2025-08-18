@@ -8,13 +8,11 @@ test_that(paste("sim_test_data_study() produces the expected output for n_ae",
 
   sim_test_data_events <- sim_test_data_study(
     event_names = c("ae", "pd"),
-    event_per_visit_mean = c(0.4, 0.4),
     event_rates = list(c(0.5, 0, 1), 0.4)
   )
 
   sim_test_data <- sim_test_data_study(
     event_names = c("ae"),
-    event_per_visit_mean = c(0.4),
     event_rates = c(0.5, 0, 1)
   )
 
@@ -36,7 +34,7 @@ test_that(paste("sim_test_data_study() produces the expected output for n_ae",
 
 test_that("eval_sites throws the correct warning when given multi-event data containing an NA", {
 
-  df_visit_events_test <- sim_test_data_events(event_names = c("ae", "pd"), event_per_visit_mean = c(0.5, 0.4)) %>%
+  df_visit_events_test <- sim_test_data_events(event_names = c("ae", "pd"), event_rates = list(0.5, 0.4)) %>%
     rename(
       site_number = site_id,
       patnum = patient_id
@@ -76,7 +74,7 @@ test_that("column names when using event_names as expected in df_eval", {
 
   cols_expected <- paste0(events, "_prob")
 
-  df_visit_events_test <- sim_test_data_events(event_names = events, event_per_visit_mean = c(0.5, 0.4))
+  df_visit_events_test <- sim_test_data_events(event_names = events, event_rates =  list(c(0.5), c(0.4)))
 
   df_eval_events <- simaerep(
     df_visit_events_test,
@@ -107,7 +105,7 @@ test_that("S3 orivisits works with event_names", {
 
   events <- c("ae", "y")
 
-  df_visit_events_test <- sim_test_data_events(event_names = events, event_per_visit_mean = c(0.5, 0.4))
+  df_visit_events_test <- sim_test_data_events(event_names = events, event_rates = list(0.5, 0.4))
 
   aerep <- simaerep(
     df_visit_events_test,
@@ -126,7 +124,7 @@ test_that("plot.simaerep, print.simaerep and print.orivisit work with event_name
 
   events <- c("ae", "y")
 
-  df_visit_events_test <- sim_test_data_events(event_names = events, event_per_visit_mean = c(0.5, 0.4))
+  df_visit_events_test <- sim_test_data_events(event_names = events, event_rates = list(0.5, 0.4))
 
   aerep <- simaerep(
     df_visit = df_visit_events_test,
@@ -154,7 +152,7 @@ test_that("get_cum_mean_event_dev works with non-default event_names", {
 
   events <- c("x", "y")
 
-  df_visit_events_test <- sim_test_data_events(event_names = events, event_per_visit_mean = c(0.5, 0.4))  %>%
+  df_visit_events_test <- sim_test_data_events(event_names = events, event_rates = list(0.5, 0.4))  %>%
     rename(
       site_number = site_id,
       patnum = patient_id
@@ -169,7 +167,7 @@ test_that("simaerep produces error when invalid event names passed", {
 
   events <- c("x", "y")
 
-  df_visit_events_test <- sim_test_data_events(event_names = events, event_per_visit_mean = c(0.5, 0.4))
+  df_visit_events_test <- sim_test_data_events(event_names = events, event_rates = list(0.5, 0.4))
 
   expect_error(
     simaerep(df_visit_events_test, event_names = c("x", "bar")),
@@ -189,7 +187,7 @@ test_that("event_names works with duckdb backend", {
 
   cols_expected <- paste0(events, "_prob")
 
-  df_visit_events_test <- sim_test_data_events(event_names = events, event_per_visit_mean = c(0.5, 0.4))
+  df_visit_events_test <- sim_test_data_events(event_names = events, event_rates = list(0.5, 0.4))
 
   con <- DBI::dbConnect(duckdb::duckdb(), dbdir = ":memory:")
   df_r <- tibble(rep = seq(1, 1000))

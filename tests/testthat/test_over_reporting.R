@@ -21,7 +21,7 @@ test_that("sim_test_data_study() - positive values passed to factor_event_rate s
   df_visit <- sim_test_data_study(
     factor_event_rate = +0.5,
     ratio_out = 0.05,
-    event_per_visit_mean = ae_per_visit_mean_def,
+    event_rates = ae_per_visit_mean_def,
     event_names = "ae"
   )
 
@@ -40,7 +40,7 @@ test_that(paste("simaerep() - under_only = FALSE - over-reporting must be zero w
                 "mean_ae_site_med75 == mean_ae_study_med75"), {
 
   df_visit <- sim_test_data_study(
-    event_per_visit_mean = 0
+    event_rates = 0
   ) %>%
   mutate(study_id = "A")
 

@@ -67,7 +67,7 @@ test_that("simaerep() - poisson test", {
   df_visit <- get_df_visit_test()
   evrep <- simaerep(df_visit, poisson_test = TRUE)
   expect_snapshot(evrep)
-  expect_s3_class(plot(evrep, prob_col = "pval"), "ggplot")
+  expect_s3_class(plot(evrep, prob_col = "pval", study = "A"), "ggplot")
 })
 
 test_that("plot.simaerep with simaerep(mult_corr = FALSE)", {

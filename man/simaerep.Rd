@@ -137,7 +137,7 @@ df_visit_events_test <- sim_test_data_study(
   n_sites = 5,
   ratio_out = 0.4,
   factor_event_rate = - 0.6,
-  event_per_visit_mean = c(0.5, 0.3),
+  event_rates = list(0.5, 0.3),
   event_names = c("ae", "pd")
 )
 

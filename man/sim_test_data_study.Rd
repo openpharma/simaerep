@@ -11,8 +11,7 @@ sim_test_data_study(
   factor_event_rate = 0,
   max_visit_mean = 20,
   max_visit_sd = 4,
-  event_per_visit_mean = c(0.5),
-  event_rates = NULL,
+  event_rates = dgamma(seq(1, 20, 0.5), shape = 5, rate = 2) * 5 + 0.1,
   event_names = c("event"),
   study_id = "A"
 )
@@ -24,10 +23,10 @@ sim_test_data_study(
 
 \item{ratio_out}{ratio of sites with outlier, Default: 0}
 
-\item{factor_event_rate}{event reporting rate factor for site outlier,
-will modify mean event per visit rate used for outlier sites. Negative Values
-will simulate under-reporting, positive values over-reporting,
-e.g. -0.4 -> 40\% under-reporting, +0.4 -> 40\% over-reporting Default: 0}
+\item{factor_event_rate}{event reporting rate factor for site outlier, will
+modify mean event per visit rate used for outlier sites. Negative Values
+will simulate under-reporting, positive values over-reporting, e.g. -0.4 ->
+40\% under-reporting, +0.4 -> 40\% over-reporting Default: 0}
 
 \item{max_visit_mean}{mean of the maximum number of visits of each patient,
 Default: 20}
@@ -35,9 +34,8 @@ Default: 20}
 \item{max_visit_sd}{standard deviation of maximum number of visits of each
 patient, Default: 4}
 
-\item{event_per_visit_mean}{mean event per visit per patient, Default: 0.5}
-
-\item{event_rates}{list or vector with visit-specific event rates, Default: Null}
+\item{event_rates}{list or vector with visit-specific event rates, Default:
+dgamma(seq(1, 20, 0.5), shape = 5, rate = 2) * 5 + 0.1}
 
 \item{event_names}{vector, contains the event names, default = "event"}
 
@@ -55,8 +53,8 @@ sites.
 }
 \details{
 maximum visit number will be sampled from normal distribution with
-characteristics derived from max_visit_mean and max_visit_sd, while the events
-per visit will be sampled from a poisson distribution described by
+characteristics derived from max_visit_mean and max_visit_sd, while the
+events per visit will be sampled from a poisson distribution described by
 events_per_visit_mean.
 }
 \examples{
@@ -70,13 +68,12 @@ df_visit <- sim_test_data_study(n_pat = 100, n_sites = 5,
     ratio_out = 0.2, factor_event_rate = -0.5)
 df_visit[which(df_visit$patient_id == "P000001"),]
 
-# non-constant event rates
-event_rates <- c(0.7, rep(0.5, 8), rep(0.3, 5))
-sim_test_data_study(n_pat = 100, n_sites = 5, event_rates = event_rates)
+# constant event rates
+sim_test_data_study(n_pat = 100, n_sites = 5, event_rates = 0.5)
 
 # non-constant event rates for two event types
 event_rates_ae <- c(0.7, rep(0.5, 8), rep(0.3, 5))
-event_rates_pd <- c(0.3, rep(0.4, 8), rep(0.1, 5))
+event_rates_pd <- c(0.3, rep(0.4, 6), rep(0.1, 5))
 
 sim_test_data_study(
 n_pat = 100,

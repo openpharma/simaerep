@@ -33,7 +33,7 @@ test_that("plot_sim_example() includes titles when title = TRUE", {
 
 test_that("plot.simaerep produces an error when an invalid plot_event is submitted", {
   events <- c("ae", "y")
-  df_visit_events_test <- sim_test_data_events(event_names = events, event_per_visit_mean = c(0.5, 0.4))
+  df_visit_events_test <- sim_test_data_events(event_names = events, event_rates = list(0.5, 0.4))
   aerep <- simaerep(
     df_visit = df_visit_events_test,
     event_names = events,

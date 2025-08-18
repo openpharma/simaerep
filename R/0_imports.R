@@ -5,7 +5,7 @@
 #' @importFrom RColorBrewer brewer.pal
 #' @importFrom utils head
 #' @importFrom stats p.adjust quantile median runif poisson.test ecdf rnorm rpois sd
-#' @importFrom stats setNames
+#' @importFrom stats setNames dgamma
 #' @importFrom purrr safely possibly pmap map map2 pmap_dbl map2_dbl map_dbl
 #' @importFrom purrr map_int map_chr in_parallel
 #' @importFrom furrr future_map future_pmap furrr_options

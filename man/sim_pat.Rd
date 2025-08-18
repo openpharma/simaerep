@@ -5,15 +5,7 @@
 \title{simulate patients and events for sites
 supports constant and non-constant event rates}
 \usage{
-sim_pat(
-  vs_max,
-  vs_sd,
-  is_out,
-  event_per_visit_mean,
-  event_rates,
-  event_names,
-  factor_event_rate
-)
+sim_pat(vs_max, vs_sd, is_out, event_rates, event_names, factor_event_rate)
 }
 \description{
 simulate patients and events for sites

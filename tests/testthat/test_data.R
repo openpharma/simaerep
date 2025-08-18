@@ -82,16 +82,6 @@ test_that("sim_test_data_study() alters the ae_rates value if ratio_out > 0", {
 })
 
 
-test_that(paste("sim_test_data_study() produces an error",
-          "when the number of event names != the number of events per visit means"), {
-
-  expect_error(
-    sim_test_data_study(event_names = c("ae", "pd"), event_per_visit_mean = 0.5),
-    regexp = "Number of events named (2) doesn't equal the number of events per visit means submitted (1)",
-    fixed = TRUE
-  )
-
-})
 
 test_that(paste("sim_test_data_study() non constant event rates for two event names"), {
 
@@ -127,7 +117,6 @@ test_that(paste("sim_test_data_study() produces an error",
   expect_error(
     sim_test_data_study(
       event_names = c("ae", "pd"),
-      event_per_visit_mean = c(0.4, 0.4),
       event_rates = c(0.3, 0.4)
     ),
     regexp = "event_rates should be entered as a list (containing arrays) when the number of events is > 1",
