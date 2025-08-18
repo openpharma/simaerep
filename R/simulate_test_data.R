@@ -215,6 +215,7 @@ sim_pat <- function(vs_max,
 #'   )
 #' @rdname sim_test_data_patient
 #' @export
+#' @keywords internal
 sim_test_data_patient <- function(.f_sample_max_visit = function() rnorm(1, mean = 20, sd = 4),
                                   .f_sample_event_per_visit = function(max_visit) rpois(max_visit, 0.5)) {
 
@@ -232,10 +233,10 @@ sim_test_data_patient <- function(.f_sample_max_visit = function() rnorm(1, mean
 
 #' @title Simulate Portfolio Test Data
 #' @description Simulate visit level data from a portfolio configuration.
-#' @param df_config dataframe as returned by \code{\link{get_config}}
+#' @param df_config dataframe as returned by \code{\link{get_portf_config}}
 #' @param df_event_rates dataframe with event rates. Default: NULL
-#' @param parallel logical activate parallel processing, see details, Default: FALSE
 #' @param progress logical, Default: TRUE
+#' @param parallel logical activate parallel processing, see details, Default: FALSE
 #'@return dataframe with the following columns: \describe{
 #'  \item{**study_id**}{study identification} \item{**event_per_visit_mean**}{mean
 #'  event per visit per study} \item{**site_id**}{site}
@@ -263,13 +264,7 @@ sim_test_data_patient <- function(.f_sample_max_visit = function() rnorm(1, mean
 #'
 #' df_visit <- dplyr::bind_rows(df_visit1, df_visit2)
 #'
-#' df_site_max <- df_visit %>%
-#'   dplyr::group_by(study_id, site_id, patient_id) %>%
-#'   dplyr::summarise(max_visit = max(visit),
-#'             max_event = max(n_event),
-#'             .groups = "drop")
-#'
-#' df_config <- get_config(df_site_max)
+#' df_config <- get_portf_config(df_visit)
 #'
 #' df_config
 #'
@@ -280,11 +275,11 @@ sim_test_data_patient <- function(.f_sample_max_visit = function() rnorm(1, mean
 #' }
 #' @seealso
 #'  \code{\link{sim_test_data_study}}
-#'  \code{\link{get_config}}
+#'  \code{\link{get_portf_config}}
 #'  \code{\link{sim_test_data_portfolio}}
 #' @rdname sim_test_data_portfolio
 #' @export
-sim_test_data_portfolio <- function(df_config, df_event_rates = NULL, parallel = FALSE, progress = TRUE) {
+sim_test_data_portfolio <- function(df_config, df_event_rates = NULL, progress = TRUE, parallel = TRUE) {
 
   # checks --------------------------
   df_config <- ungroup(df_config)
@@ -315,7 +310,10 @@ sim_test_data_portfolio <- function(df_config, df_event_rates = NULL, parallel =
   if (is.null(df_event_rates)) {
     df_config$event_rates <- NA
   } else {
+    # event rates are nested into vectors
+    # that can be passed to sim_test_data_study
     df_event_rates <- df_event_rates %>%
+      arrange(.data$study_id, .data$visit) %>%
       select(c("study_id", "event_rate")) %>%
       group_by(.data$study_id) %>%
       nest() %>%
@@ -373,8 +371,6 @@ sim_test_data_portfolio <- function(df_config, df_event_rates = NULL, parallel =
     progress = progress
   )
 
-
-
   df_portf <- df_config_sim %>%
     unnest("sim") %>%
     select(- c("n_pat", "event_rates")) %>%
@@ -393,12 +389,14 @@ sim_test_data_portfolio <- function(df_config, df_event_rates = NULL, parallel =
 }
 
 #'@title Get Portfolio Configuration
-#'@description Get Portfolio configuration from a dataframe aggregated on
-#'  patient level with max_event and max_visit. Will filter studies with only a few
-#'  sites and patients and will anonymize IDs. Portfolio configuration can be
+#'@description Get Portfolio configuration from a df_visit input dataframe. Will
+#'. filter studies with only a few sites and patients and will anonymize IDs.
+#'. Portfolio configuration can be
 #'  used by \code{\link{sim_test_data_portfolio}} to generate data for an
 #'  artificial portfolio.
-#'@param df_site dataframe aggregated on patient level with max_event and max_visit
+#'@param df_visit input dataframe with columns study_id, site_id, patient_id, visit, n_events.
+#'Can also be a lazy database table.
+#'@param check logical, perform standard checks on df_visit, Default: TRUE
 #'@param min_pat_per_study minimum number of patients per study, Default: 100
 #'@param min_sites_per_study minimum number of sites per study, Default: 10
 #'@param anonymize logical, Default: TRUE
@@ -410,63 +408,63 @@ sim_test_data_portfolio <- function(df_config, df_event_rates = NULL, parallel =
 #'  site} \item{**max_visit_mean**}{mean of maximum patient visits per site}
 #'  \item{**n_pat**}{number of patients} }
 #' @examples
-#' \donttest{
 #' df_visit1 <- sim_test_data_study(n_pat = 100, n_sites = 10,
-#'                                  ratio_out = 0.4, factor_event_rate = 0.6,
+#'                                  ratio_out = 0.4, factor_event_rate = - 0.6,
 #'                                  study_id = "A")
 #'
 #'
 #' df_visit2 <- sim_test_data_study(n_pat = 100, n_sites = 10,
-#'                                  ratio_out = 0.2, factor_event_rate = 0.1,
+#'                                  ratio_out = 0.2, factor_event_rate = - 0.1,
 #'                                  study_id = "B")
 #'
 #'
 #' df_visit <- dplyr::bind_rows(df_visit1, df_visit2)
 #'
-#' df_site_max <- df_visit %>%
-#'   dplyr::group_by(study_id, site_id, patient_id) %>%
-#'   dplyr::summarise(max_visit = max(visit),
-#'             max_event = max(n_event),
-#'             .groups = "drop")
 #'
-#' df_config <- get_config(df_site_max)
+#' get_portf_config(df_visit)
 #'
-#' df_config
-#'
-#' df_portf <- sim_test_data_portfolio(df_config)
-#'
-#' df_portf
-#'
+#' \donttest{
+#'# Database example
+#'con <- DBI::dbConnect(duckdb::duckdb(), dbdir = ":memory:")
+#'dplyr::copy_to(con, df_visit, "visit")
+#'tbl_visit <- dplyr::tbl(con, "visit")
+#'get_portf_config(tbl_visit)
+#'DBI::dbDisconnect(con)
 #' }
 #' @seealso
 #'  \code{\link{sim_test_data_study}}
-#'  \code{\link{get_config}}
+#'  \code{\link{get_portf_config}}
 #'  \code{\link{sim_test_data_portfolio}}
-#'@rdname get_config
+#'@rdname get_portf_config
 #'@export
-get_config <- function(df_site,
+get_portf_config <- function(df_visit,
+                       check = TRUE,
                        min_pat_per_study = 100,
                        min_sites_per_study = 10,
                        anonymize = TRUE,
                        pad_width = 4) {
 
-  stopifnot(c("study_id", "site_id", "patient_id", "max_visit", "max_event") %in% colnames(df_site))
-  stopifnot(nrow(df_site) == nrow(distinct(select(df_site, c("study_id", "site_id", "patient_id")))))
+  stopifnot(all(c("study_id", "site_id", "patient_id", "visit", "n_event") %in% colnames(df_visit)))
 
-  df_site %>%
-    summarise_all(~ ! anyNA(.)) %>%
-    unlist() %>%
-    all() %>%
-    stopifnot("NA detected" = .)
+  if (check) {
+    col_names = list(
+      study_id = "study_id",
+      site_id = "site_id",
+      patient_id = "patient_id",
+      visit = "visit"
+    )
 
-  df_site %>%
-    group_by(.data$study_id, .data$patient_id) %>%
-    summarise(n_sites = n_distinct(.data$site_id), .groups = "drop") %>%
-    mutate(check = .data$n_sites == 1) %>%
-    pull(.data$check) %>%
-    unlist() %>%
-    all() %>%
-    stopifnot("patient ids must be site exclusive" = .)
+    df_visit <- df_visit %>%
+      map_col_names(col_names) %>%
+      check_df_visit() %>%
+      remap_col_names(col_names)
+  }
+
+  df_site <- df_visit %>%
+    group_by(.data$study_id, .data$site_id, .data$patient_id) %>%
+    summarise(max_visit = max(.data$visit, na.rm = TRUE),
+              max_event = max(.data$n_event, na.rm = TRUE),
+              .groups = "drop")
 
   df_config <- df_site %>%
     filter(.data$max_visit > 0) %>%
@@ -477,11 +475,13 @@ get_config <- function(df_site,
       n_distinct(.data$site_id) >= min_sites_per_study
     ) %>%
     group_by(.data$study_id, .data$event_per_visit_mean, .data$site_id) %>%
-    summarise(max_visit_sd = sd(.data$max_visit),
-              max_visit_mean = mean(.data$max_visit),
+    summarise(max_visit_sd = sd(.data$max_visit, na.rm = TRUE),
+              max_visit_mean = mean(.data$max_visit, na.rm = TRUE),
               n_pat = n_distinct(.data$patient_id),
               .groups = "drop") %>%
-    mutate(max_visit_sd = ifelse(is.na(.data$max_visit_sd), 0, .data$max_visit_sd))
+    mutate(max_visit_sd = ifelse(is.na(.data$max_visit_sd), 0, .data$max_visit_sd)) %>%
+    collect()
+
 
   if (anonymize) {
     df_config <- df_config %>%
@@ -502,23 +502,104 @@ get_config <- function(df_site,
   return(df_config)
 }
 
+#' Get Portfolio Event Rates
+#' Calculates mean event rates per study and visit in a df_visit simaerep input
+#' dataframe.
+#' @inheritParams get_portf_config
+#' @export
+#' @examples
+#'
+#' df_visit1 <- sim_test_data_study(n_pat = 100, n_sites = 10,
+#'                                  ratio_out = 0.4, factor_event_rate = - 0.6,
+#'                                  study_id = "A")
+#'
+#'
+#' df_visit2 <- sim_test_data_study(n_pat = 100, n_sites = 10,
+#'                                  ratio_out = 0.2, factor_event_rate = - 0.1,
+#'                                  study_id = "B")
+#'
+#'
+#' df_visit <- dplyr::bind_rows(df_visit1, df_visit2)
+#'
+#'
+#' get_portf_event_rates(df_visit)
+#'
+#' \donttest{
+#'# Database example
+#'con <- DBI::dbConnect(duckdb::duckdb(), dbdir = ":memory:")
+#'dplyr::copy_to(con, df_visit, "visit")
+#'tbl_visit <- dplyr::tbl(con, "visit")
+#'get_portf_event_rates(tbl_visit)
+#'DBI::dbDisconnect(con)
+#' }
+get_portf_event_rates <- function(df_visit,
+                                  check = TRUE,
+                                  anonymize = TRUE,
+                                  pad_width = 4) {
+
+  stopifnot(all(c("study_id", "site_id", "patient_id", "visit", "n_event") %in% colnames(df_visit)))
+
+  if (check) {
+    col_names = list(
+      study_id = "study_id",
+      site_id = "site_id",
+      patient_id = "patient_id",
+      visit = "visit"
+    )
+
+    df_visit <- df_visit %>%
+      map_col_names(col_names) %>%
+      check_df_visit() %>%
+      remap_col_names(col_names)
+  }
+
+  if (inherits(df_visit, "data.frame")) {
+    fun_arrange <- arrange
+  } else {
+    fun_arrange <- window_order
+  }
+
+  df_event_rates <- df_visit %>%
+    fun_arrange(.data$study_id, .data$patient_id, .data$visit) %>%
+    mutate(
+      n_event = coalesce(.data$n_event - lag(.data$n_event), 0),
+      .by = c("study_id", "patient_id")
+    ) %>%
+    summarise(
+      event_rate = mean(.data$n_event, na.rm = TRUE),
+      n_pat = n_distinct(.data$patient_id),
+      .by = c("study_id", "visit")
+    ) %>%
+    collect()
+
+  if (anonymize) {
+    df_event_rates <- df_event_rates %>%
+      mutate(
+        study_id = dense_rank(.data$study_id),
+        study_id = str_pad(.data$study_id, pad_width, side = "left", "0")
+      )
+  }
+
+  return(df_event_rates)
+
+}
 
 #' simulate under-reporting
 #'@param df_visit, dataframe
 #'@param study_id, character
 #'@param site_id, character
-#'@param ur_rate, double
+#'@param factor_event, double, negative values for under-reporting positive for
+#'for over-reporting.
 #'@description we remove a fraction of events from a specific site
 #'@details we determine the absolute number of events per patient for removal.
 #'Then them remove them at the first visit.
 #'We intentionally allow fractions
 #'@export
 #'@examples
-#' df_visit <- sim_test_data_study(n_pat = 100, n_sites = 10, study_id = "A",
-#'                                  ratio_out = 0.4, factor_event_rate = 0.6)
+#' df_visit <- sim_test_data_study(n_pat = 100, n_sites = 10)
 #'
 #'
-#' df_ur <- sim_ur(df_visit, "A", site_id = "S0001", ur_rate = 0.35)
+#' df_ur <- sim_out(df_visit, "A", site_id = "S0001", factor_event = - 0.35)
 #'
 #' # Example cumulated event for first patient with 35% under-reporting
 #' df_ur[df_ur$site_id == "S0001" & df_ur$patient_id == "P000001",]$n_event
@@ -526,7 +607,7 @@ get_config <- function(df_site,
 #' # Example cumulated event for first patient with no under-reporting
 #' df_visit[df_visit$site_id == "S0001" & df_visit$patient_id == "P000001",]$n_event
 #'
-sim_ur <- function(df_visit, study_id, site_id, ur_rate) {
+sim_out <- function(df_visit, study_id, site_id, factor_event) {
 
   df_visit <- df_visit %>%
     mutate(n_event = as.numeric(.data$n_event))
@@ -540,7 +621,7 @@ sim_ur <- function(df_visit, study_id, site_id, ur_rate) {
   # determine total event per patient
   # convert cumulative counts to single increments
   # first value needs to be event start value
-  # from start value substract event count * ur_rate
+  # from start value add event count * factor_event
   # convert back to cumulative count
   df_visit_site_rem <- df_visit_site %>%
     mutate(
@@ -548,7 +629,7 @@ sim_ur <- function(df_visit, study_id, site_id, ur_rate) {
       n_event_rem = .data$n_event - lag(.data$n_event),
       n_event_rem = ifelse(
         .data$visit == 1,
-        .data$n_event - (.data$n_event_pat * .env$ur_rate),
+        .data$n_event + (.data$n_event_pat * .env$factor_event),
         .data$n_event_rem),
       n_event = cumsum(.data$n_event_rem),
       .by = "patient_id"

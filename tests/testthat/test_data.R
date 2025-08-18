@@ -1,36 +1,37 @@
 df_visit <- get_df_visit_test()
 
-test_that("sim_ur() ae_count as expected for max patient visits", {
+test_that("sim_out() event_count as expected for max patient visits", {
 
-  n_ae_test <- df_visit %>%
+  n_event_test <- df_visit %>%
     filter(visit == max(visit), .by = c("study_id", "site_id", "patient_id")) %>%
     filter(site_id == "S0001", study_id == "A") %>%
     pull(n_event) %>%
     sum()
 
-  n_ae_0p5 <- df_visit %>%
-    sim_ur(study_id = "A", site_id = "S0001", ur_rate = 0.5) %>%
+  n_event_or_0p5 <- df_visit %>%
+    sim_out(study_id = "A", site_id = "S0001", factor_event = 0.5) %>%
     filter(visit == max(visit), .by = c("study_id", "site_id", "patient_id")) %>%
     filter(site_id == "S0001", study_id == "A") %>%
     pull(n_event) %>%
     sum()
 
-  expect_true(n_ae_test == n_ae_0p5 * 2)
+  n_event_ur_0p5 <- df_visit %>%
+    sim_out(study_id = "A", site_id = "S0001", factor_event = - 0.5) %>%
+    filter(visit == max(visit), .by = c("study_id", "site_id", "patient_id")) %>%
+    filter(site_id == "S0001", study_id == "A") %>%
+    pull(n_event) %>%
+    sum()
+
+  expect_true(n_event_test == n_event_ur_0p5 * 2)
+  expect_true(n_event_test + (n_event_test * 0.5) == n_event_or_0p5 )
 
 })
 
 
 test_that("sim_test_data_portfolio() produces the expected output when ae_rates are not null", {
 
-
-  df_site_max_test <- get_df_visit_test() %>%
-    group_by(.data$study_id, .data$site_id, .data$patient_id) %>%
-    summarise(max_visit = max(.data$visit),
-              max_event = max(.data$n_event),
-              .groups = "drop")
-
-  df_config_test <- simaerep::get_config(
-    df_site_max_test,
+  df_config_test <- simaerep::get_portf_config(
+    get_df_visit_test(),
     anonymize = TRUE,
     min_pat_per_study = 100,
     min_sites_per_study = 5
@@ -80,14 +81,6 @@ test_that("sim_test_data_study() alters the ae_rates value if ratio_out > 0", {
 
 })
 
-test_that("purrr_bar() - .slow is TRUE", {
-
-  param <- (rep(0.25, 5))
-  purr_test <- purrr_bar(param, .purrr = purrr::walk, .f = Sys.sleep, .steps = 5, .slow = TRUE)
-  purr_test2 <- purrr_bar(param, .purrr = purrr::walk, .f = Sys.sleep, .steps = 5, .slow = FALSE)
-  expect_equal(purr_test, purr_test2)
-
-})
 
 test_that(paste("sim_test_data_study() produces an error",
           "when the number of event names != the number of events per visit means"), {

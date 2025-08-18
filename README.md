@@ -180,8 +180,8 @@ or high over-reporting (positive probabilities) are marked by grey dots
 and plotted in additional panels on the right. N denotes the number of
 sites. Right panel shows individual sites with total patient cumulative
 counts as grey lines. N denotes the number of patients, the percentage
-the under- and over-reporting probability and 394 denotes the difference
-compared to the expected number of events.*
+the under- and over-reporting probability and delta denotes the
+difference compared to the expected number of events.*
 
 ## In Database Calculation
 

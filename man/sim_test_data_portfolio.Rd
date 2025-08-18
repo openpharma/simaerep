@@ -7,18 +7,18 @@
 sim_test_data_portfolio(
   df_config,
   df_event_rates = NULL,
-  parallel = FALSE,
-  progress = TRUE
+  progress = TRUE,
+  parallel = TRUE
 )
 }
 \arguments{
-\item{df_config}{dataframe as returned by \code{\link{get_config}}}
+\item{df_config}{dataframe as returned by \code{\link{get_portf_config}}}
 
 \item{df_event_rates}{dataframe with event rates. Default: NULL}
 
-\item{parallel}{logical activate parallel processing, see details, Default: FALSE}
-
 \item{progress}{logical, Default: TRUE}
+
+\item{parallel}{logical activate parallel processing, see details, Default: FALSE}
 }
 \value{
 dataframe with the following columns: \describe{
@@ -54,13 +54,7 @@ df_visit2 <- sim_test_data_study(n_pat = 100, n_sites = 10,
 
 df_visit <- dplyr::bind_rows(df_visit1, df_visit2)
 
-df_site_max <- df_visit \%>\%
-  dplyr::group_by(study_id, site_id, patient_id) \%>\%
-  dplyr::summarise(max_visit = max(visit),
-            max_event = max(n_event),
-            .groups = "drop")
-
-df_config <- get_config(df_site_max)
+df_config <- get_portf_config(df_visit)
 
 df_config
 
@@ -72,6 +66,6 @@ df_portf
 }
 \seealso{
 \code{\link{sim_test_data_study}}
-\code{\link{get_config}}
+\code{\link{get_portf_config}}
 \code{\link{sim_test_data_portfolio}}
 }

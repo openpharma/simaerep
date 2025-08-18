@@ -37,4 +37,3 @@ dplyr::rename(
 
 df_sim <- simaerep:::sim_inframe(df_visit)
 }
-\keyword{internal}

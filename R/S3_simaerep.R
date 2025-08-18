@@ -533,18 +533,18 @@ simaerep_classic <- function(df_visit,
 plot.simaerep <- function(x,
                           ...,
                           study = NULL,
-                          what = "prob",
+                          what = c("prob", "med75"),
                           n_sites = 16,
                           df_visit = NULL,
                           env = parent.frame(),
                           plot_event = x$event_names[1]) {
 
+  what <- match.arg(what)
+
   .f <- switch(what,
     "prob" = plot_simaerep_plot_study,
-    "med75" = plot_simaerep_plot_visit_med75,
-    stop('what must be either "prob" or med75')
+    "med75" = plot_simaerep_plot_visit_med75
   )
-
 
   if (is.null(df_visit)) {
     df_visit <- as.data.frame(x$visit, env = env) %>%
@@ -623,7 +623,7 @@ plot_simaerep_plot_visit_med75 <- function(df_visit, x, study, n_sites, plot_eve
 #' @param x An object of class 'simaerep'
 #' @param ... Additional arguments passed to print (not used)
 #' @param n Number of rows to display from df_eval (default: 5)
-#'
+#' @keywords internal
 #' @export
 print.simaerep <- function(x, ..., n = 10) {
   cat("simaerep object:\n")

@@ -16,3 +16,4 @@
 \description{
 Print method for orivisit objects
 }
+\keyword{internal}

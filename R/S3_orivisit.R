@@ -133,8 +133,8 @@ orivisit <- function(df_visit,
 
 #' @export
 as.data.frame.orivisit <- function(x, ..., env = parent.frame()) {
-  if (is.na(x$str_call)) stop.orivisit()
-  if (! exists(x$str_call, envir = env)) stop.orivisit()
+  if (is.na(x$str_call)) error(x)
+  if (! exists(x$str_call, envir = env)) error(x)
 
   df <- rlang::env_get(env, x$str_call, inherit = TRUE)
 
@@ -150,18 +150,24 @@ as.data.frame.orivisit <- function(x, ..., env = parent.frame()) {
 
     #all.equal produces either TRUE or a character string (instead of FALSE)
     if (is.character(all.equal(df_summary, x$df_summary, tolerance = 1e-4))) {
-      stop.orivisit() # covr mistake catch with browser()
+      error(x) # covr mistake catch with browser()
     }
 
     if (! all(dim == x$dim)){
-      stop.orivisit() # covr mistake catch with browser()
+      error(x) # covr mistake catch with browser()
     }
   }
 
   return(df)
 }
 
-stop.orivisit <- function(...) {
+#' @keywords internal
+error <- function(x, ...) {
+  UseMethod("error")
+}
+
+#' @keywords internal
+error.orivisit <- function(x, ...) {
   err <- structure(
     list(
       message = paste(
@@ -183,7 +189,7 @@ stop.orivisit <- function(...) {
 #' @param x An object of class 'orivisit'
 #' @param ... Additional arguments passed to print (not used)
 #' @param n Number of rows to display from the data frame (default: 10)
-#'
+#' @keywords internal
 #' @export
 print.orivisit <- function(x, ..., n = 10) {
   cat("orivisit object:\n")

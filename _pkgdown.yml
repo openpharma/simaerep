@@ -31,75 +31,42 @@ articles:
   navbar: ~
   contents:
   - intro
-  - inframe
-  - over
-  - performance
-  - funnel_perf
-  - sas_files
-  - portfolio_perf
-  - visit_med75
-  - usability_limits
-  - check_poisson
-  - visits_or_days
+  - classic
 
 reference:
 - title: S3 Interface
   desc: ~
   contents:
   - simaerep
+  - simaerep_inframe
+  - simaerep_classic
   - plot.simaerep
-- title: Main Functions
-  desc: ~
+  - orivisit
+- title: Internal Algorithm Functions
+  desc: These Functions perform part of the algorithm
   contents:
   - site_aggr
   - sim_sites
   - sim_inframe
   - eval_sites
-  - prune_to_visit_med75_inframe
-  - plot_study
   - check_df_visit
 - title: Simulate Data
   desc: ~
   contents:
   - sim_test_data_study
-  - get_config
+  - get_portf_config
+  - get_portf_event_rates
   - sim_test_data_portfolio
   - sim_test_data_events
-- title: Test Functions
-  desc: These functions are intented to check simaerep performance.
+  - sim_out
+- title: Helper Functions Multiprocessing
+  desc: ~
   contents:
-  - sim_studies
-  - sim_ur_scenarios
-  - sim_ur
-  - get_portf_perf
-- title: Helper Functions
-  desc: These functions are intended to be called by other functions.
-  contents:
-  - get_pat_pool_config
-  - pat_pool
-  - poiss_test_site_ae_vs_study_ae
-  - prob_lower_site_ae_vs_study_ae
-  - sim_test_data_patient
-  - get_visit_med75
-  - pat_aggr
-  - get_site_mean_ae_dev
-  - get_cum_mean_event_dev
-  - aggr_duplicated_visits
-  - exp_implicit_missing_visits
-  - prep_for_sim
-  - sim_after_prep
-  - get_ecd_values
   - purrr_bar
   - with_progress_cnd
-  - sim_scenario
-  - orivisit
-  - is_simaerep
-  - is_orivisit
-  - max_rank
 - title: Additional Plot Functions
   desc: These functions are intended for creating plots for the documentation.
   contents:
-  - plot_visit_med75
-  - plot_sim_examples
   - plot_sim_example
   - plot_dots
+  - get_cum_mean_event_dev

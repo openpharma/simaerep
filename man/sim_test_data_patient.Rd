@@ -34,3 +34,4 @@ replicate(5, sim_test_data_patient(
     .f_sample_max_visit = function() rnorm(1, mean = 5, sd = 5))
   )
 }
+\keyword{internal}

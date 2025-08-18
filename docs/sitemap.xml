@@ -3,6 +3,7 @@
 <url><loc>https://openpharma.github.io/simaerep/LICENSE-text.html</loc></url>
 <url><loc>https://openpharma.github.io/simaerep/LICENSE.html</loc></url>
 <url><loc>https://openpharma.github.io/simaerep/articles/check_poisson.html</loc></url>
+<url><loc>https://openpharma.github.io/simaerep/articles/classic.html</loc></url>
 <url><loc>https://openpharma.github.io/simaerep/articles/do_not_commit.html</loc></url>
 <url><loc>https://openpharma.github.io/simaerep/articles/funnel_perf.html</loc></url>
 <url><loc>https://openpharma.github.io/simaerep/articles/gsm_perf.html</loc></url>
@@ -27,9 +28,14 @@
 <url><loc>https://openpharma.github.io/simaerep/reference/eval_sites_deprecated.html</loc></url>
 <url><loc>https://openpharma.github.io/simaerep/reference/exp_implicit_missing_visits.html</loc></url>
 <url><loc>https://openpharma.github.io/simaerep/reference/get_config.html</loc></url>
+<url><loc>https://openpharma.github.io/simaerep/reference/get_cum_mean_event_dev.html</loc></url>
+<url><loc>https://openpharma.github.io/simaerep/reference/get_df_visit_test.html</loc></url>
+<url><loc>https://openpharma.github.io/simaerep/reference/get_df_visit_test_mapped.html</loc></url>
 <url><loc>https://openpharma.github.io/simaerep/reference/get_ecd_values.html</loc></url>
 <url><loc>https://openpharma.github.io/simaerep/reference/get_legend.html</loc></url>
 <url><loc>https://openpharma.github.io/simaerep/reference/get_pat_pool_config.html</loc></url>
+<url><loc>https://openpharma.github.io/simaerep/reference/get_portf_config.html</loc></url>
+<url><loc>https://openpharma.github.io/simaerep/reference/get_portf_event_rates.html</loc></url>
 <url><loc>https://openpharma.github.io/simaerep/reference/get_portf_perf.html</loc></url>
 <url><loc>https://openpharma.github.io/simaerep/reference/get_site_mean_ae_dev.html</loc></url>
 <url><loc>https://openpharma.github.io/simaerep/reference/get_visit_med75.html</loc></url>
@@ -51,11 +57,16 @@
 <url><loc>https://openpharma.github.io/simaerep/reference/plot_visit_med75.html</loc></url>
 <url><loc>https://openpharma.github.io/simaerep/reference/poiss_test_site_ae_vs_study_ae.html</loc></url>
 <url><loc>https://openpharma.github.io/simaerep/reference/prep_for_sim.html</loc></url>
+<url><loc>https://openpharma.github.io/simaerep/reference/print.orivisit.html</loc></url>
+<url><loc>https://openpharma.github.io/simaerep/reference/print.simaerep.html</loc></url>
 <url><loc>https://openpharma.github.io/simaerep/reference/prob_lower_site_ae_vs_study_ae.html</loc></url>
 <url><loc>https://openpharma.github.io/simaerep/reference/prune_to_visit_med75_inframe.html</loc></url>
 <url><loc>https://openpharma.github.io/simaerep/reference/purrr_bar.html</loc></url>
+<url><loc>https://openpharma.github.io/simaerep/reference/remap_col_names.html</loc></url>
 <url><loc>https://openpharma.github.io/simaerep/reference/sim_after_prep.html</loc></url>
 <url><loc>https://openpharma.github.io/simaerep/reference/sim_inframe.html</loc></url>
+<url><loc>https://openpharma.github.io/simaerep/reference/sim_out.html</loc></url>
+<url><loc>https://openpharma.github.io/simaerep/reference/sim_pat.html</loc></url>
 <url><loc>https://openpharma.github.io/simaerep/reference/sim_scenario.html</loc></url>
 <url><loc>https://openpharma.github.io/simaerep/reference/sim_sites.html</loc></url>
 <url><loc>https://openpharma.github.io/simaerep/reference/sim_studies.html</loc></url>
@@ -66,7 +77,6 @@
 <url><loc>https://openpharma.github.io/simaerep/reference/sim_ur.html</loc></url>
 <url><loc>https://openpharma.github.io/simaerep/reference/sim_ur_scenarios.html</loc></url>
 <url><loc>https://openpharma.github.io/simaerep/reference/simaerep.html</loc></url>
-<url><loc>https://openpharma.github.io/simaerep/reference/simaerep_inframe.html</loc></url>
 <url><loc>https://openpharma.github.io/simaerep/reference/site_aggr.html</loc></url>
 <url><loc>https://openpharma.github.io/simaerep/reference/ttest_site_ae_vs_study_ae.html</loc></url>
 <url><loc>https://openpharma.github.io/simaerep/reference/with_progress_cnd.html</loc></url>

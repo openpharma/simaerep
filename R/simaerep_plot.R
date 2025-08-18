@@ -302,6 +302,7 @@ plot_sim_example <- function(substract_ae_per_pat = 0,
 #'  \code{\link[cowplot]{ggdraw}},\code{\link[cowplot]{draw_label}},\code{\link[cowplot]{plot_grid}}
 #' @rdname plot_sim_examples
 #' @return ggplot
+#' @keywords internal
 #' @export
 
 plot_sim_examples <- function(substract_ae_per_pat = c(0, 1, 3), ...) {

@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Find Clinical Trial Sites Under-Reporting Adverse Events • simaerep</title>
+<title>Detect Clinical Trial Sites Over- or Under-Reporting Clinical Events • simaerep</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
 <link rel="apple-touch-icon" type="image/png" sizes="180x180" href="apple-touch-icon.png">
@@ -16,9 +16,9 @@
 <link href="deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Find Clinical Trial Sites Under-Reporting Adverse Events">
-<meta name="description" content="Monitoring of Adverse Event (AE) reporting in clinical trials is important for patient safety. Sites that are under-reporting AEs can be detected using Bootstrap-based simulations that simulate overall AE reporting. Based on the simulation an AE under-reporting probability is assigned to each site in a given trial (Koneswarakantha 2021 &lt;doi:10.1007/s40264-020-01011-5&gt;).">
-<meta property="og:description" content="Monitoring of Adverse Event (AE) reporting in clinical trials is important for patient safety. Sites that are under-reporting AEs can be detected using Bootstrap-based simulations that simulate overall AE reporting. Based on the simulation an AE under-reporting probability is assigned to each site in a given trial (Koneswarakantha 2021 &lt;doi:10.1007/s40264-020-01011-5&gt;).">
+<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Detect Clinical Trial Sites Over- or Under-Reporting Clinical Events">
+<meta name="description" content="Monitoring reporting rates of subject-level clinical events (e.g. adverse events, protocol deviations) reported by clinical trial sites is an important aspect of risk-based quality monitoring strategy. Sites that are under-reporting or over-reporting events can be detected using bootstrap simulations during which patients are redistributed between sites. Site-specific distributions of event reporting rates are generated that are used to assign probabilities to the observed reporting rates. (Koneswarakantha 2024 &lt;doi:10.1007/s43441-024-00631-8&gt;).">
+<meta property="og:description" content="Monitoring reporting rates of subject-level clinical events (e.g. adverse events, protocol deviations) reported by clinical trial sites is an important aspect of risk-based quality monitoring strategy. Sites that are under-reporting or over-reporting events can be detected using bootstrap simulations during which patients are redistributed between sites. Site-specific distributions of event reporting rates are generated that are used to assign probabilities to the observed reporting rates. (Koneswarakantha 2024 &lt;doi:10.1007/s43441-024-00631-8&gt;).">
 <meta property="og:image" content="https://openpharma.github.io/simaerep/logo.png">
 <!-- Global site tag (gtag.js) - Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=UA-123997499-2"></script><script>
   window.dataLayer = window.dataLayer || [];
@@ -36,7 +36,7 @@
 
     <a class="navbar-brand me-2" href="index.html">simaerep</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -52,16 +52,7 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><a class="dropdown-item" href="articles/intro.html">Introduction</a></li>
-    <li><a class="dropdown-item" href="articles/inframe.html">Inframe Simulation Using Table Operations</a></li>
-    <li><a class="dropdown-item" href="articles/over.html">Over-Reporting Probability</a></li>
-    <li><a class="dropdown-item" href="articles/performance.html">Statistical Performance</a></li>
-    <li><a class="dropdown-item" href="articles/funnel_perf.html">Comparing {simaerep} and Funnel Plot Performance</a></li>
-    <li><a class="dropdown-item" href="articles/sas_files.html">SAS Files as a Data Source</a></li>
-    <li><a class="dropdown-item" href="articles/portfolio_perf.html">(superseded) simaerep Portfolio Performance</a></li>
-    <li><a class="dropdown-item" href="articles/visit_med75.html">Adjusted Evaluation Point visit_med75</a></li>
-    <li><a class="dropdown-item" href="articles/usability_limits.html">Address Usability Limits of Bootstrap Method</a></li>
-    <li><a class="dropdown-item" href="articles/check_poisson.html">Check Poisson Test Applicability</a></li>
-    <li><a class="dropdown-item" href="articles/visits_or_days.html">Aggregate AEs by Days or Visit?</a></li>
+    <li><a class="dropdown-item" href="articles/classic.html">Classic Algorithm</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="news/index.html">Changelog</a></li>
@@ -83,8 +74,9 @@
 </div>
 <!-- badges: start -->
 
-<p>Simulate adverse event reporting in clinical trials with the goal of detecting under-reporting sites.</p>
-<p>Monitoring of Adverse Event (AE) reporting in clinical trials is important for patient safety. We use bootstrap-based simulation to assign an AE under-reporting probability to each site in a clinical trial. The method is inspired by the ‘infer’ R package and Allen Downey’s blog article: <a href="http://allendowney.blogspot.com/2011/05/there-is-only-one-test.html" class="external-link">“There is only one test!”</a>.</p>
+<p>Simulate subject-level event reporting of clinical trial sites with the goal of detecting over- and under-reporting.</p>
+<p>Monitoring reporting rates of subject-level clinical events (e.g. adverse events, protocol deviations) reported by clinical trial sites is an important aspect of risk-based quality monitoring strategy. Sites that are under-reporting or over-reporting events can be detected using bootstrap simulations during which patients are redistributed between sites. Site-specific distributions of event reporting rates are generated that are used to assign probabilities to the observed reporting rates.</p>
+<p>The method is inspired by the ‘infer’ R package and Allen Downey’s blog article: <a href="http://allendowney.blogspot.com/2011/05/there-is-only-one-test.html" class="external-link">“There is only one test!”</a>.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
@@ -116,7 +108,7 @@
 <p>Koneswarakantha, B., Barmaz, Y., Ménard, T. et al. Follow-up on the Use of Advanced Analytics for Clinical Quality Assurance: Bootstrap Resampling to Enhance Detection of Adverse Event Under-Reporting. Drug Saf (2020). <a href="https://doi.org/10.1007/s40264-020-01011-5" class="external-link uri">https://doi.org/10.1007/s40264-020-01011-5</a></p>
 </div>
 <div class="section level2">
-<h2 id="ressources">Ressources<a class="anchor" aria-label="anchor" href="#ressources"></a>
+<h2 id="resources">Resources<a class="anchor" aria-label="anchor" href="#resources"></a>
 </h2>
 <ul>
 <li><a href="https://phuse.s3.eu-central-1.amazonaws.com/Archive/2024/Connect/EU/Strasbourg/PRE_AR04.pdf" class="external-link">Slides PHUSE conference</a></li>
@@ -138,11 +130,11 @@
 <div class="section level2">
 <h2 id="application">Application<a class="anchor" aria-label="anchor" href="#application"></a>
 </h2>
-<p>Recommended Threshold: <code>aerep$dfeval$prob_low_prob_ur: 0.95</code></p>
+<p>Calculate patient-level event reporting probabilities and the difference to the expected number of events on a simulated data set with 2 under-reporting sites.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressPackageStartupMessages</a></span><span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://openpharma.github.io/simaerep/">simaerep</a></span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressPackageStartupMessages</a></span><span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org" class="external-link">tidyverse</a></span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressPackageStartupMessages</a></span><span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressPackageStartupMessages</a></span><span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://yihui.org/knitr/" class="external-link">knitr</a></span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
@@ -150,24 +142,26 @@
 <span><span class="va">df_visit</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/sim_test_data_study.html">sim_test_data_study</a></span><span class="op">(</span></span>
 <span>  n_pat <span class="op">=</span> <span class="fl">1000</span>, <span class="co"># number of patients in study</span></span>
 <span>  n_sites <span class="op">=</span> <span class="fl">100</span>, <span class="co"># number of sites in study</span></span>
-<span>  frac_site_with_ur <span class="op">=</span> <span class="fl">0.05</span>, <span class="co"># fraction of sites under-reporting</span></span>
-<span>  ur_rate <span class="op">=</span> <span class="fl">0.4</span>, <span class="co"># rate of under-reporting</span></span>
-<span>  ae_per_visit_mean <span class="op">=</span> <span class="fl">0.5</span> <span class="co"># mean AE per patient visit</span></span>
+<span>  ratio_out <span class="op">=</span> <span class="fl">0.02</span>, <span class="co"># ratio of sites with outlier</span></span>
+<span>  factor_event_rate <span class="op">=</span> <span class="op">-</span><span class="fl">0.5</span>, <span class="co"># rate of under-reporting</span></span>
+<span>  <span class="co"># non-constant event rates based on gamma distribution</span></span>
+<span>  event_rates <span class="op">=</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/GammaDist.html" class="external-link">dgamma</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">20</span>, <span class="fl">0.5</span><span class="op">)</span>, shape <span class="op">=</span> <span class="fl">5</span>, rate <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> <span class="op">*</span> <span class="fl">5</span><span class="op">)</span> <span class="op">+</span> <span class="fl">0.1</span>,</span>
+<span>  max_visit <span class="op">=</span> <span class="fl">20</span>,</span>
+<span>  max_visit_sd <span class="op">=</span> <span class="fl">10</span>,</span>
+<span>  study_id <span class="op">=</span> <span class="st">"A"</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">df_visit</span><span class="op">$</span><span class="va">study_id</span> <span class="op">&lt;-</span> <span class="st">"A"</span></span>
-<span></span>
 <span><span class="va">df_visit</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">study_id</span>, <span class="va">site_number</span>, <span class="va">patnum</span>, <span class="va">visit</span>, <span class="va">n_ae</span><span class="op">)</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">study_id</span>, <span class="va">site_id</span>, <span class="va">patient_id</span>, <span class="va">visit</span>, <span class="va">n_event</span><span class="op">)</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">25</span><span class="op">)</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <thead><tr class="header">
 <th align="left">study_id</th>
-<th align="left">site_number</th>
-<th align="left">patnum</th>
+<th align="left">site_id</th>
+<th align="left">patient_id</th>
 <th align="right">visit</th>
-<th align="right">n_ae</th>
+<th align="right">n_event</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
@@ -182,202 +176,186 @@
 <td align="left">S0001</td>
 <td align="left">P000001</td>
 <td align="right">2</td>
-<td align="right">1</td>
-</tr>
-<tr class="odd">
-<td align="left">A</td>
-<td align="left">S0001</td>
-<td align="left">P000001</td>
-<td align="right">3</td>
-<td align="right">1</td>
-</tr>
-<tr class="even">
-<td align="left">A</td>
-<td align="left">S0001</td>
-<td align="left">P000001</td>
-<td align="right">4</td>
 <td align="right">2</td>
 </tr>
 <tr class="odd">
 <td align="left">A</td>
 <td align="left">S0001</td>
 <td align="left">P000001</td>
-<td align="right">5</td>
 <td align="right">3</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">A</td>
+<td align="left">S0001</td>
+<td align="left">P000001</td>
+<td align="right">4</td>
+<td align="right">4</td>
+</tr>
+<tr class="odd">
+<td align="left">A</td>
+<td align="left">S0001</td>
+<td align="left">P000001</td>
+<td align="right">5</td>
+<td align="right">6</td>
 </tr>
 <tr class="even">
 <td align="left">A</td>
 <td align="left">S0001</td>
 <td align="left">P000001</td>
 <td align="right">6</td>
-<td align="right">3</td>
+<td align="right">7</td>
 </tr>
 <tr class="odd">
 <td align="left">A</td>
 <td align="left">S0001</td>
 <td align="left">P000001</td>
 <td align="right">7</td>
-<td align="right">3</td>
+<td align="right">7</td>
 </tr>
 <tr class="even">
 <td align="left">A</td>
 <td align="left">S0001</td>
 <td align="left">P000001</td>
 <td align="right">8</td>
-<td align="right">3</td>
+<td align="right">7</td>
 </tr>
 <tr class="odd">
 <td align="left">A</td>
 <td align="left">S0001</td>
 <td align="left">P000001</td>
 <td align="right">9</td>
-<td align="right">3</td>
+<td align="right">7</td>
 </tr>
 <tr class="even">
 <td align="left">A</td>
 <td align="left">S0001</td>
 <td align="left">P000001</td>
 <td align="right">10</td>
-<td align="right">3</td>
+<td align="right">7</td>
 </tr>
 <tr class="odd">
 <td align="left">A</td>
 <td align="left">S0001</td>
 <td align="left">P000001</td>
 <td align="right">11</td>
-<td align="right">3</td>
+<td align="right">7</td>
 </tr>
 <tr class="even">
 <td align="left">A</td>
 <td align="left">S0001</td>
 <td align="left">P000001</td>
 <td align="right">12</td>
-<td align="right">3</td>
+<td align="right">7</td>
 </tr>
 <tr class="odd">
 <td align="left">A</td>
 <td align="left">S0001</td>
 <td align="left">P000001</td>
 <td align="right">13</td>
-<td align="right">4</td>
-</tr>
-<tr class="even">
-<td align="left">A</td>
-<td align="left">S0001</td>
-<td align="left">P000001</td>
-<td align="right">14</td>
-<td align="right">4</td>
-</tr>
-<tr class="odd">
-<td align="left">A</td>
-<td align="left">S0001</td>
-<td align="left">P000001</td>
-<td align="right">15</td>
-<td align="right">4</td>
-</tr>
-<tr class="even">
-<td align="left">A</td>
-<td align="left">S0001</td>
-<td align="left">P000001</td>
-<td align="right">16</td>
-<td align="right">6</td>
-</tr>
-<tr class="odd">
-<td align="left">A</td>
-<td align="left">S0001</td>
-<td align="left">P000001</td>
-<td align="right">17</td>
-<td align="right">6</td>
+<td align="right">7</td>
 </tr>
 <tr class="even">
 <td align="left">A</td>
 <td align="left">S0001</td>
 <td align="left">P000002</td>
 <td align="right">1</td>
-<td align="right">0</td>
+<td align="right">3</td>
 </tr>
 <tr class="odd">
 <td align="left">A</td>
 <td align="left">S0001</td>
 <td align="left">P000002</td>
 <td align="right">2</td>
-<td align="right">0</td>
+<td align="right">3</td>
 </tr>
 <tr class="even">
 <td align="left">A</td>
 <td align="left">S0001</td>
 <td align="left">P000002</td>
 <td align="right">3</td>
-<td align="right">0</td>
+<td align="right">5</td>
 </tr>
 <tr class="odd">
 <td align="left">A</td>
 <td align="left">S0001</td>
 <td align="left">P000002</td>
 <td align="right">4</td>
-<td align="right">0</td>
+<td align="right">8</td>
 </tr>
 <tr class="even">
 <td align="left">A</td>
 <td align="left">S0001</td>
 <td align="left">P000002</td>
 <td align="right">5</td>
-<td align="right">0</td>
+<td align="right">8</td>
 </tr>
 <tr class="odd">
 <td align="left">A</td>
 <td align="left">S0001</td>
 <td align="left">P000002</td>
 <td align="right">6</td>
-<td align="right">0</td>
+<td align="right">9</td>
 </tr>
 <tr class="even">
 <td align="left">A</td>
 <td align="left">S0001</td>
 <td align="left">P000002</td>
 <td align="right">7</td>
-<td align="right">0</td>
+<td align="right">9</td>
 </tr>
 <tr class="odd">
 <td align="left">A</td>
 <td align="left">S0001</td>
 <td align="left">P000002</td>
 <td align="right">8</td>
-<td align="right">1</td>
+<td align="right">9</td>
+</tr>
+<tr class="even">
+<td align="left">A</td>
+<td align="left">S0001</td>
+<td align="left">P000002</td>
+<td align="right">9</td>
+<td align="right">9</td>
+</tr>
+<tr class="odd">
+<td align="left">A</td>
+<td align="left">S0001</td>
+<td align="left">P000002</td>
+<td align="right">10</td>
+<td align="right">9</td>
+</tr>
+<tr class="even">
+<td align="left">A</td>
+<td align="left">S0001</td>
+<td align="left">P000002</td>
+<td align="right">11</td>
+<td align="right">9</td>
+</tr>
+<tr class="odd">
+<td align="left">A</td>
+<td align="left">S0001</td>
+<td align="left">P000002</td>
+<td align="right">12</td>
+<td align="right">9</td>
 </tr>
 </tbody>
 </table>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
-<span><span class="va">aerep</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/simaerep.html">simaerep</a></span><span class="op">(</span><span class="va">df_visit</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">aerep</span>, study <span class="op">=</span> <span class="st">"A"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">evrep</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/simaerep.html">simaerep</a></span><span class="op">(</span><span class="va">df_visit</span>, mult_corr <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">evrep</span>, study <span class="op">=</span> <span class="st">"A"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="reference/figures/README-unnamed-chunk-2-1.png" width="100%"></p>
-<p><em>Left panel shows mean AE reporting per site (lightblue and darkblue lines) against mean AE reporting of the entire study (golden line). Single sites are plotted in descending order by AE under-reporting probability on the right panel in which grey lines denote cumulative AE count of single patients. Grey dots in the left panel plot indicate sites that were picked for single plotting. AE under-reporting probability of dark blue lines crossed threshold of 95%. Numbers in the upper left corner indicate the ratio of patients that have been used for the analysis against the total number of patients. Patients that have not been on the study long enough to reach the evaluation point (visit_med75, see introduction) will be ignored.</em></p>
-</div>
-<div class="section level2">
-<h2 id="optimized-statistical-performance">Optimized Statistical Performance<a class="anchor" aria-label="anchor" href="#optimized-statistical-performance"></a>
-</h2>
-<p>Following the recommendation of our latest <a href="https://openpharma.github.io/simaerep/articles/performance.html">performance benchmark</a> statistical performance can be increased by using the <a href="https://openpharma.github.io/simaerep/articles/inframe.html">inframe</a> algorithm without multiplicity correction.</p>
-<p><strong>Note that the plot is more noisy because no patients are excluded and only a few patients contribute to the event count at higher visits</strong></p>
-<p>Recommended Threshold: <code>aerep$dfeval$prob_low_prob_ur: 0.99</code></p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">aerep</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/simaerep.html">simaerep</a></span><span class="op">(</span></span>
-<span>  <span class="va">df_visit</span>,</span>
-<span>  inframe <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  visit_med75 <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  mult_corr <span class="op">=</span> <span class="cn">FALSE</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">aerep</span>, study <span class="op">=</span> <span class="st">"A"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-3-1.png" width="100%"></p>
+<p><em>Left panel shows mean cumulative event reporting per site (blue lines) against mean cumulative event reporting of the entire study (golden line). Sites with either high under-reporting (negative probabilities) or high over-reporting (positive probabilities) are marked by grey dots and plotted in additional panels on the right. N denotes the number of sites. Right panel shows individual sites with total patient cumulative counts as grey lines. N denotes the number of patients, the percentage the under- and over-reporting probability and 394 denotes the difference compared to the expected number of events.</em></p>
 </div>
 <div class="section level2">
 <h2 id="in-database-calculation">In Database Calculation<a class="anchor" aria-label="anchor" href="#in-database-calculation"></a>
 </h2>
 <p>The <a href="https://openpharma.github.io/simaerep/articles/inframe.html">inframe</a> algorithm uses only <code>dbplyr</code> compatible table operations and can be executed within a database backend as we demonstrate here using <code>duckdb</code>.</p>
 <p>However, we need to provide a in database table that has as many rows as the desired replications in our simulation, instead of providing an integer for the <code>r</code> parameter.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">con</span> <span class="op">&lt;-</span> <span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbConnect.html" class="external-link">dbConnect</a></span><span class="op">(</span><span class="fu">duckdb</span><span class="fu">::</span><span class="fu"><a href="https://r.duckdb.org/reference/duckdb.html" class="external-link">duckdb</a></span><span class="op">(</span><span class="op">)</span>, dbdir <span class="op">=</span> <span class="st">":memory:"</span><span class="op">)</span></span>
 <span><span class="va">df_r</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>rep <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1000</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
@@ -387,19 +365,14 @@
 <span><span class="va">tbl_visit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/tbl.html" class="external-link">tbl</a></span><span class="op">(</span><span class="va">con</span>, <span class="st">"visit"</span><span class="op">)</span></span>
 <span><span class="va">tbl_r</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/tbl.html" class="external-link">tbl</a></span><span class="op">(</span><span class="va">con</span>, <span class="st">"r"</span><span class="op">)</span></span>
 <span></span>
-<span></span>
-<span><span class="va">aerep</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/simaerep.html">simaerep</a></span><span class="op">(</span></span>
+<span><span class="va">evrep</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/simaerep.html">simaerep</a></span><span class="op">(</span></span>
 <span>  <span class="va">tbl_visit</span>,</span>
-<span>  r <span class="op">=</span> <span class="va">tbl_r</span>,</span>
-<span>  inframe <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  visit_med75 <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  mult_corr <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  r <span class="op">=</span> <span class="va">tbl_r</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">aerep</span>, df_visit <span class="op">=</span> <span class="va">tbl_visit</span><span class="op">)</span></span>
-<span><span class="co">#&gt; study = NULL, defaulting to study:A</span></span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-4-1.png" width="100%"></p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">evrep</span>, study <span class="op">=</span> <span class="st">"A"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="reference/figures/README-unnamed-chunk-3-1.png" width="100%"></p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbDisconnect.html" class="external-link">dbDisconnect</a></span><span class="op">(</span><span class="va">con</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -407,6 +380,7 @@
   </main><aside class="col-md-3"><div class="links">
 <h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
+<li><a href="https://cloud.r-project.org/package=simaerep" class="external-link">View on CRAN</a></li>
 <li><a href="https://github.com/openpharma/simaerep/" class="external-link">Browse source code</a></li>
 </ul>
 </div>

@@ -1,30 +1,37 @@
 
 
 
-df_site_max_test <- get_df_visit_test() %>%
-  group_by(.data$study_id, .data$site_id, .data$patient_id) %>%
-  summarise(max_visit = max(.data$visit),
-            max_event = max(.data$n_event),
-            .groups = "drop")
+df_visit <- get_df_visit_test()
 
-df_config_test <- simaerep::get_config(
-  df_site_max_test,
+
+df_config <- get_portf_config(
+  df_visit,
   anonymize = TRUE,
   min_pat_per_study = 100,
   min_sites_per_study = 5
 )
 
+df_event_rates <- get_portf_event_rates(df_visit)
+
 set.seed(1)
 
-df_portf_test <- sim_test_data_portfolio(df_config_test, progress = FALSE)
+df_portf <- sim_test_data_portfolio(df_config, df_event_rates, progress = FALSE)
 
+test_that("get_portf_event_rates() - check column names of returned data frame", {
+
+  expect_true(
+    all(
+      c("study_id", "visit", "event_rate", "n_pat") %in% colnames(df_event_rates)
+    )
+  )
+})
 
 test_that("get_config() - check column names of returned data frame", {
 
   expect_true(
     all(
       c("study_id", "event_per_visit_mean", "site_id", "max_visit_sd",
-        "max_visit_mean", "n_pat") %in% colnames(df_config_test)
+        "max_visit_mean", "n_pat") %in% colnames(df_config)
     )
   )
 })
@@ -33,10 +40,40 @@ test_that("sim_test_data_portfolio() - check column names of returned data frame
   expect_true(
     all(
       c("study_id", "event_per_visit_mean", "site_id", "max_visit_sd",
-        "max_visit_mean", "patient_id", "visit", "n_event") %in% colnames(df_portf_test)
+        "max_visit_mean", "patient_id", "visit", "n_event") %in% colnames(df_portf)
     )
   )
 })
 
 
+test_that("get_portf_event_rates() and get_portf_config() using in db operations", {
 
+  skip_on_cran()
+
+  con <- DBI::dbConnect(duckdb::duckdb(), dbdir = ":memory:")
+  dplyr::copy_to(con, df_visit, "visit")
+  tbl_visit <- dplyr::tbl(con, "visit")
+
+  df_config <- get_portf_config(
+    df_visit,
+    anonymize = TRUE,
+    min_pat_per_study = 100,
+    min_sites_per_study = 5
+  )
+
+  df_event_rates <- get_portf_event_rates(df_visit)
+
+  expect_s3_class(df_config, "data.frame")
+  expect_s3_class(df_event_rates, "data.frame")
+
+  DBI::dbDisconnect(con)
+
+})
+
+
+test_that("purrr_bar() - .slow is TRUE", {
+  param <- (rep(0.25, 5))
+  purr_test <- purrr_bar(param, .purrr = purrr::walk, .f = Sys.sleep, .steps = 5, .slow = TRUE)
+  purr_test2 <- purrr_bar(param, .purrr = purrr::walk, .f = Sys.sleep, .steps = 5, .slow = FALSE)
+  expect_equal(purr_test, purr_test2)
+})

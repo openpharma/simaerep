@@ -681,21 +681,19 @@ pat_pool <- function(df_visit, df_site) {
 #' @param site_ae vector with AE numbers
 #' @param study_ae vector with AE numbers
 #' @param r integer, denotes number of simulations, default = 1000
-#' @param parallel logical, toggles parallel processing on and of, default = F
 #' @param under_only compute under-reporting probabilities only, default = TRUE
 #' @return pval
 #' @details sets pvalue=1 if mean AE site is greater than mean AE study
 #' @examples
 #' simaerep:::prob_lower_site_ae_vs_study_ae(
 #'   site_ae = c(5, 3, 3, 2, 1, 6),
-#'   study_ae = c(9, 8, 7, 9, 6, 7, 8),
-#'   parallel = FALSE
+#'   study_ae = c(9, 8, 7, 9, 6, 7, 8)
 #' )
 #' @seealso
 #' [sim_sites()][sim_sites()]
 #' @rdname prob_lower_site_ae_vs_study_ae
 #' @keywords internal
-prob_lower_site_ae_vs_study_ae <- function(site_ae, study_ae, r = 1000, parallel = FALSE, under_only = TRUE) {
+prob_lower_site_ae_vs_study_ae <- function(site_ae, study_ae, r = 1000, under_only = TRUE) {
   # if there is only one site
 
   if (is.null(study_ae)) {
@@ -719,17 +717,6 @@ prob_lower_site_ae_vs_study_ae <- function(site_ae, study_ae, r = 1000, parallel
     }
   }
 
-
-  # set-up multiprocessing
-  # multiprocessing currently not used by sim_sites()
-  if (parallel) {
-    .f_map_int <- function(...) {
-        furrr::future_map_int(..., .options = furrr_options(seed = TRUE))
-      }
-  } else {
-    .f_map_int <- purrr::map_int
-  }
-
   pool <- c(site_ae, study_ae)
   n_pat <- length(site_ae)
 
@@ -740,10 +727,8 @@ prob_lower_site_ae_vs_study_ae <- function(site_ae, study_ae, r = 1000, parallel
     return(as.integer(ifelse(me <= mean_ae_site, 1, 0)))
   }
 
-
-
   df_sim <- tibble(seed = seq.int(1, r, 1)) %>%
-    mutate(prob_lower = .f_map_int(.data$seed, .f = sim)) %>%
+    mutate(prob_lower = purrr::map_int(.data$seed, .f = sim)) %>%
     summarise(prob_lower = sum(.data$prob_lower) / r)
 
   return(df_sim$prob_lower)
@@ -940,20 +925,16 @@ sim_after_prep <- function(df_sim_prep,
   }
 
   if (prob_lower) {
-    with_progress_cnd(
       df_sim <- df_sim %>%
         mutate(
-          prob_low = purrr_bar(
+          prob_low = purrr::map2_dbl(
             .data$n_ae_site, .data$n_ae_study,
-            .purrr = map2_dbl,
-            .f = prob_lower_site_ae_vs_study_ae,
-            .f_args = list(r = r, under_only = under_only),
-            .steps = nrow(df_sim),
-            .progress = progress
+            ~ prob_lower_site_ae_vs_study_ae(
+              .x, .y, r = .env$r, under_only = .env$under_only
+            ),
+            .progress = .env$progress
           )
-        ),
-      progress = progress
-    )
+       )
   }
 
   # clean

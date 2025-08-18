@@ -8,7 +8,7 @@
   x,
   ...,
   study = NULL,
-  what = "prob",
+  what = c("prob", "med75"),
   n_sites = 16,
   df_visit = NULL,
   env = parent.frame(),

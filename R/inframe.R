@@ -29,7 +29,7 @@ prune_to_visit_med75_inframe <- function(df_visit, df_site) {
 
 
 #' Calculate prob for study sites using table operations
-#'@keywords internal
+#'@export
 #'@inheritParams simaerep
 #'@param df_site, dataframe as returned be [site_aggr()], Will switch to visit_med75.
 #'Default: NULL
@@ -49,8 +49,6 @@ prune_to_visit_med75_inframe <- function(df_visit, df_site) {
 #' df_sim <- simaerep:::sim_inframe(df_visit)
 sim_inframe <- function(df_visit, r = 1000, df_site = NULL, event_names = c("ae")) {
   colnames <- paste0("n_", event_names)
-
-
 
   # db back-end, to not form ratios from integers
   df_visit <- df_visit %>%
