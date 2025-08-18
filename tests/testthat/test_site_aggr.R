@@ -92,4 +92,3 @@ test_that("site_aggr() - visitmed75 must not become greater than 0.8 percentile 
   testthat::expect_true(max(df_site$visit_med75) <= study_qup8_max_visit)
 
 })
-

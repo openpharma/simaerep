@@ -74,11 +74,11 @@ sim_inframe <- function(df_visit, r = 1000, df_site = NULL, event_names = c("ae"
   df_pat_aggr_pool <- pat_aggr(df_visit)
 
   colnames_event <- paste0(event_names, "_count")
-  colnames_low <- paste0(event_names, "_prob_low")
+  colnames_low <- paste0(event_names, "_prob_low")  # nolint
   colnames_ori <- paste0(event_names, "_per_visit_site_ori")
   colnames_rep <- paste0(event_names, "_per_visit_rep")
-  colnames_study <- paste0(event_names, "_per_visit_study")
-  colnames_site <- paste0(event_names, "_per_visit_site")
+  colnames_study <- paste0(event_names, "_per_visit_study")  # nolint
+  colnames_site <- paste0(event_names, "_per_visit_site") # nolint
 
   # this implements visit_med75
   if (! is.null(df_site)) {
@@ -196,10 +196,6 @@ sim_inframe <- function(df_visit, r = 1000, df_site = NULL, event_names = c("ae"
              .names = "{colnames_rep}"),
       .by = c("study_id", "rep", "site_number")
     )
-
-
-
-
 
   join_temp <- df_calc %>%
     left_join(

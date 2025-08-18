@@ -114,7 +114,7 @@ test_that("p.adjust result near p_adjust_bh_inframe with duckdb", {
   tbl_df <- dplyr::tbl(con, "df")
 
   tbl_df <- tbl_df %>%
-    p_adjust_bh_inframe("p_inframe")%>%
+    p_adjust_bh_inframe("p_inframe") %>%
     # the implementation is only exact for low probabilities
     filter(p <= 0.05)
 

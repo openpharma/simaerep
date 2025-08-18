@@ -11,7 +11,7 @@
 - improved print output for simaerep and orivisit S3 objects
 - adapt validation unit tests to include event over and under reporting
 - minimize the number of exported functions
-- deprecate event_per_visit_mean argument in favour of event_rates for data simulation
+- deprecate event_per_visit_mean argument in favor of event_rates for data simulation
 - use non-constant event rates by default during data simulation
 
 # simaerep 0.7.0

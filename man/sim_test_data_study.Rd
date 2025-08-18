@@ -34,8 +34,9 @@ Default: 20}
 \item{max_visit_sd}{standard deviation of maximum number of visits of each
 patient, Default: 4}
 
-\item{event_rates}{list or vector with visit-specific event rates, Default:
-dgamma(seq(1, 20, 0.5), shape = 5, rate = 2) * 5 + 0.1}
+\item{event_rates}{list or vector with visit-specific event rates. Use list
+for multiple event names, Default: dgamma(seq(1, 20, 0.5), shape = 5, rate =
+2) * 5 + 0.1}
 
 \item{event_names}{vector, contains the event names, default = "event"}
 

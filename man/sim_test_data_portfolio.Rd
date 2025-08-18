@@ -45,7 +45,7 @@ run, e.g. `plan(multisession, workers = 3)
 \donttest{
 df_visit1 <- sim_test_data_study(n_pat = 100, n_sites = 10,
                                  ratio_out = 0.4, factor_event_rate = 0.6,
-                                 study_id = "A")#'
+                                 study_id = "A")
 
 df_visit2 <- sim_test_data_study(n_pat = 100, n_sites = 10,
                                  ratio_out = 0.2, factor_event_rate = 0.1,

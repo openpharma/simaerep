@@ -42,4 +42,3 @@ test_that("check_df_visit() must thrown an error when NA's are detected", {
   regexp = "NA detected in columns: study_id, site_number, patnum, n_ae, visit"
   )
 })
-

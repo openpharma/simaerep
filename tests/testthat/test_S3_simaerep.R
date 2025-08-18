@@ -161,4 +161,3 @@ test_that("plot.simaerep() with no reporting outlier", {
   evrep <- simaerep(df_visit)
   expect_s3_class(plot(evrep, study = "A"), "ggplot")
 })
-

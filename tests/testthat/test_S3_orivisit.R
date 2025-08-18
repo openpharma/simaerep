@@ -78,4 +78,3 @@ test_that("as.data.frame.orivisit() stops when str_call is not in the parent env
   )
   expect_error(as.data.frame.orivisit(x), regex = message)
 })
-

@@ -12,7 +12,7 @@
       Number of sites: 10
       Number of studies: 2
       
-      Multiplicity correction applied to "*_prob" columns.
+      Multiplicity correction applied to '*_prob' columns.
       
       Reporting probabilities calculated for: ae, y 
       

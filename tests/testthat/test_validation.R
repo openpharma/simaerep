@@ -89,5 +89,3 @@ test_that(paste("validation requirement - visually inspect plotted event reporti
   }
 
 })
-
-

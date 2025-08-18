@@ -113,11 +113,11 @@ sim_pat <- function(vs_max,
 
   colnames <- c(paste0(event_names, "_per_visit_mean"), "visit",  paste0("n_", event_names))
 
-  if (is_out & is.list(event_rates)) {
+  if (is_out && is.list(event_rates)) {
     event_rates <- map(event_rates, ~ . * (1 + factor_event_rate))
   }
 
-  if (is_out & ! is.list(event_rates)) {
+  if (is_out && ! is.list(event_rates)) {
     event_rates <- event_rates * (1 + factor_event_rate)
   }
 
@@ -230,7 +230,7 @@ sim_test_data_patient <- function(.f_sample_max_visit = function() rnorm(1, mean
 #' \donttest{
 #' df_visit1 <- sim_test_data_study(n_pat = 100, n_sites = 10,
 #'                                  ratio_out = 0.4, factor_event_rate = 0.6,
-#'                                  study_id = "A")#'
+#'                                  study_id = "A")
 #'
 #' df_visit2 <- sim_test_data_study(n_pat = 100, n_sites = 10,
 #'                                  ratio_out = 0.2, factor_event_rate = 0.1,
@@ -419,7 +419,7 @@ get_portf_config <- function(df_visit,
   stopifnot(all(c("study_id", "site_id", "patient_id", "visit", "n_event") %in% colnames(df_visit)))
 
   if (check) {
-    col_names = list(
+    col_names <- list(
       study_id = "study_id",
       site_id = "site_id",
       patient_id = "patient_id",
@@ -512,7 +512,7 @@ get_portf_event_rates <- function(df_visit,
   stopifnot(all(c("study_id", "site_id", "patient_id", "visit", "n_event") %in% colnames(df_visit)))
 
   if (check) {
-    col_names = list(
+    col_names <- list(
       study_id = "study_id",
       site_id = "site_id",
       patient_id = "patient_id",
@@ -614,5 +614,3 @@ sim_out <- function(df_visit, study_id, site_id, factor_event) {
   bind_rows(df_visit_study, df_visit_site_rem)
 
 }
-
-

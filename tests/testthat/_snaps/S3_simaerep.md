@@ -12,7 +12,7 @@
       Number of sites: 10
       Number of studies: 2
       
-      Multiplicity correction applied to "*_prob" columns.
+      Multiplicity correction applied to '*_prob' columns.
       
       First 10 rows of df_eval:
       # A tibble: 10 x 9

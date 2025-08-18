@@ -23,7 +23,7 @@ test_that("sim_out() event_count as expected for max patient visits", {
     sum()
 
   expect_true(n_event_test == n_event_ur_0p5 * 2)
-  expect_true(n_event_test + (n_event_test * 0.5) == n_event_or_0p5 )
+  expect_true(n_event_test + (n_event_test * 0.5) == n_event_or_0p5)
 
 })
 

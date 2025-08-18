@@ -62,4 +62,3 @@ test_that("eval_sites() - check column names of returned data frame", {
   )
 
 })
-

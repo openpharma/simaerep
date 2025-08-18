@@ -505,12 +505,12 @@ eval_sites <- function(df_sim_sites,
       event <- stringr::str_split_1(cols_prob_low[i], "_")[1]
       col_quant_event_site <- paste0(event, "_per_visit_site")
       col_quant_event_study <- paste0(event, "_per_visit_study")
-      col_event_delta <- paste0(event, "_delta")
+      col_event_delta <- paste0(event, "_delta") # nolint
     }
 
     col_prob_or <- cols_prob_or[i]
     col_prob_ur <- cols_prob_ur[i]
-    col_prob <- cols_prob[i]
+    col_prob <- cols_prob[i] # nolint
 
     df_out <- df_out %>%
       mutate(
@@ -528,7 +528,7 @@ eval_sites <- function(df_sim_sites,
         )
 
     # when not relying on med75 we can calculate delta_event for each site
-    if (! visit_med75 & inframe) {
+    if (! visit_med75 && inframe) {
       df_out <- df_out %>%
         mutate(
           "{col_event_delta}" := (.data[[col_quant_event_site]] * .data[["visits"]]) -

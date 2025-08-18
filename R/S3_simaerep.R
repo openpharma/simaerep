@@ -633,25 +633,25 @@ print.simaerep <- function(x, ..., n = 10) {
 
   cat("Summary:\n")
 
-  if (inherits(x$df_eval, "data.frame")){
+  if (inherits(x$df_eval, "data.frame")) {
     cat(sprintf("Number of sites: %d\n", nrow(x$df_eval)))
     cat(sprintf("Number of studies: %d\n\n", n_distinct(map_col_names(x$df_eval, x$col_names)$study_id)))
   }
 
   if (x$inframe) {
     if (x$mult_corr) {
-      cat('Multiplicity correction applied to "*_prob" columns.\n\n')
+      cat("Multiplicity correction applied to '*_prob' columns.\n\n")
     }
   } else {
-    cat('Classic algorithm used to calculate probabilities!!\n\n')
+    cat("Classic algorithm used to calculate probabilities!!\n\n")
     if (x$under_only) {
-      cat('Only under-reporting probability calculated !!!\n\n')
+      cat("Only under-reporting probability calculated !!!\n\n")
     }
 
-    if (x$poisson_test & x$mult_corr) {
-      cat('Multiplicity correction applied to prob and pval column.\n\n')
+    if (x$poisson_test && x$mult_corr) {
+      cat("Multiplicity correction applied to prob and pval column.\n\n")
     } else if (x$mult_corr) {
-      cat('Multiplicity correction applied to prob column.\n\n')
+      cat("Multiplicity correction applied to prob column.\n\n")
     }
 
   }
@@ -660,7 +660,7 @@ print.simaerep <- function(x, ..., n = 10) {
   if (length(x$event_names) > 1) {
     cat(
       paste(
-        'Reporting probabilities calculated for:',
+        "Reporting probabilities calculated for:",
         paste(x$event_names, collapse = ", "),
         "\n\n"
       )
@@ -709,7 +709,7 @@ map_col_names <- function(df_visit,
 
 #' renames internal simaerep col_names to externally applied colnames
 #'@keywords internal
-remap_col_names <- function(df,col_names) {
+remap_col_names <- function(df, col_names) {
 
   internal_col_names <- c(
     study_id = "study_id",
@@ -727,4 +727,3 @@ remap_col_names <- function(df,col_names) {
 
   return(df)
 }
-

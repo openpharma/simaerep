@@ -19,8 +19,6 @@ sim_test_data_events(
 \item{event_rates}{vector with visit-specific event rates, Default: Null}
 
 \item{event_names}{vector, contains the event names, default = "event"}
-
-\item{event_per_visit_mean}{mean event per visit per patient, Default: 0.5}
 }
 \value{
 tibble with columns site_id, patient_id, is_ur, max_visit_mean,

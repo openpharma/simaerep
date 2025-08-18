@@ -153,7 +153,7 @@ as.data.frame.orivisit <- function(x, ..., env = parent.frame()) {
       error(x) # covr mistake catch with browser()
     }
 
-    if (! all(dim == x$dim)){
+    if (! all(dim == x$dim)) {
       error(x) # covr mistake catch with browser()
     }
   }
@@ -195,7 +195,7 @@ print.orivisit <- function(x, ..., n = 10) {
   cat("orivisit object:\n")
   cat("----------------\n")
   cat("Stores lazy reference to original visit data.\n")
-  cat('Full data available via as.data.frame(x).\n\n')
+  cat("Full data available via as.data.frame(x).\n\n")
 
   cat("Summary:\n")
 
@@ -219,7 +219,7 @@ print.orivisit <- function(x, ..., n = 10) {
   if (length(x$event_names) > 1) {
     cat(
       paste(
-        'Event types:',
+        "Event types:",
         paste(x$event_names, collapse = ", "),
         "\n"
       )

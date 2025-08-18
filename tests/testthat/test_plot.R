@@ -48,6 +48,3 @@ test_that("plot.simaerep produces an error when an invalid plot_event is submitt
                regexp = error, fixed = TRUE)
 
 })
-
-
-

@@ -602,25 +602,8 @@ plot_study <- function(df_visit,
   if ("visit_med75" %in% colnames(df_site)) {
     col_visit <- "visit_med75"
 
-    df_pat <- pat_aggr(df_visit)
-
-    df_visit_med75 <- df_visit %>%
-      left_join(
-        df_site %>%
-          select(c("study_id", "site_number", "visit_med75")),
-        by = c("study_id", "site_number")
-      ) %>%
-      left_join(
-        df_pat %>%
-          select(c("study_id", "site_number", "patnum", "max_visit_per_pat")),
-        by = c("study_id", "site_number", "patnum")
-      ) %>%
-      filter(.data$visit <= .data$visit_med75, .data$max_visit_per_pat >= .data$visit_med75) %>%
-      select(- c("visit_med75", "max_visit_per_pat"))
-
   } else {
     col_visit <- "max_visit"
-    df_visit_med75 <- df_visit
   }
 
   # ordered sites -------------------------------------------------------------
@@ -757,7 +740,7 @@ plot_study <- function(df_visit,
     df_label$label <- paste("N: ", df_label$n_pat)
   }
 
-  if (delta & colname_delta %in% colnames(df_eval)) {
+  if (delta && colname_delta %in% colnames(df_eval)) {
     df_label <- df_label %>%
       left_join(
         df_eval %>%
@@ -851,7 +834,7 @@ plot_study <- function(df_visit,
     theme(legend.position = "none") +
     labs(y = paste0("Cumulative ", toupper(plot_event), " Count per Patient"))
 
-  if (delta & colname_delta %in% colnames(df_label)) {
+  if (delta && colname_delta %in% colnames(df_label)) {
     p_site <- p_site +
       geom_label(aes(label = paste(round(.data[[colname_delta]], 0), "delta"),
                      color = color_prob_cut),
