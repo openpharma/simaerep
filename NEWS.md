@@ -1,3 +1,19 @@
+# simaerep 1.0.0
+- use get_cum_mean_event_dev() instead of get_site_mean_ae_dev() for plotting which does not rely on visit_med75 to reduce noise
+- eval_sites will combine over- and under-reporting probability into one column prob
+- eval_sites with inframe method will calculate delta events
+- new simaerep defaults inframe = TRUE, mult_corr = TRUE, visit_med75 = FALSE, under_only = FALSE
+- retire sim_ur_scenarios, get_portf_perf, sim_studies, get_ecd_values, get_pat_pool_config portfolio performance will be calculated by removing events directly from the data with sim_out
+- remove check argument from low-level interface functions site_aggr and sim_sites
+- use test helper functions to generate data for unit testing
+- reuse saved test data for regression testing towards earlier simaerep versions
+- pass alternative column names in df_visit input data to simaerep via col_names argument and preserve names in simaerep results
+- improved print output for simaerep and orivisit S3 objects
+- adapt validation unit tests to include event over and under reporting
+- minimize the number of exported functions
+- deprecate event_per_visit_mean argument in favor of event_rates for data simulation
+- use non-constant event rates by default during data simulation
+
 # simaerep 0.7.0
 - event_names argument, allow to calculate multiple reporting probabilities at once https://github.com/openpharma/simaerep/issues/73
 - fix https://github.com/openpharma/simaerep/issues/82

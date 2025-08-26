@@ -33,7 +33,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">simaerep</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.0.900</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -49,16 +49,8 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><a class="dropdown-item" href="../articles/intro.html">Introduction</a></li>
-    <li><a class="dropdown-item" href="../articles/inframe.html">Inframe Simulation Using Table Operations</a></li>
-    <li><a class="dropdown-item" href="../articles/over.html">Over-Reporting Probability</a></li>
+    <li><a class="dropdown-item" href="../articles/classic.html">Classic Algorithm</a></li>
     <li><a class="dropdown-item" href="../articles/performance.html">Statistical Performance</a></li>
-    <li><a class="dropdown-item" href="../articles/funnel_perf.html">Comparing {simaerep} and Funnel Plot Performance</a></li>
-    <li><a class="dropdown-item" href="../articles/sas_files.html">SAS Files as a Data Source</a></li>
-    <li><a class="dropdown-item" href="../articles/portfolio_perf.html">(superseded) simaerep Portfolio Performance</a></li>
-    <li><a class="dropdown-item" href="../articles/visit_med75.html">Adjusted Evaluation Point visit_med75</a></li>
-    <li><a class="dropdown-item" href="../articles/usability_limits.html">Address Usability Limits of Bootstrap Method</a></li>
-    <li><a class="dropdown-item" href="../articles/check_poisson.html">Check Poisson Test Applicability</a></li>
-    <li><a class="dropdown-item" href="../articles/visits_or_days.html">Aggregate AEs by Days or Visit?</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -95,226 +87,796 @@
 <span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressPackageStartupMessages</a></span><span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyr.tidyverse.org" class="external-link">tidyr</a></span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressPackageStartupMessages</a></span><span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://openpharma.github.io/simaerep/">simaerep</a></span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressPackageStartupMessages</a></span><span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://purrr.tidyverse.org/" class="external-link">purrr</a></span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressPackageStartupMessages</a></span><span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://stringr.tidyverse.org" class="external-link">stringr</a></span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressPackageStartupMessages</a></span><span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/DavisVaughan/furrr" class="external-link">furrr</a></span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressPackageStartupMessages</a></span><span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://stringr.tidyverse.org" class="external-link">stringr</a></span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressPackageStartupMessages</a></span><span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://patchwork.data-imaginist.com" class="external-link">patchwork</a></span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
+<p>{simaerep} calculates site-specific event reporting probabilities
+based on bootstrap simulations that replace individual patients with
+other patients from the same study that have at least the same number of
+visits. This makes it ideal for monitoring event reporting of ongoing
+trials in which not all sites and patients are starting in the trial at
+the same time and in which the event rates are not constant over the
+entire treatment cycle.</p>
+<p>The statistical performance of {simaerep} is thus best measured
+against a data set that includes ongoing studies in different stages and
+non-constant event rates. For this we use a snapshot of our portfolio
+data to simulate a test data set from which we subsequently remove or
+add a specific percentage of events to create over- and under-reporting
+scenarios. We will then measure statistical performance of {simaerep}
+and compare it to those of other statistical methods.</p>
+<p>We have previously evaluated {simaerep} for detecting adverse events
+under-reporting in a joint industry publication using a similar
+approach.</p>
+<p>Koneswarakantha, B., Adyanthaya, R., Emerson, J. et al. An
+Open-Source R Package for Detection of Adverse Events Under-Reporting in
+Clinical Trials: Implementation and Validation by the IMPALA (Inter
+coMPany quALity Analytics) Consortium. Ther Innov Regul Sci 58, 591–599
+(2024). <a href="https://doi.org/10.1007/s43441-024-00631-8" class="external-link uri">https://doi.org/10.1007/s43441-024-00631-8</a></p>
 </div>
 <div class="section level2">
-<h2 id="performance-statistical">Performance (Statistical)<a class="anchor" aria-label="anchor" href="#performance-statistical"></a>
+<h2 id="test-data">Test Data<a class="anchor" aria-label="anchor" href="#test-data"></a>
 </h2>
+<div class="section level3">
+<h3 id="portfolio-configuration-and-event-rates">Portfolio Configuration and Event Rates<a class="anchor" aria-label="anchor" href="#portfolio-configuration-and-event-rates"></a>
+</h3>
+<p>The portfolio configuration will be used to generate compliant test
+data that is similar to a realistic portfolio of studies in which all
+sites are compliant. We will subsequently remove a percentage of AEs
+from each study site and calculate AE under-reporting statistics to
+calculate overall detection thresholds. The portfolio configuration
+should give a minimal description of the portfolio without violating
+data privacy laws or competitive intellectual property. We propose to
+include the following metrics into the portfolio configuration:</p>
+<p><strong>site parameters:</strong></p>
+<ul>
+<li>mean of all maximum patient visits</li>
+<li>sd of of all maximum patient visits</li>
+<li>total number patients</li>
+</ul>
+<p><strong>study parameters:</strong></p>
+<ul>
+<li>mean AE per visit</li>
+</ul>
+<p>The information contained in a portfolio configuration is very scarce
+and thus can be shared more easily within the industry. We can use those
+parameters to simulate test data for assessing {simaerep} performance on
+a given portfolio.</p>
+<p>We start with our standard input data set df_visit from which we
+extract the portfolio configuration and the event rates using
+<code><a href="../reference/get_portf_config.html">simaerep::get_portf_config</a></code> and
+<code><a href="../reference/get_portf_event_rates.html">simaerep::get_portf_event_rates</a></code>:</p>
+<p>This workflow will automatically:</p>
+<ul>
+<li>remove patients with 0 visits</li>
+<li>minimum number of patients per study</li>
+<li>minimum number of sites per study</li>
+<li>anonymize study and site IDs</li>
+</ul>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressPackageStartupMessages</a></span><span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/DavisVaughan/furrr" class="external-link">furrr</a></span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressPackageStartupMessages</a></span><span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://future.futureverse.org" class="external-link">future</a></span><span class="op">)</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">df_visit1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sim_test_data_study.html">sim_test_data_study</a></span><span class="op">(</span></span>
+<span>  n_pat <span class="op">=</span> <span class="fl">100</span>,</span>
+<span>  n_sites <span class="op">=</span> <span class="fl">10</span>,</span>
+<span>  ratio_out <span class="op">=</span> <span class="fl">0.4</span>,</span>
+<span>  factor_event_rate <span class="op">=</span> <span class="op">-</span> <span class="fl">0.6</span>,</span>
+<span>  event_rates <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.3</span>, <span class="fl">1</span>, <span class="fl">0.7</span>, <span class="fl">0.1</span><span class="op">)</span>,</span>
+<span>  study_id <span class="op">=</span> <span class="st">"A"</span></span>
+<span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://future.futureverse.org/reference/plan.html" class="external-link">plan</a></span><span class="op">(</span><span class="va">multisession</span>, workers <span class="op">=</span> <span class="fl">6</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">df_visit2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sim_test_data_study.html">sim_test_data_study</a></span><span class="op">(</span></span>
+<span>  n_pat <span class="op">=</span> <span class="fl">100</span>,</span>
+<span>  n_sites <span class="op">=</span> <span class="fl">10</span>,</span>
+<span>  ratio_out <span class="op">=</span> <span class="fl">0.2</span>,</span>
+<span>  factor_event_rate <span class="op">=</span> <span class="op">-</span> <span class="fl">0.1</span>,</span>
+<span>  event_rates <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0.5</span>, <span class="fl">0.3</span>, <span class="fl">0.3</span><span class="op">)</span>,</span>
+<span>  study_id <span class="op">=</span> <span class="st">"B"</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">df_visit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind_rows.html" class="external-link">bind_rows</a></span><span class="op">(</span><span class="va">df_visit1</span>, <span class="va">df_visit2</span><span class="op">)</span></span>
+<span></span>
+<span></span>
+<span><span class="va">df_config</span> <span class="op">&lt;-</span> <span class="fu">simaerep</span><span class="fu">::</span><span class="fu"><a href="../reference/get_portf_config.html">get_portf_config</a></span><span class="op">(</span></span>
+<span>  <span class="va">df_visit</span>,</span>
+<span>  anonymize <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  min_pat_per_study <span class="op">=</span> <span class="fl">100</span>,</span>
+<span>  min_sites_per_study <span class="op">=</span> <span class="fl">10</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">df_config</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">25</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<table class="table">
+<colgroup>
+<col width="12%">
+<col width="29%">
+<col width="11%">
+<col width="18%">
+<col width="20%">
+<col width="8%">
+</colgroup>
+<thead><tr class="header">
+<th align="left">study_id</th>
+<th align="right">event_per_visit_mean</th>
+<th align="left">site_id</th>
+<th align="right">max_visit_sd</th>
+<th align="right">max_visit_mean</th>
+<th align="right">n_pat</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">0001</td>
+<td align="right">0.1517349</td>
+<td align="left">0001</td>
+<td align="right">4.175324</td>
+<td align="right">19.1</td>
+<td align="right">10</td>
+</tr>
+<tr class="even">
+<td align="left">0001</td>
+<td align="right">0.1517349</td>
+<td align="left">0002</td>
+<td align="right">5.108816</td>
+<td align="right">18.1</td>
+<td align="right">10</td>
+</tr>
+<tr class="odd">
+<td align="left">0001</td>
+<td align="right">0.1517349</td>
+<td align="left">0003</td>
+<td align="right">3.011091</td>
+<td align="right">18.8</td>
+<td align="right">10</td>
+</tr>
+<tr class="even">
+<td align="left">0001</td>
+<td align="right">0.1517349</td>
+<td align="left">0004</td>
+<td align="right">3.366502</td>
+<td align="right">18.0</td>
+<td align="right">10</td>
+</tr>
+<tr class="odd">
+<td align="left">0001</td>
+<td align="right">0.1517349</td>
+<td align="left">0005</td>
+<td align="right">3.831159</td>
+<td align="right">18.7</td>
+<td align="right">10</td>
+</tr>
+<tr class="even">
+<td align="left">0001</td>
+<td align="right">0.1517349</td>
+<td align="left">0006</td>
+<td align="right">2.708013</td>
+<td align="right">19.0</td>
+<td align="right">10</td>
+</tr>
+<tr class="odd">
+<td align="left">0001</td>
+<td align="right">0.1517349</td>
+<td align="left">0007</td>
+<td align="right">1.885618</td>
+<td align="right">20.0</td>
+<td align="right">10</td>
+</tr>
+<tr class="even">
+<td align="left">0001</td>
+<td align="right">0.1517349</td>
+<td align="left">0008</td>
+<td align="right">3.333333</td>
+<td align="right">20.0</td>
+<td align="right">10</td>
+</tr>
+<tr class="odd">
+<td align="left">0001</td>
+<td align="right">0.1517349</td>
+<td align="left">0009</td>
+<td align="right">3.765339</td>
+<td align="right">22.2</td>
+<td align="right">10</td>
+</tr>
+<tr class="even">
+<td align="left">0001</td>
+<td align="right">0.1517349</td>
+<td align="left">0010</td>
+<td align="right">2.898275</td>
+<td align="right">19.2</td>
+<td align="right">10</td>
+</tr>
+<tr class="odd">
+<td align="left">0002</td>
+<td align="right">0.3070175</td>
+<td align="left">0001</td>
+<td align="right">4.237400</td>
+<td align="right">17.8</td>
+<td align="right">10</td>
+</tr>
+<tr class="even">
+<td align="left">0002</td>
+<td align="right">0.3070175</td>
+<td align="left">0002</td>
+<td align="right">3.622461</td>
+<td align="right">19.3</td>
+<td align="right">10</td>
+</tr>
+<tr class="odd">
+<td align="left">0002</td>
+<td align="right">0.3070175</td>
+<td align="left">0003</td>
+<td align="right">3.272783</td>
+<td align="right">18.6</td>
+<td align="right">10</td>
+</tr>
+<tr class="even">
+<td align="left">0002</td>
+<td align="right">0.3070175</td>
+<td align="left">0004</td>
+<td align="right">4.648775</td>
+<td align="right">20.5</td>
+<td align="right">10</td>
+</tr>
+<tr class="odd">
+<td align="left">0002</td>
+<td align="right">0.3070175</td>
+<td align="left">0005</td>
+<td align="right">3.368152</td>
+<td align="right">20.3</td>
+<td align="right">10</td>
+</tr>
+<tr class="even">
+<td align="left">0002</td>
+<td align="right">0.3070175</td>
+<td align="left">0006</td>
+<td align="right">4.083844</td>
+<td align="right">20.3</td>
+<td align="right">10</td>
+</tr>
+<tr class="odd">
+<td align="left">0002</td>
+<td align="right">0.3070175</td>
+<td align="left">0007</td>
+<td align="right">4.900113</td>
+<td align="right">19.3</td>
+<td align="right">10</td>
+</tr>
+<tr class="even">
+<td align="left">0002</td>
+<td align="right">0.3070175</td>
+<td align="left">0008</td>
+<td align="right">3.622461</td>
+<td align="right">20.3</td>
+<td align="right">10</td>
+</tr>
+<tr class="odd">
+<td align="left">0002</td>
+<td align="right">0.3070175</td>
+<td align="left">0009</td>
+<td align="right">3.604010</td>
+<td align="right">17.9</td>
+<td align="right">10</td>
+</tr>
+<tr class="even">
+<td align="left">0002</td>
+<td align="right">0.3070175</td>
+<td align="left">0010</td>
+<td align="right">3.308239</td>
+<td align="right">19.5</td>
+<td align="right">10</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">df_event_rates</span> <span class="op">&lt;-</span> <span class="fu">simaerep</span><span class="fu">::</span><span class="fu"><a href="../reference/get_portf_event_rates.html">get_portf_event_rates</a></span><span class="op">(</span><span class="va">df_visit</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">df_event_rates</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/row_number.html" class="external-link">dense_rank</a></span><span class="op">(</span><span class="va">study_id</span><span class="op">)</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<table class="table">
+<thead><tr class="header">
+<th align="left">study_id</th>
+<th align="right">visit</th>
+<th align="right">event_rate</th>
+<th align="right">n_pat</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">0001</td>
+<td align="right">1</td>
+<td align="right">0.0000000</td>
+<td align="right">100</td>
+</tr>
+<tr class="even">
+<td align="left">0001</td>
+<td align="right">2</td>
+<td align="right">0.8400000</td>
+<td align="right">100</td>
+</tr>
+<tr class="odd">
+<td align="left">0001</td>
+<td align="right">3</td>
+<td align="right">0.6100000</td>
+<td align="right">100</td>
+</tr>
+<tr class="even">
+<td align="left">0001</td>
+<td align="right">4</td>
+<td align="right">0.1000000</td>
+<td align="right">100</td>
+</tr>
+<tr class="odd">
+<td align="left">0001</td>
+<td align="right">5</td>
+<td align="right">0.0700000</td>
+<td align="right">100</td>
+</tr>
+<tr class="even">
+<td align="left">0001</td>
+<td align="right">6</td>
+<td align="right">0.0606061</td>
+<td align="right">99</td>
+</tr>
+<tr class="odd">
+<td align="left">0001</td>
+<td align="right">7</td>
+<td align="right">0.0707071</td>
+<td align="right">99</td>
+</tr>
+<tr class="even">
+<td align="left">0001</td>
+<td align="right">8</td>
+<td align="right">0.0606061</td>
+<td align="right">99</td>
+</tr>
+<tr class="odd">
+<td align="left">0001</td>
+<td align="right">9</td>
+<td align="right">0.0909091</td>
+<td align="right">99</td>
+</tr>
+<tr class="even">
+<td align="left">0001</td>
+<td align="right">10</td>
+<td align="right">0.0909091</td>
+<td align="right">99</td>
+</tr>
+<tr class="odd">
+<td align="left">0001</td>
+<td align="right">11</td>
+<td align="right">0.1111111</td>
+<td align="right">99</td>
+</tr>
+<tr class="even">
+<td align="left">0001</td>
+<td align="right">12</td>
+<td align="right">0.0909091</td>
+<td align="right">99</td>
+</tr>
+<tr class="odd">
+<td align="left">0001</td>
+<td align="right">13</td>
+<td align="right">0.0927835</td>
+<td align="right">97</td>
+</tr>
+<tr class="even">
+<td align="left">0001</td>
+<td align="right">14</td>
+<td align="right">0.0729167</td>
+<td align="right">96</td>
+</tr>
+<tr class="odd">
+<td align="left">0001</td>
+<td align="right">15</td>
+<td align="right">0.0659341</td>
+<td align="right">91</td>
+</tr>
+<tr class="even">
+<td align="left">0001</td>
+<td align="right">16</td>
+<td align="right">0.0114943</td>
+<td align="right">87</td>
+</tr>
+<tr class="odd">
+<td align="left">0001</td>
+<td align="right">17</td>
+<td align="right">0.1250000</td>
+<td align="right">80</td>
+</tr>
+<tr class="even">
+<td align="left">0001</td>
+<td align="right">18</td>
+<td align="right">0.0694444</td>
+<td align="right">72</td>
+</tr>
+<tr class="odd">
+<td align="left">0001</td>
+<td align="right">19</td>
+<td align="right">0.0476190</td>
+<td align="right">63</td>
+</tr>
+<tr class="even">
+<td align="left">0001</td>
+<td align="right">20</td>
+<td align="right">0.1224490</td>
+<td align="right">49</td>
+</tr>
+<tr class="odd">
+<td align="left">0001</td>
+<td align="right">21</td>
+<td align="right">0.0500000</td>
+<td align="right">40</td>
+</tr>
+<tr class="even">
+<td align="left">0001</td>
+<td align="right">22</td>
+<td align="right">0.0384615</td>
+<td align="right">26</td>
+</tr>
+<tr class="odd">
+<td align="left">0001</td>
+<td align="right">23</td>
+<td align="right">0.0666667</td>
+<td align="right">15</td>
+</tr>
+<tr class="even">
+<td align="left">0001</td>
+<td align="right">24</td>
+<td align="right">0.0000000</td>
+<td align="right">12</td>
+</tr>
+<tr class="odd">
+<td align="left">0001</td>
+<td align="right">25</td>
+<td align="right">0.2857143</td>
+<td align="right">7</td>
+</tr>
+<tr class="even">
+<td align="left">0001</td>
+<td align="right">26</td>
+<td align="right">0.0000000</td>
+<td align="right">3</td>
+</tr>
+</tbody>
+</table>
+<p>The configuration and the event rates can be used to simulate a new
+set of portfolio data with
+<code><a href="../reference/sim_test_data_portfolio.html">simaerep::sim_test_data_portfolio</a></code></p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">simaerep</span><span class="fu">::</span><span class="fu"><a href="../reference/sim_test_data_portfolio.html">sim_test_data_portfolio</a></span><span class="op">(</span><span class="va">df_config</span>, <span class="va">df_event_rates</span>, progress <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 3,751 × 8</span></span></span>
+<span><span class="co">##    study_id event_per_visit_mean site_id max_visit_sd max_visit_mean patient_id</span></span>
+<span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> 0001                    0.152 0001            4.18           19.1 0001      </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> 0001                    0.152 0001            4.18           19.1 0001      </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> 0001                    0.152 0001            4.18           19.1 0001      </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> 0001                    0.152 0001            4.18           19.1 0001      </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> 0001                    0.152 0001            4.18           19.1 0001      </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> 0001                    0.152 0001            4.18           19.1 0001      </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> 0001                    0.152 0001            4.18           19.1 0001      </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> 0001                    0.152 0001            4.18           19.1 0001      </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> 0001                    0.152 0001            4.18           19.1 0001      </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">10</span> 0001                    0.152 0001            4.18           19.1 0001      </span></span>
+<span><span class="co">## <span style="color: #949494;"># ℹ 3,741 more rows</span></span></span>
+<span><span class="co">## <span style="color: #949494;"># ℹ 2 more variables: visit &lt;int&gt;, n_event &lt;dbl&gt;</span></span></span></code></pre>
+</div>
 <div class="section level3">
 <h3 id="load-portfolio">Load Portfolio<a class="anchor" aria-label="anchor" href="#load-portfolio"></a>
 </h3>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">df_config</span> <span class="op">&lt;-</span> <span class="fu">readr</span><span class="fu">::</span><span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html" class="external-link">read_csv</a></span><span class="op">(</span><span class="st">"ae_conf_20240220.csv"</span><span class="op">)</span></span>
-<span><span class="va">df_ae_rates</span> <span class="op">&lt;-</span> <span class="fu">readr</span><span class="fu">::</span><span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html" class="external-link">read_csv</a></span><span class="op">(</span><span class="st">"ae_rates_20240220.csv"</span><span class="op">)</span></span>
+<p>To simulate a realistic test set with ongoing studies we load
+snapshots from our portfolio. We can use <code>future</code> package to
+set the number of workers for parallel processing.</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">df_config</span> <span class="op">&lt;-</span> <span class="fu">readr</span><span class="fu">::</span><span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html" class="external-link">read_csv</a></span><span class="op">(</span><span class="st">"ae_conf_20240220.csv"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">rename_with</a></span><span class="op">(</span><span class="op">~</span><span class="fu">stringr</span><span class="fu">::</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_replace.html" class="external-link">str_replace</a></span><span class="op">(</span><span class="va">.</span>, <span class="st">"ae_"</span>, <span class="st">"event_"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">rename</a></span><span class="op">(</span>site_id <span class="op">=</span> <span class="va">site_number</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">df_portf_flex</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sim_test_data_portfolio.html">sim_test_data_portfolio</a></span><span class="op">(</span><span class="va">df_config</span>, df_ae_rates <span class="op">=</span> <span class="va">df_ae_rates</span>, parallel <span class="op">=</span> <span class="cn">TRUE</span>, progress <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="va">df_event_rates</span> <span class="op">&lt;-</span> <span class="fu">readr</span><span class="fu">::</span><span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html" class="external-link">read_csv</a></span><span class="op">(</span><span class="st">"ae_rates_20240220.csv"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">rename_with</a></span><span class="op">(</span><span class="op">~</span><span class="fu">stringr</span><span class="fu">::</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_replace.html" class="external-link">str_replace</a></span><span class="op">(</span><span class="va">.</span>, <span class="st">"ae_"</span>, <span class="st">"event_"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">rename</a></span><span class="op">(</span>visit <span class="op">=</span> <span class="va">cum_visit</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">df_portf_flex</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">readr</span><span class="fu">::</span><span class="fu"><a href="https://readr.tidyverse.org/reference/write_delim.html" class="external-link">write_csv</a></span><span class="op">(</span><span class="st">"portf.csv"</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">df_portf_flex</span> <span class="op">&lt;-</span> <span class="fu">readr</span><span class="fu">::</span><span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html" class="external-link">read_csv</a></span><span class="op">(</span><span class="st">"portf.csv"</span><span class="op">)</span></span></code></pre></div>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressPackageStartupMessages</a></span><span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/DavisVaughan/furrr" class="external-link">furrr</a></span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://future.futureverse.org/reference/plan.html" class="external-link">plan</a></span><span class="op">(</span><span class="va">multisession</span>, workers <span class="op">=</span> <span class="fl">6</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">df_portf</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sim_test_data_portfolio.html">sim_test_data_portfolio</a></span><span class="op">(</span></span>
+<span>  <span class="va">df_config</span>,</span>
+<span>  <span class="va">df_event_rates</span>,</span>
+<span>  progress <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  parallel <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://future.futureverse.org/reference/plan.html" class="external-link">plan</a></span><span class="op">(</span><span class="va">sequential</span><span class="op">)</span></span></code></pre></div>
 </div>
-<div class="section level3">
-<h3 id="simulating-under-reporting">Simulating Under Reporting<a class="anchor" aria-label="anchor" href="#simulating-under-reporting"></a>
-</h3>
-<p>Here we reanalyze performance of {simaerep} integrating the lessons
-learned from previous versions. We will apply the following.</p>
+</div>
+<div class="section level2">
+<h2 id="simulating-reporting-outlier">Simulating Reporting Outlier<a class="anchor" aria-label="anchor" href="#simulating-reporting-outlier"></a>
+</h2>
+<p>Next we will write a function that uses simaerep and other
+statistical methods to detect reporting outlier. We will apply the
+following.</p>
 <ul>
-<li>generate portfolio using flexible AE rates</li>
-<li>remove AEs directly from the data set and not from an aggregated
-metric using <code><a href="../reference/sim_ur.html">sim_ur()</a></code>
+<li>remove or add events directly from the data set and not from an
+aggregated metric using <code><a href="../reference/sim_out.html">simaerep::sim_out()</a></code>
 </li>
 <li>set threshold for confusion matrix so that all methods have similar
 fpr</li>
-<li>test the following {simaerep} parameters <strong>with and without
-correcting for multiplicity</strong>:
+<li>test the following {simaerep} parameters:
 <ul>
-<li>default algorithm</li>
-<li>default algorithm with active over-reporting scoring</li>
+<li>classic algorithm</li>
 <li>inframe algorithm with visit_med75</li>
 <li>inframe algorithm</li>
+<li>inframe algorithm w/o multiplicity correction</li>
 </ul>
 </li>
 <li>test the following outlier detection methods
 <ul>
 <li>box-plot</li>
-<li>funnel-plot</li>
+<li>funnel-plot <a href="https://doi.org/10.1177/2168479017738981" class="external-link">Zink
+et al. 2018</a>
+</li>
 </ul>
 </li>
 </ul>
-</div>
 <div class="section level3">
 <h3 id="functions">Functions<a class="anchor" aria-label="anchor" href="#functions"></a>
 </h3>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">funnel</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">df</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  </span>
 <span>  <span class="va">df</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">visit</span> <span class="op">==</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">visit</span><span class="op">)</span>, .by <span class="op">=</span> <span class="va">patnum</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span></span>
-<span>    Metric <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">.data</span><span class="op">$</span><span class="va">n_ae</span><span class="op">)</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">.data</span><span class="op">$</span><span class="va">visit</span><span class="op">)</span>,</span>
-<span>    n_ae <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">n_ae</span><span class="op">)</span>,</span>
-<span>    visit <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">visit</span><span class="op">)</span>,</span>
-<span>    .by <span class="op">=</span> <span class="st">"site_number"</span></span>
-<span>  <span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
-<span>        vMu <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">.data</span><span class="op">$</span><span class="va">n_ae</span><span class="op">)</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">.data</span><span class="op">$</span><span class="va">visit</span><span class="op">)</span>,</span>
-<span>        z_0 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">.data</span><span class="op">$</span><span class="va">vMu</span> <span class="op">==</span> <span class="fl">0</span>,</span>
-<span>          <span class="fl">0</span>,</span>
-<span>          <span class="op">(</span><span class="va">.data</span><span class="op">$</span><span class="va">Metric</span> <span class="op">-</span> <span class="va">.data</span><span class="op">$</span><span class="va">vMu</span><span class="op">)</span> <span class="op">/</span></span>
-<span>            <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span><span class="va">.data</span><span class="op">$</span><span class="va">vMu</span> <span class="op">/</span> <span class="va">.data</span><span class="op">$</span><span class="va">visit</span><span class="op">)</span></span>
-<span>        <span class="op">)</span>,</span>
-<span>        phi <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">.data</span><span class="op">$</span><span class="va">z_0</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span>,</span>
-<span>        z_i <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">.data</span><span class="op">$</span><span class="va">vMu</span> <span class="op">==</span> <span class="fl">0</span> <span class="op">|</span> <span class="va">.data</span><span class="op">$</span><span class="va">phi</span> <span class="op">==</span> <span class="fl">0</span>,</span>
-<span>          <span class="fl">0</span>,</span>
-<span>          <span class="op">(</span><span class="va">.data</span><span class="op">$</span><span class="va">Metric</span> <span class="op">-</span> <span class="va">.data</span><span class="op">$</span><span class="va">vMu</span><span class="op">)</span> <span class="op">/</span></span>
-<span>            <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span><span class="va">.data</span><span class="op">$</span><span class="va">phi</span> <span class="op">*</span> <span class="va">.data</span><span class="op">$</span><span class="va">vMu</span> <span class="op">/</span> <span class="va">.data</span><span class="op">$</span><span class="va">visit</span><span class="op">)</span></span>
-<span>        <span class="op">)</span></span>
-<span>  <span class="op">)</span></span>
+<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">visit</span> <span class="op">==</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">visit</span><span class="op">)</span>, .by <span class="op">=</span> <span class="st">"patient_id"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span></span>
+<span>      Metric <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">.data</span><span class="op">$</span><span class="va">n_event</span><span class="op">)</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">.data</span><span class="op">$</span><span class="va">visit</span><span class="op">)</span>,</span>
+<span>      n_event <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">n_event</span><span class="op">)</span>,</span>
+<span>      visit <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">visit</span><span class="op">)</span>,</span>
+<span>      .by <span class="op">=</span> <span class="st">"site_id"</span></span>
+<span>    <span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
+<span>          vMu <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">.data</span><span class="op">$</span><span class="va">n_event</span><span class="op">)</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">.data</span><span class="op">$</span><span class="va">visit</span><span class="op">)</span>,</span>
+<span>          z_0 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">.data</span><span class="op">$</span><span class="va">vMu</span> <span class="op">==</span> <span class="fl">0</span>,</span>
+<span>            <span class="fl">0</span>,</span>
+<span>            <span class="op">(</span><span class="va">.data</span><span class="op">$</span><span class="va">Metric</span> <span class="op">-</span> <span class="va">.data</span><span class="op">$</span><span class="va">vMu</span><span class="op">)</span> <span class="op">/</span></span>
+<span>              <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span><span class="va">.data</span><span class="op">$</span><span class="va">vMu</span> <span class="op">/</span> <span class="va">.data</span><span class="op">$</span><span class="va">visit</span><span class="op">)</span></span>
+<span>          <span class="op">)</span>,</span>
+<span>          phi <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">.data</span><span class="op">$</span><span class="va">z_0</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span>,</span>
+<span>          z_i <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">.data</span><span class="op">$</span><span class="va">vMu</span> <span class="op">==</span> <span class="fl">0</span> <span class="op">|</span> <span class="va">.data</span><span class="op">$</span><span class="va">phi</span> <span class="op">==</span> <span class="fl">0</span>,</span>
+<span>            <span class="fl">0</span>,</span>
+<span>            <span class="op">(</span><span class="va">.data</span><span class="op">$</span><span class="va">Metric</span> <span class="op">-</span> <span class="va">.data</span><span class="op">$</span><span class="va">vMu</span><span class="op">)</span> <span class="op">/</span></span>
+<span>              <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span><span class="va">.data</span><span class="op">$</span><span class="va">phi</span> <span class="op">*</span> <span class="va">.data</span><span class="op">$</span><span class="va">vMu</span> <span class="op">/</span> <span class="va">.data</span><span class="op">$</span><span class="va">visit</span><span class="op">)</span></span>
+<span>          <span class="op">)</span></span>
+<span>    <span class="op">)</span></span>
 <span><span class="op">}</span></span>
 <span></span>
 <span><span class="va">box</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">df</span><span class="op">)</span> <span class="op">{</span></span>
+<span></span>
 <span>  <span class="va">df</span> <span class="op">&lt;-</span> <span class="va">df</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">visit</span> <span class="op">==</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">visit</span><span class="op">)</span>, .by <span class="op">=</span> <span class="va">patnum</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">visit</span> <span class="op">==</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">visit</span><span class="op">)</span>, .by <span class="op">=</span> <span class="st">"patient_id"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span></span>
-<span>      event_per_visit <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">.data</span><span class="op">$</span><span class="va">n_ae</span><span class="op">)</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">.data</span><span class="op">$</span><span class="va">visit</span><span class="op">)</span>,</span>
-<span>      .by <span class="op">=</span> <span class="st">"site_number"</span></span>
+<span>      event_per_visit <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">.data</span><span class="op">$</span><span class="va">n_event</span><span class="op">)</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">.data</span><span class="op">$</span><span class="va">visit</span><span class="op">)</span>,</span>
+<span>      .by <span class="op">=</span> <span class="st">"site_id"</span></span>
 <span>    <span class="op">)</span></span>
 <span>  </span>
 <span>  <span class="va">bx</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/grDevices/boxplot.stats.html" class="external-link">boxplot.stats</a></span><span class="op">(</span><span class="va">df</span><span class="op">$</span><span class="va">event_per_visit</span><span class="op">)</span></span>
-<span>  </span>
+<span></span>
 <span>  <span class="va">df</span> <span class="op">&lt;-</span> <span class="va">df</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
-<span>      box_out <span class="op">=</span> <span class="va">event_per_visit</span> <span class="op">&lt;</span> <span class="va">bx</span><span class="op">$</span><span class="va">stats</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span></span>
+<span>      box_out <span class="op">=</span> <span class="va">event_per_visit</span> <span class="op">&lt;</span> <span class="va">bx</span><span class="op">$</span><span class="va">stats</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op">|</span> <span class="va">event_per_visit</span> <span class="op">&gt;</span> <span class="va">bx</span><span class="op">$</span><span class="va">stats</span><span class="op">[</span><span class="fl">5</span><span class="op">]</span></span>
 <span>    <span class="op">)</span></span>
 <span>  </span>
 <span><span class="op">}</span></span>
 <span></span>
 <span></span>
-<span><span class="va">perf</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">df_visit</span>, <span class="va">study_id</span>, <span class="va">site_number</span>, <span class="va">ur_rate</span><span class="op">)</span> <span class="op">{</span></span>
+<span><span class="va">perf</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">df_visit</span>, <span class="va">study_id</span>, <span class="va">site_id</span>, <span class="va">factor_event</span><span class="op">)</span> <span class="op">{</span></span>
+<span></span>
 <span>  <span class="va">df_vs_study</span> <span class="op">&lt;-</span> <span class="va">df_visit</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>    <span class="fu"><a href="../reference/sim_ur.html">sim_ur</a></span><span class="op">(</span><span class="va">study_id</span>, <span class="va">site_number</span>, <span class="va">ur_rate</span><span class="op">)</span></span>
+<span>    <span class="fu">simaerep</span><span class="fu">::</span><span class="fu"><a href="../reference/sim_out.html">sim_out</a></span><span class="op">(</span><span class="va">study_id</span>, <span class="va">site_id</span>, <span class="va">factor_event</span><span class="op">)</span></span>
 <span>  </span>
-<span>  <span class="va">df_visit_med75</span> <span class="op">&lt;-</span> <span class="va">df_vs_study</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>    <span class="fu"><a href="../reference/simaerep.html">simaerep</a></span><span class="op">(</span>under_only <span class="op">=</span> <span class="cn">TRUE</span>, progress <span class="op">=</span> <span class="cn">FALSE</span>, check <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>    <span class="va">.</span><span class="op">$</span><span class="va">df_eval</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">.data</span><span class="op">$</span><span class="va">site_number</span> <span class="op">==</span> <span class="va">.env</span><span class="op">$</span><span class="va">site_number</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/rm.html" class="external-link">remove</a></span><span class="op">(</span><span class="va">df_visit</span><span class="op">)</span></span>
 <span>  </span>
-<span>  <span class="va">df_visit_med75_over</span> <span class="op">&lt;-</span> <span class="va">df_vs_study</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>    <span class="fu"><a href="../reference/simaerep.html">simaerep</a></span><span class="op">(</span>under_only <span class="op">=</span> <span class="cn">FALSE</span>, progress <span class="op">=</span> <span class="cn">FALSE</span>, check <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="va">df_classic</span> <span class="op">&lt;-</span> <span class="va">df_vs_study</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="fu"><a href="../reference/simaerep.html">simaerep</a></span><span class="op">(</span>inframe <span class="op">=</span> <span class="cn">FALSE</span>, progress <span class="op">=</span> <span class="cn">FALSE</span>, check <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>    <span class="va">.</span><span class="op">$</span><span class="va">df_eval</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">.data</span><span class="op">$</span><span class="va">site_number</span> <span class="op">==</span> <span class="va">.env</span><span class="op">$</span><span class="va">site_number</span><span class="op">)</span></span>
+<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">.data</span><span class="op">$</span><span class="va">site_id</span> <span class="op">==</span> <span class="va">.env</span><span class="op">$</span><span class="va">site_id</span><span class="op">)</span></span>
 <span></span>
 <span>  <span class="va">df_inframe</span> <span class="op">&lt;-</span> <span class="va">df_vs_study</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>    <span class="fu"><a href="../reference/simaerep.html">simaerep</a></span><span class="op">(</span>inframe <span class="op">=</span> <span class="cn">TRUE</span>, under_only <span class="op">=</span> <span class="cn">TRUE</span>, check <span class="op">=</span> <span class="cn">FALSE</span>, visit_med75 <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="fu"><a href="../reference/simaerep.html">simaerep</a></span><span class="op">(</span>check <span class="op">=</span> <span class="cn">FALSE</span>, progress <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>    <span class="va">.</span><span class="op">$</span><span class="va">df_eval</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">.data</span><span class="op">$</span><span class="va">site_number</span> <span class="op">==</span> <span class="va">.env</span><span class="op">$</span><span class="va">site_number</span><span class="op">)</span></span>
+<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">.data</span><span class="op">$</span><span class="va">site_id</span> <span class="op">==</span> <span class="va">.env</span><span class="op">$</span><span class="va">site_id</span><span class="op">)</span></span>
 <span>  </span>
 <span>  <span class="va">df_inframe_visit_med75</span> <span class="op">&lt;-</span> <span class="va">df_vs_study</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>    <span class="fu"><a href="../reference/simaerep.html">simaerep</a></span><span class="op">(</span>inframe <span class="op">=</span> <span class="cn">TRUE</span>, under_only <span class="op">=</span> <span class="cn">TRUE</span>, check <span class="op">=</span> <span class="cn">FALSE</span>, visit_med75 <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="fu"><a href="../reference/simaerep.html">simaerep</a></span><span class="op">(</span>visit_med75 <span class="op">=</span> <span class="cn">TRUE</span>, check <span class="op">=</span> <span class="cn">FALSE</span>, progress <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>    <span class="va">.</span><span class="op">$</span><span class="va">df_eval</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">.data</span><span class="op">$</span><span class="va">site_number</span> <span class="op">==</span> <span class="va">.env</span><span class="op">$</span><span class="va">site_number</span><span class="op">)</span></span>
-<span>  </span>
+<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">.data</span><span class="op">$</span><span class="va">site_id</span> <span class="op">==</span> <span class="va">.env</span><span class="op">$</span><span class="va">site_id</span><span class="op">)</span></span>
+<span></span>
 <span>  <span class="va">funnel_zi</span> <span class="op">&lt;-</span> <span class="fu">funnel</span><span class="op">(</span><span class="va">df_vs_study</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">.data</span><span class="op">$</span><span class="va">site_number</span> <span class="op">==</span> <span class="va">.env</span><span class="op">$</span><span class="va">site_number</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">.data</span><span class="op">$</span><span class="va">site_id</span> <span class="op">==</span> <span class="va">.env</span><span class="op">$</span><span class="va">site_id</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html" class="external-link">pull</a></span><span class="op">(</span><span class="va">z_i</span><span class="op">)</span></span>
 <span>  </span>
 <span>  <span class="va">box_out</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/graphics/box.html" class="external-link">box</a></span><span class="op">(</span><span class="va">df_vs_study</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">.data</span><span class="op">$</span><span class="va">site_number</span> <span class="op">==</span> <span class="va">.env</span><span class="op">$</span><span class="va">site_number</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">.data</span><span class="op">$</span><span class="va">site_id</span> <span class="op">==</span> <span class="va">.env</span><span class="op">$</span><span class="va">site_id</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html" class="external-link">pull</a></span><span class="op">(</span><span class="va">box_out</span><span class="op">)</span></span>
-<span></span>
-<span>  <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span></span>
-<span>    score_visit_med75 <span class="op">=</span> <span class="va">df_visit_med75</span><span class="op">$</span><span class="va">prob_low_prob_ur</span>,</span>
-<span>    score_visit_med75_no_mult <span class="op">=</span> <span class="fl">1</span> <span class="op">-</span> <span class="va">df_visit_med75</span><span class="op">$</span><span class="va">prob_low</span>,</span>
-<span>    score_visit_med75_over <span class="op">=</span> <span class="va">df_visit_med75_over</span><span class="op">$</span><span class="va">prob_low_prob_ur</span>,</span>
-<span>    score_visit_med75_over_no_mult <span class="op">=</span> <span class="fl">1</span> <span class="op">-</span> <span class="va">df_visit_med75_over</span><span class="op">$</span><span class="va">prob_low</span>,</span>
-<span>    score_inframe <span class="op">=</span> <span class="va">df_inframe</span><span class="op">$</span><span class="va">prob_low_prob_ur</span>,</span>
-<span>    score_inframe_no_mult <span class="op">=</span> <span class="fl">1</span> <span class="op">-</span> <span class="va">df_inframe</span><span class="op">$</span><span class="va">prob_low</span>,</span>
-<span>    score_inframe_visit_med75 <span class="op">=</span> <span class="va">df_inframe_visit_med75</span><span class="op">$</span><span class="va">prob_low_prob_ur</span>,</span>
-<span>    score_inframe_visit_med75_no_mult <span class="op">=</span> <span class="fl">1</span> <span class="op">-</span> <span class="va">df_inframe_visit_med75</span><span class="op">$</span><span class="va">prob_low</span>,</span>
+<span>  </span>
+<span>  <span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span></span>
+<span>    score_classic <span class="op">=</span> <span class="va">df_classic</span><span class="op">$</span><span class="va">prob</span>,</span>
+<span>    score_classic_no_mult <span class="op">=</span> <span class="va">df_classic</span><span class="op">$</span><span class="va">prob_no_mult</span>,</span>
+<span>    score_inframe <span class="op">=</span> <span class="va">df_inframe</span><span class="op">$</span><span class="va">event_prob</span>,</span>
+<span>    score_inframe_no_mult <span class="op">=</span> <span class="va">df_inframe</span><span class="op">$</span><span class="va">event_prob_no_mult</span>,</span>
+<span>    score_inframe_visit_med75 <span class="op">=</span> <span class="va">df_inframe_visit_med75</span><span class="op">$</span><span class="va">event_prob</span>,</span>
+<span>    score_inframe_visit_med75_no_mult <span class="op">=</span> <span class="va">df_inframe_visit_med75</span><span class="op">$</span><span class="va">event_prob_no_mult</span>,</span>
 <span>    score_funnel_zi <span class="op">=</span> <span class="va">funnel_zi</span>,</span>
 <span>    score_box_out <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="va">box_out</span><span class="op">)</span>,</span>
-<span>    stat_visit_med75_visit_med75 <span class="op">=</span> <span class="va">df_visit_med75</span><span class="op">$</span><span class="va">visit_med75</span>,</span>
-<span>    stat_visit_med75_n_pat_with_med75 <span class="op">=</span> <span class="va">df_visit_med75</span><span class="op">$</span><span class="va">n_pat_with_med75</span>,</span>
-<span>    stat_visit_med75_mean_ae_site_med75 <span class="op">=</span> <span class="va">df_visit_med75</span><span class="op">$</span><span class="va">mean_ae_site_med75</span>,</span>
-<span>    stat_visit_med75_mean_ae_study_med75 <span class="op">=</span> <span class="va">df_visit_med75</span><span class="op">$</span><span class="va">mean_ae_study_med75</span>,</span>
+<span>    stat_classic_visit_med75 <span class="op">=</span> <span class="va">df_classic</span><span class="op">$</span><span class="va">visit_med75</span>,</span>
+<span>    stat_classic_n_pat_with_med75 <span class="op">=</span> <span class="va">df_classic</span><span class="op">$</span><span class="va">n_pat_with_med75</span>,</span>
+<span>    stat_classic_mean_event_site_med75 <span class="op">=</span> <span class="va">df_classic</span><span class="op">$</span><span class="va">mean_event_site_med75</span>,</span>
+<span>    stat_classic_mean_event_study_med75 <span class="op">=</span> <span class="va">df_classic</span><span class="op">$</span><span class="va">mean_event_study_med75</span>,</span>
 <span>    stat_inframe_visit_med75 <span class="op">=</span> <span class="va">df_inframe_visit_med75</span><span class="op">$</span><span class="va">visit_med75</span>,</span>
 <span>    stat_inframe_visit_med75_n_pat_with_med75 <span class="op">=</span> <span class="va">df_inframe_visit_med75</span><span class="op">$</span><span class="va">n_pat_with_med75</span>,</span>
-<span>    stat_inframe_visit_med75_events_per_visit_site <span class="op">=</span> <span class="va">df_inframe_visit_med75</span><span class="op">$</span><span class="va">events_per_visit_site</span>,</span>
-<span>    stat_inframe_visit_med75_events_per_visit_study <span class="op">=</span> <span class="va">df_inframe_visit_med75</span><span class="op">$</span><span class="va">events_per_visit_study</span>,</span>
+<span>    stat_inframe_visit_med75_events_per_visit_site <span class="op">=</span> <span class="va">df_inframe_visit_med75</span><span class="op">$</span><span class="va">event_per_visit_site</span>,</span>
+<span>    stat_inframe_visit_med75_events_per_visit_study <span class="op">=</span> <span class="va">df_inframe_visit_med75</span><span class="op">$</span><span class="va">event_per_visit_site</span>,</span>
 <span>    stat_inframe_n_pat <span class="op">=</span> <span class="va">df_inframe</span><span class="op">$</span><span class="va">n_pat</span>,</span>
-<span>    stat_inframe_events_per_visit_site <span class="op">=</span> <span class="va">df_inframe</span><span class="op">$</span><span class="va">events_per_visit_site</span>,</span>
-<span>    stat_inframe_events_per_visit_study <span class="op">=</span> <span class="va">df_inframe</span><span class="op">$</span><span class="va">events_per_visit_study</span>,</span>
+<span>    stat_inframe_events_per_visit_site <span class="op">=</span> <span class="va">df_inframe</span><span class="op">$</span><span class="va">event_per_visit_site</span>,</span>
+<span>    stat_inframe_events_per_visit_study <span class="op">=</span> <span class="va">df_inframe</span><span class="op">$</span><span class="va">event_per_visit_study</span>,</span>
 <span>  <span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="kw">if</span> <span class="op">(</span><span class="op">!</span> <span class="fu"><a href="https://rdrr.io/r/base/any.html" class="external-link">any</a></span><span class="op">(</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_detect.html" class="external-link">str_detect</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span>, <span class="st">"no_mult"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="kw"><a href="https://rdrr.io/r/base/stop.html" class="external-link">stop</a></span><span class="op">(</span><span class="st">"no scores w/o multiplicity correction available"</span><span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
+<span>    </span>
+<span>  <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
 <span></span>
-<span><span class="co"># perf(df_portf_flex, study_id = "0010", site_number = "15153", ur_rate = 0) %&gt;% unlist()</span></span>
-<span><span class="co"># perf(df_portf_flex, study_id = "0010", site_number = "15153", ur_rate = 0.5) %&gt;% unlist()</span></span>
-<span><span class="co"># perf(df_portf_flex, study_id = "0010", site_number = "15153", ur_rate = 0.75) %&gt;% unlist()</span></span>
-<span><span class="co"># perf(df_portf_flex, study_id = "0010", site_number = "15153", ur_rate = 1) %&gt;% unlist()</span></span></code></pre></div>
+<span><span class="co"># 50% over-reporting</span></span>
+<span><span class="fu">perf</span><span class="op">(</span><span class="va">df_portf</span>, study_id <span class="op">=</span> <span class="st">"0010"</span>, site_id <span class="op">=</span> <span class="st">"15153"</span>, factor_event <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">##                                   score_classic </span></span>
+<span><span class="co">##                                       0.8045000 </span></span>
+<span><span class="co">##                           score_classic_no_mult </span></span>
+<span><span class="co">##                                       0.9970000 </span></span>
+<span><span class="co">##                                   score_inframe </span></span>
+<span><span class="co">##                                       0.8289375 </span></span>
+<span><span class="co">##                           score_inframe_no_mult </span></span>
+<span><span class="co">##                                       0.9860000 </span></span>
+<span><span class="co">##                       score_inframe_visit_med75 </span></span>
+<span><span class="co">##                                       0.8390000 </span></span>
+<span><span class="co">##               score_inframe_visit_med75_no_mult </span></span>
+<span><span class="co">##                                       0.9940000 </span></span>
+<span><span class="co">##                                 score_funnel_zi </span></span>
+<span><span class="co">##                                       2.1931127 </span></span>
+<span><span class="co">##                                   score_box_out </span></span>
+<span><span class="co">##                                       0.0000000 </span></span>
+<span><span class="co">##                    stat_classic_visit_med75.80% </span></span>
+<span><span class="co">##                                       7.0000000 </span></span>
+<span><span class="co">##                   stat_classic_n_pat_with_med75 </span></span>
+<span><span class="co">##                                       5.0000000 </span></span>
+<span><span class="co">##              stat_classic_mean_event_site_med75 </span></span>
+<span><span class="co">##                                       3.9000000 </span></span>
+<span><span class="co">##             stat_classic_mean_event_study_med75 </span></span>
+<span><span class="co">##                                       2.0576324 </span></span>
+<span><span class="co">##                    stat_inframe_visit_med75.80% </span></span>
+<span><span class="co">##                                       7.0000000 </span></span>
+<span><span class="co">##       stat_inframe_visit_med75_n_pat_with_med75 </span></span>
+<span><span class="co">##                                       5.0000000 </span></span>
+<span><span class="co">##  stat_inframe_visit_med75_events_per_visit_site </span></span>
+<span><span class="co">##                                       0.5571429 </span></span>
+<span><span class="co">## stat_inframe_visit_med75_events_per_visit_study </span></span>
+<span><span class="co">##                                       0.5571429 </span></span>
+<span><span class="co">##                              stat_inframe_n_pat </span></span>
+<span><span class="co">##                                       9.0000000 </span></span>
+<span><span class="co">##              stat_inframe_events_per_visit_site </span></span>
+<span><span class="co">##                                       0.4615385 </span></span>
+<span><span class="co">##             stat_inframe_events_per_visit_study </span></span>
+<span><span class="co">##                                       0.2937692</span></span></code></pre>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># 50% under-reporting</span></span>
+<span><span class="fu">perf</span><span class="op">(</span><span class="va">df_portf</span>, study_id <span class="op">=</span> <span class="st">"0010"</span>, site_id <span class="op">=</span> <span class="st">"15153"</span>, factor_event <span class="op">=</span> <span class="op">-</span> <span class="fl">0.5</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">##                                   score_classic </span></span>
+<span><span class="co">##                                     -0.03400000 </span></span>
+<span><span class="co">##                           score_classic_no_mult </span></span>
+<span><span class="co">##                                     -0.99400000 </span></span>
+<span><span class="co">##                                   score_inframe </span></span>
+<span><span class="co">##                                     -0.27550000 </span></span>
+<span><span class="co">##                           score_inframe_no_mult </span></span>
+<span><span class="co">##                                     -0.98000000 </span></span>
+<span><span class="co">##                       score_inframe_visit_med75 </span></span>
+<span><span class="co">##                                     -0.83900000 </span></span>
+<span><span class="co">##               score_inframe_visit_med75_no_mult </span></span>
+<span><span class="co">##                                     -0.99900000 </span></span>
+<span><span class="co">##                                 score_funnel_zi </span></span>
+<span><span class="co">##                                     -2.24765772 </span></span>
+<span><span class="co">##                                   score_box_out </span></span>
+<span><span class="co">##                                      0.00000000 </span></span>
+<span><span class="co">##                    stat_classic_visit_med75.80% </span></span>
+<span><span class="co">##                                      7.00000000 </span></span>
+<span><span class="co">##                   stat_classic_n_pat_with_med75 </span></span>
+<span><span class="co">##                                      5.00000000 </span></span>
+<span><span class="co">##              stat_classic_mean_event_site_med75 </span></span>
+<span><span class="co">##                                      0.50000000 </span></span>
+<span><span class="co">##             stat_classic_mean_event_study_med75 </span></span>
+<span><span class="co">##                                      2.05763240 </span></span>
+<span><span class="co">##                    stat_inframe_visit_med75.80% </span></span>
+<span><span class="co">##                                      7.00000000 </span></span>
+<span><span class="co">##       stat_inframe_visit_med75_n_pat_with_med75 </span></span>
+<span><span class="co">##                                      5.00000000 </span></span>
+<span><span class="co">##  stat_inframe_visit_med75_events_per_visit_site </span></span>
+<span><span class="co">##                                      0.07142857 </span></span>
+<span><span class="co">## stat_inframe_visit_med75_events_per_visit_study </span></span>
+<span><span class="co">##                                      0.07142857 </span></span>
+<span><span class="co">##                              stat_inframe_n_pat </span></span>
+<span><span class="co">##                                      9.00000000 </span></span>
+<span><span class="co">##              stat_inframe_events_per_visit_site </span></span>
+<span><span class="co">##                                      0.15384615 </span></span>
+<span><span class="co">##             stat_inframe_events_per_visit_study </span></span>
+<span><span class="co">##                                      0.29052308</span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="grid">Grid<a class="anchor" aria-label="anchor" href="#grid"></a>
 </h3>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">df_grid</span> <span class="op">&lt;-</span> <span class="va">df_portf_flex</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/distinct.html" class="external-link">distinct</a></span><span class="op">(</span><span class="va">study_id</span>, <span class="va">site_number</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">df_grid</span> <span class="op">&lt;-</span> <span class="va">df_portf</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/distinct.html" class="external-link">distinct</a></span><span class="op">(</span><span class="va">study_id</span>, <span class="va">site_id</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="co"># to reduce calculation time we only take every xth study</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/row_number.html" class="external-link">dense_rank</a></span><span class="op">(</span><span class="va">study_id</span><span class="op">)</span><span class="op"><a href="https://rdrr.io/r/base/Arithmetic.html" class="external-link">%%</a></span><span class="fl">5</span> <span class="op">==</span> <span class="fl">0</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>ur_rate <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.1</span>, <span class="fl">0.25</span>, <span class="fl">0.5</span>, <span class="fl">0.75</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest.html" class="external-link">unnest</a></span><span class="op">(</span><span class="va">ur_rate</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>factor_event <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span> <span class="op">-</span><span class="fl">1</span>, <span class="op">-</span><span class="fl">.75</span>, <span class="op">-</span><span class="fl">.5</span>, <span class="op">-</span><span class="fl">.25</span>, <span class="op">-</span><span class="fl">.1</span>, <span class="fl">0</span>, <span class="fl">0.1</span>, <span class="fl">0.25</span>, <span class="fl">0.5</span>, <span class="fl">0.75</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest.html" class="external-link">unnest</a></span><span class="op">(</span><span class="va">factor_event</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">df_grid</span></span></code></pre></div>
-<pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 27,120 × 3</span></span></span>
-<span><span class="co">##    study_id site_number ur_rate</span></span>
-<span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> 0005     4480           0   </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> 0005     4480           0.1 </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> 0005     4480           0.25</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> 0005     4480           0.5 </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> 0005     4480           0.75</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> 0005     4480           1   </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> 0005     4481           0   </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> 0005     4481           0.1 </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> 0005     4481           0.25</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">10</span> 0005     4481           0.5 </span></span>
-<span><span class="co">## <span style="color: #949494;"># ℹ 27,110 more rows</span></span></span></code></pre>
+<pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 49,720 × 3</span></span></span>
+<span><span class="co">##    study_id site_id factor_event</span></span>
+<span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> 0005     4480           -<span style="color: #BB0000;">1</span>   </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> 0005     4480           -<span style="color: #BB0000;">0.75</span></span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> 0005     4480           -<span style="color: #BB0000;">0.5</span> </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> 0005     4480           -<span style="color: #BB0000;">0.25</span></span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> 0005     4480           -<span style="color: #BB0000;">0.1</span> </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> 0005     4480            0   </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> 0005     4480            0.1 </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> 0005     4480            0.25</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> 0005     4480            0.5 </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">10</span> 0005     4480            0.75</span></span>
+<span><span class="co">## <span style="color: #949494;"># ℹ 49,710 more rows</span></span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="apply">Apply<a class="anchor" aria-label="anchor" href="#apply"></a>
 </h3>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/with_progress_cnd.html">with_progress_cnd</a></span><span class="op">(</span></span>
+<p>Again we use the <code>furrr</code> and the <code>future</code>
+package for parallel processing. <code><a href="../reference/purrr_bar.html">simaerep::purrr_bar</a></code> is a
+wrapper around <code>furrr</code> functions that enables the
+<code>progressr</code> package to display a progress bar.</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://future.futureverse.org/reference/plan.html" class="external-link">plan</a></span><span class="op">(</span><span class="va">multisession</span>, workers <span class="op">=</span> <span class="fl">6</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">progressr</span><span class="fu">::</span><span class="fu"><a href="https://progressr.futureverse.org/reference/with_progress.html" class="external-link">with_progress</a></span><span class="op">(</span></span>
 <span>  <span class="va">df_perf</span> <span class="op">&lt;-</span> <span class="va">df_grid</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
-<span>      perf <span class="op">=</span> <span class="fu"><a href="../reference/purrr_bar.html">purrr_bar</a></span><span class="op">(</span></span>
-<span>        <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">study_id</span>, <span class="va">site_number</span>, <span class="va">ur_rate</span><span class="op">)</span>,</span>
+<span>      perf <span class="op">=</span> <span class="fu">simaerep</span><span class="fu">::</span><span class="fu"><a href="../reference/purrr_bar.html">purrr_bar</a></span><span class="op">(</span></span>
+<span>        <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">study_id</span>, <span class="va">site_id</span>, <span class="va">factor_event</span><span class="op">)</span>,</span>
 <span>        .purrr <span class="op">=</span> <span class="fu">furrr</span><span class="fu">::</span><span class="va"><a href="https://furrr.futureverse.org/reference/future_map2.html" class="external-link">future_pmap</a></span>,</span>
-<span>        .f <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, <span class="va">z</span><span class="op">)</span> <span class="fu">perf</span><span class="op">(</span><span class="va">df_portf_flex</span>, <span class="va">x</span>, <span class="va">y</span>, <span class="va">z</span><span class="op">)</span>,</span>
+<span>        .f <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, <span class="va">z</span><span class="op">)</span> <span class="fu">perf</span><span class="op">(</span><span class="va">df_portf</span>, <span class="va">x</span>, <span class="va">y</span>, <span class="va">z</span><span class="op">)</span>,</span>
 <span>        .purrr_args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>.options <span class="op">=</span> <span class="fu"><a href="https://furrr.futureverse.org/reference/furrr_options.html" class="external-link">furrr_options</a></span><span class="op">(</span>seed <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>        .steps <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span></span>
 <span>      <span class="op">)</span></span>
 <span>    <span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
+<span><span class="fu"><a href="https://future.futureverse.org/reference/plan.html" class="external-link">plan</a></span><span class="op">(</span><span class="va">sequential</span><span class="op">)</span></span>
+<span></span>
+<span></span>
 <span><span class="va">df_perf</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest.html" class="external-link">unnest</a></span><span class="op">(</span><span class="va">perf</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">readr</span><span class="fu">::</span><span class="fu"><a href="https://readr.tidyverse.org/reference/write_delim.html" class="external-link">write_csv</a></span><span class="op">(</span><span class="st">"perf.csv"</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">df_perf</span> <span class="op">&lt;-</span> <span class="fu">readr</span><span class="fu">::</span><span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html" class="external-link">read_csv</a></span><span class="op">(</span><span class="st">"perf.csv"</span>, show_col_types <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">df_perf_long</span> <span class="op">&lt;-</span> <span class="va">df_perf</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html" class="external-link">pivot_longer</a></span><span class="op">(</span>cols <span class="op">=</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">study_id</span>, <span class="va">site_number</span>, <span class="va">ur_rate</span><span class="op">)</span>, names_to <span class="op">=</span> <span class="st">"type"</span>, values_to <span class="op">=</span> <span class="st">"score"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html" class="external-link">pivot_longer</a></span><span class="op">(</span>cols <span class="op">=</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">study_id</span>, <span class="va">site_id</span>, <span class="va">factor_event</span><span class="op">)</span>, names_to <span class="op">=</span> <span class="st">"type"</span>, values_to <span class="op">=</span> <span class="st">"score"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/startsWith.html" class="external-link">startsWith</a></span><span class="op">(</span><span class="va">type</span>, <span class="st">"score_"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>type <span class="op">=</span> <span class="fu">stringr</span><span class="fu">::</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_replace.html" class="external-link">str_replace</a></span><span class="op">(</span><span class="va">type</span>, <span class="st">"score_"</span>, <span class="st">""</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
+<span>    type <span class="op">=</span> <span class="fu">stringr</span><span class="fu">::</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_replace.html" class="external-link">str_replace</a></span><span class="op">(</span><span class="va">type</span>, <span class="st">"score_"</span>, <span class="st">""</span><span class="op">)</span>,</span>
+<span>    <span class="co"># we use the same cut-off for over- and under-reporting</span></span>
+<span>    score <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">score</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -327,7 +889,7 @@ correcting for multiplicity</strong>:
 <p>Note that this results in probability thresholds ~ 0.99 for scores
 w/o multiplicity correction and in the recommended funnel plot score
 threshold of -2.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">target_fpr</span> <span class="op">&lt;-</span> <span class="fl">0.01</span></span>
 <span></span>
 <span><span class="va">df_thresh</span> <span class="op">&lt;-</span> <span class="va">df_perf_long</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
@@ -335,32 +897,28 @@ threshold of -2.</p>
 <span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/nest.html" class="external-link">nest</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">ungroup</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
-<span>    data <span class="op">=</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html" class="external-link">map</a></span><span class="op">(</span><span class="va">data</span>, <span class="op">~</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">.</span>, <span class="va">ur_rate</span> <span class="op">==</span> <span class="fl">0</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>    thresh1 <span class="op">=</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html" class="external-link">map_dbl</a></span><span class="op">(</span><span class="va">data</span>, <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/stats/quantile.html" class="external-link">quantile</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html" class="external-link">pull</a></span><span class="op">(</span><span class="va">.</span>, <span class="va">score</span><span class="op">)</span>, <span class="fl">1</span> <span class="op">-</span> <span class="va">target_fpr</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>    thresh2 <span class="op">=</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html" class="external-link">map_dbl</a></span><span class="op">(</span><span class="va">data</span>, <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/stats/quantile.html" class="external-link">quantile</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html" class="external-link">pull</a></span><span class="op">(</span><span class="va">.</span>, <span class="va">score</span><span class="op">)</span>, <span class="va">target_fpr</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>    thresh <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">type</span> <span class="op">==</span> <span class="st">"funnel_zi"</span>, <span class="va">thresh2</span>, <span class="va">thresh1</span><span class="op">)</span></span>
+<span>    data <span class="op">=</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html" class="external-link">map</a></span><span class="op">(</span><span class="va">data</span>, <span class="op">~</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">.</span>, <span class="va">factor_event</span> <span class="op">==</span> <span class="fl">0</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>    thresh <span class="op">=</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html" class="external-link">map_dbl</a></span><span class="op">(</span><span class="va">data</span>, <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/stats/quantile.html" class="external-link">quantile</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html" class="external-link">pull</a></span><span class="op">(</span><span class="va">.</span>, <span class="va">score</span><span class="op">)</span>, <span class="fl">1</span> <span class="op">-</span> <span class="va">target_fpr</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  <span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">type</span>, <span class="va">thresh</span><span class="op">)</span></span>
 <span>  </span>
 <span><span class="va">df_thresh</span></span></code></pre></div>
-<pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 10 × 2</span></span></span>
-<span><span class="co">##    type                        thresh</span></span>
-<span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> visit_med75                  0.455</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> visit_med75_no_mult          0.989</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> visit_med75_over             0.455</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> visit_med75_over_no_mult     0.989</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> inframe                      0.384</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> inframe_no_mult              0.982</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> inframe_visit_med75          0.412</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> inframe_visit_med75_no_mult  0.987</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> funnel_zi                   -<span style="color: #BB0000;">2.03</span> </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">10</span> box_out                      1</span></span></code></pre>
+<pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 8 × 2</span></span></span>
+<span><span class="co">##   type                        thresh</span></span>
+<span><span class="co">##   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">1</span> classic                      0.849</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">2</span> classic_no_mult              0.995</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">3</span> inframe                      0.849</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">4</span> inframe_no_mult              0.996</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">5</span> inframe_visit_med75          0.848</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">6</span> inframe_visit_med75_no_mult  0.996</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">7</span> funnel_zi                    2.70 </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">8</span> box_out                      1</span></span></code></pre>
 </div>
 <div class="section level4">
 <h4 id="aggregate">Aggregate<a class="anchor" aria-label="anchor" href="#aggregate"></a>
 </h4>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">get_prop_test_ci95</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">...</span>, <span class="va">ix</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  </span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/stopifnot.html" class="external-link">stopifnot</a></span><span class="op">(</span><span class="va">ix</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
@@ -374,25 +932,25 @@ threshold of -2.</p>
 <span><span class="va">df_aggr</span> <span class="op">&lt;-</span> <span class="va">df_perf_long</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="va">df_thresh</span>, by <span class="op">=</span> <span class="st">"type"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
-<span>    is_ur <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">type</span> <span class="op">==</span> <span class="st">"funnel_zi"</span>, <span class="va">score</span> <span class="op">&lt;=</span> <span class="va">thresh</span>, <span class="va">score</span> <span class="op">&gt;=</span> <span class="va">thresh</span><span class="op">)</span>,</span>
-<span>    is_ur <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">type</span> <span class="op">==</span> <span class="st">"box_out"</span>, <span class="va">score</span> <span class="op">==</span> <span class="fl">1</span>, <span class="va">is_ur</span><span class="op">)</span></span>
+<span>    is_out <span class="op">=</span> <span class="va">score</span> <span class="op">&gt;=</span> <span class="va">thresh</span>,</span>
+<span>    is_out <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">type</span> <span class="op">==</span> <span class="st">"box_out"</span>, <span class="va">score</span> <span class="op">==</span> <span class="fl">1</span>, <span class="va">is_out</span><span class="op">)</span></span>
 <span>  <span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span></span>
 <span>    n <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html" class="external-link">n</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>    .by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">type</span>, <span class="va">ur_rate</span>, <span class="va">is_ur</span><span class="op">)</span></span>
+<span>    .by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">type</span>, <span class="va">factor_event</span>, <span class="va">is_out</span><span class="op">)</span></span>
 <span>  <span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_wider.html" class="external-link">pivot_wider</a></span><span class="op">(</span></span>
-<span>    names_from <span class="op">=</span> <span class="va">is_ur</span>,</span>
+<span>    names_from <span class="op">=</span> <span class="va">is_out</span>,</span>
 <span>    values_from <span class="op">=</span> <span class="va">n</span>,</span>
-<span>    names_prefix <span class="op">=</span> <span class="st">"is_ur_"</span>,</span>
+<span>    names_prefix <span class="op">=</span> <span class="st">"is_out_"</span>,</span>
 <span>    values_fill <span class="op">=</span> <span class="fl">0</span></span>
 <span>  <span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
-<span>    n_sites <span class="op">=</span> <span class="va">is_ur_TRUE</span> <span class="op">+</span> <span class="va">is_ur_FALSE</span>,</span>
-<span>    ratio <span class="op">=</span> <span class="va">is_ur_TRUE</span> <span class="op">/</span> <span class="va">n_sites</span>,</span>
-<span>    ratio_type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">ur_rate</span> <span class="op">==</span> <span class="fl">0</span>, <span class="st">"fpr"</span>, <span class="st">"tpr"</span><span class="op">)</span>,</span>
-<span>    ci95_low <span class="op">=</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/map2.html" class="external-link">map2_dbl</a></span><span class="op">(</span><span class="va">is_ur_TRUE</span>, <span class="va">n_sites</span>, <span class="op">~</span> <span class="fu">get_prop_test_ci95</span><span class="op">(</span><span class="va">.x</span>, <span class="va">.y</span>, ix <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>    ci95_high <span class="op">=</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/map2.html" class="external-link">map2_dbl</a></span><span class="op">(</span><span class="va">is_ur_TRUE</span>, <span class="va">n_sites</span>, <span class="op">~</span> <span class="fu">get_prop_test_ci95</span><span class="op">(</span><span class="va">.x</span>, <span class="va">.y</span>, ix <span class="op">=</span> <span class="fl">2</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>    n_sites <span class="op">=</span> <span class="va">is_out_TRUE</span> <span class="op">+</span> <span class="va">is_out_FALSE</span>,</span>
+<span>    ratio <span class="op">=</span> <span class="va">is_out_TRUE</span> <span class="op">/</span> <span class="va">n_sites</span>,</span>
+<span>    ratio_type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">factor_event</span> <span class="op">==</span> <span class="fl">0</span>, <span class="st">"fpr"</span>, <span class="st">"tpr"</span><span class="op">)</span>,</span>
+<span>    ci95_low <span class="op">=</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/map2.html" class="external-link">map2_dbl</a></span><span class="op">(</span><span class="va">is_out_TRUE</span>, <span class="va">n_sites</span>, <span class="op">~</span> <span class="fu">get_prop_test_ci95</span><span class="op">(</span><span class="va">.x</span>, <span class="va">.y</span>, ix <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>    ci95_high <span class="op">=</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/map2.html" class="external-link">map2_dbl</a></span><span class="op">(</span><span class="va">is_out_TRUE</span>, <span class="va">n_sites</span>, <span class="op">~</span> <span class="fu">get_prop_test_ci95</span><span class="op">(</span><span class="va">.x</span>, <span class="va">.y</span>, ix <span class="op">=</span> <span class="fl">2</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>    type_strip <span class="op">=</span> <span class="fu"><a href="https://stringr.tidyverse.org/reference/str_replace.html" class="external-link">str_replace</a></span><span class="op">(</span><span class="va">type</span>, <span class="st">"_no_mult"</span>, <span class="st">""</span><span class="op">)</span>,</span>
 <span>    has_mult <span class="op">=</span> <span class="op">!</span> <span class="fu"><a href="https://stringr.tidyverse.org/reference/str_detect.html" class="external-link">str_detect</a></span><span class="op">(</span><span class="va">type</span>, <span class="st">"no_mult"</span><span class="op">)</span> <span class="op">&amp;</span> <span class="op">!</span> <span class="va">type</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"funnel_zi"</span>, <span class="st">"box_out"</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
@@ -403,13 +961,12 @@ threshold of -2.</p>
 <p>Methods:</p>
 <ul>
 <li>
-<strong>visit_med75:</strong> default algorithm</li>
+<strong>classic:</strong> classic algorithm</li>
 <li>
-<strong>visit_med75_over:</strong> default algorithm including
-over-reporting score</li>
+<strong>inframe:</strong> new algorithm using table operations</li>
 <li>
-<strong>inframe:</strong> new algorithm using table operations and
-no visit_med75</li>
+<strong>inframe w/o multiplicity correction:</strong> new algorithm
+using table operations without multiplicity corrections</li>
 <li>
 <strong>inframe visit_med75:</strong> new algorithm using table
 operations and visit_med75</li>
@@ -420,15 +977,15 @@ detection</li>
 <strong>box_out:</strong> box plot derived outlier detection</li>
 </ul>
 <p>FN: false negatives TP: true positives</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">df_aggr</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span>method <span class="op">=</span> <span class="va">type_strip</span>, <span class="va">has_mult</span>, <span class="va">ur_rate</span>, FN <span class="op">=</span> <span class="va">is_ur_FALSE</span>, TP <span class="op">=</span> <span class="va">is_ur_TRUE</span>, <span class="va">n_sites</span>, <span class="va">ratio_type</span>, <span class="va">ratio</span>, <span class="va">ci95_low</span>, <span class="va">ci95_high</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span>method <span class="op">=</span> <span class="va">type_strip</span>, <span class="va">has_mult</span>, <span class="va">factor_event</span>, FN <span class="op">=</span> <span class="va">is_out_FALSE</span>, TP <span class="op">=</span> <span class="va">is_out_TRUE</span>, <span class="va">n_sites</span>, <span class="va">ratio_type</span>, <span class="va">ratio</span>, <span class="va">ci95_low</span>, <span class="va">ci95_high</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span>digits <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <colgroup>
-<col width="21%">
+<col width="20%">
 <col width="9%">
-<col width="8%">
+<col width="13%">
 <col width="5%">
 <col width="5%">
 <col width="8%">
@@ -440,7 +997,7 @@ detection</li>
 <thead><tr class="header">
 <th align="left">method</th>
 <th align="left">has_mult</th>
-<th align="right">ur_rate</th>
+<th align="right">factor_event</th>
 <th align="right">FN</th>
 <th align="right">TP</th>
 <th align="right">n_sites</th>
@@ -451,31 +1008,487 @@ detection</li>
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td align="left">visit_med75</td>
+<td align="left">classic</td>
 <td align="left">TRUE</td>
-<td align="right">0.00</td>
-<td align="right">4474</td>
-<td align="right">46</td>
+<td align="right">-1.00</td>
+<td align="right">1432</td>
+<td align="right">3088</td>
 <td align="right">4520</td>
-<td align="left">fpr</td>
-<td align="right">0.0102</td>
-<td align="right">0.0075</td>
-<td align="right">0.0137</td>
+<td align="left">tpr</td>
+<td align="right">0.6832</td>
+<td align="right">0.6694</td>
+<td align="right">0.6967</td>
 </tr>
 <tr class="even">
-<td align="left">visit_med75</td>
+<td align="left">classic</td>
 <td align="left">FALSE</td>
-<td align="right">0.00</td>
-<td align="right">4474</td>
-<td align="right">46</td>
+<td align="right">-1.00</td>
+<td align="right">958</td>
+<td align="right">3562</td>
 <td align="right">4520</td>
-<td align="left">fpr</td>
-<td align="right">0.0102</td>
-<td align="right">0.0075</td>
-<td align="right">0.0137</td>
+<td align="left">tpr</td>
+<td align="right">0.7881</td>
+<td align="right">0.7758</td>
+<td align="right">0.7998</td>
 </tr>
 <tr class="odd">
-<td align="left">visit_med75_over</td>
+<td align="left">inframe</td>
+<td align="left">TRUE</td>
+<td align="right">-1.00</td>
+<td align="right">1384</td>
+<td align="right">3136</td>
+<td align="right">4520</td>
+<td align="left">tpr</td>
+<td align="right">0.6938</td>
+<td align="right">0.6801</td>
+<td align="right">0.7072</td>
+</tr>
+<tr class="even">
+<td align="left">inframe</td>
+<td align="left">FALSE</td>
+<td align="right">-1.00</td>
+<td align="right">1054</td>
+<td align="right">3466</td>
+<td align="right">4520</td>
+<td align="left">tpr</td>
+<td align="right">0.7668</td>
+<td align="right">0.7542</td>
+<td align="right">0.7790</td>
+</tr>
+<tr class="odd">
+<td align="left">inframe_visit_med75</td>
+<td align="left">TRUE</td>
+<td align="right">-1.00</td>
+<td align="right">1556</td>
+<td align="right">2964</td>
+<td align="right">4520</td>
+<td align="left">tpr</td>
+<td align="right">0.6558</td>
+<td align="right">0.6417</td>
+<td align="right">0.6696</td>
+</tr>
+<tr class="even">
+<td align="left">inframe_visit_med75</td>
+<td align="left">FALSE</td>
+<td align="right">-1.00</td>
+<td align="right">1155</td>
+<td align="right">3365</td>
+<td align="right">4520</td>
+<td align="left">tpr</td>
+<td align="right">0.7445</td>
+<td align="right">0.7314</td>
+<td align="right">0.7571</td>
+</tr>
+<tr class="odd">
+<td align="left">funnel_zi</td>
+<td align="left">FALSE</td>
+<td align="right">-1.00</td>
+<td align="right">1643</td>
+<td align="right">2877</td>
+<td align="right">4520</td>
+<td align="left">tpr</td>
+<td align="right">0.6365</td>
+<td align="right">0.6223</td>
+<td align="right">0.6505</td>
+</tr>
+<tr class="even">
+<td align="left">box_out</td>
+<td align="left">FALSE</td>
+<td align="right">-1.00</td>
+<td align="right">776</td>
+<td align="right">3744</td>
+<td align="right">4520</td>
+<td align="left">tpr</td>
+<td align="right">0.8283</td>
+<td align="right">0.8169</td>
+<td align="right">0.8391</td>
+</tr>
+<tr class="odd">
+<td align="left">classic</td>
+<td align="left">TRUE</td>
+<td align="right">-0.75</td>
+<td align="right">1772</td>
+<td align="right">2748</td>
+<td align="right">4520</td>
+<td align="left">tpr</td>
+<td align="right">0.6080</td>
+<td align="right">0.5935</td>
+<td align="right">0.6222</td>
+</tr>
+<tr class="even">
+<td align="left">classic</td>
+<td align="left">FALSE</td>
+<td align="right">-0.75</td>
+<td align="right">1295</td>
+<td align="right">3225</td>
+<td align="right">4520</td>
+<td align="left">tpr</td>
+<td align="right">0.7135</td>
+<td align="right">0.7000</td>
+<td align="right">0.7266</td>
+</tr>
+<tr class="odd">
+<td align="left">inframe</td>
+<td align="left">TRUE</td>
+<td align="right">-0.75</td>
+<td align="right">1789</td>
+<td align="right">2731</td>
+<td align="right">4520</td>
+<td align="left">tpr</td>
+<td align="right">0.6042</td>
+<td align="right">0.5898</td>
+<td align="right">0.6185</td>
+</tr>
+<tr class="even">
+<td align="left">inframe</td>
+<td align="left">FALSE</td>
+<td align="right">-0.75</td>
+<td align="right">1441</td>
+<td align="right">3079</td>
+<td align="right">4520</td>
+<td align="left">tpr</td>
+<td align="right">0.6812</td>
+<td align="right">0.6673</td>
+<td align="right">0.6947</td>
+</tr>
+<tr class="odd">
+<td align="left">inframe_visit_med75</td>
+<td align="left">TRUE</td>
+<td align="right">-0.75</td>
+<td align="right">1832</td>
+<td align="right">2688</td>
+<td align="right">4520</td>
+<td align="left">tpr</td>
+<td align="right">0.5947</td>
+<td align="right">0.5802</td>
+<td align="right">0.6090</td>
+</tr>
+<tr class="even">
+<td align="left">inframe_visit_med75</td>
+<td align="left">FALSE</td>
+<td align="right">-0.75</td>
+<td align="right">1460</td>
+<td align="right">3060</td>
+<td align="right">4520</td>
+<td align="left">tpr</td>
+<td align="right">0.6770</td>
+<td align="right">0.6631</td>
+<td align="right">0.6906</td>
+</tr>
+<tr class="odd">
+<td align="left">funnel_zi</td>
+<td align="left">FALSE</td>
+<td align="right">-0.75</td>
+<td align="right">2423</td>
+<td align="right">2097</td>
+<td align="right">4520</td>
+<td align="left">tpr</td>
+<td align="right">0.4639</td>
+<td align="right">0.4493</td>
+<td align="right">0.4786</td>
+</tr>
+<tr class="even">
+<td align="left">box_out</td>
+<td align="left">FALSE</td>
+<td align="right">-0.75</td>
+<td align="right">2337</td>
+<td align="right">2183</td>
+<td align="right">4520</td>
+<td align="left">tpr</td>
+<td align="right">0.4830</td>
+<td align="right">0.4683</td>
+<td align="right">0.4977</td>
+</tr>
+<tr class="odd">
+<td align="left">classic</td>
+<td align="left">TRUE</td>
+<td align="right">-0.50</td>
+<td align="right">2634</td>
+<td align="right">1886</td>
+<td align="right">4520</td>
+<td align="left">tpr</td>
+<td align="right">0.4173</td>
+<td align="right">0.4028</td>
+<td align="right">0.4318</td>
+</tr>
+<tr class="even">
+<td align="left">classic</td>
+<td align="left">FALSE</td>
+<td align="right">-0.50</td>
+<td align="right">2250</td>
+<td align="right">2270</td>
+<td align="right">4520</td>
+<td align="left">tpr</td>
+<td align="right">0.5022</td>
+<td align="right">0.4875</td>
+<td align="right">0.5169</td>
+</tr>
+<tr class="odd">
+<td align="left">inframe</td>
+<td align="left">TRUE</td>
+<td align="right">-0.50</td>
+<td align="right">2718</td>
+<td align="right">1802</td>
+<td align="right">4520</td>
+<td align="left">tpr</td>
+<td align="right">0.3987</td>
+<td align="right">0.3844</td>
+<td align="right">0.4131</td>
+</tr>
+<tr class="even">
+<td align="left">inframe</td>
+<td align="left">FALSE</td>
+<td align="right">-0.50</td>
+<td align="right">2395</td>
+<td align="right">2125</td>
+<td align="right">4520</td>
+<td align="left">tpr</td>
+<td align="right">0.4701</td>
+<td align="right">0.4555</td>
+<td align="right">0.4848</td>
+</tr>
+<tr class="odd">
+<td align="left">inframe_visit_med75</td>
+<td align="left">TRUE</td>
+<td align="right">-0.50</td>
+<td align="right">2637</td>
+<td align="right">1883</td>
+<td align="right">4520</td>
+<td align="left">tpr</td>
+<td align="right">0.4166</td>
+<td align="right">0.4022</td>
+<td align="right">0.4311</td>
+</tr>
+<tr class="even">
+<td align="left">inframe_visit_med75</td>
+<td align="left">FALSE</td>
+<td align="right">-0.50</td>
+<td align="right">2335</td>
+<td align="right">2185</td>
+<td align="right">4520</td>
+<td align="left">tpr</td>
+<td align="right">0.4834</td>
+<td align="right">0.4687</td>
+<td align="right">0.4981</td>
+</tr>
+<tr class="odd">
+<td align="left">funnel_zi</td>
+<td align="left">FALSE</td>
+<td align="right">-0.50</td>
+<td align="right">3411</td>
+<td align="right">1109</td>
+<td align="right">4520</td>
+<td align="left">tpr</td>
+<td align="right">0.2454</td>
+<td align="right">0.2329</td>
+<td align="right">0.2582</td>
+</tr>
+<tr class="even">
+<td align="left">box_out</td>
+<td align="left">FALSE</td>
+<td align="right">-0.50</td>
+<td align="right">3636</td>
+<td align="right">884</td>
+<td align="right">4520</td>
+<td align="left">tpr</td>
+<td align="right">0.1956</td>
+<td align="right">0.1842</td>
+<td align="right">0.2075</td>
+</tr>
+<tr class="odd">
+<td align="left">classic</td>
+<td align="left">TRUE</td>
+<td align="right">-0.25</td>
+<td align="right">3883</td>
+<td align="right">637</td>
+<td align="right">4520</td>
+<td align="left">tpr</td>
+<td align="right">0.1409</td>
+<td align="right">0.1310</td>
+<td align="right">0.1515</td>
+</tr>
+<tr class="even">
+<td align="left">classic</td>
+<td align="left">FALSE</td>
+<td align="right">-0.25</td>
+<td align="right">3579</td>
+<td align="right">941</td>
+<td align="right">4520</td>
+<td align="left">tpr</td>
+<td align="right">0.2082</td>
+<td align="right">0.1965</td>
+<td align="right">0.2204</td>
+</tr>
+<tr class="odd">
+<td align="left">inframe</td>
+<td align="left">TRUE</td>
+<td align="right">-0.25</td>
+<td align="right">3917</td>
+<td align="right">603</td>
+<td align="right">4520</td>
+<td align="left">tpr</td>
+<td align="right">0.1334</td>
+<td align="right">0.1237</td>
+<td align="right">0.1437</td>
+</tr>
+<tr class="even">
+<td align="left">inframe</td>
+<td align="left">FALSE</td>
+<td align="right">-0.25</td>
+<td align="right">3665</td>
+<td align="right">855</td>
+<td align="right">4520</td>
+<td align="left">tpr</td>
+<td align="right">0.1892</td>
+<td align="right">0.1779</td>
+<td align="right">0.2010</td>
+</tr>
+<tr class="odd">
+<td align="left">inframe_visit_med75</td>
+<td align="left">TRUE</td>
+<td align="right">-0.25</td>
+<td align="right">3886</td>
+<td align="right">634</td>
+<td align="right">4520</td>
+<td align="left">tpr</td>
+<td align="right">0.1403</td>
+<td align="right">0.1303</td>
+<td align="right">0.1508</td>
+</tr>
+<tr class="even">
+<td align="left">inframe_visit_med75</td>
+<td align="left">FALSE</td>
+<td align="right">-0.25</td>
+<td align="right">3656</td>
+<td align="right">864</td>
+<td align="right">4520</td>
+<td align="left">tpr</td>
+<td align="right">0.1912</td>
+<td align="right">0.1798</td>
+<td align="right">0.2030</td>
+</tr>
+<tr class="odd">
+<td align="left">funnel_zi</td>
+<td align="left">FALSE</td>
+<td align="right">-0.25</td>
+<td align="right">4309</td>
+<td align="right">211</td>
+<td align="right">4520</td>
+<td align="left">tpr</td>
+<td align="right">0.0467</td>
+<td align="right">0.0408</td>
+<td align="right">0.0533</td>
+</tr>
+<tr class="even">
+<td align="left">box_out</td>
+<td align="left">FALSE</td>
+<td align="right">-0.25</td>
+<td align="right">4307</td>
+<td align="right">213</td>
+<td align="right">4520</td>
+<td align="left">tpr</td>
+<td align="right">0.0471</td>
+<td align="right">0.0412</td>
+<td align="right">0.0538</td>
+</tr>
+<tr class="odd">
+<td align="left">classic</td>
+<td align="left">TRUE</td>
+<td align="right">-0.10</td>
+<td align="right">4444</td>
+<td align="right">76</td>
+<td align="right">4520</td>
+<td align="left">tpr</td>
+<td align="right">0.0168</td>
+<td align="right">0.0134</td>
+<td align="right">0.0211</td>
+</tr>
+<tr class="even">
+<td align="left">classic</td>
+<td align="left">FALSE</td>
+<td align="right">-0.10</td>
+<td align="right">4367</td>
+<td align="right">153</td>
+<td align="right">4520</td>
+<td align="left">tpr</td>
+<td align="right">0.0338</td>
+<td align="right">0.0289</td>
+<td align="right">0.0396</td>
+</tr>
+<tr class="odd">
+<td align="left">inframe</td>
+<td align="left">TRUE</td>
+<td align="right">-0.10</td>
+<td align="right">4436</td>
+<td align="right">84</td>
+<td align="right">4520</td>
+<td align="left">tpr</td>
+<td align="right">0.0186</td>
+<td align="right">0.0149</td>
+<td align="right">0.0231</td>
+</tr>
+<tr class="even">
+<td align="left">inframe</td>
+<td align="left">FALSE</td>
+<td align="right">-0.10</td>
+<td align="right">4393</td>
+<td align="right">127</td>
+<td align="right">4520</td>
+<td align="left">tpr</td>
+<td align="right">0.0281</td>
+<td align="right">0.0236</td>
+<td align="right">0.0334</td>
+</tr>
+<tr class="odd">
+<td align="left">inframe_visit_med75</td>
+<td align="left">TRUE</td>
+<td align="right">-0.10</td>
+<td align="right">4454</td>
+<td align="right">66</td>
+<td align="right">4520</td>
+<td align="left">tpr</td>
+<td align="right">0.0146</td>
+<td align="right">0.0114</td>
+<td align="right">0.0187</td>
+</tr>
+<tr class="even">
+<td align="left">inframe_visit_med75</td>
+<td align="left">FALSE</td>
+<td align="right">-0.10</td>
+<td align="right">4402</td>
+<td align="right">118</td>
+<td align="right">4520</td>
+<td align="left">tpr</td>
+<td align="right">0.0261</td>
+<td align="right">0.0217</td>
+<td align="right">0.0313</td>
+</tr>
+<tr class="odd">
+<td align="left">funnel_zi</td>
+<td align="left">FALSE</td>
+<td align="right">-0.10</td>
+<td align="right">4469</td>
+<td align="right">51</td>
+<td align="right">4520</td>
+<td align="left">tpr</td>
+<td align="right">0.0113</td>
+<td align="right">0.0085</td>
+<td align="right">0.0149</td>
+</tr>
+<tr class="even">
+<td align="left">box_out</td>
+<td align="left">FALSE</td>
+<td align="right">-0.10</td>
+<td align="right">4323</td>
+<td align="right">197</td>
+<td align="right">4520</td>
+<td align="left">tpr</td>
+<td align="right">0.0436</td>
+<td align="right">0.0379</td>
+<td align="right">0.0501</td>
+</tr>
+<tr class="odd">
+<td align="left">classic</td>
 <td align="left">TRUE</td>
 <td align="right">0.00</td>
 <td align="right">4474</td>
@@ -487,7 +1500,7 @@ detection</li>
 <td align="right">0.0137</td>
 </tr>
 <tr class="even">
-<td align="left">visit_med75_over</td>
+<td align="left">classic</td>
 <td align="left">FALSE</td>
 <td align="right">0.00</td>
 <td align="right">4474</td>
@@ -501,18 +1514,6 @@ detection</li>
 <tr class="odd">
 <td align="left">inframe</td>
 <td align="left">TRUE</td>
-<td align="right">0.00</td>
-<td align="right">4470</td>
-<td align="right">50</td>
-<td align="right">4520</td>
-<td align="left">fpr</td>
-<td align="right">0.0111</td>
-<td align="right">0.0083</td>
-<td align="right">0.0147</td>
-</tr>
-<tr class="even">
-<td align="left">inframe</td>
-<td align="left">FALSE</td>
 <td align="right">0.00</td>
 <td align="right">4473</td>
 <td align="right">47</td>
@@ -522,29 +1523,41 @@ detection</li>
 <td align="right">0.0077</td>
 <td align="right">0.0139</td>
 </tr>
+<tr class="even">
+<td align="left">inframe</td>
+<td align="left">FALSE</td>
+<td align="right">0.00</td>
+<td align="right">4472</td>
+<td align="right">48</td>
+<td align="right">4520</td>
+<td align="left">fpr</td>
+<td align="right">0.0106</td>
+<td align="right">0.0079</td>
+<td align="right">0.0142</td>
+</tr>
 <tr class="odd">
 <td align="left">inframe_visit_med75</td>
 <td align="left">TRUE</td>
 <td align="right">0.00</td>
-<td align="right">4468</td>
-<td align="right">52</td>
+<td align="right">4474</td>
+<td align="right">46</td>
 <td align="right">4520</td>
 <td align="left">fpr</td>
-<td align="right">0.0115</td>
-<td align="right">0.0087</td>
-<td align="right">0.0152</td>
+<td align="right">0.0102</td>
+<td align="right">0.0075</td>
+<td align="right">0.0137</td>
 </tr>
 <tr class="even">
 <td align="left">inframe_visit_med75</td>
 <td align="left">FALSE</td>
 <td align="right">0.00</td>
-<td align="right">4471</td>
-<td align="right">49</td>
+<td align="right">4472</td>
+<td align="right">48</td>
 <td align="right">4520</td>
 <td align="left">fpr</td>
-<td align="right">0.0108</td>
-<td align="right">0.0081</td>
-<td align="right">0.0144</td>
+<td align="right">0.0106</td>
+<td align="right">0.0079</td>
+<td align="right">0.0142</td>
 </tr>
 <tr class="odd">
 <td align="left">funnel_zi</td>
@@ -562,426 +1575,462 @@ detection</li>
 <td align="left">box_out</td>
 <td align="left">FALSE</td>
 <td align="right">0.00</td>
-<td align="right">4463</td>
-<td align="right">57</td>
-<td align="right">4520</td>
-<td align="left">fpr</td>
-<td align="right">0.0126</td>
-<td align="right">0.0097</td>
-<td align="right">0.0164</td>
-</tr>
-<tr class="odd">
-<td align="left">visit_med75</td>
-<td align="left">TRUE</td>
-<td align="right">0.10</td>
-<td align="right">4264</td>
-<td align="right">256</td>
-<td align="right">4520</td>
-<td align="left">tpr</td>
-<td align="right">0.0566</td>
-<td align="right">0.0502</td>
-<td align="right">0.0639</td>
-</tr>
-<tr class="even">
-<td align="left">visit_med75</td>
-<td align="left">FALSE</td>
-<td align="right">0.10</td>
-<td align="right">4281</td>
-<td align="right">239</td>
-<td align="right">4520</td>
-<td align="left">tpr</td>
-<td align="right">0.0529</td>
-<td align="right">0.0466</td>
-<td align="right">0.0599</td>
-</tr>
-<tr class="odd">
-<td align="left">visit_med75_over</td>
-<td align="left">TRUE</td>
-<td align="right">0.10</td>
-<td align="right">4264</td>
-<td align="right">256</td>
-<td align="right">4520</td>
-<td align="left">tpr</td>
-<td align="right">0.0566</td>
-<td align="right">0.0502</td>
-<td align="right">0.0639</td>
-</tr>
-<tr class="even">
-<td align="left">visit_med75_over</td>
-<td align="left">FALSE</td>
-<td align="right">0.10</td>
-<td align="right">4281</td>
-<td align="right">239</td>
-<td align="right">4520</td>
-<td align="left">tpr</td>
-<td align="right">0.0529</td>
-<td align="right">0.0466</td>
-<td align="right">0.0599</td>
-</tr>
-<tr class="odd">
-<td align="left">inframe</td>
-<td align="left">TRUE</td>
-<td align="right">0.10</td>
-<td align="right">4261</td>
-<td align="right">259</td>
-<td align="right">4520</td>
-<td align="left">tpr</td>
-<td align="right">0.0573</td>
-<td align="right">0.0508</td>
-<td align="right">0.0646</td>
-</tr>
-<tr class="even">
-<td align="left">inframe</td>
-<td align="left">FALSE</td>
-<td align="right">0.10</td>
-<td align="right">4203</td>
-<td align="right">317</td>
-<td align="right">4520</td>
-<td align="left">tpr</td>
-<td align="right">0.0701</td>
-<td align="right">0.0629</td>
-<td align="right">0.0781</td>
-</tr>
-<tr class="odd">
-<td align="left">inframe_visit_med75</td>
-<td align="left">TRUE</td>
-<td align="right">0.10</td>
-<td align="right">4228</td>
-<td align="right">292</td>
-<td align="right">4520</td>
-<td align="left">tpr</td>
-<td align="right">0.0646</td>
-<td align="right">0.0577</td>
-<td align="right">0.0723</td>
-</tr>
-<tr class="even">
-<td align="left">inframe_visit_med75</td>
-<td align="left">FALSE</td>
-<td align="right">0.10</td>
 <td align="right">4253</td>
 <td align="right">267</td>
 <td align="right">4520</td>
-<td align="left">tpr</td>
+<td align="left">fpr</td>
 <td align="right">0.0591</td>
 <td align="right">0.0525</td>
 <td align="right">0.0664</td>
 </tr>
 <tr class="odd">
-<td align="left">funnel_zi</td>
+<td align="left">classic</td>
+<td align="left">TRUE</td>
+<td align="right">0.10</td>
+<td align="right">4399</td>
+<td align="right">121</td>
+<td align="right">4520</td>
+<td align="left">tpr</td>
+<td align="right">0.0268</td>
+<td align="right">0.0223</td>
+<td align="right">0.0320</td>
+</tr>
+<tr class="even">
+<td align="left">classic</td>
 <td align="left">FALSE</td>
 <td align="right">0.10</td>
-<td align="right">4359</td>
-<td align="right">161</td>
+<td align="right">4318</td>
+<td align="right">202</td>
 <td align="right">4520</td>
 <td align="left">tpr</td>
-<td align="right">0.0356</td>
-<td align="right">0.0305</td>
-<td align="right">0.0415</td>
-</tr>
-<tr class="even">
-<td align="left">box_out</td>
-<td align="left">FALSE</td>
-<td align="right">0.10</td>
-<td align="right">4445</td>
-<td align="right">75</td>
-<td align="right">4520</td>
-<td align="left">tpr</td>
-<td align="right">0.0166</td>
-<td align="right">0.0132</td>
-<td align="right">0.0209</td>
-</tr>
-<tr class="odd">
-<td align="left">visit_med75</td>
-<td align="left">TRUE</td>
-<td align="right">0.25</td>
-<td align="right">3425</td>
-<td align="right">1095</td>
-<td align="right">4520</td>
-<td align="left">tpr</td>
-<td align="right">0.2423</td>
-<td align="right">0.2299</td>
-<td align="right">0.2551</td>
-</tr>
-<tr class="even">
-<td align="left">visit_med75</td>
-<td align="left">FALSE</td>
-<td align="right">0.25</td>
-<td align="right">3378</td>
-<td align="right">1142</td>
-<td align="right">4520</td>
-<td align="left">tpr</td>
-<td align="right">0.2527</td>
-<td align="right">0.2401</td>
-<td align="right">0.2656</td>
-</tr>
-<tr class="odd">
-<td align="left">visit_med75_over</td>
-<td align="left">TRUE</td>
-<td align="right">0.25</td>
-<td align="right">3425</td>
-<td align="right">1095</td>
-<td align="right">4520</td>
-<td align="left">tpr</td>
-<td align="right">0.2423</td>
-<td align="right">0.2299</td>
-<td align="right">0.2551</td>
-</tr>
-<tr class="even">
-<td align="left">visit_med75_over</td>
-<td align="left">FALSE</td>
-<td align="right">0.25</td>
-<td align="right">3378</td>
-<td align="right">1142</td>
-<td align="right">4520</td>
-<td align="left">tpr</td>
-<td align="right">0.2527</td>
-<td align="right">0.2401</td>
-<td align="right">0.2656</td>
+<td align="right">0.0447</td>
+<td align="right">0.0389</td>
+<td align="right">0.0512</td>
 </tr>
 <tr class="odd">
 <td align="left">inframe</td>
 <td align="left">TRUE</td>
-<td align="right">0.25</td>
-<td align="right">3458</td>
-<td align="right">1062</td>
+<td align="right">0.10</td>
+<td align="right">4392</td>
+<td align="right">128</td>
 <td align="right">4520</td>
 <td align="left">tpr</td>
-<td align="right">0.2350</td>
-<td align="right">0.2227</td>
-<td align="right">0.2477</td>
+<td align="right">0.0283</td>
+<td align="right">0.0238</td>
+<td align="right">0.0337</td>
 </tr>
 <tr class="even">
 <td align="left">inframe</td>
 <td align="left">FALSE</td>
-<td align="right">0.25</td>
-<td align="right">3233</td>
-<td align="right">1287</td>
+<td align="right">0.10</td>
+<td align="right">4330</td>
+<td align="right">190</td>
 <td align="right">4520</td>
 <td align="left">tpr</td>
-<td align="right">0.2847</td>
-<td align="right">0.2717</td>
-<td align="right">0.2982</td>
-</tr>
-<tr class="odd">
-<td align="left">inframe_visit_med75</td>
-<td align="left">TRUE</td>
-<td align="right">0.25</td>
-<td align="right">3344</td>
-<td align="right">1176</td>
-<td align="right">4520</td>
-<td align="left">tpr</td>
-<td align="right">0.2602</td>
-<td align="right">0.2475</td>
-<td align="right">0.2733</td>
-</tr>
-<tr class="even">
-<td align="left">inframe_visit_med75</td>
-<td align="left">FALSE</td>
-<td align="right">0.25</td>
-<td align="right">3304</td>
-<td align="right">1216</td>
-<td align="right">4520</td>
-<td align="left">tpr</td>
-<td align="right">0.2690</td>
-<td align="right">0.2562</td>
-<td align="right">0.2823</td>
-</tr>
-<tr class="odd">
-<td align="left">funnel_zi</td>
-<td align="left">FALSE</td>
-<td align="right">0.25</td>
-<td align="right">3877</td>
-<td align="right">643</td>
-<td align="right">4520</td>
-<td align="left">tpr</td>
-<td align="right">0.1423</td>
-<td align="right">0.1323</td>
-<td align="right">0.1529</td>
-</tr>
-<tr class="even">
-<td align="left">box_out</td>
-<td align="left">FALSE</td>
-<td align="right">0.25</td>
-<td align="right">4357</td>
-<td align="right">163</td>
-<td align="right">4520</td>
-<td align="left">tpr</td>
-<td align="right">0.0361</td>
-<td align="right">0.0309</td>
 <td align="right">0.0420</td>
+<td align="right">0.0365</td>
+<td align="right">0.0484</td>
 </tr>
 <tr class="odd">
-<td align="left">visit_med75</td>
+<td align="left">inframe_visit_med75</td>
 <td align="left">TRUE</td>
-<td align="right">0.50</td>
-<td align="right">2161</td>
-<td align="right">2359</td>
+<td align="right">0.10</td>
+<td align="right">4389</td>
+<td align="right">131</td>
 <td align="right">4520</td>
 <td align="left">tpr</td>
-<td align="right">0.5219</td>
-<td align="right">0.5072</td>
-<td align="right">0.5366</td>
+<td align="right">0.0290</td>
+<td align="right">0.0244</td>
+<td align="right">0.0344</td>
 </tr>
 <tr class="even">
-<td align="left">visit_med75</td>
+<td align="left">inframe_visit_med75</td>
 <td align="left">FALSE</td>
-<td align="right">0.50</td>
-<td align="right">1977</td>
-<td align="right">2543</td>
+<td align="right">0.10</td>
+<td align="right">4342</td>
+<td align="right">178</td>
 <td align="right">4520</td>
 <td align="left">tpr</td>
-<td align="right">0.5626</td>
-<td align="right">0.5480</td>
-<td align="right">0.5771</td>
+<td align="right">0.0394</td>
+<td align="right">0.0340</td>
+<td align="right">0.0456</td>
 </tr>
 <tr class="odd">
-<td align="left">visit_med75_over</td>
-<td align="left">TRUE</td>
-<td align="right">0.50</td>
-<td align="right">2161</td>
-<td align="right">2359</td>
+<td align="left">funnel_zi</td>
+<td align="left">FALSE</td>
+<td align="right">0.10</td>
+<td align="right">4401</td>
+<td align="right">119</td>
 <td align="right">4520</td>
 <td align="left">tpr</td>
-<td align="right">0.5219</td>
-<td align="right">0.5072</td>
-<td align="right">0.5366</td>
+<td align="right">0.0263</td>
+<td align="right">0.0219</td>
+<td align="right">0.0315</td>
 </tr>
 <tr class="even">
-<td align="left">visit_med75_over</td>
+<td align="left">box_out</td>
 <td align="left">FALSE</td>
-<td align="right">0.50</td>
-<td align="right">1977</td>
-<td align="right">2543</td>
+<td align="right">0.10</td>
+<td align="right">4161</td>
+<td align="right">359</td>
 <td align="right">4520</td>
 <td align="left">tpr</td>
-<td align="right">0.5626</td>
-<td align="right">0.5480</td>
-<td align="right">0.5771</td>
+<td align="right">0.0794</td>
+<td align="right">0.0718</td>
+<td align="right">0.0878</td>
+</tr>
+<tr class="odd">
+<td align="left">classic</td>
+<td align="left">TRUE</td>
+<td align="right">0.25</td>
+<td align="right">3855</td>
+<td align="right">665</td>
+<td align="right">4520</td>
+<td align="left">tpr</td>
+<td align="right">0.1471</td>
+<td align="right">0.1370</td>
+<td align="right">0.1579</td>
+</tr>
+<tr class="even">
+<td align="left">classic</td>
+<td align="left">FALSE</td>
+<td align="right">0.25</td>
+<td align="right">3551</td>
+<td align="right">969</td>
+<td align="right">4520</td>
+<td align="left">tpr</td>
+<td align="right">0.2144</td>
+<td align="right">0.2026</td>
+<td align="right">0.2267</td>
+</tr>
+<tr class="odd">
+<td align="left">inframe</td>
+<td align="left">TRUE</td>
+<td align="right">0.25</td>
+<td align="right">3870</td>
+<td align="right">650</td>
+<td align="right">4520</td>
+<td align="left">tpr</td>
+<td align="right">0.1438</td>
+<td align="right">0.1338</td>
+<td align="right">0.1545</td>
+</tr>
+<tr class="even">
+<td align="left">inframe</td>
+<td align="left">FALSE</td>
+<td align="right">0.25</td>
+<td align="right">3654</td>
+<td align="right">866</td>
+<td align="right">4520</td>
+<td align="left">tpr</td>
+<td align="right">0.1916</td>
+<td align="right">0.1803</td>
+<td align="right">0.2034</td>
+</tr>
+<tr class="odd">
+<td align="left">inframe_visit_med75</td>
+<td align="left">TRUE</td>
+<td align="right">0.25</td>
+<td align="right">3844</td>
+<td align="right">676</td>
+<td align="right">4520</td>
+<td align="left">tpr</td>
+<td align="right">0.1496</td>
+<td align="right">0.1394</td>
+<td align="right">0.1604</td>
+</tr>
+<tr class="even">
+<td align="left">inframe_visit_med75</td>
+<td align="left">FALSE</td>
+<td align="right">0.25</td>
+<td align="right">3591</td>
+<td align="right">929</td>
+<td align="right">4520</td>
+<td align="left">tpr</td>
+<td align="right">0.2055</td>
+<td align="right">0.1939</td>
+<td align="right">0.2177</td>
+</tr>
+<tr class="odd">
+<td align="left">funnel_zi</td>
+<td align="left">FALSE</td>
+<td align="right">0.25</td>
+<td align="right">4031</td>
+<td align="right">489</td>
+<td align="right">4520</td>
+<td align="left">tpr</td>
+<td align="right">0.1082</td>
+<td align="right">0.0994</td>
+<td align="right">0.1177</td>
+</tr>
+<tr class="even">
+<td align="left">box_out</td>
+<td align="left">FALSE</td>
+<td align="right">0.25</td>
+<td align="right">3855</td>
+<td align="right">665</td>
+<td align="right">4520</td>
+<td align="left">tpr</td>
+<td align="right">0.1471</td>
+<td align="right">0.1370</td>
+<td align="right">0.1579</td>
+</tr>
+<tr class="odd">
+<td align="left">classic</td>
+<td align="left">TRUE</td>
+<td align="right">0.50</td>
+<td align="right">2662</td>
+<td align="right">1858</td>
+<td align="right">4520</td>
+<td align="left">tpr</td>
+<td align="right">0.4111</td>
+<td align="right">0.3967</td>
+<td align="right">0.4256</td>
+</tr>
+<tr class="even">
+<td align="left">classic</td>
+<td align="left">FALSE</td>
+<td align="right">0.50</td>
+<td align="right">2327</td>
+<td align="right">2193</td>
+<td align="right">4520</td>
+<td align="left">tpr</td>
+<td align="right">0.4852</td>
+<td align="right">0.4705</td>
+<td align="right">0.4999</td>
 </tr>
 <tr class="odd">
 <td align="left">inframe</td>
 <td align="left">TRUE</td>
 <td align="right">0.50</td>
-<td align="right">2146</td>
-<td align="right">2374</td>
+<td align="right">2722</td>
+<td align="right">1798</td>
 <td align="right">4520</td>
 <td align="left">tpr</td>
-<td align="right">0.5252</td>
-<td align="right">0.5105</td>
-<td align="right">0.5399</td>
+<td align="right">0.3978</td>
+<td align="right">0.3835</td>
+<td align="right">0.4122</td>
 </tr>
 <tr class="even">
 <td align="left">inframe</td>
 <td align="left">FALSE</td>
 <td align="right">0.50</td>
-<td align="right">1836</td>
-<td align="right">2684</td>
+<td align="right">2463</td>
+<td align="right">2057</td>
 <td align="right">4520</td>
 <td align="left">tpr</td>
-<td align="right">0.5938</td>
-<td align="right">0.5793</td>
-<td align="right">0.6081</td>
+<td align="right">0.4551</td>
+<td align="right">0.4405</td>
+<td align="right">0.4697</td>
 </tr>
 <tr class="odd">
 <td align="left">inframe_visit_med75</td>
 <td align="left">TRUE</td>
 <td align="right">0.50</td>
-<td align="right">2081</td>
-<td align="right">2439</td>
+<td align="right">2677</td>
+<td align="right">1843</td>
 <td align="right">4520</td>
 <td align="left">tpr</td>
-<td align="right">0.5396</td>
-<td align="right">0.5249</td>
-<td align="right">0.5542</td>
+<td align="right">0.4077</td>
+<td align="right">0.3934</td>
+<td align="right">0.4223</td>
 </tr>
 <tr class="even">
 <td align="left">inframe_visit_med75</td>
 <td align="left">FALSE</td>
 <td align="right">0.50</td>
-<td align="right">1927</td>
-<td align="right">2593</td>
+<td align="right">2370</td>
+<td align="right">2150</td>
 <td align="right">4520</td>
 <td align="left">tpr</td>
-<td align="right">0.5737</td>
-<td align="right">0.5591</td>
-<td align="right">0.5881</td>
+<td align="right">0.4757</td>
+<td align="right">0.4610</td>
+<td align="right">0.4903</td>
 </tr>
 <tr class="odd">
 <td align="left">funnel_zi</td>
 <td align="left">FALSE</td>
 <td align="right">0.50</td>
-<td align="right">2607</td>
-<td align="right">1913</td>
+<td align="right">3020</td>
+<td align="right">1500</td>
 <td align="right">4520</td>
 <td align="left">tpr</td>
-<td align="right">0.4232</td>
-<td align="right">0.4088</td>
-<td align="right">0.4378</td>
+<td align="right">0.3319</td>
+<td align="right">0.3182</td>
+<td align="right">0.3458</td>
 </tr>
 <tr class="even">
 <td align="left">box_out</td>
 <td align="left">FALSE</td>
 <td align="right">0.50</td>
-<td align="right">3481</td>
-<td align="right">1039</td>
+<td align="right">3021</td>
+<td align="right">1499</td>
 <td align="right">4520</td>
 <td align="left">tpr</td>
-<td align="right">0.2299</td>
-<td align="right">0.2177</td>
-<td align="right">0.2425</td>
+<td align="right">0.3316</td>
+<td align="right">0.3180</td>
+<td align="right">0.3456</td>
 </tr>
 <tr class="odd">
-<td align="left">visit_med75</td>
+<td align="left">classic</td>
 <td align="left">TRUE</td>
 <td align="right">0.75</td>
-<td align="right">1269</td>
-<td align="right">3251</td>
+<td align="right">1920</td>
+<td align="right">2600</td>
 <td align="right">4520</td>
 <td align="left">tpr</td>
-<td align="right">0.7192</td>
-<td align="right">0.7059</td>
-<td align="right">0.7323</td>
+<td align="right">0.5752</td>
+<td align="right">0.5606</td>
+<td align="right">0.5897</td>
 </tr>
 <tr class="even">
-<td align="left">visit_med75</td>
+<td align="left">classic</td>
 <td align="left">FALSE</td>
 <td align="right">0.75</td>
-<td align="right">1095</td>
-<td align="right">3425</td>
+<td align="right">1623</td>
+<td align="right">2897</td>
 <td align="right">4520</td>
 <td align="left">tpr</td>
-<td align="right">0.7577</td>
-<td align="right">0.7449</td>
-<td align="right">0.7701</td>
-</tr>
-<tr class="odd">
-<td align="left">visit_med75_over</td>
-<td align="left">TRUE</td>
-<td align="right">0.75</td>
-<td align="right">1269</td>
-<td align="right">3251</td>
-<td align="right">4520</td>
-<td align="left">tpr</td>
-<td align="right">0.7192</td>
-<td align="right">0.7059</td>
-<td align="right">0.7323</td>
-</tr>
-<tr class="even">
-<td align="left">visit_med75_over</td>
-<td align="left">FALSE</td>
-<td align="right">0.75</td>
-<td align="right">1095</td>
-<td align="right">3425</td>
-<td align="right">4520</td>
-<td align="left">tpr</td>
-<td align="right">0.7577</td>
-<td align="right">0.7449</td>
-<td align="right">0.7701</td>
+<td align="right">0.6409</td>
+<td align="right">0.6267</td>
+<td align="right">0.6549</td>
 </tr>
 <tr class="odd">
 <td align="left">inframe</td>
 <td align="left">TRUE</td>
 <td align="right">0.75</td>
+<td align="right">1978</td>
+<td align="right">2542</td>
+<td align="right">4520</td>
+<td align="left">tpr</td>
+<td align="right">0.5624</td>
+<td align="right">0.5478</td>
+<td align="right">0.5769</td>
+</tr>
+<tr class="even">
+<td align="left">inframe</td>
+<td align="left">FALSE</td>
+<td align="right">0.75</td>
+<td align="right">1757</td>
+<td align="right">2763</td>
+<td align="right">4520</td>
+<td align="left">tpr</td>
+<td align="right">0.6113</td>
+<td align="right">0.5969</td>
+<td align="right">0.6255</td>
+</tr>
+<tr class="odd">
+<td align="left">inframe_visit_med75</td>
+<td align="left">TRUE</td>
+<td align="right">0.75</td>
+<td align="right">1915</td>
+<td align="right">2605</td>
+<td align="right">4520</td>
+<td align="left">tpr</td>
+<td align="right">0.5763</td>
+<td align="right">0.5618</td>
+<td align="right">0.5908</td>
+</tr>
+<tr class="even">
+<td align="left">inframe_visit_med75</td>
+<td align="left">FALSE</td>
+<td align="right">0.75</td>
+<td align="right">1682</td>
+<td align="right">2838</td>
+<td align="right">4520</td>
+<td align="left">tpr</td>
+<td align="right">0.6279</td>
+<td align="right">0.6136</td>
+<td align="right">0.6420</td>
+</tr>
+<tr class="odd">
+<td align="left">funnel_zi</td>
+<td align="left">FALSE</td>
+<td align="right">0.75</td>
+<td align="right">2106</td>
+<td align="right">2414</td>
+<td align="right">4520</td>
+<td align="left">tpr</td>
+<td align="right">0.5341</td>
+<td align="right">0.5194</td>
+<td align="right">0.5487</td>
+</tr>
+<tr class="even">
+<td align="left">box_out</td>
+<td align="left">FALSE</td>
+<td align="right">0.75</td>
+<td align="right">2136</td>
+<td align="right">2384</td>
+<td align="right">4520</td>
+<td align="left">tpr</td>
+<td align="right">0.5274</td>
+<td align="right">0.5128</td>
+<td align="right">0.5421</td>
+</tr>
+<tr class="odd">
+<td align="left">classic</td>
+<td align="left">TRUE</td>
+<td align="right">1.00</td>
+<td align="right">1394</td>
+<td align="right">3126</td>
+<td align="right">4520</td>
+<td align="left">tpr</td>
+<td align="right">0.6916</td>
+<td align="right">0.6779</td>
+<td align="right">0.7050</td>
+</tr>
+<tr class="even">
+<td align="left">classic</td>
+<td align="left">FALSE</td>
+<td align="right">1.00</td>
+<td align="right">1146</td>
+<td align="right">3374</td>
+<td align="right">4520</td>
+<td align="left">tpr</td>
+<td align="right">0.7465</td>
+<td align="right">0.7335</td>
+<td align="right">0.7590</td>
+</tr>
+<tr class="odd">
+<td align="left">inframe</td>
+<td align="left">TRUE</td>
+<td align="right">1.00</td>
+<td align="right">1461</td>
+<td align="right">3059</td>
+<td align="right">4520</td>
+<td align="left">tpr</td>
+<td align="right">0.6768</td>
+<td align="right">0.6629</td>
+<td align="right">0.6904</td>
+</tr>
+<tr class="even">
+<td align="left">inframe</td>
+<td align="left">FALSE</td>
+<td align="right">1.00</td>
+<td align="right">1275</td>
+<td align="right">3245</td>
+<td align="right">4520</td>
+<td align="left">tpr</td>
+<td align="right">0.7179</td>
+<td align="right">0.7045</td>
+<td align="right">0.7310</td>
+</tr>
+<tr class="odd">
+<td align="left">inframe_visit_med75</td>
+<td align="left">TRUE</td>
+<td align="right">1.00</td>
+<td align="right">1403</td>
+<td align="right">3117</td>
+<td align="right">4520</td>
+<td align="left">tpr</td>
+<td align="right">0.6896</td>
+<td align="right">0.6758</td>
+<td align="right">0.7030</td>
+</tr>
+<tr class="even">
+<td align="left">inframe_visit_med75</td>
+<td align="left">FALSE</td>
+<td align="right">1.00</td>
 <td align="right">1200</td>
 <td align="right">3320</td>
 <td align="right">4520</td>
@@ -990,185 +2039,29 @@ detection</li>
 <td align="right">0.7213</td>
 <td align="right">0.7473</td>
 </tr>
-<tr class="even">
-<td align="left">inframe</td>
-<td align="left">FALSE</td>
-<td align="right">0.75</td>
-<td align="right">932</td>
-<td align="right">3588</td>
-<td align="right">4520</td>
-<td align="left">tpr</td>
-<td align="right">0.7938</td>
-<td align="right">0.7817</td>
-<td align="right">0.8055</td>
-</tr>
-<tr class="odd">
-<td align="left">inframe_visit_med75</td>
-<td align="left">TRUE</td>
-<td align="right">0.75</td>
-<td align="right">1249</td>
-<td align="right">3271</td>
-<td align="right">4520</td>
-<td align="left">tpr</td>
-<td align="right">0.7237</td>
-<td align="right">0.7103</td>
-<td align="right">0.7366</td>
-</tr>
-<tr class="even">
-<td align="left">inframe_visit_med75</td>
-<td align="left">FALSE</td>
-<td align="right">0.75</td>
-<td align="right">1055</td>
-<td align="right">3465</td>
-<td align="right">4520</td>
-<td align="left">tpr</td>
-<td align="right">0.7666</td>
-<td align="right">0.7539</td>
-<td align="right">0.7788</td>
-</tr>
-<tr class="odd">
-<td align="left">funnel_zi</td>
-<td align="left">FALSE</td>
-<td align="right">0.75</td>
-<td align="right">1627</td>
-<td align="right">2893</td>
-<td align="right">4520</td>
-<td align="left">tpr</td>
-<td align="right">0.6400</td>
-<td align="right">0.6258</td>
-<td align="right">0.6540</td>
-</tr>
-<tr class="even">
-<td align="left">box_out</td>
-<td align="left">FALSE</td>
-<td align="right">0.75</td>
-<td align="right">2242</td>
-<td align="right">2278</td>
-<td align="right">4520</td>
-<td align="left">tpr</td>
-<td align="right">0.5040</td>
-<td align="right">0.4893</td>
-<td align="right">0.5187</td>
-</tr>
-<tr class="odd">
-<td align="left">visit_med75</td>
-<td align="left">TRUE</td>
-<td align="right">1.00</td>
-<td align="right">969</td>
-<td align="right">3551</td>
-<td align="right">4520</td>
-<td align="left">tpr</td>
-<td align="right">0.7856</td>
-<td align="right">0.7733</td>
-<td align="right">0.7974</td>
-</tr>
-<tr class="even">
-<td align="left">visit_med75</td>
-<td align="left">FALSE</td>
-<td align="right">1.00</td>
-<td align="right">791</td>
-<td align="right">3729</td>
-<td align="right">4520</td>
-<td align="left">tpr</td>
-<td align="right">0.8250</td>
-<td align="right">0.8135</td>
-<td align="right">0.8359</td>
-</tr>
-<tr class="odd">
-<td align="left">visit_med75_over</td>
-<td align="left">TRUE</td>
-<td align="right">1.00</td>
-<td align="right">969</td>
-<td align="right">3551</td>
-<td align="right">4520</td>
-<td align="left">tpr</td>
-<td align="right">0.7856</td>
-<td align="right">0.7733</td>
-<td align="right">0.7974</td>
-</tr>
-<tr class="even">
-<td align="left">visit_med75_over</td>
-<td align="left">FALSE</td>
-<td align="right">1.00</td>
-<td align="right">791</td>
-<td align="right">3729</td>
-<td align="right">4520</td>
-<td align="left">tpr</td>
-<td align="right">0.8250</td>
-<td align="right">0.8135</td>
-<td align="right">0.8359</td>
-</tr>
-<tr class="odd">
-<td align="left">inframe</td>
-<td align="left">TRUE</td>
-<td align="right">1.00</td>
-<td align="right">901</td>
-<td align="right">3619</td>
-<td align="right">4520</td>
-<td align="left">tpr</td>
-<td align="right">0.8007</td>
-<td align="right">0.7887</td>
-<td align="right">0.8122</td>
-</tr>
-<tr class="even">
-<td align="left">inframe</td>
-<td align="left">FALSE</td>
-<td align="right">1.00</td>
-<td align="right">623</td>
-<td align="right">3897</td>
-<td align="right">4520</td>
-<td align="left">tpr</td>
-<td align="right">0.8622</td>
-<td align="right">0.8517</td>
-<td align="right">0.8720</td>
-</tr>
-<tr class="odd">
-<td align="left">inframe_visit_med75</td>
-<td align="left">TRUE</td>
-<td align="right">1.00</td>
-<td align="right">1002</td>
-<td align="right">3518</td>
-<td align="right">4520</td>
-<td align="left">tpr</td>
-<td align="right">0.7783</td>
-<td align="right">0.7659</td>
-<td align="right">0.7903</td>
-</tr>
-<tr class="even">
-<td align="left">inframe_visit_med75</td>
-<td align="left">FALSE</td>
-<td align="right">1.00</td>
-<td align="right">774</td>
-<td align="right">3746</td>
-<td align="right">4520</td>
-<td align="left">tpr</td>
-<td align="right">0.8288</td>
-<td align="right">0.8174</td>
-<td align="right">0.8396</td>
-</tr>
 <tr class="odd">
 <td align="left">funnel_zi</td>
 <td align="left">FALSE</td>
 <td align="right">1.00</td>
-<td align="right">916</td>
-<td align="right">3604</td>
+<td align="right">1519</td>
+<td align="right">3001</td>
 <td align="right">4520</td>
 <td align="left">tpr</td>
-<td align="right">0.7973</td>
-<td align="right">0.7853</td>
-<td align="right">0.8089</td>
+<td align="right">0.6639</td>
+<td align="right">0.6499</td>
+<td align="right">0.6777</td>
 </tr>
 <tr class="even">
 <td align="left">box_out</td>
 <td align="left">FALSE</td>
 <td align="right">1.00</td>
-<td align="right">776</td>
-<td align="right">3744</td>
+<td align="right">1490</td>
+<td align="right">3030</td>
 <td align="right">4520</td>
 <td align="left">tpr</td>
-<td align="right">0.8283</td>
-<td align="right">0.8169</td>
-<td align="right">0.8391</td>
+<td align="right">0.6704</td>
+<td align="right">0.6564</td>
+<td align="right">0.6840</td>
 </tr>
 </tbody>
 </table>
@@ -1176,46 +2069,60 @@ detection</li>
 <div class="section level4">
 <h4 id="plot">Plot<a class="anchor" aria-label="anchor" href="#plot"></a>
 </h4>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">df_aggr</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>ur_rate <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"under-reporting rate: "</span>,  <span class="va">ur_rate</span>, <span class="st">" - "</span>, <span class="va">ratio_type</span><span class="op">)</span></span>
-<span>  <span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">ur_rate</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">type</span>, <span class="va">ratio</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_linerange.html" class="external-link">geom_errorbar</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>ymin <span class="op">=</span> <span class="va">ci95_low</span>, ymax <span class="op">=</span> <span class="va">ci95_high</span>, color <span class="op">=</span> <span class="va">type_strip</span>, alpha <span class="op">=</span> <span class="va">has_mult</span><span class="op">)</span>, linewidth <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">+</span></span>
-<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html" class="external-link">facet_wrap</a></span><span class="op">(</span><span class="op">~</span> <span class="va">ur_rate</span>, ncol <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">+</span></span>
-<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_flip.html" class="external-link">coord_flip</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
-<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span></span>
-<span>      legend.position <span class="op">=</span> <span class="st">"right"</span>,</span>
-<span>      axis.text.y <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_blank</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>      axis.ticks.y <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_blank</a></span><span class="op">(</span><span class="op">)</span></span>
-<span>    <span class="op">)</span> <span class="op">+</span></span>
-<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span></span>
-<span>      x <span class="op">=</span> <span class="st">""</span>,</span>
-<span>      y <span class="op">=</span> <span class="st">"Ratio (CI95)"</span>, </span>
-<span>      title <span class="op">=</span> <span class="st">"{simaerep} Performance"</span>,</span>
-<span>      color <span class="op">=</span> <span class="st">"Method"</span>,</span>
-<span>      alpha <span class="op">=</span> <span class="st">"Multiplicity Correction"</span></span>
-<span>    <span class="op">)</span> <span class="op">+</span></span>
-<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html" class="external-link">scale_color_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rev.html" class="external-link">rev</a></span><span class="op">(</span><span class="fu">RColorBrewer</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/RColorBrewer/man/ColorBrewer.html" class="external-link">brewer.pal</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">6</span>, name <span class="op">=</span> <span class="st">"Dark2"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html" class="external-link">scale_alpha_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0.5</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">plot_perf</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">df</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">p</span> <span class="op">&lt;-</span> <span class="va">df</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
+<span>      factor_event <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"outlier reporting rate: "</span>,  <span class="va">factor_event</span>, <span class="st">" - "</span>, <span class="va">ratio_type</span><span class="op">)</span>,</span>
+<span>      factor_event <span class="op">=</span> <span class="fu">forcats</span><span class="fu">::</span><span class="fu"><a href="https://forcats.tidyverse.org/reference/fct_relevel.html" class="external-link">fct_relevel</a></span><span class="op">(</span><span class="va">factor_event</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"outlier reporting rate: 0 - fpr"</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>      type <span class="op">=</span> <span class="fu">forcats</span><span class="fu">::</span><span class="fu"><a href="https://forcats.tidyverse.org/reference/fct_relevel.html" class="external-link">fct_relevel</a></span><span class="op">(</span><span class="va">type</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"box_out"</span>, <span class="st">"funnel_zi"</span><span class="op">)</span><span class="op">)</span></span>
+<span>    <span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">factor_event</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">type</span>, <span class="va">ratio</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>      <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_linerange.html" class="external-link">geom_errorbar</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>ymin <span class="op">=</span> <span class="va">ci95_low</span>, ymax <span class="op">=</span> <span class="va">ci95_high</span>, color <span class="op">=</span> <span class="va">type_strip</span>, alpha <span class="op">=</span> <span class="va">has_mult</span><span class="op">)</span>, linewidth <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">+</span></span>
+<span>      <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html" class="external-link">facet_wrap</a></span><span class="op">(</span><span class="op">~</span> <span class="va">factor_event</span>, ncol <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">+</span></span>
+<span>      <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_flip.html" class="external-link">coord_flip</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>      <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span></span>
+<span>        legend.position <span class="op">=</span> <span class="st">"right"</span>,</span>
+<span>        axis.text.y <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_blank</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>        axis.ticks.y <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_blank</a></span><span class="op">(</span><span class="op">)</span></span>
+<span>      <span class="op">)</span> <span class="op">+</span></span>
+<span>      <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span></span>
+<span>        x <span class="op">=</span> <span class="st">""</span>,</span>
+<span>        y <span class="op">=</span> <span class="st">"Ratio (CI95)"</span>, </span>
+<span>        title <span class="op">=</span> <span class="st">"{simaerep} Performance"</span>,</span>
+<span>        color <span class="op">=</span> <span class="st">"Method"</span>,</span>
+<span>        alpha <span class="op">=</span> <span class="st">"Multiplicity Correction"</span></span>
+<span>      <span class="op">)</span> <span class="op">+</span></span>
+<span>      <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html" class="external-link">scale_color_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rev.html" class="external-link">rev</a></span><span class="op">(</span><span class="fu">RColorBrewer</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/RColorBrewer/man/ColorBrewer.html" class="external-link">brewer.pal</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">6</span>, name <span class="op">=</span> <span class="st">"Dark2"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>      <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html" class="external-link">scale_alpha_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0.5</span><span class="op">)</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">p</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="va">p_over</span> <span class="op">&lt;-</span> <span class="va">df_aggr</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">factor_event</span> <span class="op">&gt;=</span> <span class="fl">0</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">plot_perf</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Over-Reporting"</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">p_under</span> <span class="op">&lt;-</span> <span class="va">df_aggr</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">factor_event</span> <span class="op">&lt;=</span> <span class="fl">0</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">plot_perf</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Under-Reporting"</span><span class="op">)</span></span>
+<span></span>
+<span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://patchwork.data-imaginist.com" class="external-link">patchwork</a></span><span class="op">)</span></span>
+<span></span>
+<span></span>
+<span><span class="va">p_over</span> <span class="op">+</span> <span class="va">p_under</span> <span class="op">+</span> <span class="fu">patchwork</span><span class="fu">::</span><span class="fu"><a href="https://patchwork.data-imaginist.com/reference/plot_annotation.html" class="external-link">plot_annotation</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"{simaerep} Performance"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="performance_files/figure-html/plot-1.png" width="960"></p>
 </div>
 <div class="section level4">
 <h4 id="summary">Summary<a class="anchor" aria-label="anchor" href="#summary"></a>
 </h4>
 <ul>
-<li>new inframe method has slightly better performance than original
-algorithm</li>
-</ul>
-<blockquote>
-<p>The new inframe methods compares event per visit rates without
-dropping any patients or AEs from the analysis. This is likely to
-explain the performance increase. We observed a similar increase when we
-optimized visit_med75 in past experiments.</p>
-</blockquote>
-<ul>
-<li>multiplicity correction imposes a penalty on the true positive
+<li>Multiplicity correction imposes a penalty on the true positive
 rate</li>
 </ul>
 <blockquote>
@@ -1232,6 +2139,15 @@ plot outlier detection.</li>
 <blockquote>
 <p>These controls confirm previous observations that were made during
 the {simaerep} validation.</p>
+</blockquote>
+<ul>
+<li>{simaerep} algorithm variants are performing more or less at the
+same level.</li>
+</ul>
+<blockquote>
+<p>The inframe method can be calculated in a database backend and also
+calculated delta events, while the classic method is faster but requires
+the data to be processed in memory.</p>
 </blockquote>
 </div>
 </div>

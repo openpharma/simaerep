@@ -18,35 +18,55 @@ knitr::opts_chunk$set(echo = TRUE, cache = FALSE)
 
 # Load
 ```{r}
-suppressPackageStartupMessages(library(tidyverse))
+suppressPackageStartupMessages(library(dplyr))
+suppressPackageStartupMessages(library(tibble))
+suppressPackageStartupMessages(library(DBI))
 suppressPackageStartupMessages(library(knitr))
 suppressPackageStartupMessages(library(simaerep))
 ```
 
 # Introduction
 
-Simulate adverse event reporting in clinical trials with the goal of detecting under-reporting sites.
+Simulate subject-level event reporting of clinical trial sites with the goal of detecting over- and under-reporting.
 
-Monitoring of Adverse Event (AE) reporting in clinical trials is important for patient safety. We
-use bootstrap-based simulation to assign an AE under-reporting probability to each site in a clinical trial.
+Monitoring reporting rates of subject-level clinical events (e.g.
+adverse events, protocol deviations) reported by clinical trial sites is an
+important aspect of risk-based quality monitoring (RBQM) strategy. Sites that are 
+under-reporting or over-reporting events can be detected using bootstrap
+simulations during which patients are redistributed between sites. Site-specific
+distributions of event reporting rates  are generated that are used to assign
+probabilities to the observed reporting rates.
+  
 The method is inspired by the 'infer' R package and Allen Downey's blog article: ["There is only one test!"](
 http://allendowney.blogspot.com/2011/05/there-is-only-one-test.html).
 
-## Adverse Events
+## Why use {simaerep}?
 
-An adverse event (AE) is any untoward medical occurrence in a patient or clinical investigation subject administered a pharmaceutical product and which does not necessarily have a causal relationship with this treatment. It is important for patient safety that AEs are reported back to the sponsor. An important part of quality monitoring is to detect clinical trial sites that are not propagating all of the AEs reported to them by their patients to the sponsor. In a clinical trial patients follow a strict visiting schedule at which times treatments are given and exams are being performed. Typically AEs get reported by a patient when they are at an on-site visit at the clinic. So the total number of AEs reported by a site depends on the number of patients enrolled at the site and the total number of visits. 
+Patient-level events during a clinical study do not occur randomly at visits but
+they are heavily dependent on the underlying study protocol and the planned procedures.
+We have illustrated this in our simulated test data by sampling event rates from
+a gamma distribution with higher rates for early visits and low rates for late visits.
+
+Typically most RBQM tools calculate a ratio between the site event count and the
+number of patient, the days that they spend on study or the number of visits. Then
+they employ some outlier detection method to detect outliers (e.g. box plot statistics,
+percentiles, funnel plots). All of these methods assume a constant event rate
+over the course of the study or that all patients started the trial at the same time.
+
+In a simulation experiments we could show that {simaerep} outperforms these methods [see
+documentation](https://openpharma.github.io/simaerep/articles/funnel_perf.html).
+
+{simaerep} has also been positively evaluated by three different industry members for the
+purpose of detecting sites that are under-reporting adverse events [Koneswarakantha et al. 2024](https://doi.org/10.1007/s40264-020-01011-5).
 
 ## Algorithm
 
-In a nutshell we will perform the following steps.
-
-1) Record visit_med75, number of patients that have reached visit_med75, mean cumulative AE count at visit_med75 for a clinical trial site.
-2) Create patient pool with all patients in study that have reached visit_med75 as determined in 1) and their cumulative AE count at visit_med75.
-3) Draw with replacement as many patients from 2) as determined in 1) and calculate the mean cumulative AE count of the draw (figure 1b).
-4) Repeat 3) 1000 times.
-5) Calculate probability of obtaining mean cumulative AE count or lower as obtained in 1) based on results of 4).
-6) Repeat 1-5) for all sites in trial.
-7) Adjust probabilities using the [Benjamin Hochberg Procedure](https://www.statisticshowto.com/benjamini-hochberg-procedure/) in order to correct alpha error.
+1) Record initial site-level events per visits rate
+2) Replace every patient with a random patient with the same number of visits
+3) Record site-level events per visits rate for new set of patients
+4) Repeat 3) 1000 times to obtain site-specific events per visits rate distribution.
+5) Determine probability to obtain initial site-level events per visits rate from 1) using the distribution generated in 4)
+6) Adjust probabilities using the [Benjamin Hochberg Procedure](https://www.statisticshowto.com/benjamini-hochberg-procedure/) in order to correct alpha error.
 
 
 ## Sample Data
@@ -65,7 +85,7 @@ replicate(
    3,
    sim_test_data_patient(
     .f_sample_max_visit = function() rnorm(1, mean = 20, sd = 4),
-    .f_sample_ae_per_visit = function(max_visit) rpois(max_visit, 0.5)
+    .f_sample_event_per_visit = function(max_visit) rpois(max_visit, 0.5)
   )
 )
 
@@ -73,151 +93,274 @@ replicate(
 
 ### Study
 
-In order to simulate patient data for an entire study we assume make the simplification that all sites have the same number of patients. Further we specify a fraction of sites that is under-reporting AEs.
+In order to simulate patient data for an entire study we assume make the simplification that all sites have the same number of patients. Further we specify a fraction of sites that is under-reporting events.
+
+We sample event_rates from a gamma distribution to reflect the non-constant event rates.
 
 ```{r}
+
+set.seed(1)
+
 df_visit <- sim_test_data_study(
-  n_pat = 120,
-  n_sites = 6,
-  frac_site_with_ur = 0.4,
-  ur_rate = 0.6,
-  max_visit_mean = 20,
-  max_visit_sd = 4,
-  ae_per_visit_mean = 0.5
+  n_pat = 100, # number of patients in study
+  n_sites = 10, # number of sites in study
+  ratio_out = 0.1, # ratio of sites with outlier
+  factor_event_rate = -0.5, # rate of under-reporting
+  # non-constant event rates based on gamma distribution
+  event_rates = (dgamma(seq(1, 20, 0.5), shape = 5, rate = 2) * 5) + 0.1,
+  max_visit = 20,
+  max_visit_sd = 10,
+  study_id = "A"
 )
 
-df_visit$study_id <- "A"
 
 df_visit %>%
   head(10) %>%
   knitr::kable()
 
 df_visit %>%
-  select(site_number, is_ur) %>%
+  select(site_id, is_out) %>%
   distinct() %>%
   knitr::kable()
 ```
 
-In our sample data 2 sites (S0001 and S0002) are under-reporting AEs
+In our sample data 1 sites (S0001) is under-reporting events.
 
 ## Algorithm Execution
 
-### S3 interface
+### Standard
 
-We will describe the internal details of the algorithm next. However, it is recommended to use the S3 interface, which manages the execution of the internal functions and stores the intermediate results.
+The column `event_prob` contains the reporting probability for each site as values
+between -1 and 1. Under- and over-reporting probabilities are inversely related and
+have been combined into one column. Negative values show high under-reporting,
+positive values higher over-reporting.
+
+The column `event_delta` shows the difference of the expected event count minus the reported event count.
+
 
 ```{r}
-aerep <- simaerep(df_visit)
-aerep
+evrep <- simaerep(df_visit)
+evrep
 ```
 
-
-### Specifying the Evaluation Point visit_med75
-
-In an ongoing trial all patients will have a different number of consecutive visits. To find a cut-off visit to normalize the data we specify a single evaluation point for a given site based on the number of visits of the patient population. 
-
-For determining the visit number at which we are going to evaluate AE reporting we take the maximum visit of each patient at a site and take the median. Then we multiply with 0.75 which will give us a cut-off point determining which patient will be evaluated. Of those patients we will evaluate we take the minimum of all maximum visits hence ensuring that we take the highest visit number possible without excluding more patients from the analysis. In order to ensure that the sampling pool for that visit is large enough we ensure that at least 20% of all patients at the study are available for sampling. We limit visit_med75 to the 80% quantile of all patient maximum visits of the entire study.
-
-For this we use `site_aggr` to aggregate the simulated visit level data to site level. Adjusting `min_pat_pool` will change the minimum ratio of patients available for sampling that determines the maximum values for visit_med75.
-
-```{r warning= FALSE}
-
-df_site <- site_aggr(df_visit, method = "med75_adj", min_pat_pool = 0.2)
-
-df_site %>%
-  kable()
-
-plot_visit_med75(df_visit, df_site, study_id_str = "A", n_site = 6)
-```
-
-Using the adjusted visit_med75 will drop a few patients (dashed lines) but will by definition at least include 50% of all patients favoring patients that have higher number of visits. By looking at the mean ae development (purple line) we can already easily spot the two under-reporting sites. The same goes for looking at the `mean_ae_site_med75` column in `df_site`. Next we will use bootstrap simulations to determine the probability for obtaining each mean AE value or lower at visit_med75 by chance.
-
-### Bootstrap Simulations
-
-#### Advantage Over Classic Statistical Tests
-
-We could use a classical parametric test and calculate the probability with which we can reject the NULL hypothesis for the AE counts that we observe at the visit_med75.
-
-As we sample the AEs from a poisson distribution the R implementation of the poisson.test would be appropriate.
-
-But there are four major problems that we often encounter when we try to describe real life count data with the poisson distribution which is only described by a single parameter:
-
-- over and underdispersion
-- skewness (long right tail)
-- inflated zeros
-- variance mean relationship might not be fixed
-
-(see [Distribution for Modelling Location Scale and Shape 5.1.2](https://www.gamlss.com/wp-content/uploads/2018/01/DistributionsForModellingLocationScaleandShape.pdf))
-
-The true distribution of the AE counts will vary from study to study with the degree of the influence of these 4 problems being unknown unless thoroughly investigated.
-
-With the non-parametric approach that we propose we do not need to worry about these statistical assumptions. Since the distribution of the AE count from the simulated patient pool we draw from will be very close to the unknown true distribution of the underlying AE generating process.
-
-
-#### Disadvantages Over Classic Statistical Tests
-
-- **Upper Limit for Uncompliant Sites**. We simulate an underlying compliant patient population using the data we are given. If the fraction of uncompliant examples becomes too high, detection rates will decrease. We find that detection rates start decreasing with 30-50% of under-reporting sites and are not usable anymore if a majority > 50% of all sites are under-reporting [see article on usability limits](https://openpharma.github.io/simaerep/articles/usability_limits.html).
-- **Lower Probability Limit** The number of repeats determines the smallest probability greater than zero, for example a for r=1000 the smallest value greater than zero is 0.001
-- **Computationally Expensive**
-
-
-#### Methodology
-
-*How likely is it to get a mean AE value that is equal or lower to what we observe at site C with the same number of patients?*
-
-For illustration purposes we start to simulate 10 hypothetical patient groups for site C by drawing (with replacement) from all patients in the study marking those for which we have obtained an equal or lower mean AE value than initially observed (middle).
-
-
-Instead of 10 times we simulate 1000 times and count how many times we have observed an equal or lower mean AE value than initially observed and convert it to a percentage (right).
-
-To illustrate the effect of under-reporting we repeat the same process after having removed 2 AEs per patient from site C. We see how the probability for obtaining an equal or lower mean AE value than initially observed decreases (bottom).
-
-```{r fig.width=11, fig.height=9}
-plot_sim_examples(size_dot = 4, size_raster_label = 10)
-```
-
-#### Application
-
-We can run the above described simulation and as a benchmark also perform a poisson test.
 
 ```{r}
-df_sim_sites <- sim_sites(df_site, df_visit, r = 1000, poisson_test = TRUE)
-
-df_sim_sites %>%
-  kable()
+plot(evrep, study = "A")
 ```
 
-We find that the probability of getting a mean ae at visit_med75 for sites S0001 and S0002 is 0 or near zero.
+*Left panel shows mean cumulative event reporting per site (blue lines) against mean cumulative event reporting of the entire study (golden line). Sites with either high under-reporting (negative probabilities) or high over-reporting (positive probabilities) are marked by grey dots and plotted in additional panels on the right. N denotes the number of sites. Right panel shows individual sites with total patient cumulative counts as grey lines. N denotes the number of patients, the percentage the under- and over-reporting probability and \u0394 denotes the difference compared to the expected number of events.*
 
-## Alpha Error Correction
+### Illustrate Probability Scoring
 
-Our simulated test data set consists of just 6 sites. However, it is not uncommon for 100 sites or more to participate in the same clinical trial. This would mean that we need to perform 100 statistical tests, and applying a 5% significance threshold would lead to on average of 5 False Positives (FP). We therefore need to adjust the calculated p-values and bootstrapped probabilities using `stats::p.adjust(p, method = "BH")`, which applies the [Benjamin Hochberg Procedure](https://www.statisticshowto.com/benjamini-hochberg-procedure/). `eval_sites()` uses the the inverted adjusted values to calculates the final bootstrapped AE under-reporting probability (prob_low_prob_ur) and includes the poisson test derived under-reporting probability as a reference (pval_prob_ur).
+We can illustrate the probability scoring by increasing the number of sites and 
+switching off the multiplicity correction and not introducing any outlier.
+
+Note that none of these sites are actually outlier but high scores are the
+results of repetitive testing.
 
 ```{r}
-df_eval <- eval_sites(df_sim_sites, method = "BH")
+df_visit <- sim_test_data_study(
+  n_pat = 1000, # number of patients in study
+  n_sites = 100, # number of sites in study
+  # non-constant event rates based on gamma distribution
+  event_rates = (dgamma(seq(1, 20, 0.5), shape = 5, rate = 2) * 5) + 0.1,
+  max_visit = 20,
+  max_visit_sd = 10,
+  study_id = "A"
+)
 
-df_eval %>%
-  kable()
+evrep <- simaerep(df_visit, mult_corr = FALSE)
+evrep
+
+plot(evrep, study = "A")
 ```
 
+### Multiple Event Types
 
-## Plot Results
-
-`plot_study` will plot mean ae development of all sites and visit level data for each flagged site with an AE under-reporting threshold of 95%.
-
-```{r fig.width = 10}
-plot_study(df_visit, df_site, df_eval, study = "A")
-```
-
-# Applying {simaerep}
-
-Instead of executing all previous steps manually we can also use the S3 interface which manages all intermediate results and provides more convenient plotting using the `plot()` generic function.
+We can calculate scores for multiple event types in one go. This time we add a site
+outlier with 50% over-reporting.
 
 ```{r}
-aerep <- simaerep(df_visit)
-aerep
-str(aerep)
-plot(aerep)
+
+set.seed(1)
+
+event_names <- c("x", "y")
+
+df_visit <- sim_test_data_study(
+  n_pat = 1000, # number of patients in study
+  n_sites = 100, # number of sites in study
+  # non-constant event rates based on gamma distribution
+  ratio_out = 1/100, # ratio of sites with outlier
+  factor_event_rate = +0.5, # rate of over-reporting
+  event_names = event_names,
+  event_rates = list(
+    (dgamma(seq(1, 20, 0.5), shape = 5, rate = 2) * 5) + 0.1,
+    (dgamma(seq(1, 20, 0.5), shape = 4, rate = 2) * 5) + 0.05
+  ),
+  max_visit = 20,
+  max_visit_sd = 10,
+  study_id = "A"
+)
+
+df_visit %>%
+  select(site_id, patient_id, visit, n_x, n_y)
 ```
 
-For modifying the default parameters please check out the `simaerep()` documentation.
+```{r}
+evrep <- simaerep(df_visit, event_names = event_names)
+evrep
+```
+
+```{r}
+plot(evrep, study = "A", plot_event = "x")
+
+plot(evrep, study = "A", plot_event = "y")
+
+```
+
+### Input Data Requirements
+
+As input data the cumulative event count for each patient visit is required.
+
+```{r}
+
+df_visit <- sim_test_data_study()
+
+df_visit %>%
+  filter(patient_id == "P000001") %>%
+  select(site_id, patient_id, visit, n_event) %>%
+  knitr::kable()
+```
+
+In practice this requires data from different domains within the clinical data set
+to be merged. This requires the patient and site ids as well as the date and time
+at which visits and events are occurring. 
+
+There will be edge cases e.g. missing dates, missing patient link, events and visits
+on the same date, that require attention.
+
+[gsm.simaerep::InputCumCount](https://impala-consortium.github.io/gsm.simaerep/reference/Input_CumCount.html) that is part of the gsm extension [`gsm.simaerep`](https://github.com/IMPALA-Consortium/gsm.simaerep) 
+uses subject, visit and event data as input and merges the data into a `simaerep`
+ready data frame.
+
+However, it follows the `gsm` naming conventions so the column names will be different
+than those required by `simaerep`. We can adapt to the different column names in the
+following way.
+
+`gsm.simaerep` has not yet been released on CRAN so we are not demonstrating it's 
+functionality here.
+
+
+```{r}
+
+df_visit_gsm <- df_visit %>%
+  mutate(
+    study_id = "A"
+  ) %>%
+  select(
+    StudyID = study_id,
+    GroupID = site_id,
+    SubjectID = patient_id, 
+    Denominator = visit, 
+    Numerator = n_event
+  )
+
+simaerep(
+  df_visit_gsm,
+  col_names = list(
+    study_id = "StudyID",
+    site_id = "GroupID",
+    patient_id = "SubjectID",
+    visit = "Denominator",
+    n_ae = "Numerator"
+  )
+)
+
+```
+
+## Multiple Studies
+
+`simaerep` probabilities can be calculated for multiple studies at once.
+
+```{r}
+
+df_visit <- bind_rows(
+  sim_test_data_study(study_id = "A"),
+  sim_test_data_study(study_id = "B")
+)
+
+simaerep(df_visit)
+```
+
+## In Database Calculation
+
+We can demonstrate the database-backend compatibility by using a connection to a in memory `duckdb` database. In order to set the number of replications we need to create a new table in our back-end that has one column with as many rows as the desired replications.
+
+A lazy reference to this table can then be passed to the `r` parameter.
+
+```{r}
+con <- DBI::dbConnect(duckdb::duckdb(), dbdir = ":memory:")
+df_r <- tibble(rep = seq(1, 1000))
+
+df_visit <- sim_test_data_study(
+  n_pat = 100, # number of patients in study
+  n_sites = 10, # number of sites in study
+  ratio_out = 0.1, # ratio of sites with outlier
+  factor_event_rate = -0.5, # rate of under-reporting
+  # non-constant event rates based on gamma distribution
+  event_rates = (dgamma(seq(1, 20, 0.5), shape = 5, rate = 2) * 5) + 0.1,
+  max_visit = 20,
+  max_visit_sd = 10,
+  study_id = "A"
+)
+
+dplyr::copy_to(con, df_visit, "visit")
+dplyr::copy_to(con, df_r, "r")
+
+tbl_visit <- tbl(con, "visit")
+tbl_r <- tbl(con, "r")
+
+evrep_db <- simaerep(tbl_visit, r = tbl_r)
+```
+
+When inspecting `df_eval` we see that it is still a lazy table object.
+
+```{r}
+evrep_db
+```
+
+We can convert it to sql code. The `cte` option makes the sql code more readable.
+
+```{r}
+sql_eval <- dbplyr::sql_render(evrep_db$df_eval, sql_options = dbplyr::sql_options(cte = TRUE))
+stringr::str_trunc(sql_eval, 500)
+```
+
+We can take that code and wrap it in a `CREATE TABLE` statement
+
+```{r}
+sql_create <- glue::glue("CREATE TABLE eval AS ({sql_eval})")
+DBI::dbExecute(con, sql_create)
+```
+
+Retrieve the new table from the database.
+
+```{r}
+tbl_eval <- tbl(con, "eval")
+tbl_eval
+```
+
+We plot the results from the {simaerep} object.
+
+```{r}
+plot(evrep_db, study = "A")
+```
+
+
+```{r}
+DBI::dbDisconnect(con)
+```
+
+
+
+

@@ -38,19 +38,23 @@ after \code{\link[simaerep]{prep_for_sim}}
 }
 \examples{
 df_visit <- sim_test_data_study(
-   n_pat = 100,
-   n_sites = 5,
-   frac_site_with_ur = 0.4,
-   ur_rate = 0.2
-)
-
-df_visit$study_id <- "A"
+  n_pat = 100,
+  n_sites = 5,
+  ratio_out = 0.4,
+  factor_event_rate = 0.6
+  ) \%>\%
+  # internal functions require internal column names
+  dplyr::rename(
+    n_ae = n_event,
+    site_number = site_id,
+    patnum = patient_id
+  )
 
 df_site <- site_aggr(df_visit)
 
-df_prep <- prep_for_sim(df_site, df_visit)
+df_prep <- simaerep:::prep_for_sim(df_site, df_visit)
 
-df_sim <- sim_after_prep(df_prep)
+df_sim <- simaerep:::sim_after_prep(df_prep)
 
 df_sim
 }
@@ -58,3 +62,4 @@ df_sim
 \code{\link[simaerep]{sim_sites}},
 \code{\link[simaerep]{prep_for_sim}}
 }
+\keyword{internal}

@@ -6,29 +6,29 @@
 \usage{
 sim_test_data_portfolio(
   df_config,
-  df_ae_rates = NULL,
-  parallel = FALSE,
-  progress = TRUE
+  df_event_rates = NULL,
+  progress = TRUE,
+  parallel = TRUE
 )
 }
 \arguments{
-\item{df_config}{dataframe as returned by \code{\link{get_config}}}
+\item{df_config}{dataframe as returned by \code{\link{get_portf_config}}}
 
-\item{df_ae_rates}{dataframe with ae rates. Default: NULL}
-
-\item{parallel}{logical activate parallel processing, see details, Default: FALSE}
+\item{df_event_rates}{dataframe with event rates. Default: NULL}
 
 \item{progress}{logical, Default: TRUE}
+
+\item{parallel}{logical activate parallel processing, see details, Default: FALSE}
 }
 \value{
 dataframe with the following columns: \describe{
-\item{\strong{study_id}}{study identification} \item{\strong{ae_per_visit_mean}}{mean
-AE per visit per study} \item{\strong{site_number}}{site}
+\item{\strong{study_id}}{study identification} \item{\strong{event_per_visit_mean}}{mean
+event per visit per study} \item{\strong{site_id}}{site}
 \item{\strong{max_visit_sd}}{standard deviation of maximum patient visits per
 site} \item{\strong{max_visit_mean}}{mean of maximum patient visits per site}
-\item{\strong{patnum}}{number of patients}
+\item{\strong{patient_id}}{number of patients}
 \item{\strong{visit}}{visit number}
-\item{\strong{n_ae}}{cumulative sum of AEs}
+\item{\strong{n_event}}{cumulative sum of events}
 }
 }
 \description{
@@ -44,24 +44,17 @@ run, e.g. `plan(multisession, workers = 3)
 \examples{
 \donttest{
 df_visit1 <- sim_test_data_study(n_pat = 100, n_sites = 10,
-                                 frac_site_with_ur = 0.4, ur_rate = 0.6)
-
-df_visit1$study_id <- "A"
+                                 ratio_out = 0.4, factor_event_rate = 0.6,
+                                 study_id = "A")
 
 df_visit2 <- sim_test_data_study(n_pat = 100, n_sites = 10,
-                                 frac_site_with_ur = 0.2, ur_rate = 0.1)
+                                 ratio_out = 0.2, factor_event_rate = 0.1,
+                                 study_id = "B")
 
-df_visit2$study_id <- "B"
 
 df_visit <- dplyr::bind_rows(df_visit1, df_visit2)
 
-df_site_max <- df_visit \%>\%
-  dplyr::group_by(study_id, site_number, patnum) \%>\%
-  dplyr::summarise(max_visit = max(visit),
-            max_ae = max(n_ae),
-            .groups = "drop")
-
-df_config <- get_config(df_site_max)
+df_config <- get_portf_config(df_visit)
 
 df_config
 
@@ -69,22 +62,10 @@ df_portf <- sim_test_data_portfolio(df_config)
 
 df_portf
 
-df_scen <- sim_ur_scenarios(df_portf,
-                            extra_ur_sites = 2,
-                            ur_rate = c(0.5, 1))
-
-
-df_scen
-
-df_perf <- get_portf_perf(df_scen)
-
-df_perf
 }
 }
 \seealso{
 \code{\link{sim_test_data_study}}
-\code{\link{get_config}}
+\code{\link{get_portf_config}}
 \code{\link{sim_test_data_portfolio}}
-\code{\link{sim_ur_scenarios}}
-\code{\link{get_portf_perf}}
 }

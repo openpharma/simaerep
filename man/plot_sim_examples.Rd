@@ -29,3 +29,4 @@ plot_sim_examples()
 \seealso{
 \code{\link[cowplot]{ggdraw}},\code{\link[cowplot]{draw_label}},\code{\link[cowplot]{plot_grid}}
 }
+\keyword{internal}

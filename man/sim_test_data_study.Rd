@@ -7,13 +7,13 @@
 sim_test_data_study(
   n_pat = 1000,
   n_sites = 20,
-  frac_site_with_ur = 0,
-  ur_rate = 0,
+  ratio_out = 0,
+  factor_event_rate = 0,
   max_visit_mean = 20,
   max_visit_sd = 4,
-  ae_per_visit_mean = c(0.5),
-  ae_rates = c(NULL),
-  event_names = list("ae")
+  event_rates = dgamma(seq(1, 20, 0.5), shape = 5, rate = 2) * 5 + 0.1,
+  event_names = c("event"),
+  study_id = "A"
 )
 }
 \arguments{
@@ -21,11 +21,12 @@ sim_test_data_study(
 
 \item{n_sites}{integer, number of sites, Default: 20}
 
-\item{frac_site_with_ur}{fraction of AE under-reporting sites, Default: 0}
+\item{ratio_out}{ratio of sites with outlier, Default: 0}
 
-\item{ur_rate}{AE under-reporting rate, will lower mean ae per visit used to
-simulate patients at sites flagged as AE-under-reporting. Negative Values
-will simulate over-reporting., Default: 0}
+\item{factor_event_rate}{event reporting rate factor for site outlier, will
+modify mean event per visit rate used for outlier sites. Negative Values
+will simulate under-reporting, positive values over-reporting, e.g. -0.4 ->
+40\% under-reporting, +0.4 -> 40\% over-reporting Default: 0}
 
 \item{max_visit_mean}{mean of the maximum number of visits of each patient,
 Default: 20}
@@ -33,35 +34,53 @@ Default: 20}
 \item{max_visit_sd}{standard deviation of maximum number of visits of each
 patient, Default: 4}
 
-\item{ae_per_visit_mean}{mean event per visit per patient, Default: 0.5}
+\item{event_rates}{list or vector with visit-specific event rates. Use list
+for multiple event names, Default: dgamma(seq(1, 20, 0.5), shape = 5, rate =
+2) * 5 + 0.1}
 
-\item{ae_rates}{vector with visit-specific event rates, Default: Null}
+\item{event_names}{vector, contains the event names, default = "event"}
 
-\item{event_names}{vector, contains the event names, default = "ae"}
+\item{study_id}{character, Default: "A"}
 }
 \value{
-tibble with columns site_number, patnum, is_ur, max_visit_mean,
-max_visit_sd, ae_per_visit_mean, visit, n_ae
+tibble with columns site_id, patient_id, is_out, max_visit_mean,
+max_visit_sd, event_per_visit_mean, visit, n_event
 }
 \description{
 evenly distributes a number of given patients across a number of
-given sites. Then simulates ae development of each patient reducing the
-number of reported AEs for patients distributed to AE-under-reporting
+given sites. Then simulates event reporting of each patient reducing the
+number of reported events for patients distributed to event-under-reporting
 sites.
 }
 \details{
 maximum visit number will be sampled from normal distribution with
-characteristics derived from max_visit_mean and max_visit_sd, while the ae
-per visit will be sampled from a poisson distribution described by
-ae_per_visit_mean.
+characteristics derived from max_visit_mean and max_visit_sd, while the
+events per visit will be sampled from a poisson distribution described by
+events_per_visit_mean.
 }
 \examples{
 set.seed(1)
+# no outlier
 df_visit <- sim_test_data_study(n_pat = 100, n_sites = 5)
-df_visit[which(df_visit$patnum == "P000001"),]
+df_visit[which(df_visit$patient_id == "P000001"),]
+
+# under-reporting outlier
 df_visit <- sim_test_data_study(n_pat = 100, n_sites = 5,
-    frac_site_with_ur = 0.2, ur_rate = 0.5)
-df_visit[which(df_visit$patnum == "P000001"),]
-ae_rates <- c(0.7, rep(0.5, 8), rep(0.3, 5))
-sim_test_data_study(n_pat = 100, n_sites = 5, ae_rates = ae_rates)
+    ratio_out = 0.2, factor_event_rate = -0.5)
+df_visit[which(df_visit$patient_id == "P000001"),]
+
+# constant event rates
+sim_test_data_study(n_pat = 100, n_sites = 5, event_rates = 0.5)
+
+# non-constant event rates for two event types
+event_rates_ae <- c(0.7, rep(0.5, 8), rep(0.3, 5))
+event_rates_pd <- c(0.3, rep(0.4, 6), rep(0.1, 5))
+
+sim_test_data_study(
+n_pat = 100,
+n_sites = 5,
+event_names = c("ae", "pd"),
+event_rates = list(event_rates_ae, event_rates_pd)
+)
+
 }

@@ -4,13 +4,7 @@
 \alias{prob_lower_site_ae_vs_study_ae}
 \title{Calculate bootstrapped probability for obtaining a lower site mean AE number.}
 \usage{
-prob_lower_site_ae_vs_study_ae(
-  site_ae,
-  study_ae,
-  r = 1000,
-  parallel = FALSE,
-  under_only = TRUE
-)
+prob_lower_site_ae_vs_study_ae(site_ae, study_ae, r = 1000, under_only = TRUE)
 }
 \arguments{
 \item{site_ae}{vector with AE numbers}
@@ -18,8 +12,6 @@ prob_lower_site_ae_vs_study_ae(
 \item{study_ae}{vector with AE numbers}
 
 \item{r}{integer, denotes number of simulations, default = 1000}
-
-\item{parallel}{logical, toggles parallel processing on and of, default = F}
 
 \item{under_only}{compute under-reporting probabilities only, default = TRUE}
 }
@@ -33,12 +25,12 @@ Internal function used by \code{\link[=sim_sites]{sim_sites()}}
 sets pvalue=1 if mean AE site is greater than mean AE study
 }
 \examples{
-prob_lower_site_ae_vs_study_ae(
+simaerep:::prob_lower_site_ae_vs_study_ae(
   site_ae = c(5, 3, 3, 2, 1, 6),
-  study_ae = c(9, 8, 7, 9, 6, 7, 8),
-  parallel = FALSE
+  study_ae = c(9, 8, 7, 9, 6, 7, 8)
 )
 }
 \seealso{
-\code{\link[purrr]{safely}}
+\code{\link[=sim_sites]{sim_sites()}}
 }
+\keyword{internal}

@@ -33,7 +33,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">simaerep</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.0.900</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -49,16 +49,8 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><a class="dropdown-item" href="../articles/intro.html">Introduction</a></li>
-    <li><a class="dropdown-item" href="../articles/inframe.html">Inframe Simulation Using Table Operations</a></li>
-    <li><a class="dropdown-item" href="../articles/over.html">Over-Reporting Probability</a></li>
+    <li><a class="dropdown-item" href="../articles/classic.html">Classic Algorithm</a></li>
     <li><a class="dropdown-item" href="../articles/performance.html">Statistical Performance</a></li>
-    <li><a class="dropdown-item" href="../articles/funnel_perf.html">Comparing {simaerep} and Funnel Plot Performance</a></li>
-    <li><a class="dropdown-item" href="../articles/sas_files.html">SAS Files as a Data Source</a></li>
-    <li><a class="dropdown-item" href="../articles/portfolio_perf.html">(superseded) simaerep Portfolio Performance</a></li>
-    <li><a class="dropdown-item" href="../articles/visit_med75.html">Adjusted Evaluation Point visit_med75</a></li>
-    <li><a class="dropdown-item" href="../articles/usability_limits.html">Address Usability Limits of Bootstrap Method</a></li>
-    <li><a class="dropdown-item" href="../articles/check_poisson.html">Check Poisson Test Applicability</a></li>
-    <li><a class="dropdown-item" href="../articles/visits_or_days.html">Aggregate AEs by Days or Visit?</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -90,54 +82,63 @@
 <h2 id="load">Load<a class="anchor" aria-label="anchor" href="#load"></a>
 </h2>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressPackageStartupMessages</a></span><span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org" class="external-link">tidyverse</a></span><span class="op">)</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressPackageStartupMessages</a></span><span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressPackageStartupMessages</a></span><span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tibble.tidyverse.org/" class="external-link">tibble</a></span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressPackageStartupMessages</a></span><span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dbi.r-dbi.org" class="external-link">DBI</a></span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressPackageStartupMessages</a></span><span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://yihui.org/knitr/" class="external-link">knitr</a></span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressPackageStartupMessages</a></span><span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://openpharma.github.io/simaerep/">simaerep</a></span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
-<p>Simulate adverse event reporting in clinical trials with the goal of
-detecting under-reporting sites.</p>
-<p>Monitoring of Adverse Event (AE) reporting in clinical trials is
-important for patient safety. We use bootstrap-based simulation to
-assign an AE under-reporting probability to each site in a clinical
-trial. The method is inspired by the ‘infer’ R package and Allen
-Downey’s blog article: <a href="http://allendowney.blogspot.com/2011/05/there-is-only-one-test.html" class="external-link">“There
+<p>Simulate subject-level event reporting of clinical trial sites with
+the goal of detecting over- and under-reporting.</p>
+<p>Monitoring reporting rates of subject-level clinical events (e.g.
+adverse events, protocol deviations) reported by clinical trial sites is
+an important aspect of risk-based quality monitoring (RBQM) strategy.
+Sites that are under-reporting or over-reporting events can be detected
+using bootstrap simulations during which patients are redistributed
+between sites. Site-specific distributions of event reporting rates are
+generated that are used to assign probabilities to the observed
+reporting rates.</p>
+<p>The method is inspired by the ‘infer’ R package and Allen Downey’s
+blog article: <a href="http://allendowney.blogspot.com/2011/05/there-is-only-one-test.html" class="external-link">“There
 is only one test!”</a>.</p>
 <div class="section level3">
-<h3 id="adverse-events">Adverse Events<a class="anchor" aria-label="anchor" href="#adverse-events"></a>
+<h3 id="why-use-simaerep">Why use {simaerep}?<a class="anchor" aria-label="anchor" href="#why-use-simaerep"></a>
 </h3>
-<p>An adverse event (AE) is any untoward medical occurrence in a patient
-or clinical investigation subject administered a pharmaceutical product
-and which does not necessarily have a causal relationship with this
-treatment. It is important for patient safety that AEs are reported back
-to the sponsor. An important part of quality monitoring is to detect
-clinical trial sites that are not propagating all of the AEs reported to
-them by their patients to the sponsor. In a clinical trial patients
-follow a strict visiting schedule at which times treatments are given
-and exams are being performed. Typically AEs get reported by a patient
-when they are at an on-site visit at the clinic. So the total number of
-AEs reported by a site depends on the number of patients enrolled at the
-site and the total number of visits.</p>
+<p>Patient-level events during a clinical study do not occur randomly at
+visits but they are heavily dependent on the underlying study protocol
+and the planned procedures. We have illustrated this in our simulated
+test data by sampling event rates from a gamma distribution with higher
+rates for early visits and low rates for late visits.</p>
+<p>Typically most RBQM tools calculate a ratio between the site event
+count and the number of patient, the days that they spend on study or
+the number of visits. Then they employ some outlier detection method to
+detect outliers (e.g. box plot statistics, percentiles, funnel plots).
+All of these methods assume a constant event rate over the course of the
+study or that all patients started the trial at the same time.</p>
+<p>In a simulation experiments we could show that {simaerep} outperforms
+these methods <a href="https://openpharma.github.io/simaerep/articles/funnel_perf.html">see
+documentation</a>.</p>
+<p>{simaerep} has also been positively evaluated by three different
+industry members for the purpose of detecting sites that are
+under-reporting adverse events <a href="https://doi.org/10.1007/s40264-020-01011-5" class="external-link">Koneswarakantha et
+al. 2024</a>.</p>
 </div>
 <div class="section level3">
 <h3 id="algorithm">Algorithm<a class="anchor" aria-label="anchor" href="#algorithm"></a>
 </h3>
-<p>In a nutshell we will perform the following steps.</p>
 <ol style="list-style-type: decimal">
-<li>Record visit_med75, number of patients that have reached
-visit_med75, mean cumulative AE count at visit_med75 for a clinical
-trial site.</li>
-<li>Create patient pool with all patients in study that have reached
-visit_med75 as determined in 1) and their cumulative AE count at
-visit_med75.</li>
-<li>Draw with replacement as many patients from 2) as determined in 1)
-and calculate the mean cumulative AE count of the draw (figure 1b).</li>
-<li>Repeat 3) 1000 times.</li>
-<li>Calculate probability of obtaining mean cumulative AE count or lower
-as obtained in 1) based on results of 4).</li>
-<li>Repeat 1-5) for all sites in trial.</li>
+<li>Record initial site-level events per visits rate</li>
+<li>Replace every patient with a random patient with the same number of
+visits</li>
+<li>Record site-level events per visits rate for new set of
+patients</li>
+<li>Repeat 3) 1000 times to obtain site-specific events per visits rate
+distribution.</li>
+<li>Determine probability to obtain initial site-level events per visits
+rate from 1) using the distribution generated in 4)</li>
 <li>Adjust probabilities using the <a href="https://www.statisticshowto.com/benjamini-hochberg-procedure/" class="external-link">Benjamin
 Hochberg Procedure</a> in order to correct alpha error.</li>
 </ol>
@@ -161,7 +162,7 @@ distribution.</p>
 <span>   <span class="fl">3</span>,</span>
 <span>   <span class="fu"><a href="../reference/sim_test_data_patient.html">sim_test_data_patient</a></span><span class="op">(</span></span>
 <span>    .f_sample_max_visit <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">1</span>, mean <span class="op">=</span> <span class="fl">20</span>, sd <span class="op">=</span> <span class="fl">4</span><span class="op">)</span>,</span>
-<span>    .f_sample_ae_per_visit <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">max_visit</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/stats/Poisson.html" class="external-link">rpois</a></span><span class="op">(</span><span class="va">max_visit</span>, <span class="fl">0.5</span><span class="op">)</span></span>
+<span>    .f_sample_event_per_visit <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">max_visit</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/stats/Poisson.html" class="external-link">rpois</a></span><span class="op">(</span><span class="va">max_visit</span>, <span class="fl">0.5</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [[1]]</span></span>
@@ -178,44 +179,50 @@ distribution.</p>
 </h4>
 <p>In order to simulate patient data for an entire study we assume make
 the simplification that all sites have the same number of patients.
-Further we specify a fraction of sites that is under-reporting AEs.</p>
+Further we specify a fraction of sites that is under-reporting
+events.</p>
+<p>We sample event_rates from a gamma distribution to reflect the
+non-constant event rates.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">df_visit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sim_test_data_study.html">sim_test_data_study</a></span><span class="op">(</span></span>
-<span>  n_pat <span class="op">=</span> <span class="fl">120</span>,</span>
-<span>  n_sites <span class="op">=</span> <span class="fl">6</span>,</span>
-<span>  frac_site_with_ur <span class="op">=</span> <span class="fl">0.4</span>,</span>
-<span>  ur_rate <span class="op">=</span> <span class="fl">0.6</span>,</span>
-<span>  max_visit_mean <span class="op">=</span> <span class="fl">20</span>,</span>
-<span>  max_visit_sd <span class="op">=</span> <span class="fl">4</span>,</span>
-<span>  ae_per_visit_mean <span class="op">=</span> <span class="fl">0.5</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">df_visit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sim_test_data_study.html">sim_test_data_study</a></span><span class="op">(</span></span>
+<span>  n_pat <span class="op">=</span> <span class="fl">100</span>, <span class="co"># number of patients in study</span></span>
+<span>  n_sites <span class="op">=</span> <span class="fl">10</span>, <span class="co"># number of sites in study</span></span>
+<span>  ratio_out <span class="op">=</span> <span class="fl">0.1</span>, <span class="co"># ratio of sites with outlier</span></span>
+<span>  factor_event_rate <span class="op">=</span> <span class="op">-</span><span class="fl">0.5</span>, <span class="co"># rate of under-reporting</span></span>
+<span>  <span class="co"># non-constant event rates based on gamma distribution</span></span>
+<span>  event_rates <span class="op">=</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/GammaDist.html" class="external-link">dgamma</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">20</span>, <span class="fl">0.5</span><span class="op">)</span>, shape <span class="op">=</span> <span class="fl">5</span>, rate <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> <span class="op">*</span> <span class="fl">5</span><span class="op">)</span> <span class="op">+</span> <span class="fl">0.1</span>,</span>
+<span>  max_visit <span class="op">=</span> <span class="fl">20</span>,</span>
+<span>  max_visit_sd <span class="op">=</span> <span class="fl">10</span>,</span>
+<span>  study_id <span class="op">=</span> <span class="st">"A"</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">df_visit</span><span class="op">$</span><span class="va">study_id</span> <span class="op">&lt;-</span> <span class="st">"A"</span></span>
 <span></span>
 <span><span class="va">df_visit</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <table style="width:100%;" class="table">
 <colgroup>
+<col width="11%">
 <col width="8%">
+<col width="7%">
+<col width="15%">
 <col width="13%">
+<col width="21%">
 <col width="6%">
-<col width="16%">
-<col width="14%">
-<col width="19%">
-<col width="6%">
-<col width="5%">
+<col width="8%">
 <col width="9%">
 </colgroup>
 <thead><tr class="header">
-<th align="left">patnum</th>
-<th align="left">site_number</th>
-<th align="left">is_ur</th>
+<th align="left">patient_id</th>
+<th align="left">site_id</th>
+<th align="left">is_out</th>
 <th align="right">max_visit_mean</th>
 <th align="right">max_visit_sd</th>
-<th align="right">ae_per_visit_mean</th>
+<th align="right">event_per_visit_mean</th>
 <th align="right">visit</th>
-<th align="right">n_ae</th>
+<th align="right">n_event</th>
 <th align="left">study_id</th>
 </tr></thead>
 <tbody>
@@ -224,8 +231,8 @@ Further we specify a fraction of sites that is under-reporting AEs.</p>
 <td align="left">S0001</td>
 <td align="left">TRUE</td>
 <td align="right">20</td>
-<td align="right">4</td>
-<td align="right">0.2</td>
+<td align="right">10</td>
+<td align="right">0.1762578</td>
 <td align="right">1</td>
 <td align="right">0</td>
 <td align="left">A</td>
@@ -235,111 +242,111 @@ Further we specify a fraction of sites that is under-reporting AEs.</p>
 <td align="left">S0001</td>
 <td align="left">TRUE</td>
 <td align="right">20</td>
-<td align="right">4</td>
-<td align="right">0.2</td>
-<td align="right">2</td>
-<td align="right">1</td>
-<td align="left">A</td>
-</tr>
-<tr class="odd">
-<td align="left">P000001</td>
-<td align="left">S0001</td>
-<td align="left">TRUE</td>
-<td align="right">20</td>
-<td align="right">4</td>
-<td align="right">0.2</td>
-<td align="right">3</td>
-<td align="right">1</td>
-<td align="left">A</td>
-</tr>
-<tr class="even">
-<td align="left">P000001</td>
-<td align="left">S0001</td>
-<td align="left">TRUE</td>
-<td align="right">20</td>
-<td align="right">4</td>
-<td align="right">0.2</td>
-<td align="right">4</td>
-<td align="right">2</td>
-<td align="left">A</td>
-</tr>
-<tr class="odd">
-<td align="left">P000001</td>
-<td align="left">S0001</td>
-<td align="left">TRUE</td>
-<td align="right">20</td>
-<td align="right">4</td>
-<td align="right">0.2</td>
-<td align="right">5</td>
-<td align="right">2</td>
-<td align="left">A</td>
-</tr>
-<tr class="even">
-<td align="left">P000001</td>
-<td align="left">S0001</td>
-<td align="left">TRUE</td>
-<td align="right">20</td>
-<td align="right">4</td>
-<td align="right">0.2</td>
-<td align="right">6</td>
-<td align="right">2</td>
-<td align="left">A</td>
-</tr>
-<tr class="odd">
-<td align="left">P000001</td>
-<td align="left">S0001</td>
-<td align="left">TRUE</td>
-<td align="right">20</td>
-<td align="right">4</td>
-<td align="right">0.2</td>
-<td align="right">7</td>
-<td align="right">2</td>
-<td align="left">A</td>
-</tr>
-<tr class="even">
-<td align="left">P000001</td>
-<td align="left">S0001</td>
-<td align="left">TRUE</td>
-<td align="right">20</td>
-<td align="right">4</td>
-<td align="right">0.2</td>
-<td align="right">8</td>
-<td align="right">3</td>
-<td align="left">A</td>
-</tr>
-<tr class="odd">
-<td align="left">P000001</td>
-<td align="left">S0001</td>
-<td align="left">TRUE</td>
-<td align="right">20</td>
-<td align="right">4</td>
-<td align="right">0.2</td>
-<td align="right">9</td>
-<td align="right">4</td>
-<td align="left">A</td>
-</tr>
-<tr class="even">
-<td align="left">P000001</td>
-<td align="left">S0001</td>
-<td align="left">TRUE</td>
-<td align="right">20</td>
-<td align="right">4</td>
-<td align="right">0.2</td>
 <td align="right">10</td>
+<td align="right">0.1762578</td>
+<td align="right">2</td>
+<td align="right">2</td>
+<td align="left">A</td>
+</tr>
+<tr class="odd">
+<td align="left">P000001</td>
+<td align="left">S0001</td>
+<td align="left">TRUE</td>
+<td align="right">20</td>
+<td align="right">10</td>
+<td align="right">0.1762578</td>
+<td align="right">3</td>
+<td align="right">2</td>
+<td align="left">A</td>
+</tr>
+<tr class="even">
+<td align="left">P000001</td>
+<td align="left">S0001</td>
+<td align="left">TRUE</td>
+<td align="right">20</td>
+<td align="right">10</td>
+<td align="right">0.1762578</td>
 <td align="right">4</td>
+<td align="right">4</td>
+<td align="left">A</td>
+</tr>
+<tr class="odd">
+<td align="left">P000001</td>
+<td align="left">S0001</td>
+<td align="left">TRUE</td>
+<td align="right">20</td>
+<td align="right">10</td>
+<td align="right">0.1762578</td>
+<td align="right">5</td>
+<td align="right">6</td>
+<td align="left">A</td>
+</tr>
+<tr class="even">
+<td align="left">P000001</td>
+<td align="left">S0001</td>
+<td align="left">TRUE</td>
+<td align="right">20</td>
+<td align="right">10</td>
+<td align="right">0.1762578</td>
+<td align="right">6</td>
+<td align="right">7</td>
+<td align="left">A</td>
+</tr>
+<tr class="odd">
+<td align="left">P000001</td>
+<td align="left">S0001</td>
+<td align="left">TRUE</td>
+<td align="right">20</td>
+<td align="right">10</td>
+<td align="right">0.1762578</td>
+<td align="right">7</td>
+<td align="right">7</td>
+<td align="left">A</td>
+</tr>
+<tr class="even">
+<td align="left">P000001</td>
+<td align="left">S0001</td>
+<td align="left">TRUE</td>
+<td align="right">20</td>
+<td align="right">10</td>
+<td align="right">0.1762578</td>
+<td align="right">8</td>
+<td align="right">7</td>
+<td align="left">A</td>
+</tr>
+<tr class="odd">
+<td align="left">P000001</td>
+<td align="left">S0001</td>
+<td align="left">TRUE</td>
+<td align="right">20</td>
+<td align="right">10</td>
+<td align="right">0.1762578</td>
+<td align="right">9</td>
+<td align="right">7</td>
+<td align="left">A</td>
+</tr>
+<tr class="even">
+<td align="left">P000001</td>
+<td align="left">S0001</td>
+<td align="left">TRUE</td>
+<td align="right">20</td>
+<td align="right">10</td>
+<td align="right">0.1762578</td>
+<td align="right">10</td>
+<td align="right">7</td>
 <td align="left">A</td>
 </tr>
 </tbody>
 </table>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">df_visit</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">site_number</span>, <span class="va">is_ur</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">site_id</span>, <span class="va">is_out</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/distinct.html" class="external-link">distinct</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <thead><tr class="header">
-<th align="left">site_number</th>
-<th align="left">is_ur</th>
+<th align="left">site_id</th>
+<th align="left">is_out</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
@@ -348,7 +355,7 @@ Further we specify a fraction of sites that is under-reporting AEs.</p>
 </tr>
 <tr class="even">
 <td align="left">S0002</td>
-<td align="left">TRUE</td>
+<td align="left">FALSE</td>
 </tr>
 <tr class="odd">
 <td align="left">S0003</td>
@@ -366,570 +373,604 @@ Further we specify a fraction of sites that is under-reporting AEs.</p>
 <td align="left">S0006</td>
 <td align="left">FALSE</td>
 </tr>
+<tr class="odd">
+<td align="left">S0007</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="even">
+<td align="left">S0008</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="left">S0009</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="even">
+<td align="left">S0010</td>
+<td align="left">FALSE</td>
+</tr>
 </tbody>
 </table>
-<p>In our sample data 2 sites (S0001 and S0002) are under-reporting
-AEs</p>
+<p>In our sample data 1 sites (S0001) is under-reporting events.</p>
 </div>
 </div>
 <div class="section level3">
 <h3 id="algorithm-execution">Algorithm Execution<a class="anchor" aria-label="anchor" href="#algorithm-execution"></a>
 </h3>
 <div class="section level4">
-<h4 id="s3-interface">S3 interface<a class="anchor" aria-label="anchor" href="#s3-interface"></a>
+<h4 id="standard">Standard<a class="anchor" aria-label="anchor" href="#standard"></a>
 </h4>
-<p>We will describe the internal details of the algorithm next. However,
-it is recommended to use the S3 interface, which manages the execution
-of the internal functions and stores the intermediate results.</p>
+<p>The column <code>event_prob</code> contains the reporting probability
+for each site as values between -1 and 1. Under- and over-reporting
+probabilities are inversely related and have been combined into one
+column. Negative values show high under-reporting, positive values
+higher over-reporting.</p>
+<p>The column <code>event_delta</code> shows the difference of the
+expected event count minus the reported event count.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">aerep</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/simaerep.html">simaerep</a></span><span class="op">(</span><span class="va">df_visit</span><span class="op">)</span></span>
-<span><span class="va">aerep</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">evrep</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/simaerep.html">simaerep</a></span><span class="op">(</span><span class="va">df_visit</span><span class="op">)</span></span>
+<span><span class="va">evrep</span></span></code></pre></div>
 <pre><code><span><span class="co">## simaerep object:</span></span>
-<span><span class="co">## Check aerep$df_eval prob_low_prob_ur column for under-reporting probabililty.</span></span>
-<span><span class="co">## Plot results using plot() generic.</span></span></code></pre>
-</div>
-<div class="section level4">
-<h4 id="specifying-the-evaluation-point-visit_med75">Specifying the Evaluation Point visit_med75<a class="anchor" aria-label="anchor" href="#specifying-the-evaluation-point-visit_med75"></a>
-</h4>
-<p>In an ongoing trial all patients will have a different number of
-consecutive visits. To find a cut-off visit to normalize the data we
-specify a single evaluation point for a given site based on the number
-of visits of the patient population.</p>
-<p>For determining the visit number at which we are going to evaluate AE
-reporting we take the maximum visit of each patient at a site and take
-the median. Then we multiply with 0.75 which will give us a cut-off
-point determining which patient will be evaluated. Of those patients we
-will evaluate we take the minimum of all maximum visits hence ensuring
-that we take the highest visit number possible without excluding more
-patients from the analysis. In order to ensure that the sampling pool
-for that visit is large enough we ensure that at least 20% of all
-patients at the study are available for sampling. We limit visit_med75
-to the 80% quantile of all patient maximum visits of the entire
-study.</p>
-<p>For this we use <code>site_aggr</code> to aggregate the simulated
-visit level data to site level. Adjusting <code>min_pat_pool</code> will
-change the minimum ratio of patients available for sampling that
-determines the maximum values for visit_med75.</p>
+<span><span class="co">## ----------------</span></span>
+<span><span class="co">## Plot results using plot() generic.</span></span>
+<span><span class="co">## Full results available in "df_eval".</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Summary:</span></span>
+<span><span class="co">## Number of sites: 10</span></span>
+<span><span class="co">## Number of studies: 1</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Multiplicity correction applied to '*_prob' columns.</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## First 10 rows of df_eval:</span></span>
+<span><span class="co">## <span style="color: #949494;"># A tibble: 10 × 10</span></span></span>
+<span><span class="co">##    study_id site_id event_count event_per_visit_site visits n_pat</span></span>
+<span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>                <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> A        S0001            67                0.390    172    10</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> A        S0002            97                0.740    131    10</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> A        S0003           122                0.587    208    10</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> A        S0004           108                0.6      180    10</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> A        S0005           121                0.5      242    10</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> A        S0006           101                0.470    215    10</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> A        S0007           103                0.545    189    10</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> A        S0008           105                0.559    188    10</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> A        S0009           119                0.601    198    10</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">10</span> A        S0010            99                0.471    210    10</span></span>
+<span><span class="co">## <span style="color: #949494;"># ℹ 4 more variables: event_per_visit_study &lt;dbl&gt;, event_prob_no_mult &lt;dbl&gt;,</span></span></span>
+<span><span class="co">## <span style="color: #949494;">#   event_prob &lt;dbl&gt;, event_delta &lt;dbl&gt;</span></span></span></code></pre>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">df_site</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/site_aggr.html">site_aggr</a></span><span class="op">(</span><span class="va">df_visit</span>, method <span class="op">=</span> <span class="st">"med75_adj"</span>, min_pat_pool <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">df_site</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<table class="table">
-<colgroup>
-<col width="12%">
-<col width="16%">
-<col width="8%">
-<col width="22%">
-<col width="16%">
-<col width="25%">
-</colgroup>
-<thead><tr class="header">
-<th align="left">study_id</th>
-<th align="left">site_number</th>
-<th align="right">n_pat</th>
-<th align="right">n_pat_with_med75</th>
-<th align="right">visit_med75</th>
-<th align="right">mean_ae_site_med75</th>
-</tr></thead>
-<tbody>
-<tr class="odd">
-<td align="left">A</td>
-<td align="left">S0001</td>
-<td align="right">20</td>
-<td align="right">17</td>
-<td align="right">15</td>
-<td align="right">3.000000</td>
-</tr>
-<tr class="even">
-<td align="left">A</td>
-<td align="left">S0002</td>
-<td align="right">20</td>
-<td align="right">17</td>
-<td align="right">14</td>
-<td align="right">3.352941</td>
-</tr>
-<tr class="odd">
-<td align="left">A</td>
-<td align="left">S0003</td>
-<td align="right">20</td>
-<td align="right">16</td>
-<td align="right">17</td>
-<td align="right">8.500000</td>
-</tr>
-<tr class="even">
-<td align="left">A</td>
-<td align="left">S0004</td>
-<td align="right">20</td>
-<td align="right">17</td>
-<td align="right">16</td>
-<td align="right">8.058824</td>
-</tr>
-<tr class="odd">
-<td align="left">A</td>
-<td align="left">S0005</td>
-<td align="right">20</td>
-<td align="right">18</td>
-<td align="right">16</td>
-<td align="right">7.555556</td>
-</tr>
-<tr class="even">
-<td align="left">A</td>
-<td align="left">S0006</td>
-<td align="right">20</td>
-<td align="right">20</td>
-<td align="right">15</td>
-<td align="right">7.850000</td>
-</tr>
-</tbody>
-</table>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_visit_med75.html">plot_visit_med75</a></span><span class="op">(</span><span class="va">df_visit</span>, <span class="va">df_site</span>, study_id_str <span class="op">=</span> <span class="st">"A"</span>, n_site <span class="op">=</span> <span class="fl">6</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## purple line:          mean site ae of patients with visit_med75</span></span>
-<span><span class="co">## grey line:            patient included</span></span>
-<span><span class="co">## black dashed line:    patient excluded</span></span>
-<span><span class="co">## dotted vertical line: visit_med75, 0.75 x median of maximum patient visits of site </span></span>
-<span><span class="co">## solid vertical line:  visit_med75 adjusted, increased to minimum maximum patient visit of included patients</span></span>
-<span><span class="co">## dashed vertical line: maximum value for visit_med75 adjusted, 80% quantile of maximum patient visits of study</span></span></code></pre>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">evrep</span>, study <span class="op">=</span> <span class="st">"A"</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## Warning in fortify(data, ...): Arguments in `...` must be used.</span></span>
+<span><span class="co">## <span style="color: #BB0000;">✖</span> Problematic argument:</span></span>
+<span><span class="co">## <span style="color: #00BBBB;">•</span> na.rm = TRUE</span></span>
+<span><span class="co">## <span style="color: #00BBBB;">ℹ</span> Did you misspell an argument name?</span></span>
+<span><span class="co">## Arguments in `...` must be used.</span></span>
+<span><span class="co">## <span style="color: #BB0000;">✖</span> Problematic argument:</span></span>
+<span><span class="co">## <span style="color: #00BBBB;">•</span> na.rm = TRUE</span></span>
+<span><span class="co">## <span style="color: #00BBBB;">ℹ</span> Did you misspell an argument name?</span></span></code></pre>
 <p><img src="intro_files/figure-html/unnamed-chunk-5-1.png" width="700"></p>
-<p>Using the adjusted visit_med75 will drop a few patients (dashed
-lines) but will by definition at least include 50% of all patients
-favoring patients that have higher number of visits. By looking at the
-mean ae development (purple line) we can already easily spot the two
-under-reporting sites. The same goes for looking at the
-<code>mean_ae_site_med75</code> column in <code>df_site</code>. Next we
-will use bootstrap simulations to determine the probability for
-obtaining each mean AE value or lower at visit_med75 by chance.</p>
+<p><em>Left panel shows mean cumulative event reporting per site (blue
+lines) against mean cumulative event reporting of the entire study
+(golden line). Sites with either high under-reporting (negative
+probabilities) or high over-reporting (positive probabilities) are
+marked by grey dots and plotted in additional panels on the right. N
+denotes the number of sites. Right panel shows individual sites with
+total patient cumulative counts as grey lines. N denotes the number of
+patients, the percentage the under- and over-reporting probability and
+394 denotes the difference compared to the expected number of
+events.</em></p>
 </div>
 <div class="section level4">
-<h4 id="bootstrap-simulations">Bootstrap Simulations<a class="anchor" aria-label="anchor" href="#bootstrap-simulations"></a>
+<h4 id="illustrate-probability-scoring">Illustrate Probability Scoring<a class="anchor" aria-label="anchor" href="#illustrate-probability-scoring"></a>
 </h4>
-<div class="section level5">
-<h5 id="advantage-over-classic-statistical-tests">Advantage Over Classic Statistical Tests<a class="anchor" aria-label="anchor" href="#advantage-over-classic-statistical-tests"></a>
-</h5>
-<p>We could use a classical parametric test and calculate the
-probability with which we can reject the NULL hypothesis for the AE
-counts that we observe at the visit_med75.</p>
-<p>As we sample the AEs from a poisson distribution the R implementation
-of the poisson.test would be appropriate.</p>
-<p>But there are four major problems that we often encounter when we try
-to describe real life count data with the poisson distribution which is
-only described by a single parameter:</p>
-<ul>
-<li>over and underdispersion</li>
-<li>skewness (long right tail)</li>
-<li>inflated zeros</li>
-<li>variance mean relationship might not be fixed</li>
-</ul>
-<p>(see <a href="https://www.gamlss.com/wp-content/uploads/2018/01/DistributionsForModellingLocationScaleandShape.pdf" class="external-link">Distribution
-for Modelling Location Scale and Shape 5.1.2</a>)</p>
-<p>The true distribution of the AE counts will vary from study to study
-with the degree of the influence of these 4 problems being unknown
-unless thoroughly investigated.</p>
-<p>With the non-parametric approach that we propose we do not need to
-worry about these statistical assumptions. Since the distribution of the
-AE count from the simulated patient pool we draw from will be very close
-to the unknown true distribution of the underlying AE generating
-process.</p>
-</div>
-<div class="section level5">
-<h5 id="disadvantages-over-classic-statistical-tests">Disadvantages Over Classic Statistical Tests<a class="anchor" aria-label="anchor" href="#disadvantages-over-classic-statistical-tests"></a>
-</h5>
-<ul>
-<li>
-<strong>Upper Limit for Uncompliant Sites</strong>. We simulate an
-underlying compliant patient population using the data we are given. If
-the fraction of uncompliant examples becomes too high, detection rates
-will decrease. We find that detection rates start decreasing with 30-50%
-of under-reporting sites and are not usable anymore if a majority &gt;
-50% of all sites are under-reporting <a href="https://openpharma.github.io/simaerep/articles/usability_limits.html">see
-article on usability limits</a>.</li>
-<li>
-<strong>Lower Probability Limit</strong> The number of repeats
-determines the smallest probability greater than zero, for example a for
-r=1000 the smallest value greater than zero is 0.001</li>
-<li><strong>Computationally Expensive</strong></li>
-</ul>
-</div>
-<div class="section level5">
-<h5 id="methodology">Methodology<a class="anchor" aria-label="anchor" href="#methodology"></a>
-</h5>
-<p><em>How likely is it to get a mean AE value that is equal or lower to
-what we observe at site C with the same number of patients?</em></p>
-<p>For illustration purposes we start to simulate 10 hypothetical
-patient groups for site C by drawing (with replacement) from all
-patients in the study marking those for which we have obtained an equal
-or lower mean AE value than initially observed (middle).</p>
-<p>Instead of 10 times we simulate 1000 times and count how many times
-we have observed an equal or lower mean AE value than initially observed
-and convert it to a percentage (right).</p>
-<p>To illustrate the effect of under-reporting we repeat the same
-process after having removed 2 AEs per patient from site C. We see how
-the probability for obtaining an equal or lower mean AE value than
-initially observed decreases (bottom).</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_sim_examples.html">plot_sim_examples</a></span><span class="op">(</span>size_dot <span class="op">=</span> <span class="fl">4</span>, size_raster_label <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></code></pre></div>
-<p><img src="intro_files/figure-html/unnamed-chunk-6-1.png" width="1056"></p>
-</div>
-<div class="section level5">
-<h5 id="application">Application<a class="anchor" aria-label="anchor" href="#application"></a>
-</h5>
-<p>We can run the above described simulation and as a benchmark also
-perform a poisson test.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">df_sim_sites</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sim_sites.html">sim_sites</a></span><span class="op">(</span><span class="va">df_site</span>, <span class="va">df_visit</span>, r <span class="op">=</span> <span class="fl">1000</span>, poisson_test <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<p>We can illustrate the probability scoring by increasing the number of
+sites and switching off the multiplicity correction and not introducing
+any outlier.</p>
+<p>Note that none of these sites are actually outlier but high scores
+are the results of repetitive testing.</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">df_visit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sim_test_data_study.html">sim_test_data_study</a></span><span class="op">(</span></span>
+<span>  n_pat <span class="op">=</span> <span class="fl">1000</span>, <span class="co"># number of patients in study</span></span>
+<span>  n_sites <span class="op">=</span> <span class="fl">100</span>, <span class="co"># number of sites in study</span></span>
+<span>  <span class="co"># non-constant event rates based on gamma distribution</span></span>
+<span>  event_rates <span class="op">=</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/GammaDist.html" class="external-link">dgamma</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">20</span>, <span class="fl">0.5</span><span class="op">)</span>, shape <span class="op">=</span> <span class="fl">5</span>, rate <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> <span class="op">*</span> <span class="fl">5</span><span class="op">)</span> <span class="op">+</span> <span class="fl">0.1</span>,</span>
+<span>  max_visit <span class="op">=</span> <span class="fl">20</span>,</span>
+<span>  max_visit_sd <span class="op">=</span> <span class="fl">10</span>,</span>
+<span>  study_id <span class="op">=</span> <span class="st">"A"</span></span>
+<span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">df_sim_sites</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<table class="table">
-<colgroup>
-<col width="6%">
-<col width="8%">
-<col width="4%">
-<col width="12%">
-<col width="8%">
-<col width="14%">
-<col width="14%">
-<col width="17%">
-<col width="5%">
-<col width="6%">
-</colgroup>
-<thead><tr class="header">
-<th align="left">study_id</th>
-<th align="left">site_number</th>
-<th align="right">n_pat</th>
-<th align="right">n_pat_with_med75</th>
-<th align="right">visit_med75</th>
-<th align="right">mean_ae_site_med75</th>
-<th align="right">mean_ae_study_med75</th>
-<th align="right">n_pat_with_med75_study</th>
-<th align="right">pval</th>
-<th align="right">prob_low</th>
-</tr></thead>
-<tbody>
-<tr class="odd">
-<td align="left">A</td>
-<td align="left">S0001</td>
-<td align="right">20</td>
-<td align="right">17</td>
-<td align="right">15</td>
-<td align="right">3.000000</td>
-<td align="right">6.712644</td>
-<td align="right">87</td>
-<td align="right">0.0e+00</td>
-<td align="right">0</td>
-</tr>
-<tr class="even">
-<td align="left">A</td>
-<td align="left">S0002</td>
-<td align="right">20</td>
-<td align="right">17</td>
-<td align="right">14</td>
-<td align="right">3.352941</td>
-<td align="right">6.021739</td>
-<td align="right">92</td>
-<td align="right">7.5e-06</td>
-<td align="right">0</td>
-</tr>
-<tr class="odd">
-<td align="left">A</td>
-<td align="left">S0003</td>
-<td align="right">20</td>
-<td align="right">16</td>
-<td align="right">17</td>
-<td align="right">8.500000</td>
-<td align="right">6.513514</td>
-<td align="right">74</td>
-<td align="right">1.0e+00</td>
-<td align="right">1</td>
-</tr>
-<tr class="even">
-<td align="left">A</td>
-<td align="left">S0004</td>
-<td align="right">20</td>
-<td align="right">17</td>
-<td align="right">16</td>
-<td align="right">8.058824</td>
-<td align="right">6.261905</td>
-<td align="right">84</td>
-<td align="right">1.0e+00</td>
-<td align="right">1</td>
-</tr>
-<tr class="odd">
-<td align="left">A</td>
-<td align="left">S0005</td>
-<td align="right">20</td>
-<td align="right">18</td>
-<td align="right">16</td>
-<td align="right">7.555556</td>
-<td align="right">6.349398</td>
-<td align="right">83</td>
-<td align="right">1.0e+00</td>
-<td align="right">1</td>
-</tr>
-<tr class="even">
-<td align="left">A</td>
-<td align="left">S0006</td>
-<td align="right">20</td>
-<td align="right">20</td>
-<td align="right">15</td>
-<td align="right">7.850000</td>
-<td align="right">5.690476</td>
-<td align="right">84</td>
-<td align="right">1.0e+00</td>
-<td align="right">1</td>
-</tr>
-</tbody>
-</table>
-<p>We find that the probability of getting a mean ae at visit_med75 for
-sites S0001 and S0002 is 0 or near zero.</p>
-</div>
-</div>
-</div>
-<div class="section level3">
-<h3 id="alpha-error-correction">Alpha Error Correction<a class="anchor" aria-label="anchor" href="#alpha-error-correction"></a>
-</h3>
-<p>Our simulated test data set consists of just 6 sites. However, it is
-not uncommon for 100 sites or more to participate in the same clinical
-trial. This would mean that we need to perform 100 statistical tests,
-and applying a 5% significance threshold would lead to on average of 5
-False Positives (FP). We therefore need to adjust the calculated
-p-values and bootstrapped probabilities using
-<code>stats::p.adjust(p, method = "BH")</code>, which applies the <a href="https://www.statisticshowto.com/benjamini-hochberg-procedure/" class="external-link">Benjamin
-Hochberg Procedure</a>. <code><a href="../reference/eval_sites.html">eval_sites()</a></code> uses the the inverted
-adjusted values to calculates the final bootstrapped AE under-reporting
-probability (prob_low_prob_ur) and includes the poisson test derived
-under-reporting probability as a reference (pval_prob_ur).</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">df_eval</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/eval_sites.html">eval_sites</a></span><span class="op">(</span><span class="va">df_sim_sites</span>, method <span class="op">=</span> <span class="st">"BH"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">df_eval</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<table class="table">
-<colgroup>
-<col width="4%">
-<col width="6%">
-<col width="3%">
-<col width="9%">
-<col width="6%">
-<col width="10%">
-<col width="10%">
-<col width="12%">
-<col width="4%">
-<col width="4%">
-<col width="4%">
-<col width="6%">
-<col width="6%">
-<col width="9%">
-</colgroup>
-<thead><tr class="header">
-<th align="left">study_id</th>
-<th align="left">site_number</th>
-<th align="right">n_pat</th>
-<th align="right">n_pat_with_med75</th>
-<th align="right">visit_med75</th>
-<th align="right">mean_ae_site_med75</th>
-<th align="right">mean_ae_study_med75</th>
-<th align="right">n_pat_with_med75_study</th>
-<th align="right">pval</th>
-<th align="right">prob_low</th>
-<th align="right">pval_adj</th>
-<th align="right">pval_prob_ur</th>
-<th align="right">prob_low_adj</th>
-<th align="right">prob_low_prob_ur</th>
-</tr></thead>
-<tbody>
-<tr class="odd">
-<td align="left">A</td>
-<td align="left">S0001</td>
-<td align="right">20</td>
-<td align="right">17</td>
-<td align="right">15</td>
-<td align="right">3.000000</td>
-<td align="right">6.712644</td>
-<td align="right">87</td>
-<td align="right">0.0e+00</td>
-<td align="right">0</td>
-<td align="right">0.00e+00</td>
-<td align="right">1.0000000</td>
-<td align="right">0</td>
-<td align="right">1</td>
-</tr>
-<tr class="even">
-<td align="left">A</td>
-<td align="left">S0002</td>
-<td align="right">20</td>
-<td align="right">17</td>
-<td align="right">14</td>
-<td align="right">3.352941</td>
-<td align="right">6.021739</td>
-<td align="right">92</td>
-<td align="right">7.5e-06</td>
-<td align="right">0</td>
-<td align="right">2.24e-05</td>
-<td align="right">0.9999776</td>
-<td align="right">0</td>
-<td align="right">1</td>
-</tr>
-<tr class="odd">
-<td align="left">A</td>
-<td align="left">S0003</td>
-<td align="right">20</td>
-<td align="right">16</td>
-<td align="right">17</td>
-<td align="right">8.500000</td>
-<td align="right">6.513514</td>
-<td align="right">74</td>
-<td align="right">1.0e+00</td>
-<td align="right">1</td>
-<td align="right">1.00e+00</td>
-<td align="right">0.0000000</td>
-<td align="right">1</td>
-<td align="right">0</td>
-</tr>
-<tr class="even">
-<td align="left">A</td>
-<td align="left">S0004</td>
-<td align="right">20</td>
-<td align="right">17</td>
-<td align="right">16</td>
-<td align="right">8.058824</td>
-<td align="right">6.261905</td>
-<td align="right">84</td>
-<td align="right">1.0e+00</td>
-<td align="right">1</td>
-<td align="right">1.00e+00</td>
-<td align="right">0.0000000</td>
-<td align="right">1</td>
-<td align="right">0</td>
-</tr>
-<tr class="odd">
-<td align="left">A</td>
-<td align="left">S0005</td>
-<td align="right">20</td>
-<td align="right">18</td>
-<td align="right">16</td>
-<td align="right">7.555556</td>
-<td align="right">6.349398</td>
-<td align="right">83</td>
-<td align="right">1.0e+00</td>
-<td align="right">1</td>
-<td align="right">1.00e+00</td>
-<td align="right">0.0000000</td>
-<td align="right">1</td>
-<td align="right">0</td>
-</tr>
-<tr class="even">
-<td align="left">A</td>
-<td align="left">S0006</td>
-<td align="right">20</td>
-<td align="right">20</td>
-<td align="right">15</td>
-<td align="right">7.850000</td>
-<td align="right">5.690476</td>
-<td align="right">84</td>
-<td align="right">1.0e+00</td>
-<td align="right">1</td>
-<td align="right">1.00e+00</td>
-<td align="right">0.0000000</td>
-<td align="right">1</td>
-<td align="right">0</td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="section level3">
-<h3 id="plot-results">Plot Results<a class="anchor" aria-label="anchor" href="#plot-results"></a>
-</h3>
-<p><code>plot_study</code> will plot mean ae development of all sites
-and visit level data for each flagged site with an AE under-reporting
-threshold of 95%.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_study.html">plot_study</a></span><span class="op">(</span><span class="va">df_visit</span>, <span class="va">df_site</span>, <span class="va">df_eval</span>, study <span class="op">=</span> <span class="st">"A"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="intro_files/figure-html/unnamed-chunk-9-1.png" width="960"></p>
-</div>
-</div>
-<div class="section level2">
-<h2 id="applying-simaerep">Applying {simaerep}<a class="anchor" aria-label="anchor" href="#applying-simaerep"></a>
-</h2>
-<p>Instead of executing all previous steps manually we can also use the
-S3 interface which manages all intermediate results and provides more
-convenient plotting using the <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> generic function.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">aerep</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/simaerep.html">simaerep</a></span><span class="op">(</span><span class="va">df_visit</span><span class="op">)</span></span>
-<span><span class="va">aerep</span></span></code></pre></div>
+<span><span class="va">evrep</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/simaerep.html">simaerep</a></span><span class="op">(</span><span class="va">df_visit</span>, mult_corr <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="va">evrep</span></span></code></pre></div>
 <pre><code><span><span class="co">## simaerep object:</span></span>
-<span><span class="co">## Check aerep$df_eval prob_low_prob_ur column for under-reporting probabililty.</span></span>
-<span><span class="co">## Plot results using plot() generic.</span></span></code></pre>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">aerep</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## List of 12</span></span>
-<span><span class="co">##  $ visit           :List of 4</span></span>
-<span><span class="co">##   ..$ dim        : int [1:2] 2336 9</span></span>
-<span><span class="co">##   ..$ df_summary : tibble [1 × 5] (S3: tbl_df/tbl/data.frame)</span></span>
-<span><span class="co">##   .. ..$ n_studies : int 1</span></span>
-<span><span class="co">##   .. ..$ n_sites   : int 6</span></span>
-<span><span class="co">##   .. ..$ n_patients: int 120</span></span>
-<span><span class="co">##   .. ..$ n_visits  : int 2336</span></span>
-<span><span class="co">##   .. ..$ n_aes     : int 942</span></span>
-<span><span class="co">##   ..$ str_call   : chr "df_visit"</span></span>
-<span><span class="co">##   ..$ event_names: chr "ae"</span></span>
-<span><span class="co">##   ..- attr(*, "class")= chr "orivisit"</span></span>
-<span><span class="co">##  $ df_site         : tibble [6 × 6] (S3: tbl_df/tbl/data.frame)</span></span>
-<span><span class="co">##   ..$ study_id          : chr [1:6] "A" "A" "A" "A" ...</span></span>
-<span><span class="co">##   ..$ site_number       : chr [1:6] "S0001" "S0002" "S0003" "S0004" ...</span></span>
-<span><span class="co">##   ..$ n_pat             : int [1:6] 20 20 20 20 20 20</span></span>
-<span><span class="co">##   ..$ n_pat_with_med75  : num [1:6] 17 17 16 17 18 20</span></span>
-<span><span class="co">##   ..$ visit_med75       : Named num [1:6] 15 14 17 16 16 15</span></span>
-<span><span class="co">##   .. ..- attr(*, "names")= chr [1:6] "80%" "80%" "80%" "80%" ...</span></span>
-<span><span class="co">##   ..$ mean_ae_site_med75: num [1:6] 3 3.35 8.5 8.06 7.56 ...</span></span>
-<span><span class="co">##  $ df_sim_sites    : tibble [6 × 9] (S3: tbl_df/tbl/data.frame)</span></span>
-<span><span class="co">##   ..$ study_id              : chr [1:6] "A" "A" "A" "A" ...</span></span>
-<span><span class="co">##   ..$ site_number           : chr [1:6] "S0001" "S0002" "S0003" "S0004" ...</span></span>
-<span><span class="co">##   ..$ n_pat                 : int [1:6] 20 20 20 20 20 20</span></span>
-<span><span class="co">##   ..$ n_pat_with_med75      : num [1:6] 17 17 16 17 18 20</span></span>
-<span><span class="co">##   ..$ visit_med75           : Named num [1:6] 15 14 17 16 16 15</span></span>
-<span><span class="co">##   .. ..- attr(*, "names")= chr [1:6] "80%" "80%" "80%" "80%" ...</span></span>
-<span><span class="co">##   ..$ mean_ae_site_med75    : num [1:6] 3 3.35 8.5 8.06 7.56 ...</span></span>
-<span><span class="co">##   ..$ mean_ae_study_med75   : num [1:6] 6.71 6.02 6.51 6.26 6.35 ...</span></span>
-<span><span class="co">##   ..$ n_pat_with_med75_study: int [1:6] 87 92 74 84 83 84</span></span>
-<span><span class="co">##   ..$ prob_low              : num [1:6] 0 0 1 1 1 1</span></span>
-<span><span class="co">##  $ df_eval         : tibble [6 × 11] (S3: tbl_df/tbl/data.frame)</span></span>
-<span><span class="co">##   ..$ study_id              : chr [1:6] "A" "A" "A" "A" ...</span></span>
-<span><span class="co">##   ..$ site_number           : chr [1:6] "S0001" "S0002" "S0003" "S0004" ...</span></span>
-<span><span class="co">##   ..$ n_pat                 : int [1:6] 20 20 20 20 20 20</span></span>
-<span><span class="co">##   ..$ n_pat_with_med75      : num [1:6] 17 17 16 17 18 20</span></span>
-<span><span class="co">##   ..$ visit_med75           : Named num [1:6] 15 14 17 16 16 15</span></span>
-<span><span class="co">##   .. ..- attr(*, "names")= chr [1:6] "80%" "80%" "80%" "80%" ...</span></span>
-<span><span class="co">##   ..$ mean_ae_site_med75    : num [1:6] 3 3.35 8.5 8.06 7.56 ...</span></span>
-<span><span class="co">##   ..$ mean_ae_study_med75   : num [1:6] 6.71 6.02 6.51 6.26 6.35 ...</span></span>
-<span><span class="co">##   ..$ n_pat_with_med75_study: int [1:6] 87 92 74 84 83 84</span></span>
-<span><span class="co">##   ..$ prob_low              : num [1:6] 0 0 1 1 1 1</span></span>
-<span><span class="co">##   ..$ prob_low_adj          : num [1:6] 0 0 1 1 1 1</span></span>
-<span><span class="co">##   ..$ prob_low_prob_ur      : num [1:6] 1 1 0 0 0 0</span></span>
-<span><span class="co">##  $ r               : num 1000</span></span>
-<span><span class="co">##  $ visit_med75     : logi TRUE</span></span>
-<span><span class="co">##  $ inframe         : logi FALSE</span></span>
-<span><span class="co">##  $ under_only      : logi TRUE</span></span>
-<span><span class="co">##  $ param_site_aggr :List of 2</span></span>
-<span><span class="co">##   ..$ method      : chr "med75_adj"</span></span>
-<span><span class="co">##   ..$ min_pat_pool: num 0.2</span></span>
-<span><span class="co">##  $ param_sim_sites :List of 4</span></span>
-<span><span class="co">##   ..$ r           : num 1000</span></span>
-<span><span class="co">##   ..$ poisson_test: logi FALSE</span></span>
-<span><span class="co">##   ..$ prob_lower  : logi TRUE</span></span>
-<span><span class="co">##   ..$ under_only  : logi TRUE</span></span>
-<span><span class="co">##  $ param_eval_sites:List of 2</span></span>
-<span><span class="co">##   ..$ method    : chr "BH"</span></span>
-<span><span class="co">##   ..$ under_only: logi TRUE</span></span>
-<span><span class="co">##  $ event_names     : chr "ae"</span></span>
-<span><span class="co">##  - attr(*, "class")= chr "simaerep"</span></span></code></pre>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">aerep</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## study = NULL, defaulting to study:A</span></span></code></pre>
-<p><img src="intro_files/figure-html/unnamed-chunk-10-1.png" width="700"></p>
-<p>For modifying the default parameters please check out the
-<code><a href="../reference/simaerep.html">simaerep()</a></code> documentation.</p>
+<span><span class="co">## ----------------</span></span>
+<span><span class="co">## Plot results using plot() generic.</span></span>
+<span><span class="co">## Full results available in "df_eval".</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Summary:</span></span>
+<span><span class="co">## Number of sites: 100</span></span>
+<span><span class="co">## Number of studies: 1</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## First 10 rows of df_eval:</span></span>
+<span><span class="co">## <span style="color: #949494;"># A tibble: 10 × 9</span></span></span>
+<span><span class="co">##    study_id site_id event_count event_per_visit_site visits n_pat</span></span>
+<span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>                <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> A        S0001            95                0.426    223    10</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> A        S0002           116                0.547    212    10</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> A        S0003            97                0.424    229    10</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> A        S0004           110                0.509    216    10</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> A        S0005           109                0.623    175    10</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> A        S0006           115                0.5      230    10</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> A        S0007           103                0.518    199    10</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> A        S0008           133                0.522    255    10</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> A        S0009           125                0.710    176    10</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">10</span> A        S0010           107                0.457    234    10</span></span>
+<span><span class="co">## <span style="color: #949494;"># ℹ 3 more variables: event_per_visit_study &lt;dbl&gt;, event_prob &lt;dbl&gt;,</span></span></span>
+<span><span class="co">## <span style="color: #949494;">#   event_delta &lt;dbl&gt;</span></span></span></code></pre>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">evrep</span>, study <span class="op">=</span> <span class="st">"A"</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## Warning in fortify(data, ...): Arguments in `...` must be used.</span></span>
+<span><span class="co">## <span style="color: #BB0000;">✖</span> Problematic argument:</span></span>
+<span><span class="co">## <span style="color: #00BBBB;">•</span> na.rm = TRUE</span></span>
+<span><span class="co">## <span style="color: #00BBBB;">ℹ</span> Did you misspell an argument name?</span></span>
+<span><span class="co">## Arguments in `...` must be used.</span></span>
+<span><span class="co">## <span style="color: #BB0000;">✖</span> Problematic argument:</span></span>
+<span><span class="co">## <span style="color: #00BBBB;">•</span> na.rm = TRUE</span></span>
+<span><span class="co">## <span style="color: #00BBBB;">ℹ</span> Did you misspell an argument name?</span></span></code></pre>
+<p><img src="intro_files/figure-html/unnamed-chunk-6-1.png" width="700"></p>
+</div>
+<div class="section level4">
+<h4 id="multiple-event-types">Multiple Event Types<a class="anchor" aria-label="anchor" href="#multiple-event-types"></a>
+</h4>
+<p>We can calculate scores for multiple event types in one go. This time
+we add a site outlier with 50% over-reporting.</p>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">event_names</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x"</span>, <span class="st">"y"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">df_visit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sim_test_data_study.html">sim_test_data_study</a></span><span class="op">(</span></span>
+<span>  n_pat <span class="op">=</span> <span class="fl">1000</span>, <span class="co"># number of patients in study</span></span>
+<span>  n_sites <span class="op">=</span> <span class="fl">100</span>, <span class="co"># number of sites in study</span></span>
+<span>  <span class="co"># non-constant event rates based on gamma distribution</span></span>
+<span>  ratio_out <span class="op">=</span> <span class="fl">1</span><span class="op">/</span><span class="fl">100</span>, <span class="co"># ratio of sites with outlier</span></span>
+<span>  factor_event_rate <span class="op">=</span> <span class="op">+</span><span class="fl">0.5</span>, <span class="co"># rate of over-reporting</span></span>
+<span>  event_names <span class="op">=</span> <span class="va">event_names</span>,</span>
+<span>  event_rates <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>    <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/GammaDist.html" class="external-link">dgamma</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">20</span>, <span class="fl">0.5</span><span class="op">)</span>, shape <span class="op">=</span> <span class="fl">5</span>, rate <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> <span class="op">*</span> <span class="fl">5</span><span class="op">)</span> <span class="op">+</span> <span class="fl">0.1</span>,</span>
+<span>    <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/GammaDist.html" class="external-link">dgamma</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">20</span>, <span class="fl">0.5</span><span class="op">)</span>, shape <span class="op">=</span> <span class="fl">4</span>, rate <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> <span class="op">*</span> <span class="fl">5</span><span class="op">)</span> <span class="op">+</span> <span class="fl">0.05</span></span>
+<span>  <span class="op">)</span>,</span>
+<span>  max_visit <span class="op">=</span> <span class="fl">20</span>,</span>
+<span>  max_visit_sd <span class="op">=</span> <span class="fl">10</span>,</span>
+<span>  study_id <span class="op">=</span> <span class="st">"A"</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">df_visit</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">site_id</span>, <span class="va">patient_id</span>, <span class="va">visit</span>, <span class="va">n_x</span>, <span class="va">n_y</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 19,535 × 5</span></span></span>
+<span><span class="co">##    site_id patient_id visit   n_x   n_y</span></span>
+<span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> S0001   P000001        1     2     3</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> S0001   P000001        2     7     7</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> S0001   P000001        3     9    15</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> S0001   P000001        4    14    17</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> S0001   P000001        5    19    19</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> S0001   P000001        6    21    21</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> S0001   P000001        7    22    21</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> S0001   P000001        8    22    21</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> S0001   P000001        9    22    21</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">10</span> S0001   P000001       10    22    21</span></span>
+<span><span class="co">## <span style="color: #949494;"># ℹ 19,525 more rows</span></span></span></code></pre>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">evrep</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/simaerep.html">simaerep</a></span><span class="op">(</span><span class="va">df_visit</span>, event_names <span class="op">=</span> <span class="va">event_names</span><span class="op">)</span></span>
+<span><span class="va">evrep</span></span></code></pre></div>
+<pre><code><span><span class="co">## simaerep object:</span></span>
+<span><span class="co">## ----------------</span></span>
+<span><span class="co">## Plot results using plot() generic.</span></span>
+<span><span class="co">## Full results available in "df_eval".</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Summary:</span></span>
+<span><span class="co">## Number of sites: 100</span></span>
+<span><span class="co">## Number of studies: 1</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Multiplicity correction applied to '*_prob' columns.</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Reporting probabilities calculated for: x, y </span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## First 10 rows of df_eval:</span></span>
+<span><span class="co">## <span style="color: #949494;"># A tibble: 10 × 16</span></span></span>
+<span><span class="co">##    study_id site_id x_count y_count x_per_visit_site y_per_visit_site visits</span></span>
+<span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> A        S0001       177     175            0.738            0.729    240</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> A        S0002       120      99            0.632            0.521    190</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> A        S0003       111      89            0.624            0.5      178</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> A        S0004       107     105            0.540            0.530    198</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> A        S0005        97      83            0.551            0.472    176</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> A        S0006       111      97            0.531            0.464    209</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> A        S0007       110     106            0.466            0.449    236</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> A        S0008       119     116            0.482            0.470    247</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> A        S0009       121     103            0.680            0.579    178</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">10</span> A        S0010        92      82            0.561            0.5      164</span></span>
+<span><span class="co">## <span style="color: #949494;"># ℹ 9 more variables: n_pat &lt;int&gt;, x_per_visit_study &lt;dbl&gt;,</span></span></span>
+<span><span class="co">## <span style="color: #949494;">#   y_per_visit_study &lt;dbl&gt;, x_prob_no_mult &lt;dbl&gt;, x_prob &lt;dbl&gt;, x_delta &lt;dbl&gt;,</span></span></span>
+<span><span class="co">## <span style="color: #949494;">#   y_prob_no_mult &lt;dbl&gt;, y_prob &lt;dbl&gt;, y_delta &lt;dbl&gt;</span></span></span></code></pre>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">evrep</span>, study <span class="op">=</span> <span class="st">"A"</span>, plot_event <span class="op">=</span> <span class="st">"x"</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## Warning in fortify(data, ...): Arguments in `...` must be used.</span></span>
+<span><span class="co">## <span style="color: #BB0000;">✖</span> Problematic argument:</span></span>
+<span><span class="co">## <span style="color: #00BBBB;">•</span> na.rm = TRUE</span></span>
+<span><span class="co">## <span style="color: #00BBBB;">ℹ</span> Did you misspell an argument name?</span></span>
+<span><span class="co">## Arguments in `...` must be used.</span></span>
+<span><span class="co">## <span style="color: #BB0000;">✖</span> Problematic argument:</span></span>
+<span><span class="co">## <span style="color: #00BBBB;">•</span> na.rm = TRUE</span></span>
+<span><span class="co">## <span style="color: #00BBBB;">ℹ</span> Did you misspell an argument name?</span></span></code></pre>
+<p><img src="intro_files/figure-html/unnamed-chunk-9-1.png" width="700"></p>
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">evrep</span>, study <span class="op">=</span> <span class="st">"A"</span>, plot_event <span class="op">=</span> <span class="st">"y"</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## Warning in fortify(data, ...): Arguments in `...` must be used.</span></span>
+<span><span class="co">## <span style="color: #BB0000;">✖</span> Problematic argument:</span></span>
+<span><span class="co">## <span style="color: #00BBBB;">•</span> na.rm = TRUE</span></span>
+<span><span class="co">## <span style="color: #00BBBB;">ℹ</span> Did you misspell an argument name?</span></span>
+<span><span class="co">## Arguments in `...` must be used.</span></span>
+<span><span class="co">## <span style="color: #BB0000;">✖</span> Problematic argument:</span></span>
+<span><span class="co">## <span style="color: #00BBBB;">•</span> na.rm = TRUE</span></span>
+<span><span class="co">## <span style="color: #00BBBB;">ℹ</span> Did you misspell an argument name?</span></span></code></pre>
+<p><img src="intro_files/figure-html/unnamed-chunk-9-2.png" width="700"></p>
+</div>
+<div class="section level4">
+<h4 id="input-data-requirements">Input Data Requirements<a class="anchor" aria-label="anchor" href="#input-data-requirements"></a>
+</h4>
+<p>As input data the cumulative event count for each patient visit is
+required.</p>
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">df_visit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sim_test_data_study.html">sim_test_data_study</a></span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">df_visit</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">patient_id</span> <span class="op">==</span> <span class="st">"P000001"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">site_id</span>, <span class="va">patient_id</span>, <span class="va">visit</span>, <span class="va">n_event</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<table class="table">
+<thead><tr class="header">
+<th align="left">site_id</th>
+<th align="left">patient_id</th>
+<th align="right">visit</th>
+<th align="right">n_event</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">S0001</td>
+<td align="left">P000001</td>
+<td align="right">1</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
+<td align="left">S0001</td>
+<td align="left">P000001</td>
+<td align="right">2</td>
+<td align="right">6</td>
+</tr>
+<tr class="odd">
+<td align="left">S0001</td>
+<td align="left">P000001</td>
+<td align="right">3</td>
+<td align="right">10</td>
+</tr>
+<tr class="even">
+<td align="left">S0001</td>
+<td align="left">P000001</td>
+<td align="right">4</td>
+<td align="right">11</td>
+</tr>
+<tr class="odd">
+<td align="left">S0001</td>
+<td align="left">P000001</td>
+<td align="right">5</td>
+<td align="right">13</td>
+</tr>
+<tr class="even">
+<td align="left">S0001</td>
+<td align="left">P000001</td>
+<td align="right">6</td>
+<td align="right">16</td>
+</tr>
+<tr class="odd">
+<td align="left">S0001</td>
+<td align="left">P000001</td>
+<td align="right">7</td>
+<td align="right">17</td>
+</tr>
+<tr class="even">
+<td align="left">S0001</td>
+<td align="left">P000001</td>
+<td align="right">8</td>
+<td align="right">17</td>
+</tr>
+<tr class="odd">
+<td align="left">S0001</td>
+<td align="left">P000001</td>
+<td align="right">9</td>
+<td align="right">17</td>
+</tr>
+<tr class="even">
+<td align="left">S0001</td>
+<td align="left">P000001</td>
+<td align="right">10</td>
+<td align="right">17</td>
+</tr>
+<tr class="odd">
+<td align="left">S0001</td>
+<td align="left">P000001</td>
+<td align="right">11</td>
+<td align="right">17</td>
+</tr>
+<tr class="even">
+<td align="left">S0001</td>
+<td align="left">P000001</td>
+<td align="right">12</td>
+<td align="right">17</td>
+</tr>
+<tr class="odd">
+<td align="left">S0001</td>
+<td align="left">P000001</td>
+<td align="right">13</td>
+<td align="right">17</td>
+</tr>
+<tr class="even">
+<td align="left">S0001</td>
+<td align="left">P000001</td>
+<td align="right">14</td>
+<td align="right">17</td>
+</tr>
+<tr class="odd">
+<td align="left">S0001</td>
+<td align="left">P000001</td>
+<td align="right">15</td>
+<td align="right">17</td>
+</tr>
+</tbody>
+</table>
+<p>In practice this requires data from different domains within the
+clinical data set to be merged. This requires the patient and site ids
+as well as the date and time at which visits and events are
+occurring.</p>
+<p>There will be edge cases e.g. missing dates, missing patient link,
+events and visits on the same date, that require attention.</p>
+<p><a href="https://impala-consortium.github.io/gsm.simaerep/reference/Input_CumCount.html" class="external-link">gsm.simaerep::InputCumCount</a>
+that is part of the gsm extension <a href="https://github.com/IMPALA-Consortium/gsm.simaerep" class="external-link"><code>gsm.simaerep</code></a>
+uses subject, visit and event data as input and merges the data into a
+<code>simaerep</code> ready data frame.</p>
+<p>However, it follows the <code>gsm</code> naming conventions so the
+column names will be different than those required by
+<code>simaerep</code>. We can adapt to the different column names in the
+following way.</p>
+<p><code>gsm.simaerep</code> has not yet been released on CRAN so we are
+not demonstrating it’s functionality here.</p>
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">df_visit_gsm</span> <span class="op">&lt;-</span> <span class="va">df_visit</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
+<span>    study_id <span class="op">=</span> <span class="st">"A"</span></span>
+<span>  <span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span></span>
+<span>    StudyID <span class="op">=</span> <span class="va">study_id</span>,</span>
+<span>    GroupID <span class="op">=</span> <span class="va">site_id</span>,</span>
+<span>    SubjectID <span class="op">=</span> <span class="va">patient_id</span>, </span>
+<span>    Denominator <span class="op">=</span> <span class="va">visit</span>, </span>
+<span>    Numerator <span class="op">=</span> <span class="va">n_event</span></span>
+<span>  <span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="../reference/simaerep.html">simaerep</a></span><span class="op">(</span></span>
+<span>  <span class="va">df_visit_gsm</span>,</span>
+<span>  col_names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>    study_id <span class="op">=</span> <span class="st">"StudyID"</span>,</span>
+<span>    site_id <span class="op">=</span> <span class="st">"GroupID"</span>,</span>
+<span>    patient_id <span class="op">=</span> <span class="st">"SubjectID"</span>,</span>
+<span>    visit <span class="op">=</span> <span class="st">"Denominator"</span>,</span>
+<span>    n_ae <span class="op">=</span> <span class="st">"Numerator"</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## simaerep object:</span></span>
+<span><span class="co">## ----------------</span></span>
+<span><span class="co">## Plot results using plot() generic.</span></span>
+<span><span class="co">## Full results available in "df_eval".</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Summary:</span></span>
+<span><span class="co">## Number of sites: 20</span></span>
+<span><span class="co">## Number of studies: 1</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Multiplicity correction applied to '*_prob' columns.</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## First 10 rows of df_eval:</span></span>
+<span><span class="co">## <span style="color: #949494;"># A tibble: 10 × 10</span></span></span>
+<span><span class="co">##    StudyID GroupID ae_count ae_per_visit_site visits n_pat ae_per_visit_study</span></span>
+<span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> A       S0001        615             0.616    998    50              0.601</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> A       S0002        607             0.611    994    50              0.603</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> A       S0003        615             0.617    996    50              0.604</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> A       S0004        613             0.637    962    50              0.618</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> A       S0005        589             0.623    945    50              0.630</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> A       S0006        576             0.579    995    50              0.604</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> A       S0007        618             0.610   <span style="text-decoration: underline;">1</span>013    50              0.599</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> A       S0008        623             0.614   <span style="text-decoration: underline;">1</span>014    50              0.594</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> A       S0009        583             0.610    956    50              0.624</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">10</span> A       S0010        574             0.585    982    50              0.612</span></span>
+<span><span class="co">## <span style="color: #949494;"># ℹ 3 more variables: ae_prob_no_mult &lt;dbl&gt;, ae_prob &lt;dbl&gt;, ae_delta &lt;dbl&gt;</span></span></span></code></pre>
+</div>
+</div>
+<div class="section level3">
+<h3 id="multiple-studies">Multiple Studies<a class="anchor" aria-label="anchor" href="#multiple-studies"></a>
+</h3>
+<p><code>simaerep</code> probabilities can be calculated for multiple
+studies at once.</p>
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">df_visit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind_rows.html" class="external-link">bind_rows</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="../reference/sim_test_data_study.html">sim_test_data_study</a></span><span class="op">(</span>study_id <span class="op">=</span> <span class="st">"A"</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="../reference/sim_test_data_study.html">sim_test_data_study</a></span><span class="op">(</span>study_id <span class="op">=</span> <span class="st">"B"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="../reference/simaerep.html">simaerep</a></span><span class="op">(</span><span class="va">df_visit</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## simaerep object:</span></span>
+<span><span class="co">## ----------------</span></span>
+<span><span class="co">## Plot results using plot() generic.</span></span>
+<span><span class="co">## Full results available in "df_eval".</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Summary:</span></span>
+<span><span class="co">## Number of sites: 40</span></span>
+<span><span class="co">## Number of studies: 2</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Multiplicity correction applied to '*_prob' columns.</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## First 10 rows of df_eval:</span></span>
+<span><span class="co">## <span style="color: #949494;"># A tibble: 10 × 10</span></span></span>
+<span><span class="co">##    study_id site_id event_count event_per_visit_site visits n_pat</span></span>
+<span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>                <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> A        S0001           576                0.579    995    50</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> A        S0002           608                0.637    955    50</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> A        S0003           572                0.570   <span style="text-decoration: underline;">1</span>003    50</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> A        S0004           619                0.607   <span style="text-decoration: underline;">1</span>019    50</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> A        S0005           598                0.631    947    50</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> A        S0006           604                0.629    960    50</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> A        S0007           584                0.608    961    50</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> A        S0008           595                0.619    961    50</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> A        S0009           614                0.638    962    50</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">10</span> A        S0010           623                0.644    967    50</span></span>
+<span><span class="co">## <span style="color: #949494;"># ℹ 4 more variables: event_per_visit_study &lt;dbl&gt;, event_prob_no_mult &lt;dbl&gt;,</span></span></span>
+<span><span class="co">## <span style="color: #949494;">#   event_prob &lt;dbl&gt;, event_delta &lt;dbl&gt;</span></span></span></code></pre>
+</div>
+<div class="section level3">
+<h3 id="in-database-calculation">In Database Calculation<a class="anchor" aria-label="anchor" href="#in-database-calculation"></a>
+</h3>
+<p>We can demonstrate the database-backend compatibility by using a
+connection to a in memory <code>duckdb</code> database. In order to set
+the number of replications we need to create a new table in our back-end
+that has one column with as many rows as the desired replications.</p>
+<p>A lazy reference to this table can then be passed to the
+<code>r</code> parameter.</p>
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">con</span> <span class="op">&lt;-</span> <span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbConnect.html" class="external-link">dbConnect</a></span><span class="op">(</span><span class="fu">duckdb</span><span class="fu">::</span><span class="fu"><a href="https://r.duckdb.org/reference/duckdb.html" class="external-link">duckdb</a></span><span class="op">(</span><span class="op">)</span>, dbdir <span class="op">=</span> <span class="st">":memory:"</span><span class="op">)</span></span>
+<span><span class="va">df_r</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>rep <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1000</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">df_visit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sim_test_data_study.html">sim_test_data_study</a></span><span class="op">(</span></span>
+<span>  n_pat <span class="op">=</span> <span class="fl">100</span>, <span class="co"># number of patients in study</span></span>
+<span>  n_sites <span class="op">=</span> <span class="fl">10</span>, <span class="co"># number of sites in study</span></span>
+<span>  ratio_out <span class="op">=</span> <span class="fl">0.1</span>, <span class="co"># ratio of sites with outlier</span></span>
+<span>  factor_event_rate <span class="op">=</span> <span class="op">-</span><span class="fl">0.5</span>, <span class="co"># rate of under-reporting</span></span>
+<span>  <span class="co"># non-constant event rates based on gamma distribution</span></span>
+<span>  event_rates <span class="op">=</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/GammaDist.html" class="external-link">dgamma</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">20</span>, <span class="fl">0.5</span><span class="op">)</span>, shape <span class="op">=</span> <span class="fl">5</span>, rate <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> <span class="op">*</span> <span class="fl">5</span><span class="op">)</span> <span class="op">+</span> <span class="fl">0.1</span>,</span>
+<span>  max_visit <span class="op">=</span> <span class="fl">20</span>,</span>
+<span>  max_visit_sd <span class="op">=</span> <span class="fl">10</span>,</span>
+<span>  study_id <span class="op">=</span> <span class="st">"A"</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/copy_to.html" class="external-link">copy_to</a></span><span class="op">(</span><span class="va">con</span>, <span class="va">df_visit</span>, <span class="st">"visit"</span><span class="op">)</span></span>
+<span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/copy_to.html" class="external-link">copy_to</a></span><span class="op">(</span><span class="va">con</span>, <span class="va">df_r</span>, <span class="st">"r"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">tbl_visit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/tbl.html" class="external-link">tbl</a></span><span class="op">(</span><span class="va">con</span>, <span class="st">"visit"</span><span class="op">)</span></span>
+<span><span class="va">tbl_r</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/tbl.html" class="external-link">tbl</a></span><span class="op">(</span><span class="va">con</span>, <span class="st">"r"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">evrep_db</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/simaerep.html">simaerep</a></span><span class="op">(</span><span class="va">tbl_visit</span>, r <span class="op">=</span> <span class="va">tbl_r</span><span class="op">)</span></span></code></pre></div>
+<p>When inspecting <code>df_eval</code> we see that it is still a lazy
+table object.</p>
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">evrep_db</span></span></code></pre></div>
+<pre><code><span><span class="co">## simaerep object:</span></span>
+<span><span class="co">## ----------------</span></span>
+<span><span class="co">## Plot results using plot() generic.</span></span>
+<span><span class="co">## Full results available in "df_eval".</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Summary:</span></span>
+<span><span class="co">## Multiplicity correction applied to '*_prob' columns.</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## First 10 rows of df_eval:</span></span>
+<span><span class="co">## <span style="color: #949494;"># Source:     SQL [?? x 10]</span></span></span>
+<span><span class="co">## <span style="color: #949494;"># Database:   DuckDB v1.3.0 [koneswab@Darwin 23.6.0:R 4.4.1/:memory:]</span></span></span>
+<span><span class="co">## <span style="color: #949494;"># Ordered by: study_id, site_id</span></span></span>
+<span><span class="co">##    study_id site_id event_count event_per_visit_site visits n_pat</span></span>
+<span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>                <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> A        S0010           107                0.480    223    10</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> A        S0001            61                0.302    202    10</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> A        S0005            96                0.381    252    10</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> A        S0003           125                0.595    210    10</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> A        S0008           103                0.462    223    10</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> A        S0007           122                0.552    221    10</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> A        S0004           116                0.483    240    10</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> A        S0009           123                0.530    232    10</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> A        S0006           119                0.463    257    10</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">10</span> A        S0002           105                0.544    193    10</span></span>
+<span><span class="co">## <span style="color: #949494;"># ℹ 4 more variables: event_per_visit_study &lt;dbl&gt;, event_prob_no_mult &lt;dbl&gt;,</span></span></span>
+<span><span class="co">## <span style="color: #949494;">#   event_prob &lt;dbl&gt;, event_delta &lt;dbl&gt;</span></span></span></code></pre>
+<p>We can convert it to sql code. The <code>cte</code> option makes the
+sql code more readable.</p>
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">sql_eval</span> <span class="op">&lt;-</span> <span class="fu">dbplyr</span><span class="fu">::</span><span class="fu"><a href="https://dbplyr.tidyverse.org/reference/sql_build.html" class="external-link">sql_render</a></span><span class="op">(</span><span class="va">evrep_db</span><span class="op">$</span><span class="va">df_eval</span>, sql_options <span class="op">=</span> <span class="fu">dbplyr</span><span class="fu">::</span><span class="fu"><a href="https://dbplyr.tidyverse.org/reference/sql_options.html" class="external-link">sql_options</a></span><span class="op">(</span>cte <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu">stringr</span><span class="fu">::</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_trunc.html" class="external-link">str_trunc</a></span><span class="op">(</span><span class="va">sql_eval</span>, <span class="fl">500</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## &lt;SQL&gt; WITH q01 AS (</span></span>
+<span><span class="co">##   SELECT</span></span>
+<span><span class="co">##     patient_id AS patnum,</span></span>
+<span><span class="co">##     site_id AS site_number,</span></span>
+<span><span class="co">##     is_out,</span></span>
+<span><span class="co">##     max_visit_mean,</span></span>
+<span><span class="co">##     max_visit_sd,</span></span>
+<span><span class="co">##     event_per_visit_mean,</span></span>
+<span><span class="co">##     visit,</span></span>
+<span><span class="co">##     n_event,</span></span>
+<span><span class="co">##     study_id</span></span>
+<span><span class="co">##   FROM visit</span></span>
+<span><span class="co">## ),</span></span>
+<span><span class="co">## q02 AS (</span></span>
+<span><span class="co">##   SELECT</span></span>
+<span><span class="co">##     patnum,</span></span>
+<span><span class="co">##     site_number,</span></span>
+<span><span class="co">##     is_out,</span></span>
+<span><span class="co">##     max_visit_mean,</span></span>
+<span><span class="co">##     max_visit_sd,</span></span>
+<span><span class="co">##     event_per_visit_mean,</span></span>
+<span><span class="co">##     CAST(visit AS NUMERIC) AS visit,</span></span>
+<span><span class="co">##     CAST(n_event AS NUMERIC) AS n_event,</span></span>
+<span><span class="co">##     study_id</span></span>
+<span><span class="co">##   FROM q01</span></span>
+<span><span class="co">## ),</span></span>
+<span><span class="co">## q03 AS (</span></span>
+<span><span class="co">##   SELECT DISTINCT study_id, site_number</span></span>
+<span><span class="co">##   FROM q02 q01...</span></span></code></pre>
+<p>We can take that code and wrap it in a <code>CREATE TABLE</code>
+statement</p>
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">sql_create</span> <span class="op">&lt;-</span> <span class="fu">glue</span><span class="fu">::</span><span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html" class="external-link">glue</a></span><span class="op">(</span><span class="st">"CREATE TABLE eval AS ({sql_eval})"</span><span class="op">)</span></span>
+<span><span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbExecute.html" class="external-link">dbExecute</a></span><span class="op">(</span><span class="va">con</span>, <span class="va">sql_create</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## [1] 10</span></span></code></pre>
+<p>Retrieve the new table from the database.</p>
+<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">tbl_eval</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/tbl.html" class="external-link">tbl</a></span><span class="op">(</span><span class="va">con</span>, <span class="st">"eval"</span><span class="op">)</span></span>
+<span><span class="va">tbl_eval</span></span></code></pre></div>
+<pre><code><span><span class="co">## <span style="color: #949494;"># Source:   table&lt;eval&gt; [?? x 10]</span></span></span>
+<span><span class="co">## <span style="color: #949494;"># Database: DuckDB v1.3.0 [koneswab@Darwin 23.6.0:R 4.4.1/:memory:]</span></span></span>
+<span><span class="co">##    study_id site_id event_count event_per_visit_site visits n_pat</span></span>
+<span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>                <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> A        S0008           103                0.462    223    10</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> A        S0007           122                0.552    221    10</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> A        S0010           107                0.480    223    10</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> A        S0005            96                0.381    252    10</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> A        S0006           119                0.463    257    10</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> A        S0003           125                0.595    210    10</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> A        S0002           105                0.544    193    10</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> A        S0009           123                0.530    232    10</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> A        S0001            61                0.302    202    10</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">10</span> A        S0004           116                0.483    240    10</span></span>
+<span><span class="co">## <span style="color: #949494;"># ℹ 4 more variables: event_per_visit_study &lt;dbl&gt;, event_prob_no_mult &lt;dbl&gt;,</span></span></span>
+<span><span class="co">## <span style="color: #949494;">#   event_prob &lt;dbl&gt;, event_delta &lt;dbl&gt;</span></span></span></code></pre>
+<p>We plot the results from the {simaerep} object.</p>
+<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">evrep_db</span>, study <span class="op">=</span> <span class="st">"A"</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## Warning in fortify(data, ...): Arguments in `...` must be used.</span></span>
+<span><span class="co">## <span style="color: #BB0000;">✖</span> Problematic argument:</span></span>
+<span><span class="co">## <span style="color: #00BBBB;">•</span> na.rm = TRUE</span></span>
+<span><span class="co">## <span style="color: #00BBBB;">ℹ</span> Did you misspell an argument name?</span></span>
+<span><span class="co">## Arguments in `...` must be used.</span></span>
+<span><span class="co">## <span style="color: #BB0000;">✖</span> Problematic argument:</span></span>
+<span><span class="co">## <span style="color: #00BBBB;">•</span> na.rm = TRUE</span></span>
+<span><span class="co">## <span style="color: #00BBBB;">ℹ</span> Did you misspell an argument name?</span></span></code></pre>
+<p><img src="intro_files/figure-html/unnamed-chunk-18-1.png" width="700"></p>
+<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbDisconnect.html" class="external-link">dbDisconnect</a></span><span class="op">(</span><span class="va">con</span><span class="op">)</span></span></code></pre></div>
+</div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

@@ -15,3 +15,4 @@ logical
 \description{
 internal function
 }
+\keyword{internal}

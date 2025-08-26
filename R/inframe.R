@@ -28,7 +28,7 @@ prune_to_visit_med75_inframe <- function(df_visit, df_site) {
 }
 
 
-#' Calculate prob_lower for study sites using table operations
+#' Calculate prob for study sites using table operations
 #'@export
 #'@inheritParams simaerep
 #'@param df_site, dataframe as returned be [site_aggr()], Will switch to visit_med75.
@@ -37,18 +37,18 @@ prune_to_visit_med75_inframe <- function(df_visit, df_site) {
 #' df_visit <- sim_test_data_study(
 #'   n_pat = 100,
 #'   n_sites = 5,
-#'   frac_site_with_ur = 0.4,
-#'   ur_rate = 0.6
+#'   ratio_out = 0.4,
+#'   factor_event_rate = - 0.6
+#' ) %>%
+#' dplyr::rename(
+#'   site_number = site_id,
+#'   patnum = patient_id,
+#'   n_ae = n_event
 #' )
-#' df_visit$study_id <- "A"
 #'
-#' df_sim <- sim_inframe(df_visit)
-#' df_eval <- eval_sites(df_sim)
-#' df_eval
+#' df_sim <- simaerep:::sim_inframe(df_visit)
 sim_inframe <- function(df_visit, r = 1000, df_site = NULL, event_names = c("ae")) {
   colnames <- paste0("n_", event_names)
-
-
 
   # db back-end, to not form ratios from integers
   df_visit <- df_visit %>%
@@ -70,29 +70,15 @@ sim_inframe <- function(df_visit, r = 1000, df_site = NULL, event_names = c("ae"
       )
   }
 
-
   # aggregate per patient to get max visits
   df_pat_aggr_pool <- pat_aggr(df_visit)
 
-
-  colnames_event <- "events"
-  colnames_low <- "prob_low" #nolint
-  colnames_ori <- "events_per_visit_site_ori"
-  colnames_rep <- "events_per_visit_rep"
-  colnames_study <- "events_per_visit_study" #nolint
-  colnames_site <- "events_per_visit_site" #nolint
-
-
-  if (length(event_names) != 1) {
-    colnames_event <- paste0(event_names, "_events")
-    colnames_low <- paste0(event_names, "_prob_low")
-    colnames_ori <- paste0(event_names, "_per_visit_site_ori")
-    colnames_rep <- paste0(event_names, "_per_visit_rep")
-    colnames_study <- paste0(event_names, "_per_visit_study")
-    colnames_site <- paste0(event_names, "_per_visit_site")
-  }
-
-
+  colnames_event <- paste0(event_names, "_count")
+  colnames_low <- paste0(event_names, "_prob_low")  # nolint
+  colnames_ori <- paste0(event_names, "_per_visit_site_ori")
+  colnames_rep <- paste0(event_names, "_per_visit_rep")
+  colnames_study <- paste0(event_names, "_per_visit_study")  # nolint
+  colnames_site <- paste0(event_names, "_per_visit_site") # nolint
 
   # this implements visit_med75
   if (! is.null(df_site)) {
@@ -211,10 +197,6 @@ sim_inframe <- function(df_visit, r = 1000, df_site = NULL, event_names = c("ae"
       .by = c("study_id", "rep", "site_number")
     )
 
-
-
-
-
   join_temp <- df_calc %>%
     left_join(
       df_calc_ori,
@@ -251,8 +233,7 @@ sim_inframe <- function(df_visit, r = 1000, df_site = NULL, event_names = c("ae"
 
 #' benjamini hochberg p value correction using table operations
 #'@keywords internal
-p_adjust_bh_inframe <- function(df_eval, cols, suffix) {
-
+p_adjust_bh_inframe <- function(df_eval, cols) {
 
   any_probx <- any(str_detect(colnames(df_eval), "probx_"))
 
@@ -264,16 +245,9 @@ p_adjust_bh_inframe <- function(df_eval, cols, suffix) {
     fun_arrange <- window_order
   }
 
-
-
-
-
   df_out <- df_eval
 
   for (col in cols) {
-    col_adj <- paste0(col, "_adj")
-    col_suffix <- paste0(col, suffix)
-
     df_out <- df_out %>%
       mutate(probx = .data[[col]]) %>%
       fun_arrange(.data$study_id, .data$probx) %>%
@@ -295,8 +269,7 @@ p_adjust_bh_inframe <- function(df_eval, cols, suffix) {
         probx_p_vs_fp_ratio = ifelse(.data$probx_p_vs_fp_ratio < 1, 1, .data$probx_p_vs_fp_ratio)
       ) %>%
       mutate(
-        !! as.name(col_adj) := 1 / .data$probx_p_vs_fp_ratio,
-        !! as.name(col_suffix) := 1 - .data[[col_adj]]
+        !! as.name(col) := 1 / .data$probx_p_vs_fp_ratio,
       ) %>%
       select(- starts_with("probx"))
 
@@ -315,7 +288,7 @@ p_adjust_bh_inframe <- function(df_eval, cols, suffix) {
 #' this is needed for hochberg p value adjustment. We need to assign higher
 #' rank when multiple sites have same p value
 #'
-#' @export
+#' @keywords internal
 #' @examples
 #'
 #'df <- tibble::tibble(s = c(1, 2, 2, 2, 5, 10)) %>%
@@ -324,13 +297,13 @@ p_adjust_bh_inframe <- function(df_eval, cols, suffix) {
 #'  )
 #'
 #'df %>%
-#'  max_rank("s", "max_rank")
+#'  simaerep:::max_rank("s", "max_rank")
 #'\donttest{
 #'# Database
 #'con <- DBI::dbConnect(duckdb::duckdb(), dbdir = ":memory:")
 #'
 #'dplyr::copy_to(con, df, "df")
-#'max_rank(dplyr::tbl(con, "df"), "s", "max_rank")
+#'simaerep:::max_rank(dplyr::tbl(con, "df"), "s", "max_rank")
 #'
 #'DBI::dbDisconnect(con)
 #'}

@@ -18,3 +18,4 @@ df_visit corrected
 \description{
 Internal function called by \link[=check_df_visit]{check_df_visit()}.
 }
+\keyword{internal}

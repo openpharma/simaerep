@@ -9,7 +9,7 @@ get_visit_med75(df_pat, method = "med75_adj", min_pat_pool = 0.2)
 \arguments{
 \item{df_pat}{dataframe as returned by \code{\link[=pat_aggr]{pat_aggr()}}}
 
-\item{method}{character, one of c("med75", "med75_adj") defining method for
+\item{method}{character, one of c("med75", "med75_adj", "max") defining method for
 defining evaluation point visit_med75 (see details), Default: "med75_adj"}
 
 \item{min_pat_pool}{double, minimum ratio of available patients available for
@@ -21,3 +21,4 @@ dataframe
 \description{
 Internal function used by \code{\link[=site_aggr]{site_aggr()}}.
 }
+\keyword{internal}
