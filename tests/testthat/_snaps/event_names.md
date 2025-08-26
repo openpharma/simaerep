@@ -17,7 +17,7 @@
       Reporting probabilities calculated for: ae, y 
       
       First 10 rows of df_eval:
-      # A tibble: 10 x 14
+      # A tibble: 10 x 16
          study_id site_id ae_count y_count ae_per_visit_site y_per_visit_site visits
          <chr>    <chr>      <dbl>   <dbl>             <dbl>            <dbl>  <dbl>
        1 A        S0001         72      70             0.193            0.188    373
@@ -30,9 +30,9 @@
        8 B        S0003        199     139             0.509            0.355    391
        9 B        S0004        213     144             0.559            0.378    381
       10 B        S0005        204     170             0.516            0.430    395
-      # i 7 more variables: n_pat <int>, ae_per_visit_study <dbl>,
-      #   y_per_visit_study <dbl>, ae_prob <dbl>, ae_delta <dbl>, y_prob <dbl>,
-      #   y_delta <dbl>
+      # i 9 more variables: n_pat <int>, ae_per_visit_study <dbl>,
+      #   y_per_visit_study <dbl>, ae_prob_no_mult <dbl>, ae_prob <dbl>,
+      #   ae_delta <dbl>, y_prob_no_mult <dbl>, y_prob <dbl>, y_delta <dbl>
 
 ---
 

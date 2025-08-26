@@ -15,7 +15,7 @@
       Multiplicity correction applied to '*_prob' columns.
       
       First 10 rows of df_eval:
-      # A tibble: 10 x 9
+      # A tibble: 10 x 10
          study_id site_id event_count event_per_visit_site visits n_pat
          <chr>    <chr>         <dbl>                <dbl>  <dbl> <int>
        1 A        S0001           109                0.280    389    20
@@ -28,8 +28,8 @@
        8 B        S0003           198                0.524    378    20
        9 B        S0004           204                0.490    416    20
       10 B        S0005           166                0.438    379    20
-      # i 3 more variables: event_per_visit_study <dbl>, event_prob <dbl>,
-      #   event_delta <dbl>
+      # i 4 more variables: event_per_visit_study <dbl>, event_prob_no_mult <dbl>,
+      #   event_prob <dbl>, event_delta <dbl>
 
 ---
 
@@ -50,7 +50,7 @@
       Multiplicity correction applied to prob column.
       
       First 10 rows of df_eval:
-      # A tibble: 10 x 9
+      # A tibble: 10 x 10
          study_id site_id n_pat n_pat_with_med75 visit_med75 mean_event_site_med75
          <chr>    <chr>   <int>            <dbl>       <dbl>                 <dbl>
        1 A        S0001      20               17          15                  4.18
@@ -63,8 +63,8 @@
        8 B        S0003      20               17          15                  7.71
        9 B        S0004      20               17          16                  7.29
       10 B        S0005      20               16          14                  6.31
-      # i 3 more variables: mean_event_study_med75 <dbl>,
-      #   n_pat_with_med75_study <int>, prob <dbl>
+      # i 4 more variables: mean_event_study_med75 <dbl>,
+      #   n_pat_with_med75_study <int>, prob_no_mult <dbl>, prob <dbl>
 
 # simaerep() - poisson test
 

@@ -135,8 +135,7 @@ between -1 and 1. Under- and over-reporting probabilities are inversely related 
 have been combined into one column. Negative values show high under-reporting,
 positive values higher over-reporting.
 
-The column `event_delta` shows the difference of events expected minus the events
-reported.
+The column `event_delta` shows the difference of the expected event count minus the reported event count.
 
 
 ```{r}
@@ -303,7 +302,17 @@ A lazy reference to this table can then be passed to the `r` parameter.
 con <- DBI::dbConnect(duckdb::duckdb(), dbdir = ":memory:")
 df_r <- tibble(rep = seq(1, 1000))
 
-df_visit <- sim_test_data_study(ratio_out = 1/20, factor_event_rate = 0.5)
+df_visit <- sim_test_data_study(
+  n_pat = 100, # number of patients in study
+  n_sites = 10, # number of sites in study
+  ratio_out = 0.1, # ratio of sites with outlier
+  factor_event_rate = -0.5, # rate of under-reporting
+  # non-constant event rates based on gamma distribution
+  event_rates = (dgamma(seq(1, 20, 0.5), shape = 5, rate = 2) * 5) + 0.1,
+  max_visit = 20,
+  max_visit_sd = 10,
+  study_id = "A"
+)
 
 dplyr::copy_to(con, df_visit, "visit")
 dplyr::copy_to(con, df_r, "r")
@@ -345,15 +354,6 @@ We plot the results from the {simaerep} object.
 
 ```{r}
 plot(evrep_db, study = "A")
-```
-
-Or more efficiently by using `plot_study()` when we have already written the `simaerep` results into the database.
-Here we avoid that the results are being recalculated just for the sake of creating a plot.
-
-```{r}
-
-plot(evrep_db, df_eval = tbl_eval, study = "A")
-
 ```
 
 

@@ -1,6 +1,6 @@
 Package: simaerep
 Title: Detect Clinical Trial Sites Over- or Under-Reporting Clinical Events
-Version: 1.0.0
+Version: 0.7.0.900
 Authors@R: c(
     person(given = "Bjoern",
            family = "Koneswarakantha",

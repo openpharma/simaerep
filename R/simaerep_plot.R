@@ -579,7 +579,8 @@ plot_study <- function(df_visit,
   colname_mean <- paste0("cum_mean_dev_", plot_event)
   colname_delta <- paste0(plot_event, "_delta")
 
-  if (length(event_names) != 1 || !colnames(df_eval)[grep(prob_col, colnames(df_eval))][1] == prob_col) {
+  # "prob" will only come up for classic algo
+  if (! "prob" %in% colnames(df_eval)) {
     colname_site <- paste0(plot_event, "_per_visit_site")
     colname_study <- paste0(plot_event, "_per_visit_study")
     prob_col <- paste0(plot_event, "_", prob_col)

@@ -19,7 +19,7 @@ sites."><meta property="og:image" content="https://openpharma.github.io/simaerep
 
     <a class="navbar-brand me-2" href="../index.html">simaerep</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.0.900</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -34,6 +34,7 @@ sites."><meta property="og:image" content="https://openpharma.github.io/simaerep
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/intro.html">Introduction</a></li>
     <li><a class="dropdown-item" href="../articles/classic.html">Classic Algorithm</a></li>
+    <li><a class="dropdown-item" href="../articles/performance.html">Statistical Performance</a></li>
   </ul></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><a class="external-link nav-link" href="https://github.com/openpharma/simaerep/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
@@ -65,8 +66,7 @@ sites.</p>
 <span>  factor_event_rate <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  max_visit_mean <span class="op">=</span> <span class="fl">20</span>,</span>
 <span>  max_visit_sd <span class="op">=</span> <span class="fl">4</span>,</span>
-<span>  event_per_visit_mean <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.5</span><span class="op">)</span>,</span>
-<span>  event_rates <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  event_rates <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/GammaDist.html" class="external-link">dgamma</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">20</span>, <span class="fl">0.5</span><span class="op">)</span>, shape <span class="op">=</span> <span class="fl">5</span>, rate <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> <span class="op">*</span> <span class="fl">5</span> <span class="op">+</span> <span class="fl">0.1</span>,</span>
 <span>  event_names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"event"</span><span class="op">)</span>,</span>
 <span>  study_id <span class="op">=</span> <span class="st">"A"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -89,10 +89,10 @@ sites.</p>
 
 
 <dt id="arg-factor-event-rate">factor_event_rate<a class="anchor" aria-label="anchor" href="#arg-factor-event-rate"></a></dt>
-<dd><p>event reporting rate factor for site outlier,
-will modify mean event per visit rate used for outlier sites. Negative Values
-will simulate under-reporting, positive values over-reporting,
-e.g. -0.4 -&gt; 40% under-reporting, +0.4 -&gt; 40% over-reporting Default: 0</p></dd>
+<dd><p>event reporting rate factor for site outlier, will
+modify mean event per visit rate used for outlier sites. Negative Values
+will simulate under-reporting, positive values over-reporting, e.g. -0.4 -&gt;
+40% under-reporting, +0.4 -&gt; 40% over-reporting Default: 0</p></dd>
 
 
 <dt id="arg-max-visit-mean">max_visit_mean<a class="anchor" aria-label="anchor" href="#arg-max-visit-mean"></a></dt>
@@ -105,12 +105,10 @@ Default: 20</p></dd>
 patient, Default: 4</p></dd>
 
 
-<dt id="arg-event-per-visit-mean">event_per_visit_mean<a class="anchor" aria-label="anchor" href="#arg-event-per-visit-mean"></a></dt>
-<dd><p>mean event per visit per patient, Default: 0.5</p></dd>
-
-
 <dt id="arg-event-rates">event_rates<a class="anchor" aria-label="anchor" href="#arg-event-rates"></a></dt>
-<dd><p>list or vector with visit-specific event rates, Default: Null</p></dd>
+<dd><p>list or vector with visit-specific event rates. Use list
+for multiple event names, Default: dgamma(seq(1, 20, 0.5), shape = 5, rate =
+2) * 5 + 0.1</p></dd>
 
 
 <dt id="arg-event-names">event_names<a class="anchor" aria-label="anchor" href="#arg-event-names"></a></dt>
@@ -129,8 +127,8 @@ max_visit_sd, event_per_visit_mean, visit, n_event</p>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>maximum visit number will be sampled from normal distribution with
-characteristics derived from max_visit_mean and max_visit_sd, while the events
-per visit will be sampled from a poisson distribution described by
+characteristics derived from max_visit_mean and max_visit_sd, while the
+events per visit will be sampled from a poisson distribution described by
 events_per_visit_mean.</p>
     </div>
 
@@ -143,6 +141,50 @@ events_per_visit_mean.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 17 × 9</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    patient_id site_id is_out max_visit_mean max_visit_sd event_per_visit_mean</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>                <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> P000001    S0001   FALSE              20            4                0.353</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> P000001    S0001   FALSE              20            4                0.353</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> P000001    S0001   FALSE              20            4                0.353</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> P000001    S0001   FALSE              20            4                0.353</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> P000001    S0001   FALSE              20            4                0.353</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> P000001    S0001   FALSE              20            4                0.353</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> P000001    S0001   FALSE              20            4                0.353</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> P000001    S0001   FALSE              20            4                0.353</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> P000001    S0001   FALSE              20            4                0.353</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> P000001    S0001   FALSE              20            4                0.353</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">11</span> P000001    S0001   FALSE              20            4                0.353</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">12</span> P000001    S0001   FALSE              20            4                0.353</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">13</span> P000001    S0001   FALSE              20            4                0.353</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">14</span> P000001    S0001   FALSE              20            4                0.353</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">15</span> P000001    S0001   FALSE              20            4                0.353</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">16</span> P000001    S0001   FALSE              20            4                0.353</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">17</span> P000001    S0001   FALSE              20            4                0.353</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 3 more variables: visit &lt;int&gt;, n_event &lt;dbl&gt;, study_id &lt;chr&gt;</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># under-reporting outlier</span></span></span>
+<span class="r-in"><span><span class="va">df_visit</span> <span class="op">&lt;-</span> <span class="fu">sim_test_data_study</span><span class="op">(</span>n_pat <span class="op">=</span> <span class="fl">100</span>, n_sites <span class="op">=</span> <span class="fl">5</span>,</span></span>
+<span class="r-in"><span>    ratio_out <span class="op">=</span> <span class="fl">0.2</span>, factor_event_rate <span class="op">=</span> <span class="op">-</span><span class="fl">0.5</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">df_visit</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="va">df_visit</span><span class="op">$</span><span class="va">patient_id</span> <span class="op">==</span> <span class="st">"P000001"</span><span class="op">)</span>,<span class="op">]</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 23 × 9</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    patient_id site_id is_out max_visit_mean max_visit_sd event_per_visit_mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>                <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> P000001    S0001   TRUE               20            4                0.176</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> P000001    S0001   TRUE               20            4                0.176</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> P000001    S0001   TRUE               20            4                0.176</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> P000001    S0001   TRUE               20            4                0.176</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> P000001    S0001   TRUE               20            4                0.176</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> P000001    S0001   TRUE               20            4                0.176</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> P000001    S0001   TRUE               20            4                0.176</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> P000001    S0001   TRUE               20            4                0.176</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> P000001    S0001   TRUE               20            4                0.176</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> P000001    S0001   TRUE               20            4                0.176</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 13 more rows</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 3 more variables: visit &lt;int&gt;, n_event &lt;dbl&gt;, study_id &lt;chr&gt;</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># constant event rates</span></span></span>
+<span class="r-in"><span><span class="fu">sim_test_data_study</span><span class="op">(</span>n_pat <span class="op">=</span> <span class="fl">100</span>, n_sites <span class="op">=</span> <span class="fl">5</span>, event_rates <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1,968 × 9</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    patient_id site_id is_out max_visit_mean max_visit_sd event_per_visit_mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>                <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> P000001    S0001   FALSE              20            4                  0.5</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> P000001    S0001   FALSE              20            4                  0.5</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> P000001    S0001   FALSE              20            4                  0.5</span>
@@ -153,57 +195,12 @@ events_per_visit_mean.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> P000001    S0001   FALSE              20            4                  0.5</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> P000001    S0001   FALSE              20            4                  0.5</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> P000001    S0001   FALSE              20            4                  0.5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">11</span> P000001    S0001   FALSE              20            4                  0.5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">12</span> P000001    S0001   FALSE              20            4                  0.5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">13</span> P000001    S0001   FALSE              20            4                  0.5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">14</span> P000001    S0001   FALSE              20            4                  0.5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">15</span> P000001    S0001   FALSE              20            4                  0.5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">16</span> P000001    S0001   FALSE              20            4                  0.5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">17</span> P000001    S0001   FALSE              20            4                  0.5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 3 more variables: visit &lt;int&gt;, n_event &lt;int&gt;, study_id &lt;chr&gt;</span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># under-reporting outlier</span></span></span>
-<span class="r-in"><span><span class="va">df_visit</span> <span class="op">&lt;-</span> <span class="fu">sim_test_data_study</span><span class="op">(</span>n_pat <span class="op">=</span> <span class="fl">100</span>, n_sites <span class="op">=</span> <span class="fl">5</span>,</span></span>
-<span class="r-in"><span>    ratio_out <span class="op">=</span> <span class="fl">0.2</span>, factor_event_rate <span class="op">=</span> <span class="op">-</span><span class="fl">0.5</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">df_visit</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="va">df_visit</span><span class="op">$</span><span class="va">patient_id</span> <span class="op">==</span> <span class="st">"P000001"</span><span class="op">)</span>,<span class="op">]</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 23 × 9</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    patient_id site_id is_out max_visit_mean max_visit_sd event_per_visit_mean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>                <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> P000001    S0001   TRUE               20            4                 0.25</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> P000001    S0001   TRUE               20            4                 0.25</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> P000001    S0001   TRUE               20            4                 0.25</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> P000001    S0001   TRUE               20            4                 0.25</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> P000001    S0001   TRUE               20            4                 0.25</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> P000001    S0001   TRUE               20            4                 0.25</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> P000001    S0001   TRUE               20            4                 0.25</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> P000001    S0001   TRUE               20            4                 0.25</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> P000001    S0001   TRUE               20            4                 0.25</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> P000001    S0001   TRUE               20            4                 0.25</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 13 more rows</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 3 more variables: visit &lt;int&gt;, n_event &lt;int&gt;, study_id &lt;chr&gt;</span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># non-constant event rates</span></span></span>
-<span class="r-in"><span><span class="va">event_rates</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.7</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0.5</span>, <span class="fl">8</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0.3</span>, <span class="fl">5</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu">sim_test_data_study</span><span class="op">(</span>n_pat <span class="op">=</span> <span class="fl">100</span>, n_sites <span class="op">=</span> <span class="fl">5</span>, event_rates <span class="op">=</span> <span class="va">event_rates</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1,968 × 9</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    patient_id site_id is_out max_visit_mean max_visit_sd event_per_visit_mean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>                <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> P000001    S0001   FALSE              20            4                0.443</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> P000001    S0001   FALSE              20            4                0.443</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> P000001    S0001   FALSE              20            4                0.443</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> P000001    S0001   FALSE              20            4                0.443</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> P000001    S0001   FALSE              20            4                0.443</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> P000001    S0001   FALSE              20            4                0.443</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> P000001    S0001   FALSE              20            4                0.443</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> P000001    S0001   FALSE              20            4                0.443</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> P000001    S0001   FALSE              20            4                0.443</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> P000001    S0001   FALSE              20            4                0.443</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 1,958 more rows</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 3 more variables: visit &lt;int&gt;, n_event &lt;dbl&gt;, study_id &lt;chr&gt;</span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># non-constant event rates for two event types</span></span></span>
 <span class="r-in"><span><span class="va">event_rates_ae</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.7</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0.5</span>, <span class="fl">8</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0.3</span>, <span class="fl">5</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">event_rates_pd</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.3</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0.4</span>, <span class="fl">8</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">5</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">event_rates_pd</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.3</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0.4</span>, <span class="fl">6</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">5</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">sim_test_data_study</span><span class="op">(</span></span></span>
 <span class="r-in"><span>n_pat <span class="op">=</span> <span class="fl">100</span>,</span></span>

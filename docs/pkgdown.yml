@@ -4,7 +4,8 @@ pkgdown_sha: ~
 articles:
   classic: classic.html
   intro: intro.html
-last_built: 2025-08-18T09:45Z
+  performance: performance.html
+last_built: 2025-08-26T09:18Z
 urls:
   reference: https://openpharma.github.io/simaerep/reference
   article: https://openpharma.github.io/simaerep/articles

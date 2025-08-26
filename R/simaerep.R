@@ -475,13 +475,22 @@ eval_sites <- function(df_sim_sites,
   # p_adjust() when applied to database tables can create complex
   # sql so it is best applied outside a loop
 
+  cols_prob_or_no_mult <- character(0)
+  cols_prob_ur_no_mult <- character(0)
+
+
   if (! is.null(method)) {
+
+    cols_prob_or_no_mult <- paste0(cols_prob_or, "_no_mult")
+    cols_prob_ur_no_mult <- paste0(cols_prob_ur, "_no_mult")
 
     # p_adjust expects to lift small p-values based on multiplicity
     # for pro_cols: 0.95 = 95% = p-value 0.05, therefore we invert
     # and invert back right after
 
     df_out <- df_out %>%
+      mutate(across(all_of(cols_prob_or), ~ ., .names = "{.col}_no_mult")) %>%
+      mutate(across(all_of(cols_prob_ur), ~ ., .names = "{.col}_no_mult")) %>%
       mutate(across(all_of(c(cols_prob_or, cols_prob_ur)), ~ 1 - .)) %>%
       p_adjust(cols_prob_or, method = method) %>%
       p_adjust(cols_prob_ur, method = method) %>%
@@ -508,6 +517,31 @@ eval_sites <- function(df_sim_sites,
       col_event_delta <- paste0(event, "_delta") # nolint
     }
 
+    # merge no_mult columns ------------------------------------
+    if (paste0(cols_prob_or[i], "_no_mult") %in% colnames(df_out)) {
+
+      col_prob_or_no_mult <- cols_prob_or_no_mult[i]
+      col_prob_ur_no_mult <- cols_prob_ur_no_mult[i]
+      col_prob_no_mult <- paste0(cols_prob[i], "_no_mult") # nolint
+
+      df_out <- df_out %>%
+        mutate(
+          "{col_prob_or_no_mult}" := ifelse(
+            .data[[col_quant_event_site]] == .data[[col_quant_event_study]],
+            0,
+            .data[[col_prob_or_no_mult]]
+          ),
+          # here we build col_prob
+          "{col_prob_no_mult}" := ifelse(
+            .data[[col_prob_ur_no_mult]] >= .data[[col_prob_or_no_mult]],
+            .data[[col_prob_ur_no_mult]] * - 1,
+            .data[[col_prob_or_no_mult]]
+          )
+        )
+
+    }
+
+    # merge multiplicity corrected columns -------------------
     col_prob_or <- cols_prob_or[i]
     col_prob_ur <- cols_prob_ur[i]
     col_prob <- cols_prob[i] # nolint
@@ -527,6 +561,7 @@ eval_sites <- function(df_sim_sites,
           )
         )
 
+
     # when not relying on med75 we can calculate delta_event for each site
     if (! visit_med75 && inframe) {
       df_out <- df_out %>%
@@ -540,7 +575,8 @@ eval_sites <- function(df_sim_sites,
 
   # we only return cols_prob
   df_out <- df_out %>%
-    select(- all_of(c(cols_prob_or, cols_prob_ur)))
+    select(- all_of(c(cols_prob_or, cols_prob_ur))) %>%
+    select(- any_of(c(cols_prob_or_no_mult, cols_prob_ur_no_mult)))
 
   # order
 

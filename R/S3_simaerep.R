@@ -77,17 +77,19 @@ validate_simaerep <- function(x) {
 #'@param check Logical, perform data check and attempt repair with
 #'  [check_df_visit()]. Computationally expensive on large data sets. Default:
 #'  TRUE.
-#'@param visit_med75 Logical, should evaluation point visit_med75 be used.
+#'@param visit_med75 Logical, should evaluation point visit_med75 be used. Compatible
+#'  with inframe and classic version of the algorithm.
 #'  Default: FALSE
-#'@param inframe Logical, only table operations to be used; does not require
-#'  visit_med75. Compatible with dbplyr supported database backends. Default: TRUE
+#'@param inframe Logical, when FALSE classic simaerep algorithm will be used. The
+#'  default inframe method uses only table operations and is compatible with
+#'  dbplyr supported database backends. Default: TRUE
 #'@param mult_corr Logical, multiplicity correction, Default: TRUE
 #'@param progress Logical, display progress bar. Default: TRUE.
 #'@param env Optional, provide environment of original visit data. Default:
 #'  parent.frame().
 #'@param under_only Logical, compute under-reporting probabilities only.
-#'  Supersedes under_only parameter passed to [eval_sites()] and [sim_sites()].
-#'  Default: FALSE
+#'  only applies to the classic algorithm in which a one-sided evaluation can
+#'  save computation time. Default: FALSE
 #'@param poisson_test logical, compute p-value with poisson test, only supported
 #'by the classic algorithm using visit_med75. Default: FALSE
 #'@param event_names vector, contains the event names, default = "event"

@@ -19,10 +19,11 @@ eval_sites(
 will be made.}
 
 \item{under_only}{Logical, compute under-reporting probabilities only.
-Supersedes under_only parameter passed to \code{\link[=eval_sites]{eval_sites()}} and \code{\link[=sim_sites]{sim_sites()}}.
-Default: FALSE}
+only applies to the classic algorithm in which a one-sided evaluation can
+save computation time. Default: FALSE}
 
-\item{visit_med75}{Logical, should evaluation point visit_med75 be used.
+\item{visit_med75}{Logical, should evaluation point visit_med75 be used. Compatible
+with inframe and classic version of the algorithm.
 Default: FALSE}
 
 \item{...}{use to pass r_sim_sites parameter to eval_sites_deprecated()}

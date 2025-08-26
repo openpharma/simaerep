@@ -33,7 +33,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">simaerep</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.0.900</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -50,6 +50,7 @@
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><a class="dropdown-item" href="../articles/intro.html">Introduction</a></li>
     <li><a class="dropdown-item" href="../articles/classic.html">Classic Algorithm</a></li>
+    <li><a class="dropdown-item" href="../articles/performance.html">Statistical Performance</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -151,7 +152,7 @@ argument to FALSE</p>
 <span><span class="co">## Multiplicity correction applied to prob column.</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## First 10 rows of df_eval:</span></span>
-<span><span class="co">## <span style="color: #949494;"># A tibble: 10 × 9</span></span></span>
+<span><span class="co">## <span style="color: #949494;"># A tibble: 10 × 10</span></span></span>
 <span><span class="co">##    study_id site_id n_pat n_pat_with_med75 visit_med75 mean_event_site_med75</span></span>
 <span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>                 <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
 <span><span class="co">## <span style="color: #BCBCBC;"> 1</span> A        S0001      50               32          15                   6  </span></span>
@@ -164,14 +165,22 @@ argument to FALSE</p>
 <span><span class="co">## <span style="color: #BCBCBC;"> 8</span> A        S0008      50               32          17                  11.3</span></span>
 <span><span class="co">## <span style="color: #BCBCBC;"> 9</span> A        S0009      50               32          14                  11.9</span></span>
 <span><span class="co">## <span style="color: #BCBCBC;">10</span> A        S0010      50               34          18                  12  </span></span>
-<span><span class="co">## <span style="color: #949494;"># ℹ 3 more variables: mean_event_study_med75 &lt;dbl&gt;,</span></span></span>
-<span><span class="co">## <span style="color: #949494;">#   n_pat_with_med75_study &lt;int&gt;, prob &lt;dbl&gt;</span></span></span></code></pre>
+<span><span class="co">## <span style="color: #949494;"># ℹ 4 more variables: mean_event_study_med75 &lt;dbl&gt;,</span></span></span>
+<span><span class="co">## <span style="color: #949494;">#   n_pat_with_med75_study &lt;int&gt;, prob_no_mult &lt;dbl&gt;, prob &lt;dbl&gt;</span></span></span></code></pre>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">evrep_classic</span>, study <span class="op">=</span> <span class="st">"A"</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## Warning in fortify(data, ...): Arguments in `...` must be used.</span></span>
+<span><span class="co">## <span style="color: #BB0000;">✖</span> Problematic argument:</span></span>
+<span><span class="co">## <span style="color: #00BBBB;">•</span> na.rm = TRUE</span></span>
+<span><span class="co">## <span style="color: #00BBBB;">ℹ</span> Did you misspell an argument name?</span></span>
+<span><span class="co">## Arguments in `...` must be used.</span></span>
+<span><span class="co">## <span style="color: #BB0000;">✖</span> Problematic argument:</span></span>
+<span><span class="co">## <span style="color: #00BBBB;">•</span> na.rm = TRUE</span></span>
+<span><span class="co">## <span style="color: #00BBBB;">ℹ</span> Did you misspell an argument name?</span></span></code></pre>
 <p><img src="classic_files/figure-html/unnamed-chunk-2-1.png" width="700"></p>
 <p>We can also visualize the visit cut-off evaluation point
 visit_med75</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">evrep_classic</span>, what <span class="op">=</span> <span class="st">"med75"</span>, study <span class="op">=</span> <span class="st">"A"</span>, n_sites <span class="op">=</span> <span class="fl">6</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## purple line:          mean site event of patients with visit_med75</span></span>
 <span><span class="co">## grey line:            patient included</span></span>
@@ -185,7 +194,7 @@ under-reporting of adverse events over-reporting was not in scope. In
 case site reporting average was higher than study average. The sampling
 of patients was skipped which made the algorithm a little bit faster. We
 can still switch off the over-reporting analysis.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">evrep_or_off</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/simaerep.html">simaerep</a></span><span class="op">(</span><span class="va">df_visit</span>, inframe <span class="op">=</span> <span class="cn">FALSE</span>, under_only <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">evrep_or_off</span></span></code></pre></div>
@@ -222,7 +231,7 @@ can still switch off the over-reporting analysis.</p>
 <span><span class="co">## <span style="color: #949494;">#   n_pat_with_med75_study &lt;int&gt;, prob &lt;dbl&gt;</span></span></span></code></pre>
 <p>All values in <code>prob</code> are between -1 and 0 instead of -1
 and 1.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">evrep_or_off</span><span class="op">$</span><span class="va">df_eval</span><span class="op">$</span><span class="va">prob</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. </span></span>
 <span><span class="co">##   -1.00    0.00    0.00   -0.05    0.00    0.00</span></span></code></pre>
@@ -230,7 +239,7 @@ and 1.</p>
 the boot-strapped results. As the poisson p-values obtained for
 under-reporting are not inversely related to the over-reporting, poisson
 test p-values are only available for under-reporting.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">evrep_pval</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/simaerep.html">simaerep</a></span><span class="op">(</span><span class="va">df_visit</span>, poisson_test <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">evrep_pval</span></span></code></pre></div>
@@ -265,8 +274,16 @@ test p-values are only available for under-reporting.</p>
 <span><span class="co">## <span style="color: #BCBCBC;">10</span> A        S0010      50               34          18                  12  </span></span>
 <span><span class="co">## <span style="color: #949494;"># ℹ 4 more variables: mean_event_study_med75 &lt;dbl&gt;,</span></span></span>
 <span><span class="co">## <span style="color: #949494;">#   n_pat_with_med75_study &lt;int&gt;, pval &lt;dbl&gt;, prob &lt;dbl&gt;</span></span></span></code></pre>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">evrep_pval</span>, prob_col <span class="op">=</span> <span class="st">"pval"</span>, study <span class="op">=</span> <span class="st">"A"</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## Warning in fortify(data, ...): Arguments in `...` must be used.</span></span>
+<span><span class="co">## <span style="color: #BB0000;">✖</span> Problematic argument:</span></span>
+<span><span class="co">## <span style="color: #00BBBB;">•</span> na.rm = TRUE</span></span>
+<span><span class="co">## <span style="color: #00BBBB;">ℹ</span> Did you misspell an argument name?</span></span>
+<span><span class="co">## Arguments in `...` must be used.</span></span>
+<span><span class="co">## <span style="color: #BB0000;">✖</span> Problematic argument:</span></span>
+<span><span class="co">## <span style="color: #00BBBB;">•</span> na.rm = TRUE</span></span>
+<span><span class="co">## <span style="color: #00BBBB;">ℹ</span> Did you misspell an argument name?</span></span></code></pre>
 <p><img src="classic_files/figure-html/unnamed-chunk-6-1.png" width="700"></p>
 </div>
 <div class="section level2">

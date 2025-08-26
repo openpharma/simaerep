@@ -161,3 +161,44 @@ test_that("plot.simaerep() with no reporting outlier", {
   evrep <- simaerep(df_visit)
   expect_s3_class(plot(evrep, study = "A"), "ggplot")
 })
+
+
+test_that("mult_corr = TRUE preserves original score", {
+
+  df_visit <- sim_test_data_study(ratio_out = 0)
+  evrep <- simaerep(df_visit, mult_corr = TRUE)
+
+  expect_true("event_prob_no_mult" %in% colnames(evrep$df_eval))
+
+  df_visit <- sim_test_data_study(ratio_out = 0)
+  evrep <- simaerep(df_visit, inframe = FALSE, mult_corr = TRUE)
+
+  expect_true("prob_no_mult" %in% colnames(evrep$df_eval))
+
+  df_visit <- sim_test_data_events(event_rates = list(0.5, 0.5), event_names = c("x", "y"))
+  evrep <- simaerep(df_visit, mult_corr = TRUE, event_names = c("x", "y"))
+
+  expect_true("x_prob_no_mult" %in% colnames(evrep$df_eval))
+  expect_true("y_prob_no_mult" %in% colnames(evrep$df_eval))
+
+})
+
+test_that("mult_corr = FALSE not has column with original score", {
+
+  df_visit <- sim_test_data_study(ratio_out = 0)
+  evrep <- simaerep(df_visit, mult_corr = FALSE)
+
+  expect_true(! "event_prob_no_mult" %in% colnames(evrep$df_eval))
+
+  df_visit <- sim_test_data_study(ratio_out = 0)
+  evrep <- simaerep(df_visit, inframe = FALSE, mult_corr = FALSE)
+
+  expect_true(! "event_prob_no_mult" %in% colnames(evrep$df_eval))
+
+  df_visit <- sim_test_data_events(event_rates = list(0.5, 0.5), event_names = c("x", "y"))
+  evrep <- simaerep(df_visit, mult_corr = FALSE, event_names = c("x", "y"))
+
+  expect_true(! "x_prob_no_mult" %in% colnames(evrep$df_eval))
+  expect_true(! "y_prob_no_mult" %in% colnames(evrep$df_eval))
+
+})

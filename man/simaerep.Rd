@@ -62,14 +62,16 @@ many rows as desired repetitions. Default: 1000.}
 TRUE.}
 
 \item{under_only}{Logical, compute under-reporting probabilities only.
-Supersedes under_only parameter passed to \code{\link[=eval_sites]{eval_sites()}} and \code{\link[=sim_sites]{sim_sites()}}.
+only applies to the classic algorithm in which a one-sided evaluation can
+save computation time. Default: FALSE}
+
+\item{visit_med75}{Logical, should evaluation point visit_med75 be used. Compatible
+with inframe and classic version of the algorithm.
 Default: FALSE}
 
-\item{visit_med75}{Logical, should evaluation point visit_med75 be used.
-Default: FALSE}
-
-\item{inframe}{Logical, only table operations to be used; does not require
-visit_med75. Compatible with dbplyr supported database backends. Default: TRUE}
+\item{inframe}{Logical, when FALSE classic simaerep algorithm will be used. The
+default inframe method uses only table operations and is compatible with
+dbplyr supported database backends. Default: TRUE}
 
 \item{progress}{Logical, display progress bar. Default: TRUE.}
 

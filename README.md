@@ -169,6 +169,14 @@ df_visit %>%
 evrep <- simaerep(df_visit, mult_corr = TRUE)
 
 plot(evrep, study = "A")
+#> Warning in fortify(data, ...): Arguments in `...` must be used.
+#> ✖ Problematic argument:
+#> • na.rm = TRUE
+#> ℹ Did you misspell an argument name?
+#> Arguments in `...` must be used.
+#> ✖ Problematic argument:
+#> • na.rm = TRUE
+#> ℹ Did you misspell an argument name?
 ```
 
 <img src="man/figures/README-unnamed-chunk-2-1.png" width="100%" />
@@ -211,6 +219,14 @@ evrep <- simaerep(
 )
 
 plot(evrep, study = "A")
+#> Warning in fortify(data, ...): Arguments in `...` must be used.
+#> ✖ Problematic argument:
+#> • na.rm = TRUE
+#> ℹ Did you misspell an argument name?
+#> Arguments in `...` must be used.
+#> ✖ Problematic argument:
+#> • na.rm = TRUE
+#> ℹ Did you misspell an argument name?
 ```
 
 <img src="man/figures/README-unnamed-chunk-3-1.png" width="100%" />
