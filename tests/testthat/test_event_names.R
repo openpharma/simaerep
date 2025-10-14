@@ -50,7 +50,7 @@ test_that("eval_sites throws the correct warning when given multi-event data con
 
 
   expect_warning(eval_sites(df_sim_sites_events_test, event_names = c("ae", "pd"), under_only = FALSE),
-                 regexp = "study_id: A, site_number: S0001, a prob_low value contains NA", fixed = TRUE)
+                 regexp = "study_id: A, site_number: S0001, a prob_low value contains NA")
 
 
   df_sim_sites_events_test <- sim_inframe(df_site = df_site_events_test,

@@ -52,3 +52,36 @@ test_that(paste("simaerep() - under_only = FALSE - over-reporting must be zero w
   expect_true(all(zeros == 0))
 
 })
+
+
+test_that(paste("no over-reporting for sites with zero events"), {
+
+  # https://github.com/openpharma/simaerep/issues/92
+
+  sites <- 10
+  pat <- 5
+  vis_m <- 15
+
+  df_vis <- data.frame(
+    patnum=paste0("P",rep(1:50,each=15)),
+    site_number=paste0("S",rep(1:10,each=75)),
+    visit=rep(1:15,times=50),
+    n_event=0,
+    study_id="A"
+  )
+
+  df_vis[15,]$n_event <- 1
+
+  zero_rep_prob <- simaerep(df_vis, inframe = TRUE)$df_eval %>%
+    filter(event_count == 0) %>%
+    pull(event_prob)
+
+  expect_true(all(zero_rep_prob <= 0.6))
+
+  zero_rep_prob <- simaerep(df_vis, inframe = FALSE)$df_eval %>%
+    filter(mean_event_site_med75 == 0) %>%
+    pull(prob)
+
+  expect_true(all(zero_rep_prob <= 0.6))
+
+})

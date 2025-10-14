@@ -446,30 +446,51 @@ eval_sites <- function(df_sim_sites,
   }
 
   cols_prob_low <- colnames(select(df_out, contains("prob_low")))
-  warning_na(df_out, cols_prob_low)
+  cols_prob_high <- colnames(select(df_out, contains("prob_high")))
 
   cols_prob_or <- stringr::str_replace(cols_prob_low, "low$", "or")
   cols_prob_ur <- stringr::str_replace(cols_prob_low, "low$", "ur")
 
   cols_prob <- stringr::str_replace(cols_prob_low, "_low$", "")
 
-  # prob_low is defined as the probability of getting the same
-  # or lower value than the observed value. This is identical
-  # with the over-reporting probability. So we rename the column
+  if (! identical(cols_prob_high, character(0))) {
+    warning_na(df_out, cols_prob_high)
+    warning_na(df_out, cols_prob_low)
 
-  df_out <- df_out %>%
-    rename(
-      setNames(cols_prob_low, cols_prob_or)
-    )
-
-  # the under-reporting probability is the inversion of the over-reporting
-  # probability.
-
-  for (i in seq_along(cols_prob_low)) {
     df_out <- df_out %>%
-      mutate(
-        "{cols_prob_ur[i]}" := 1 - .data[[cols_prob_or[i]]],
+      rename(
+        setNames(cols_prob_high, cols_prob_ur)
       )
+
+    for (i in seq_along(cols_prob_low)) {
+      df_out <- df_out %>%
+        mutate(
+          "{cols_prob_or[i]}" := 1 - .data[[cols_prob_low[i]]],
+        )
+    }
+
+  } else {
+    warning_na(df_out, cols_prob_low)
+
+    # prob_low is defined as the probability of getting the same
+    # or lower value than the observed value. This is identical
+    # with the over-reporting probability. So we rename the column
+
+    df_out <- df_out %>%
+      rename(
+        setNames(cols_prob_low, cols_prob_or)
+      )
+
+    # the under-reporting probability is the inversion of the over-reporting
+    # probability.
+
+    for (i in seq_along(cols_prob_low)) {
+      df_out <- df_out %>%
+        mutate(
+          "{cols_prob_ur[i]}" := 1 - .data[[cols_prob_or[i]]],
+        )
+    }
+
   }
 
   # p_adjust() when applied to database tables can create complex
@@ -496,7 +517,6 @@ eval_sites <- function(df_sim_sites,
       p_adjust(cols_prob_ur, method = method) %>%
       mutate(across(all_of(c(cols_prob_or, cols_prob_ur)), ~ 1 - .))
   }
-
 
   for (i in seq_along(cols_prob_low)) {
 
@@ -576,7 +596,8 @@ eval_sites <- function(df_sim_sites,
   # we only return cols_prob
   df_out <- df_out %>%
     select(- all_of(c(cols_prob_or, cols_prob_ur))) %>%
-    select(- any_of(c(cols_prob_or_no_mult, cols_prob_ur_no_mult)))
+    select(- any_of(c(cols_prob_or_no_mult, cols_prob_ur_no_mult))) %>%
+    select(- any_of(c(cols_prob_low, cols_prob_high)))
 
   # order
 
