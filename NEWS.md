@@ -13,6 +13,7 @@
 - minimize the number of exported functions
 - deprecate event_per_visit_mean argument in favor of event_rates for data simulation
 - use non-constant event rates by default during data simulation
+- independent calculation of over-reporting to remove artifacts for zero reporters https://github.com/openpharma/simaerep/issues/92
 
 # simaerep 0.7.0
 - event_names argument, allow to calculate multiple reporting probabilities at once https://github.com/openpharma/simaerep/issues/73

@@ -208,23 +208,23 @@ simaerep_inframe</p></div>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 5 × 10</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   study_id site_id event_count event_per_visit_site visits n_pat</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>                <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> A        S0001           103                0.266    387    20</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> A        S0002            93                0.221    421    20</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> A        S0003           262                0.657    399    20</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> A        S0004           256                0.674    380    20</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> A        S0005           232                0.611    380    20</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> A        S0001           101                0.254    398    20</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> A        S0002            87                0.223    390    20</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> A        S0003           237                0.578    410    20</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> A        S0004           251                0.678    370    20</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> A        S0005           239                0.631    379    20</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 4 more variables: event_per_visit_study &lt;dbl&gt;, event_prob_no_mult &lt;dbl&gt;,</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   event_prob &lt;dbl&gt;, event_delta &lt;dbl&gt;</span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">evrep</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> List of 12</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ visit       :List of 5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ dim        : int [1:2] 1967 9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ dim        : int [1:2] 1947 9</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ df_summary : tibble [1 × 5] (S3: tbl_df/tbl/data.frame)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ n_studies : int 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ n_sites   : int 5</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ n_patients: int 100</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ n_visits  : int 1967</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ n_events  : num 946</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ n_visits  : int 1947</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ n_events  : num 915</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ str_call   : chr "df_visit"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ event_names: chr "event"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ col_names  :List of 4</span>
@@ -236,29 +236,30 @@ simaerep_inframe</p></div>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ df_site     : tibble [5 × 5] (S3: tbl_df/tbl/data.frame)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ study_id            : chr [1:5] "A" "A" "A" "A" ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ site_id             : chr [1:5] "S0001" "S0002" "S0003" "S0004" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ max_visit           : num [1:5] 27 27 28 27 25</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ max_visit           : num [1:5] 26 25 27 25 25</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ n_pat               : int [1:5] 20 20 20 20 20</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ n_pat_with_max_visit: int [1:5] 2 2 3 3 3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ df_sim_sites: tibble [5 × 8] (S3: tbl_df/tbl/data.frame)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ n_pat_with_max_visit: int [1:5] 2 2 2 3 4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ df_sim_sites: tibble [5 × 9] (S3: tbl_df/tbl/data.frame)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ study_id             : chr [1:5] "A" "A" "A" "A" ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ site_id              : chr [1:5] "S0001" "S0002" "S0003" "S0004" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ event_count          : num [1:5] 103 93 262 256 232</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ event_per_visit_site : num [1:5] 0.266 0.221 0.657 0.674 0.611</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ visits               : num [1:5] 387 421 399 380 380</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ event_count          : num [1:5] 101 87 237 251 239</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ event_per_visit_site : num [1:5] 0.254 0.223 0.578 0.678 0.631</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ visits               : num [1:5] 398 390 410 370 379</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ n_pat                : int [1:5] 20 20 20 20 20</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ event_per_visit_study: num [1:5] 0.466 0.428 0.464 0.476 0.473</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ event_prob_low       : num [1:5] 0 0 1 1 0.99</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ event_per_visit_study: num [1:5] 0.469 0.483 0.464 0.508 0.499</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ event_prob_grequal   : num [1:5] 1 1 0.024 0.001 0.016</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ event_prob_gr        : num [1:5] 1 1 0.021 0.001 0.013</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ df_eval     : tibble [5 × 10] (S3: tbl_df/tbl/data.frame)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ study_id             : chr [1:5] "A" "A" "A" "A" ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ site_id              : chr [1:5] "S0001" "S0002" "S0003" "S0004" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ event_count          : num [1:5] 103 93 262 256 232</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ event_per_visit_site : num [1:5] 0.266 0.221 0.657 0.674 0.611</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ visits               : num [1:5] 387 421 399 380 380</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ event_count          : num [1:5] 101 87 237 251 239</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ event_per_visit_site : num [1:5] 0.254 0.223 0.578 0.678 0.631</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ visits               : num [1:5] 398 390 410 370 379</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ n_pat                : int [1:5] 20 20 20 20 20</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ event_per_visit_study: num [1:5] 0.466 0.428 0.464 0.476 0.473</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ event_prob_no_mult   : num [1:5] -1 -1 1 1 0.99</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ event_prob           : num [1:5] -1 -1 1 1 0.983</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ event_delta          : num [1:5] -77.2 -87.3 76.7 75 52.3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ event_per_visit_study: num [1:5] 0.469 0.483 0.464 0.508 0.499</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ event_prob_no_mult   : num [1:5] -1 -1 0.976 0.999 0.984</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ event_prob           : num [1:5] -1 -1 0.96 0.995 0.96</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ event_delta          : num [1:5] -85.8 -101.5 46.7 63.1 50</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ r           : num 1000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ visit_med75 : logi FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ inframe     : logi TRUE</span>
@@ -296,11 +297,11 @@ simaerep_inframe</p></div>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 5 × 9</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   study_id site_id n_pat n_pat_with_med75 visit_med75 mean_event_site_med75</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>                 <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> A        S0001      20               18          16                  5.11</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> A        S0002      20               17          18                  4.18</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> A        S0003      20               18          17                 12.7 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> A        S0004      20               18          14                 12.3 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> A        S0005      20               17          15                 11.7 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> A        S0001      20               19          15                  4.79</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> A        S0002      20               19          15                  4.05</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> A        S0003      20               17          16                 11.5 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> A        S0004      20               18          14                 12.1 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> A        S0005      20               16          16                 12.1 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 3 more variables: mean_event_study_med75 &lt;dbl&gt;,</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   n_pat_with_med75_study &lt;int&gt;, prob &lt;dbl&gt;</span></span>
 <span class="r-in"><span></span></span>
@@ -363,20 +364,17 @@ simaerep_inframe</p></div>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> First 10 rows of df_eval:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># Source:     SQL [?? x 10]</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># Database:   DuckDB v1.3.0 [koneswab@Darwin 23.6.0:R 4.4.1/:memory:]</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># Database:   DuckDB 1.4.0 [koneswab@Darwin 23.6.0:R 4.4.1/:memory:]</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># Ordered by: study_id, site_id</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   study_id site_id event_count</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> A        S0004           256</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> A        S0001           103</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> A        S0002            93</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> A        S0003           262</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> A        S0005           232</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 7 more variables:</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   event_per_visit_site &lt;dbl&gt;, visits &lt;dbl&gt;,</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   n_pat &lt;dbl&gt;, event_per_visit_study &lt;dbl&gt;,</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   event_prob_no_mult &lt;dbl&gt;, event_prob &lt;dbl&gt;,</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   event_delta &lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   study_id site_id event_count event_per_visit_site visits n_pat</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>                <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> A        S0005           239                0.631    379    20</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> A        S0001           101                0.254    398    20</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> A        S0002            87                0.223    390    20</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> A        S0003           237                0.578    410    20</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> A        S0004           251                0.678    370    20</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 4 more variables: event_per_visit_study &lt;dbl&gt;, event_prob_no_mult &lt;dbl&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   event_prob &lt;dbl&gt;, event_delta &lt;dbl&gt;</span></span>
 <span class="r-in"><span><span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbDisconnect.html" class="external-link">dbDisconnect</a></span><span class="op">(</span><span class="va">con</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>

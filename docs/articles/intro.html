@@ -439,14 +439,6 @@ expected event count minus the reported event count.</p>
 <span><span class="co">## <span style="color: #949494;">#   event_prob &lt;dbl&gt;, event_delta &lt;dbl&gt;</span></span></span></code></pre>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">evrep</span>, study <span class="op">=</span> <span class="st">"A"</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## Warning in fortify(data, ...): Arguments in `...` must be used.</span></span>
-<span><span class="co">## <span style="color: #BB0000;">✖</span> Problematic argument:</span></span>
-<span><span class="co">## <span style="color: #00BBBB;">•</span> na.rm = TRUE</span></span>
-<span><span class="co">## <span style="color: #00BBBB;">ℹ</span> Did you misspell an argument name?</span></span>
-<span><span class="co">## Arguments in `...` must be used.</span></span>
-<span><span class="co">## <span style="color: #BB0000;">✖</span> Problematic argument:</span></span>
-<span><span class="co">## <span style="color: #00BBBB;">•</span> na.rm = TRUE</span></span>
-<span><span class="co">## <span style="color: #00BBBB;">ℹ</span> Did you misspell an argument name?</span></span></code></pre>
 <p><img src="intro_files/figure-html/unnamed-chunk-5-1.png" width="700"></p>
 <p><em>Left panel shows mean cumulative event reporting per site (blue
 lines) against mean cumulative event reporting of the entire study
@@ -467,7 +459,7 @@ sites and switching off the multiplicity correction and not introducing
 any outlier.</p>
 <p>Note that none of these sites are actually outlier but high scores
 are the results of repetitive testing.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">df_visit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sim_test_data_study.html">sim_test_data_study</a></span><span class="op">(</span></span>
 <span>  n_pat <span class="op">=</span> <span class="fl">1000</span>, <span class="co"># number of patients in study</span></span>
 <span>  n_sites <span class="op">=</span> <span class="fl">100</span>, <span class="co"># number of sites in study</span></span>
@@ -505,16 +497,8 @@ are the results of repetitive testing.</p>
 <span><span class="co">## <span style="color: #BCBCBC;">10</span> A        S0010           107                0.457    234    10</span></span>
 <span><span class="co">## <span style="color: #949494;"># ℹ 3 more variables: event_per_visit_study &lt;dbl&gt;, event_prob &lt;dbl&gt;,</span></span></span>
 <span><span class="co">## <span style="color: #949494;">#   event_delta &lt;dbl&gt;</span></span></span></code></pre>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">evrep</span>, study <span class="op">=</span> <span class="st">"A"</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## Warning in fortify(data, ...): Arguments in `...` must be used.</span></span>
-<span><span class="co">## <span style="color: #BB0000;">✖</span> Problematic argument:</span></span>
-<span><span class="co">## <span style="color: #00BBBB;">•</span> na.rm = TRUE</span></span>
-<span><span class="co">## <span style="color: #00BBBB;">ℹ</span> Did you misspell an argument name?</span></span>
-<span><span class="co">## Arguments in `...` must be used.</span></span>
-<span><span class="co">## <span style="color: #BB0000;">✖</span> Problematic argument:</span></span>
-<span><span class="co">## <span style="color: #00BBBB;">•</span> na.rm = TRUE</span></span>
-<span><span class="co">## <span style="color: #00BBBB;">ℹ</span> Did you misspell an argument name?</span></span></code></pre>
 <p><img src="intro_files/figure-html/unnamed-chunk-6-1.png" width="700"></p>
 </div>
 <div class="section level4">
@@ -522,7 +506,7 @@ are the results of repetitive testing.</p>
 </h4>
 <p>We can calculate scores for multiple event types in one go. This time
 we add a site outlier with 50% over-reporting.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">event_names</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x"</span>, <span class="st">"y"</span><span class="op">)</span></span>
@@ -559,7 +543,7 @@ we add a site outlier with 50% over-reporting.</p>
 <span><span class="co">## <span style="color: #BCBCBC;"> 9</span> S0001   P000001        9    22    21</span></span>
 <span><span class="co">## <span style="color: #BCBCBC;">10</span> S0001   P000001       10    22    21</span></span>
 <span><span class="co">## <span style="color: #949494;"># ℹ 19,525 more rows</span></span></span></code></pre>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">evrep</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/simaerep.html">simaerep</a></span><span class="op">(</span><span class="va">df_visit</span>, event_names <span class="op">=</span> <span class="va">event_names</span><span class="op">)</span></span>
 <span><span class="va">evrep</span></span></code></pre></div>
 <pre><code><span><span class="co">## simaerep object:</span></span>
@@ -592,27 +576,11 @@ we add a site outlier with 50% over-reporting.</p>
 <span><span class="co">## <span style="color: #949494;"># ℹ 9 more variables: n_pat &lt;int&gt;, x_per_visit_study &lt;dbl&gt;,</span></span></span>
 <span><span class="co">## <span style="color: #949494;">#   y_per_visit_study &lt;dbl&gt;, x_prob_no_mult &lt;dbl&gt;, x_prob &lt;dbl&gt;, x_delta &lt;dbl&gt;,</span></span></span>
 <span><span class="co">## <span style="color: #949494;">#   y_prob_no_mult &lt;dbl&gt;, y_prob &lt;dbl&gt;, y_delta &lt;dbl&gt;</span></span></span></code></pre>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">evrep</span>, study <span class="op">=</span> <span class="st">"A"</span>, plot_event <span class="op">=</span> <span class="st">"x"</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## Warning in fortify(data, ...): Arguments in `...` must be used.</span></span>
-<span><span class="co">## <span style="color: #BB0000;">✖</span> Problematic argument:</span></span>
-<span><span class="co">## <span style="color: #00BBBB;">•</span> na.rm = TRUE</span></span>
-<span><span class="co">## <span style="color: #00BBBB;">ℹ</span> Did you misspell an argument name?</span></span>
-<span><span class="co">## Arguments in `...` must be used.</span></span>
-<span><span class="co">## <span style="color: #BB0000;">✖</span> Problematic argument:</span></span>
-<span><span class="co">## <span style="color: #00BBBB;">•</span> na.rm = TRUE</span></span>
-<span><span class="co">## <span style="color: #00BBBB;">ℹ</span> Did you misspell an argument name?</span></span></code></pre>
 <p><img src="intro_files/figure-html/unnamed-chunk-9-1.png" width="700"></p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">evrep</span>, study <span class="op">=</span> <span class="st">"A"</span>, plot_event <span class="op">=</span> <span class="st">"y"</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## Warning in fortify(data, ...): Arguments in `...` must be used.</span></span>
-<span><span class="co">## <span style="color: #BB0000;">✖</span> Problematic argument:</span></span>
-<span><span class="co">## <span style="color: #00BBBB;">•</span> na.rm = TRUE</span></span>
-<span><span class="co">## <span style="color: #00BBBB;">ℹ</span> Did you misspell an argument name?</span></span>
-<span><span class="co">## Arguments in `...` must be used.</span></span>
-<span><span class="co">## <span style="color: #BB0000;">✖</span> Problematic argument:</span></span>
-<span><span class="co">## <span style="color: #00BBBB;">•</span> na.rm = TRUE</span></span>
-<span><span class="co">## <span style="color: #00BBBB;">ℹ</span> Did you misspell an argument name?</span></span></code></pre>
 <p><img src="intro_files/figure-html/unnamed-chunk-9-2.png" width="700"></p>
 </div>
 <div class="section level4">
@@ -620,7 +588,7 @@ we add a site outlier with 50% over-reporting.</p>
 </h4>
 <p>As input data the cumulative event count for each patient visit is
 required.</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">df_visit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sim_test_data_study.html">sim_test_data_study</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">df_visit</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
@@ -743,7 +711,7 @@ column names will be different than those required by
 following way.</p>
 <p><code>gsm.simaerep</code> has not yet been released on CRAN so we are
 not demonstrating it’s functionality here.</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">df_visit_gsm</span> <span class="op">&lt;-</span> <span class="va">df_visit</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
 <span>    study_id <span class="op">=</span> <span class="st">"A"</span></span>
@@ -799,7 +767,7 @@ not demonstrating it’s functionality here.</p>
 </h3>
 <p><code>simaerep</code> probabilities can be calculated for multiple
 studies at once.</p>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">df_visit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind_rows.html" class="external-link">bind_rows</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="../reference/sim_test_data_study.html">sim_test_data_study</a></span><span class="op">(</span>study_id <span class="op">=</span> <span class="st">"A"</span><span class="op">)</span>,</span>
 <span>  <span class="fu"><a href="../reference/sim_test_data_study.html">sim_test_data_study</a></span><span class="op">(</span>study_id <span class="op">=</span> <span class="st">"B"</span><span class="op">)</span></span>
@@ -843,7 +811,7 @@ the number of replications we need to create a new table in our back-end
 that has one column with as many rows as the desired replications.</p>
 <p>A lazy reference to this table can then be passed to the
 <code>r</code> parameter.</p>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">con</span> <span class="op">&lt;-</span> <span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbConnect.html" class="external-link">dbConnect</a></span><span class="op">(</span><span class="fu">duckdb</span><span class="fu">::</span><span class="fu"><a href="https://r.duckdb.org/reference/duckdb.html" class="external-link">duckdb</a></span><span class="op">(</span><span class="op">)</span>, dbdir <span class="op">=</span> <span class="st">":memory:"</span><span class="op">)</span></span>
 <span><span class="va">df_r</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>rep <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1000</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
@@ -868,7 +836,7 @@ that has one column with as many rows as the desired replications.</p>
 <span><span class="va">evrep_db</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/simaerep.html">simaerep</a></span><span class="op">(</span><span class="va">tbl_visit</span>, r <span class="op">=</span> <span class="va">tbl_r</span><span class="op">)</span></span></code></pre></div>
 <p>When inspecting <code>df_eval</code> we see that it is still a lazy
 table object.</p>
-<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">evrep_db</span></span></code></pre></div>
 <pre><code><span><span class="co">## simaerep object:</span></span>
 <span><span class="co">## ----------------</span></span>
@@ -880,25 +848,25 @@ table object.</p>
 <span><span class="co">## </span></span>
 <span><span class="co">## First 10 rows of df_eval:</span></span>
 <span><span class="co">## <span style="color: #949494;"># Source:     SQL [?? x 10]</span></span></span>
-<span><span class="co">## <span style="color: #949494;"># Database:   DuckDB v1.3.0 [koneswab@Darwin 23.6.0:R 4.4.1/:memory:]</span></span></span>
+<span><span class="co">## <span style="color: #949494;"># Database:   DuckDB 1.4.0 [koneswab@Darwin 23.6.0:R 4.4.1/:memory:]</span></span></span>
 <span><span class="co">## <span style="color: #949494;"># Ordered by: study_id, site_id</span></span></span>
 <span><span class="co">##    study_id site_id event_count event_per_visit_site visits n_pat</span></span>
 <span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>                <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> A        S0010           107                0.480    223    10</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> A        S0001            61                0.302    202    10</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> A        S0005            96                0.381    252    10</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> A        S0003           125                0.595    210    10</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> A        S0008           103                0.462    223    10</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> A        S0007           122                0.552    221    10</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> A        S0004           116                0.483    240    10</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> A        S0009           123                0.530    232    10</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> A        S0006           119                0.463    257    10</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">10</span> A        S0002           105                0.544    193    10</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> A        S0008           103                0.462    223    10</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> A        S0005            96                0.381    252    10</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> A        S0010           107                0.480    223    10</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> A        S0001            61                0.302    202    10</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> A        S0007           122                0.552    221    10</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> A        S0004           116                0.483    240    10</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> A        S0009           123                0.530    232    10</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> A        S0006           119                0.463    257    10</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> A        S0002           105                0.544    193    10</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">10</span> A        S0003           125                0.595    210    10</span></span>
 <span><span class="co">## <span style="color: #949494;"># ℹ 4 more variables: event_per_visit_study &lt;dbl&gt;, event_prob_no_mult &lt;dbl&gt;,</span></span></span>
 <span><span class="co">## <span style="color: #949494;">#   event_prob &lt;dbl&gt;, event_delta &lt;dbl&gt;</span></span></span></code></pre>
 <p>We can convert it to sql code. The <code>cte</code> option makes the
 sql code more readable.</p>
-<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sql_eval</span> <span class="op">&lt;-</span> <span class="fu">dbplyr</span><span class="fu">::</span><span class="fu"><a href="https://dbplyr.tidyverse.org/reference/sql_build.html" class="external-link">sql_render</a></span><span class="op">(</span><span class="va">evrep_db</span><span class="op">$</span><span class="va">df_eval</span>, sql_options <span class="op">=</span> <span class="fu">dbplyr</span><span class="fu">::</span><span class="fu"><a href="https://dbplyr.tidyverse.org/reference/sql_options.html" class="external-link">sql_options</a></span><span class="op">(</span>cte <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu">stringr</span><span class="fu">::</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_trunc.html" class="external-link">str_trunc</a></span><span class="op">(</span><span class="va">sql_eval</span>, <span class="fl">500</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## &lt;SQL&gt; WITH q01 AS (</span></span>
@@ -932,43 +900,35 @@ sql code more readable.</p>
 <span><span class="co">##   FROM q02 q01...</span></span></code></pre>
 <p>We can take that code and wrap it in a <code>CREATE TABLE</code>
 statement</p>
-<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sql_create</span> <span class="op">&lt;-</span> <span class="fu">glue</span><span class="fu">::</span><span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html" class="external-link">glue</a></span><span class="op">(</span><span class="st">"CREATE TABLE eval AS ({sql_eval})"</span><span class="op">)</span></span>
 <span><span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbExecute.html" class="external-link">dbExecute</a></span><span class="op">(</span><span class="va">con</span>, <span class="va">sql_create</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] 10</span></span></code></pre>
 <p>Retrieve the new table from the database.</p>
-<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tbl_eval</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/tbl.html" class="external-link">tbl</a></span><span class="op">(</span><span class="va">con</span>, <span class="st">"eval"</span><span class="op">)</span></span>
 <span><span class="va">tbl_eval</span></span></code></pre></div>
 <pre><code><span><span class="co">## <span style="color: #949494;"># Source:   table&lt;eval&gt; [?? x 10]</span></span></span>
-<span><span class="co">## <span style="color: #949494;"># Database: DuckDB v1.3.0 [koneswab@Darwin 23.6.0:R 4.4.1/:memory:]</span></span></span>
+<span><span class="co">## <span style="color: #949494;"># Database: DuckDB 1.4.0 [koneswab@Darwin 23.6.0:R 4.4.1/:memory:]</span></span></span>
 <span><span class="co">##    study_id site_id event_count event_per_visit_site visits n_pat</span></span>
 <span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>                <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> A        S0008           103                0.462    223    10</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> A        S0007           122                0.552    221    10</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> A        S0010           107                0.480    223    10</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> A        S0005            96                0.381    252    10</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> A        S0006           119                0.463    257    10</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> A        S0001            61                0.302    202    10</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> A        S0008           103                0.462    223    10</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> A        S0005            96                0.381    252    10</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> A        S0009           123                0.530    232    10</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> A        S0002           105                0.544    193    10</span></span>
 <span><span class="co">## <span style="color: #BCBCBC;"> 6</span> A        S0003           125                0.595    210    10</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> A        S0002           105                0.544    193    10</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> A        S0009           123                0.530    232    10</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> A        S0001            61                0.302    202    10</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">10</span> A        S0004           116                0.483    240    10</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> A        S0010           107                0.480    223    10</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> A        S0004           116                0.483    240    10</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> A        S0007           122                0.552    221    10</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">10</span> A        S0006           119                0.463    257    10</span></span>
 <span><span class="co">## <span style="color: #949494;"># ℹ 4 more variables: event_per_visit_study &lt;dbl&gt;, event_prob_no_mult &lt;dbl&gt;,</span></span></span>
 <span><span class="co">## <span style="color: #949494;">#   event_prob &lt;dbl&gt;, event_delta &lt;dbl&gt;</span></span></span></code></pre>
 <p>We plot the results from the {simaerep} object.</p>
-<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">evrep_db</span>, study <span class="op">=</span> <span class="st">"A"</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## Warning in fortify(data, ...): Arguments in `...` must be used.</span></span>
-<span><span class="co">## <span style="color: #BB0000;">✖</span> Problematic argument:</span></span>
-<span><span class="co">## <span style="color: #00BBBB;">•</span> na.rm = TRUE</span></span>
-<span><span class="co">## <span style="color: #00BBBB;">ℹ</span> Did you misspell an argument name?</span></span>
-<span><span class="co">## Arguments in `...` must be used.</span></span>
-<span><span class="co">## <span style="color: #BB0000;">✖</span> Problematic argument:</span></span>
-<span><span class="co">## <span style="color: #00BBBB;">•</span> na.rm = TRUE</span></span>
-<span><span class="co">## <span style="color: #00BBBB;">ℹ</span> Did you misspell an argument name?</span></span></code></pre>
 <p><img src="intro_files/figure-html/unnamed-chunk-18-1.png" width="700"></p>
-<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbDisconnect.html" class="external-link">dbDisconnect</a></span><span class="op">(</span><span class="va">con</span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>

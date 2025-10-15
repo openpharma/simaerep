@@ -78,10 +78,11 @@ test_that(paste("no over-reporting for sites with zero events"), {
 
   expect_true(all(zero_rep_prob <= 0.6))
 
+  # classic algorithm not changed
   zero_rep_prob <- simaerep(df_vis, inframe = FALSE)$df_eval %>%
     filter(mean_event_site_med75 == 0) %>%
     pull(prob)
 
-  expect_true(all(zero_rep_prob <= 0.6))
+  expect_false(all(zero_rep_prob <= 0.6))
 
 })
