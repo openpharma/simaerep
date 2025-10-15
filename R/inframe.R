@@ -74,7 +74,8 @@ sim_inframe <- function(df_visit, r = 1000, df_site = NULL, event_names = c("ae"
   df_pat_aggr_pool <- pat_aggr(df_visit)
 
   colnames_event <- paste0(event_names, "_count")
-  colnames_low <- paste0(event_names, "_prob_low")  # nolint
+  colnames_gr <- paste0(event_names, "_prob_gr")  # nolint
+  colnames_grequal <- paste0(event_names, "_prob_grequal")  # nolint
   colnames_ori <- paste0(event_names, "_per_visit_site_ori")
   colnames_rep <- paste0(event_names, "_per_visit_rep")
   colnames_study <- paste0(event_names, "_per_visit_study")  # nolint
@@ -208,19 +209,22 @@ sim_inframe <- function(df_visit, r = 1000, df_site = NULL, event_names = c("ae"
       df_calc_ori,
       by = c("study_id", "site_number")
     ) %>%
-
     # calculate probability by comparing original stats with simulated stats
     # how many times simulated value below original value
-
     summarise(
       across(.cols = all_of(colnames_rep), .fns = ~mean(.x, na.rm = TRUE), .names = "{colnames_study}"),
       .by = c("study_id", "site_number", all_of(colnames_event), all_of(colnames_ori), "visits", "n_pat")
     )
+
   for (x in seq_along(colnames_ori)){
     temp <- join_temp %>%
-      summarise("{colnames_low[x]}" := sum(ifelse(.data[[colnames_ori[x]]] >= .data[[colnames_rep[x]]], 1, 0)) / n(),
-                .by = c("study_id", "site_number", "visits", "n_pat")) %>%
-      select(c("study_id", "site_number", 5))
+      summarise(
+        "{colnames_grequal[x]}" := sum(ifelse(.data[[colnames_rep[x]]] >= .data[[colnames_ori[x]]], 1, 0)) / n(),
+        "{colnames_gr[x]}" := sum(ifelse(.data[[colnames_rep[x]]] > .data[[colnames_ori[x]]], 1, 0)) / n(),
+        .by = c("study_id", "site_number", "visits", "n_pat")
+      ) %>%
+      select(c("study_id", "site_number", colnames_grequal[x], colnames_gr[x]))
+
     df_calc_aggr <- df_calc_aggr %>%
       left_join(temp, by = c("study_id", "site_number"))
   }

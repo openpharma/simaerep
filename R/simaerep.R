@@ -409,75 +409,30 @@ eval_sites <- function(df_sim_sites,
     method <- NULL
   }
 
-  df_out <- df_sim_sites
-
-  # pval columns
-  # pass through p_adjust not calculate over-reporting
-  # column name should be pval
-
-  if (any(endsWith(colnames(df_out), suffix = "pval"))) {
-    cols_pval <- colnames(select(df_out, contains("pval")))
-    warning_na(df_out, cols_pval)
-
-    if (! is.null(method)) {
-      df_out <- df_out %>%
-        p_adjust(cols_pval, method = method)
-    }
-
-  }
-
-  # under_only is only allowed for the classic algorithm
-  # it can only run with one event_type with a predictable column name
   if (under_only) {
-
-    if (! is.null(method)) {
-      df_out <- df_out %>%
-        p_adjust("prob_low", method = method)
-    }
-
-    df_out <- df_out %>%
-      mutate(
-        prob = (1 - .data$prob_low) * - 1
-      ) %>%
-      select(- "prob_low")
+    df_out <- eval_sites_classic_under_only(
+        df_sim_sites,
+        method = method
+      )
 
     return(df_out)
-
   }
 
-  cols_prob_low <- colnames(select(df_out, contains("prob_low")))
-  warning_na(df_out, cols_prob_low)
+  cols_prob <- df_sim_sites %>%
+    select(ends_with("prob_low"), ends_with("_prob_gr")) %>%
+    colnames() %>%
+    stringr::str_replace("(_gr$|_low$)", "")
 
-  cols_prob_or <- stringr::str_replace(cols_prob_low, "low$", "or")
-  cols_prob_ur <- stringr::str_replace(cols_prob_low, "low$", "ur")
+  df_out <- derive_probabilities(df_sim_sites)
 
-  cols_prob <- stringr::str_replace(cols_prob_low, "_low$", "")
-
-  # prob_low is defined as the probability of getting the same
-  # or lower value than the observed value. This is identical
-  # with the over-reporting probability. So we rename the column
-
-  df_out <- df_out %>%
-    rename(
-      setNames(cols_prob_low, cols_prob_or)
-    )
-
-  # the under-reporting probability is the inversion of the over-reporting
-  # probability.
-
-  for (i in seq_along(cols_prob_low)) {
-    df_out <- df_out %>%
-      mutate(
-        "{cols_prob_ur[i]}" := 1 - .data[[cols_prob_or[i]]],
-      )
-  }
-
-  # p_adjust() when applied to database tables can create complex
-  # sql so it is best applied outside a loop
+  cols_prob_or <- paste0(cols_prob, "_or")
+  cols_prob_ur <- paste0(cols_prob, "_ur")
 
   cols_prob_or_no_mult <- character(0)
   cols_prob_ur_no_mult <- character(0)
 
+  # p_adjust() when applied to database tables can create complex
+  # sql so it is best applied outside a loop
 
   if (! is.null(method)) {
 
@@ -497,8 +452,7 @@ eval_sites <- function(df_sim_sites,
       mutate(across(all_of(c(cols_prob_or, cols_prob_ur)), ~ 1 - .))
   }
 
-
-  for (i in seq_along(cols_prob_low)) {
+  for (i in seq_along(cols_prob)) {
 
     # we correct for an edge case in which the quantitative count of
     # events between site and study is equal which can happen when
@@ -511,7 +465,7 @@ eval_sites <- function(df_sim_sites,
       col_quant_event_site <- "mean_ae_site_med75"
       col_quant_event_study <- "mean_ae_study_med75"
     } else {
-      event <- stringr::str_split_1(cols_prob_low[i], "_")[1]
+      event <- stringr::str_split_1(cols_prob[i], "_")[1]
       col_quant_event_site <- paste0(event, "_per_visit_site")
       col_quant_event_study <- paste0(event, "_per_visit_study")
       col_event_delta <- paste0(event, "_delta") # nolint
@@ -593,6 +547,116 @@ eval_sites <- function(df_sim_sites,
 }
 
 #'@keywords internal
+eval_sites_classic_under_only <- function(df_sim_sites, method) {
+
+  # pval columns
+  # pass through p_adjust not calculate over-reporting
+  # column name should be pval
+
+  df_out <- df_sim_sites
+
+  if (any(endsWith(colnames(df_out), suffix = "pval"))) {
+    cols_pval <- colnames(select(df_out, contains("pval")))
+    warning_na(df_out, cols_pval)
+
+    if (! is.null(method)) {
+      df_out <- df_out %>%
+        p_adjust(cols_pval, method = method)
+    }
+
+  }
+
+  # under_only is only allowed for the classic algorithm
+  # it can only run with one event_type with a predictable
+  # column name
+
+  if (! is.null(method)) {
+    df_out <- df_out %>%
+      p_adjust("prob_low", method = method)
+  }
+
+  df_out <- df_out %>%
+    mutate(
+      prob = (1 - .data$prob_low) * - 1
+    ) %>%
+    select(- "prob_low")
+
+  return(df_out)
+}
+
+#'@keywords internal
+derive_probabilities <- function(df_sim_sites) {
+
+  df_out <- df_sim_sites
+
+  # this column only exists for classic version
+  cols_prob_low <- colnames(select(df_out, contains("prob_low")))
+
+  # these columns are inframe spercific
+  cols_prob_gr <- colnames(select(df_out, ends_with("_prob_gr")))
+  cols_prob_grequal <- colnames(select(df_out, ends_with("_prob_grequal")))
+
+  if (! identical(cols_prob_gr, character(0))) {
+
+    cols_prob_or <- stringr::str_replace(cols_prob_gr, "gr$", "or")
+    cols_prob_ur <- stringr::str_replace(cols_prob_gr, "gr$", "ur")
+
+    warning_na(df_out, cols_prob_grequal)
+    warning_na(df_out, cols_prob_gr)
+
+    # under-reporting probability defined as ratio of simulated rates
+    # greater than observed rate
+
+    df_out <- df_out %>%
+      rename(
+        setNames(cols_prob_gr, cols_prob_ur)
+      )
+
+    # over-reporting probability defined as inverted ratio of simulated
+    # rates greater or equal than observed rate
+
+    for (i in seq_along(cols_prob_grequal)) {
+      df_out <- df_out %>%
+        mutate(
+          "{cols_prob_or[i]}" := 1 - .data[[cols_prob_grequal[i]]],
+        )
+    }
+
+  } else if (! identical(cols_prob_low, character(0))) {
+
+    cols_prob_or <- stringr::str_replace(cols_prob_low, "low$", "or")
+    cols_prob_ur <- stringr::str_replace(cols_prob_low, "low$", "ur")
+
+    warning_na(df_out, cols_prob_low)
+
+    # prob_low is defined as the probability of getting the same
+    # or lower value than the observed value. This is identical
+    # with the over-reporting probability. So we rename the column
+
+    df_out <- df_out %>%
+      rename(
+        setNames(cols_prob_low, cols_prob_or)
+      )
+
+    # the under-reporting probability is the inversion of the over-reporting
+    # probability.
+
+    for (i in seq_along(cols_prob_low)) {
+      df_out <- df_out %>%
+        mutate(
+          "{cols_prob_ur[i]}" := 1 - .data[[cols_prob_or[i]]],
+        )
+    }
+
+  }
+
+  df_out <- df_out %>%
+    select(- any_of(c(cols_prob_low, cols_prob_gr, cols_prob_grequal)))
+
+  return(df_out)
+}
+
+#'@keywords internal
 p_adjust <- function(df, cols, method = "BH") {
 
 
@@ -623,8 +687,13 @@ warning_na <- function(df, col) {
     warning_messages <- df %>%
       filter(dplyr::if_any(any_of(col), is.na)) %>%
       mutate(
-        warning = paste0("\nstudy_id: ", .data$study_id,
-                         ", site_number: ", .data$site_number, ", a prob_low value contains NA")
+        warning = paste(
+          "\nstudy_id: ",
+          .data$study_id,
+          ", site_number: ",
+          .data$site_number,
+          paste(col, collapse = ", "),
+          "NA detected")
       ) %>%
       distinct() %>%
       pull(.data$warning) %>%

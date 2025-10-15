@@ -756,7 +756,7 @@ plot_study <- function(df_visit,
   max_ae_study <- max(df_mean_ae_dev_site[[colname_mean]])
 
   p_study <- df_mean_ae_dev_site_no_alert %>%
-    ggplot(aes(visit, .data[[colname_mean]]), na.rm = TRUE) +
+    ggplot(aes(visit, .data[[colname_mean]])) +
     geom_line(aes(
       group = .data$site_number,
       color = color_prob_cut
@@ -800,7 +800,7 @@ plot_study <- function(df_visit,
   max_ae <- max(c(df_ae_dev_patient[[colname_event]], df_mean_ae_dev_study[[colname_mean]]))
 
   p_site <- df_ae_dev_patient %>%
-    ggplot(aes(visit, .data[[colname_event]]), na.rm = TRUE) +
+    ggplot(aes(visit, .data[[colname_event]])) +
     geom_line(aes(group = patnum),
               color = "grey",
               alpha = 0.5
