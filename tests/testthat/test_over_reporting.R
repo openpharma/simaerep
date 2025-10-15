@@ -63,14 +63,14 @@ test_that(paste("no over-reporting for sites with zero events"), {
   vis_m <- 15
 
   df_vis <- data.frame(
-    patnum=paste0("P",rep(1:50,each=15)),
-    site_number=paste0("S",rep(1:10,each=75)),
-    visit=rep(1:15,times=50),
-    n_event=0,
-    study_id="A"
+    patnum = paste0("P", rep(1:50, each = 15)),
+    site_number = paste0("S", rep(1:10, each = 75)),
+    visit = rep(1:15, times = 50),
+    n_event = 0,
+    study_id = "A"
   )
 
-  df_vis[15,]$n_event <- 1
+  df_vis[15, ]$n_event <- 1
 
   zero_rep_prob <- simaerep(df_vis, inframe = TRUE)$df_eval %>%
     filter(event_count == 0) %>%
