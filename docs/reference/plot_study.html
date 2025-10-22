@@ -13,7 +13,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">simaerep</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.0.900</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -27,16 +27,8 @@
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/intro.html">Introduction</a></li>
-    <li><a class="dropdown-item" href="../articles/inframe.html">Inframe Simulation Using Table Operations</a></li>
-    <li><a class="dropdown-item" href="../articles/over.html">Over-Reporting Probability</a></li>
+    <li><a class="dropdown-item" href="../articles/classic.html">Classic Algorithm</a></li>
     <li><a class="dropdown-item" href="../articles/performance.html">Statistical Performance</a></li>
-    <li><a class="dropdown-item" href="../articles/funnel_perf.html">Comparing {simaerep} and Funnel Plot Performance</a></li>
-    <li><a class="dropdown-item" href="../articles/sas_files.html">SAS Files as a Data Source</a></li>
-    <li><a class="dropdown-item" href="../articles/portfolio_perf.html">(superseded) simaerep Portfolio Performance</a></li>
-    <li><a class="dropdown-item" href="../articles/visit_med75.html">Adjusted Evaluation Point visit_med75</a></li>
-    <li><a class="dropdown-item" href="../articles/usability_limits.html">Address Usability Limits of Bootstrap Method</a></li>
-    <li><a class="dropdown-item" href="../articles/check_poisson.html">Check Poisson Test Applicability</a></li>
-    <li><a class="dropdown-item" href="../articles/visits_or_days.html">Aggregate AEs by Days or Visit?</a></li>
   </ul></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><a class="external-link nav-link" href="https://github.com/openpharma/simaerep/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
@@ -63,12 +55,12 @@
 <span>  <span class="va">df_site</span>,</span>
 <span>  <span class="va">df_eval</span>,</span>
 <span>  <span class="va">study</span>,</span>
-<span>  df_al <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  n_sites <span class="op">=</span> <span class="fl">16</span>,</span>
-<span>  pval <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  prob_col <span class="op">=</span> <span class="st">"prob_low_prob_ur"</span>,</span>
+<span>  prob_col <span class="op">=</span> <span class="st">"prob"</span>,</span>
 <span>  event_names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ae"</span><span class="op">)</span>,</span>
-<span>  plot_event <span class="op">=</span> <span class="st">"ae"</span></span>
+<span>  plot_event <span class="op">=</span> <span class="st">"ae"</span>,</span>
+<span>  mult_corr <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  delta <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -92,17 +84,8 @@
 <dd><p>study</p></dd>
 
 
-<dt id="arg-df-al">df_al<a class="anchor" aria-label="anchor" href="#arg-df-al"></a></dt>
-<dd><p>dataframe containing study_id, site_number, alert_level_site,
-alert_level_study (optional), Default: NA</p></dd>
-
-
 <dt id="arg-n-sites">n_sites<a class="anchor" aria-label="anchor" href="#arg-n-sites"></a></dt>
 <dd><p>integer number of most at risk sites, Default: 16</p></dd>
-
-
-<dt id="arg-pval">pval<a class="anchor" aria-label="anchor" href="#arg-pval"></a></dt>
-<dd><p>logical show p-value, Default:FALSE</p></dd>
 
 
 <dt id="arg-prob-col">prob_col<a class="anchor" aria-label="anchor" href="#arg-prob-col"></a></dt>
@@ -115,6 +98,14 @@ alert_level_study (optional), Default: NA</p></dd>
 
 <dt id="arg-plot-event">plot_event<a class="anchor" aria-label="anchor" href="#arg-plot-event"></a></dt>
 <dd><p>vector containing the events that should be plotted, default = "ae"</p></dd>
+
+
+<dt id="arg-mult-corr">mult_corr<a class="anchor" aria-label="anchor" href="#arg-mult-corr"></a></dt>
+<dd><p>Logical, multiplicity correction, Default: TRUE</p></dd>
+
+
+<dt id="arg-delta">delta<a class="anchor" aria-label="anchor" href="#arg-delta"></a></dt>
+<dd><p>logical, show delta events on plot</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -138,18 +129,28 @@ reach the evaluation point (visit_med75) will be ignored.</p>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
-<span class="r-in"><span><span class="va">df_visit</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim_test_data_study.html">sim_test_data_study</a></span><span class="op">(</span>n_pat <span class="op">=</span> <span class="fl">1000</span>, n_sites <span class="op">=</span> <span class="fl">10</span>,</span></span>
-<span class="r-in"><span>    frac_site_with_ur <span class="op">=</span> <span class="fl">0.2</span>, ur_rate <span class="op">=</span> <span class="fl">0.15</span>, max_visit_sd <span class="op">=</span> <span class="fl">8</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">df_visit</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim_test_data_study.html">sim_test_data_study</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  n_pat <span class="op">=</span> <span class="fl">100</span>,</span></span>
+<span class="r-in"><span>  n_sites <span class="op">=</span> <span class="fl">5</span>,</span></span>
+<span class="r-in"><span>  ratio_out <span class="op">=</span> <span class="fl">0.4</span>,</span></span>
+<span class="r-in"><span>  factor_event_rate <span class="op">=</span> <span class="fl">0.6</span></span></span>
+<span class="r-in"><span>  <span class="op">)</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span></span>
+<span class="r-in"><span>  <span class="co"># internal functions require internal column names</span></span></span>
+<span class="r-in"><span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">rename</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>    n_ae <span class="op">=</span> <span class="va">n_event</span>,</span></span>
+<span class="r-in"><span>    site_number <span class="op">=</span> <span class="va">site_id</span>,</span></span>
+<span class="r-in"><span>    patnum <span class="op">=</span> <span class="va">patient_id</span></span></span>
+<span class="r-in"><span>  <span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">df_visit</span><span class="op">$</span><span class="va">study_id</span> <span class="op">&lt;-</span> <span class="st">"A"</span></span></span>
 <span class="r-in"><span><span class="va">df_site</span> <span class="op">&lt;-</span> <span class="fu"><a href="site_aggr.html">site_aggr</a></span><span class="op">(</span><span class="va">df_visit</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">df_sim_sites</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim_sites.html">sim_sites</a></span><span class="op">(</span><span class="va">df_site</span>, <span class="va">df_visit</span>, r <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">df_eval</span> <span class="op">&lt;-</span> <span class="fu"><a href="eval_sites.html">eval_sites</a></span><span class="op">(</span><span class="va">df_sim_sites</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="fu">plot_study</span><span class="op">(</span><span class="va">df_visit</span>, <span class="va">df_site</span>, <span class="va">df_eval</span>, study <span class="op">=</span> <span class="st">"A"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">simaerep</span><span class="fu">:::</span><span class="fu">plot_study</span><span class="op">(</span><span class="va">df_visit</span>, <span class="va">df_site</span>, <span class="va">df_eval</span>, study <span class="op">=</span> <span class="st">"A"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plot_study-1.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>

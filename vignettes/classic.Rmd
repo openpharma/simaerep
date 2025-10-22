@@ -1,0 +1,124 @@
+---
+title: "Classic Algorithm"
+output:
+  html_document:
+    toc: true
+    toc_depth: 4
+    toc_float: true
+    number_sections: true
+    code_folding: show
+    collapse: false
+editor_options:
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, cache = FALSE)
+```
+
+# Load
+```{r}
+suppressPackageStartupMessages(library(dplyr))
+suppressPackageStartupMessages(library(knitr))
+suppressPackageStartupMessages(library(simaerep))
+```
+
+# Introduction
+
+The `simaerep` default algorithm only uses table operations that can also be 
+replicated in a `dbplyr` compatible data base backend via `sql`. The classic
+version of the algorithm used a vector based approach to sample the study data.
+
+The classic algorithm would also rely on a specific cut-off evaluation point
+that was determined for each site based on the progression of its patients. This
+means that only visits up to a certain progression point would be considered. 
+Patients that had not yet reached that visit point would be excluded from the
+analysis.
+
+The classic algorithm is faster and ensures that the sampling pool for patients
+would not get smaller than 20%. Further all publications using {simaerep} employed
+the classic algorithm. The default algorithm uses fixed seeds within the simulations
+so that the score will always be the same if the data does not change.
+
+Advantages:
+
+- faster
+- robust sampling pool of 20% patients
+- fixed seeds provide consistent scores
+- used in publications
+
+Disadvantages:
+
+- slightly lower statistical performance
+- can only calculate probabilities for one event type per run
+- not compatible with database backends
+
+# Classic Algorithm
+
+We can still employ the classic algorithm by setting the inframe argument to FALSE
+
+```{r}
+
+# a high sd will result in more patients with fewer visits
+df_visit <- sim_test_data_study(
+  ratio_out = 1/20,
+  factor_event_rate = -0.5,
+  max_visit_sd = 10,
+  event_rates = (dgamma(seq(1, 20, 0.5), shape = 5, rate = 2) * 5) + 0.1
+)
+
+# the classic algorithm requires event count saved as "n_ae"
+df_visit$n_ae <- df_visit$n_event
+
+evrep_classic <- simaerep(df_visit, inframe = FALSE)
+
+evrep_classic
+
+plot(evrep_classic, study = "A")
+```
+
+We can also visualize the visit cut-off evaluation point visit_med75
+
+```{r}
+plot(evrep_classic, what = "med75", study = "A", n_sites = 6)
+```
+
+Originally `simaerep` was built for the detection of under-reporting of adverse
+events over-reporting was not in scope. In case site reporting average was higher
+than study average. The sampling of patients was skipped which made the algorithm
+a little bit faster. We can still switch off the over-reporting analysis.
+
+```{r}
+evrep_or_off <- simaerep(df_visit, inframe = FALSE, under_only = TRUE)
+
+evrep_or_off
+```
+
+All values in `prob` are between -1 and 0 instead of -1 and 1.
+
+```{r}
+summary(evrep_or_off$df_eval$prob)
+```
+
+The classic version also supports poisson.test results in addition to the boot-strapped results.
+As the poisson p-values obtained for under-reporting are not inversely related to the over-reporting,
+poisson test p-values are only available for under-reporting.
+
+```{r}
+evrep_pval <- simaerep(df_visit, poisson_test = TRUE)
+
+evrep_pval
+
+plot(evrep_pval, prob_col = "pval", study = "A")
+```
+
+
+
+# Maintaining Reproducibility
+
+We take several measures to ensure consistent results between `simaerep` versions using unit tests.
+
+- Sample data stored in `R/sysdata.rda` to ensure identical results for classic algorithm.
+- Visit cut-off point visit_med75 can be used with inframe method to check that the same sites are flagged as with classic method.
+- Compare base R multiplicity correction with simaerep inframe multiplicity correction.
+

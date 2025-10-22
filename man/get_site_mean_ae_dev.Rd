@@ -19,6 +19,7 @@ get_site_mean_ae_dev(df_visit, df_pat, df_site, event_names = c("ae"))
 dataframe
 }
 \description{
-Internal function used by \code{\link[=site_aggr]{site_aggr()}}, \code{\link[=plot_visit_med75]{plot_visit_med75()}},
+Internal function used by \code{\link[=site_aggr]{site_aggr()}},
 returns mean AE development from visit 0 to visit_med75.
 }
+\keyword{internal}

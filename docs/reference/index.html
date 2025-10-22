@@ -13,7 +13,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">simaerep</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.0.900</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -27,16 +27,8 @@
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/intro.html">Introduction</a></li>
-    <li><a class="dropdown-item" href="../articles/inframe.html">Inframe Simulation Using Table Operations</a></li>
-    <li><a class="dropdown-item" href="../articles/over.html">Over-Reporting Probability</a></li>
+    <li><a class="dropdown-item" href="../articles/classic.html">Classic Algorithm</a></li>
     <li><a class="dropdown-item" href="../articles/performance.html">Statistical Performance</a></li>
-    <li><a class="dropdown-item" href="../articles/funnel_perf.html">Comparing {simaerep} and Funnel Plot Performance</a></li>
-    <li><a class="dropdown-item" href="../articles/sas_files.html">SAS Files as a Data Source</a></li>
-    <li><a class="dropdown-item" href="../articles/portfolio_perf.html">(superseded) simaerep Portfolio Performance</a></li>
-    <li><a class="dropdown-item" href="../articles/visit_med75.html">Adjusted Evaluation Point visit_med75</a></li>
-    <li><a class="dropdown-item" href="../articles/usability_limits.html">Address Usability Limits of Bootstrap Method</a></li>
-    <li><a class="dropdown-item" href="../articles/check_poisson.html">Check Poisson Test Applicability</a></li>
-    <li><a class="dropdown-item" href="../articles/visits_or_days.html">Aggregate AEs by Days or Visit?</a></li>
   </ul></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><a class="external-link nav-link" href="https://github.com/openpharma/simaerep/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
@@ -63,7 +55,7 @@
 
       <dl><dt>
 
-          <code><a href="simaerep.html">simaerep()</a></code>
+          <code><a href="simaerep.html">simaerep()</a></code> <code><a href="simaerep.html">simaerep_inframe()</a></code> <code><a href="simaerep.html">simaerep_classic()</a></code>
 
         </dt>
         <dd>Create simaerep object</dd>
@@ -73,10 +65,16 @@
 
         </dt>
         <dd>plot AE under-reporting simulation results</dd>
+      </dl><dl><dt>
+
+          <code><a href="orivisit.html">orivisit()</a></code>
+
+        </dt>
+        <dd>create orivisit object</dd>
       </dl></div><div class="section level2">
-      <h2 id="main-functions">Main Functions<a class="anchor" aria-label="anchor" href="#main-functions"></a></h2>
+      <h2 id="internal-algorithm-functions">Internal Algorithm Functions<a class="anchor" aria-label="anchor" href="#internal-algorithm-functions"></a></h2>
 
-
+      <div class="section-desc"><p>These Functions perform part of the algorithm</p></div>
 
 
     </div><div class="section level2">
@@ -101,25 +99,13 @@
           <code><a href="sim_inframe.html">sim_inframe()</a></code>
 
         </dt>
-        <dd>Calculate prob_lower for study sites using table operations</dd>
+        <dd>Calculate prob for study sites using table operations</dd>
       </dl><dl><dt>
 
           <code><a href="eval_sites.html">eval_sites()</a></code>
 
         </dt>
         <dd>Evaluate sites.</dd>
-      </dl><dl><dt>
-
-          <code><a href="prune_to_visit_med75_inframe.html">prune_to_visit_med75_inframe()</a></code>
-
-        </dt>
-        <dd>prune visits to visit_med75 using table operations</dd>
-      </dl><dl><dt>
-
-          <code><a href="plot_study.html">plot_study()</a></code>
-
-        </dt>
-        <dd>Plot ae development of study and sites highlighting at risk sites.</dd>
       </dl><dl><dt>
 
           <code><a href="check_df_visit.html">check_df_visit()</a></code>
@@ -145,10 +131,16 @@
         <dd>simulate study test data</dd>
       </dl><dl><dt>
 
-          <code><a href="get_config.html">get_config()</a></code>
+          <code><a href="get_portf_config.html">get_portf_config()</a></code>
 
         </dt>
         <dd>Get Portfolio Configuration</dd>
+      </dl><dl><dt>
+
+          <code><a href="get_portf_event_rates.html">get_portf_event_rates()</a></code>
+
+        </dt>
+        <dd>Get Portfolio Event Rates Calculates mean event rates per study and visit in a df_visit simaerep input dataframe.</dd>
       </dl><dl><dt>
 
           <code><a href="sim_test_data_portfolio.html">sim_test_data_portfolio()</a></code>
@@ -161,45 +153,16 @@
 
         </dt>
         <dd>simulate test data events</dd>
-      </dl></div><div class="section level2">
-      <h2 id="test-functions">Test Functions<a class="anchor" aria-label="anchor" href="#test-functions"></a></h2>
-
-      <div class="section-desc"><p>These functions are intented to check simaerep performance.</p></div>
-
-
-    </div><div class="section level2">
-
-
-
-
-      <dl><dt>
-
-          <code><a href="sim_studies.html">sim_studies()</a></code>
-
-        </dt>
-        <dd>Simulate studies.</dd>
       </dl><dl><dt>
 
-          <code><a href="sim_ur_scenarios.html">sim_ur_scenarios()</a></code>
-
-        </dt>
-        <dd>Simulate Under-Reporting Scenarios</dd>
-      </dl><dl><dt>
-
-          <code><a href="sim_ur.html">sim_ur()</a></code>
+          <code><a href="sim_out.html">sim_out()</a></code>
 
         </dt>
         <dd>simulate under-reporting</dd>
-      </dl><dl><dt>
-
-          <code><a href="get_portf_perf.html">get_portf_perf()</a></code>
-
-        </dt>
-        <dd>Get Portfolio Performance</dd>
       </dl></div><div class="section level2">
-      <h2 id="helper-functions">Helper Functions<a class="anchor" aria-label="anchor" href="#helper-functions"></a></h2>
+      <h2 id="helper-functions-multiprocessing">Helper Functions Multiprocessing<a class="anchor" aria-label="anchor" href="#helper-functions-multiprocessing"></a></h2>
 
-      <div class="section-desc"><p>These functions are intended to be called by other functions.</p></div>
+
 
 
     </div><div class="section level2">
@@ -208,84 +171,6 @@
 
 
       <dl><dt>
-
-          <code><a href="get_pat_pool_config.html">get_pat_pool_config()</a></code>
-
-        </dt>
-        <dd>Configure study patient pool by site parameters.</dd>
-      </dl><dl><dt>
-
-          <code><a href="pat_pool.html">pat_pool()</a></code>
-
-        </dt>
-        <dd>Create a study specific patient pool for sampling</dd>
-      </dl><dl><dt>
-
-          <code><a href="poiss_test_site_ae_vs_study_ae.html">poiss_test_site_ae_vs_study_ae()</a></code>
-
-        </dt>
-        <dd>Poisson test for vector with site AEs vs vector with study AEs.</dd>
-      </dl><dl><dt>
-
-          <code><a href="prob_lower_site_ae_vs_study_ae.html">prob_lower_site_ae_vs_study_ae()</a></code>
-
-        </dt>
-        <dd>Calculate bootstrapped probability for obtaining a lower site mean AE number.</dd>
-      </dl><dl><dt>
-
-          <code><a href="sim_test_data_patient.html">sim_test_data_patient()</a></code>
-
-        </dt>
-        <dd>simulate patient ae reporting test data</dd>
-      </dl><dl><dt>
-
-          <code><a href="get_visit_med75.html">get_visit_med75()</a></code>
-
-        </dt>
-        <dd>Get visit_med75.</dd>
-      </dl><dl><dt>
-
-          <code><a href="pat_aggr.html">pat_aggr()</a></code>
-
-        </dt>
-        <dd>Aggregate visit to patient level.</dd>
-      </dl><dl><dt>
-
-          <code><a href="get_site_mean_ae_dev.html">get_site_mean_ae_dev()</a></code>
-
-        </dt>
-        <dd>Get site mean ae development.</dd>
-      </dl><dl><dt>
-
-          <code><a href="aggr_duplicated_visits.html">aggr_duplicated_visits()</a></code>
-
-        </dt>
-        <dd>Aggregate duplicated visits.</dd>
-      </dl><dl><dt>
-
-          <code><a href="exp_implicit_missing_visits.html">exp_implicit_missing_visits()</a></code>
-
-        </dt>
-        <dd>Expose implicitly missing visits.</dd>
-      </dl><dl><dt>
-
-          <code><a href="prep_for_sim.html">prep_for_sim()</a></code>
-
-        </dt>
-        <dd>Prepare data for simulation.</dd>
-      </dl><dl><dt>
-
-          <code><a href="sim_after_prep.html">sim_after_prep()</a></code>
-
-        </dt>
-        <dd>Start simulation after preparation.</dd>
-      </dl><dl><dt>
-
-          <code><a href="get_ecd_values.html">get_ecd_values()</a></code>
-
-        </dt>
-        <dd>Get empirical cumulative distribution values of pval or prob_lower</dd>
-      </dl><dl><dt>
 
           <code><a href="purrr_bar.html">purrr_bar()</a></code>
 
@@ -297,36 +182,6 @@
 
         </dt>
         <dd>Conditional <code><a href="https://progressr.futureverse.org/reference/with_progress.html" class="external-link">with_progress</a></code>.</dd>
-      </dl><dl><dt>
-
-          <code><a href="sim_scenario.html">sim_scenario()</a></code>
-
-        </dt>
-        <dd>simulate single scenario</dd>
-      </dl><dl><dt>
-
-          <code><a href="orivisit.html">orivisit()</a></code>
-
-        </dt>
-        <dd>create orivisit object</dd>
-      </dl><dl><dt>
-
-          <code><a href="is_simaerep.html">is_simaerep()</a></code>
-
-        </dt>
-        <dd>is simaerep class</dd>
-      </dl><dl><dt>
-
-          <code><a href="is_orivisit.html">is_orivisit()</a></code>
-
-        </dt>
-        <dd>is orivisit class</dd>
-      </dl><dl><dt>
-
-          <code><a href="max_rank.html">max_rank()</a></code>
-
-        </dt>
-        <dd>Calculate Max Rank</dd>
       </dl></div><div class="section level2">
       <h2 id="additional-plot-functions">Additional Plot Functions<a class="anchor" aria-label="anchor" href="#additional-plot-functions"></a></h2>
 
@@ -340,18 +195,6 @@
 
       <dl><dt>
 
-          <code><a href="plot_visit_med75.html">plot_visit_med75()</a></code>
-
-        </dt>
-        <dd>Plot patient visits against visit_med75.</dd>
-      </dl><dl><dt>
-
-          <code><a href="plot_sim_examples.html">plot_sim_examples()</a></code>
-
-        </dt>
-        <dd>Plot multiple simulation examples.</dd>
-      </dl><dl><dt>
-
           <code><a href="plot_sim_example.html">plot_sim_example()</a></code>
 
         </dt>
@@ -362,6 +205,12 @@
 
         </dt>
         <dd>Plots AE per site as dots.</dd>
+      </dl><dl><dt>
+
+          <code><a href="get_cum_mean_event_dev.html">get_cum_mean_event_dev()</a></code>
+
+        </dt>
+        <dd>Get cumulative mean event development</dd>
       </dl></div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>

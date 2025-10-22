@@ -17,7 +17,7 @@ integers."><meta property="og:image" content="https://openpharma.github.io/simae
 
     <a class="navbar-brand me-2" href="../index.html">simaerep</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.0.900</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -31,16 +31,8 @@ integers."><meta property="og:image" content="https://openpharma.github.io/simae
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/intro.html">Introduction</a></li>
-    <li><a class="dropdown-item" href="../articles/inframe.html">Inframe Simulation Using Table Operations</a></li>
-    <li><a class="dropdown-item" href="../articles/over.html">Over-Reporting Probability</a></li>
+    <li><a class="dropdown-item" href="../articles/classic.html">Classic Algorithm</a></li>
     <li><a class="dropdown-item" href="../articles/performance.html">Statistical Performance</a></li>
-    <li><a class="dropdown-item" href="../articles/funnel_perf.html">Comparing {simaerep} and Funnel Plot Performance</a></li>
-    <li><a class="dropdown-item" href="../articles/sas_files.html">SAS Files as a Data Source</a></li>
-    <li><a class="dropdown-item" href="../articles/portfolio_perf.html">(superseded) simaerep Portfolio Performance</a></li>
-    <li><a class="dropdown-item" href="../articles/visit_med75.html">Adjusted Evaluation Point visit_med75</a></li>
-    <li><a class="dropdown-item" href="../articles/usability_limits.html">Address Usability Limits of Bootstrap Method</a></li>
-    <li><a class="dropdown-item" href="../articles/check_poisson.html">Check Poisson Test Applicability</a></li>
-    <li><a class="dropdown-item" href="../articles/visits_or_days.html">Aggregate AEs by Days or Visit?</a></li>
   </ul></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><a class="external-link nav-link" href="https://github.com/openpharma/simaerep/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
@@ -91,26 +83,30 @@ integers.</p>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">df_visit</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim_test_data_study.html">sim_test_data_study</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>   n_pat <span class="op">=</span> <span class="fl">100</span>,</span></span>
-<span class="r-in"><span>   n_sites <span class="op">=</span> <span class="fl">5</span>,</span></span>
-<span class="r-in"><span>   frac_site_with_ur <span class="op">=</span> <span class="fl">0.4</span>,</span></span>
-<span class="r-in"><span>   ur_rate <span class="op">=</span> <span class="fl">0.2</span></span></span>
-<span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">df_visit</span><span class="op">$</span><span class="va">study_id</span> <span class="op">&lt;-</span> <span class="st">"A"</span></span></span>
+<span class="r-in"><span>  n_pat <span class="op">=</span> <span class="fl">100</span>,</span></span>
+<span class="r-in"><span>  n_sites <span class="op">=</span> <span class="fl">5</span>,</span></span>
+<span class="r-in"><span>  ratio_out <span class="op">=</span> <span class="fl">0.4</span>,</span></span>
+<span class="r-in"><span>  factor_event_rate <span class="op">=</span> <span class="fl">0.6</span></span></span>
+<span class="r-in"><span>  <span class="op">)</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span></span>
+<span class="r-in"><span>  <span class="co"># internal functions require internal column names</span></span></span>
+<span class="r-in"><span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">rename</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>    n_ae <span class="op">=</span> <span class="va">n_event</span>,</span></span>
+<span class="r-in"><span>    site_number <span class="op">=</span> <span class="va">site_id</span>,</span></span>
+<span class="r-in"><span>    patnum <span class="op">=</span> <span class="va">patient_id</span></span></span>
+<span class="r-in"><span>  <span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">df_site</span> <span class="op">&lt;-</span> <span class="fu"><a href="site_aggr.html">site_aggr</a></span><span class="op">(</span><span class="va">df_visit</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">df_prep</span> <span class="op">&lt;-</span> <span class="fu">prep_for_sim</span><span class="op">(</span><span class="va">df_site</span>, <span class="va">df_visit</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">df_prep</span> <span class="op">&lt;-</span> <span class="fu">simaerep</span><span class="fu">:::</span><span class="fu">prep_for_sim</span><span class="op">(</span><span class="va">df_site</span>, <span class="va">df_visit</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">df_prep</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 5 × 7</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   study_id site_number n_pat n_pat_with_med75 visit_med75 n_ae_site  n_ae_study</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> A        S0001          20               18          15 <span style="color: #949494;">&lt;int [18]&gt;</span> <span style="color: #949494;">&lt;int [71]&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> A        S0002          20               16          16 <span style="color: #949494;">&lt;int [16]&gt;</span> <span style="color: #949494;">&lt;int [64]&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> A        S0003          20               19          15 <span style="color: #949494;">&lt;int [19]&gt;</span> <span style="color: #949494;">&lt;int [70]&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> A        S0004          20               18          14 <span style="color: #949494;">&lt;int [18]&gt;</span> <span style="color: #949494;">&lt;int [73]&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> A        S0005          20               17          15 <span style="color: #949494;">&lt;int [17]&gt;</span> <span style="color: #949494;">&lt;int [72]&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> A        S0001          20               18          15 <span style="color: #949494;">&lt;dbl [18]&gt;</span> <span style="color: #949494;">&lt;dbl [71]&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> A        S0002          20               17          15 <span style="color: #949494;">&lt;dbl [17]&gt;</span> <span style="color: #949494;">&lt;dbl [72]&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> A        S0003          20               18          16 <span style="color: #949494;">&lt;dbl [18]&gt;</span> <span style="color: #949494;">&lt;dbl [63]&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> A        S0004          20               19          14 <span style="color: #949494;">&lt;dbl [19]&gt;</span> <span style="color: #949494;">&lt;dbl [72]&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> A        S0005          20               17          15 <span style="color: #949494;">&lt;dbl [17]&gt;</span> <span style="color: #949494;">&lt;dbl [72]&gt;</span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

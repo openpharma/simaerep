@@ -4,16 +4,33 @@
 \alias{orivisit}
 \title{create orivisit object}
 \usage{
-orivisit(df_visit, call = NULL, env = parent.frame(), event_names = c("ae"))
+orivisit(
+  df_visit,
+  call = NULL,
+  env = parent.frame(),
+  event_names = c("event"),
+  col_names = list(study_id = "study_id", site_id = "site_id", patient_id = "patient_id",
+    visit = "visit")
+)
 }
 \arguments{
-\item{df_visit}{dataframe with original visit data}
+\item{df_visit}{Data frame with columns: study_id, site_number, patnum, visit,
+n_ae.}
 
 \item{call}{optional, provide call, Default: NULL}
 
-\item{env}{optional, provide environment of original visit data, Default: parent.frame()}
+\item{env}{Optional, provide environment of original visit data. Default:
+parent.frame().}
 
-\item{event_names}{vector, contains the event names, default = "ae"}
+\item{event_names}{vector, contains the event names, default = "event"}
+
+\item{col_names}{named list, indicate study_id, site_id, patient_id and visit
+column in df_visit input dataframe. Default: list(
+study_id = "study_id",
+site_id = "site_id",
+patient_id = "patient_id",
+visit = "visit"
+)}
 }
 \value{
 orivisit object
@@ -32,11 +49,9 @@ retrieved using as.data.frame(x).
 df_visit <- sim_test_data_study(
   n_pat = 100,
   n_sites = 5,
-  frac_site_with_ur = 0.4,
-  ur_rate = 0.6
-)
-
-df_visit$study_id <- "A"
+  ratio_out = 0.4,
+  factor_event_rate = - 0.6
+)#'
 
 visit <- orivisit(df_visit)
 

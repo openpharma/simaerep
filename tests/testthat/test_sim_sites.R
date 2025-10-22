@@ -1,9 +1,13 @@
-# test data is automatically loaded, check ./data-raw/generate_test_data.R
+
+df_visit <- get_df_visit_test_mapped()
+
+df_site <- df_visit %>%
+  site_aggr()
 
 
 test_that("pat_pool() - check column names and datatypes of returnes dataframe", {
 
-  df_pat_pool <- pat_pool(df_visit_test, df_site_test)
+  df_pat_pool <- pat_pool(df_visit, df_site)
 
   expect_equal(names(df_pat_pool), c("study_id", "pat_pool"))
 
@@ -101,7 +105,7 @@ test_that("sim_sites() - prob_low and pval must be between 0 - 1", {
 
 test_that("prep_for_sim() - ae vector for site must match number of patients at site", {
 
-  df_prep <- prep_for_sim(df_site_test, df_visit_test)
+  df_prep <- prep_for_sim(df_site_test, df_visit)
 
   df_prep %>%
     mutate(check = map2(
@@ -119,7 +123,6 @@ test_that("prob_lower_site_ae_vs_study_ae() returns NA when mean_ae_site is NA",
   expect_true(is.na(prob_lower_site_ae_vs_study_ae(site_ae = c(5, 3, 3, 2, 1, 6),
                                                    study_ae = c(NA),
                                                    r = 1000,
-                                                   parallel = FALSE,
                                                    under_only = FALSE)))
 })
 
@@ -139,8 +142,8 @@ test_that("warning when no patients with med75 found in study pool", {
   df_visit1 <- sim_test_data_study(
     n_pat = 100,
     n_sites = 5,
-    frac_site_with_ur = 0.4,
-    ur_rate = 0.6,
+    ratio_out = 0.4,
+    factor_event_rate = - 0.6,
     max_visit_mean = 10,
     max_visit_sd = 1
   )
@@ -148,20 +151,25 @@ test_that("warning when no patients with med75 found in study pool", {
   df_visit2 <- sim_test_data_study(
     n_pat = 100,
     n_sites = 1,
-    frac_site_with_ur = 0,
-    ur_rate = 0.6,
+    ratio_out = 0,
+    factor_event_rate = - 0.6,
     max_visit_mean = 30,
     max_visit_sd = 1
     ) %>%
     mutate(
-      patnum = paste(patnum, "A"),
+      patient_id = paste(patient_id, "A"),
     )
 
-  df_visit <- dplyr::bind_rows(df_visit1, df_visit2)
+  df_visit <- dplyr::bind_rows(df_visit1, df_visit2) %>%
+    rename(
+      patnum = patient_id,
+      site_number = site_id,
+      n_ae = n_event
+    )
 
   df_visit$study_id <- "A"
 
-  df_site <- site_aggr(df_visit)
+  df_site <- site_aggr(df_visit, event_names = "ae")
 
   df_prep <- prep_for_sim(df_site, df_visit)
 

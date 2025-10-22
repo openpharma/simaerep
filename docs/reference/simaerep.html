@@ -13,7 +13,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">simaerep</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.0.900</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -27,16 +27,8 @@
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/intro.html">Introduction</a></li>
-    <li><a class="dropdown-item" href="../articles/inframe.html">Inframe Simulation Using Table Operations</a></li>
-    <li><a class="dropdown-item" href="../articles/over.html">Over-Reporting Probability</a></li>
+    <li><a class="dropdown-item" href="../articles/classic.html">Classic Algorithm</a></li>
     <li><a class="dropdown-item" href="../articles/performance.html">Statistical Performance</a></li>
-    <li><a class="dropdown-item" href="../articles/funnel_perf.html">Comparing {simaerep} and Funnel Plot Performance</a></li>
-    <li><a class="dropdown-item" href="../articles/sas_files.html">SAS Files as a Data Source</a></li>
-    <li><a class="dropdown-item" href="../articles/portfolio_perf.html">(superseded) simaerep Portfolio Performance</a></li>
-    <li><a class="dropdown-item" href="../articles/visit_med75.html">Adjusted Evaluation Point visit_med75</a></li>
-    <li><a class="dropdown-item" href="../articles/usability_limits.html">Address Usability Limits of Bootstrap Method</a></li>
-    <li><a class="dropdown-item" href="../articles/check_poisson.html">Check Poisson Test Applicability</a></li>
-    <li><a class="dropdown-item" href="../articles/visits_or_days.html">Aggregate AEs by Days or Visit?</a></li>
   </ul></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><a class="external-link nav-link" href="https://github.com/openpharma/simaerep/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
@@ -62,16 +54,43 @@
 <span>  <span class="va">df_visit</span>,</span>
 <span>  r <span class="op">=</span> <span class="fl">1000</span>,</span>
 <span>  check <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  under_only <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  visit_med75 <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  inframe <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  under_only <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  visit_med75 <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  inframe <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  progress <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  mult_corr <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  param_site_aggr <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>method <span class="op">=</span> <span class="st">"med75_adj"</span>, min_pat_pool <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span>,</span>
-<span>  param_sim_sites <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>r <span class="op">=</span> <span class="fl">1000</span>, poisson_test <span class="op">=</span> <span class="cn">FALSE</span>, prob_lower <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
-<span>  param_eval_sites <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>method <span class="op">=</span> <span class="st">"BH"</span><span class="op">)</span>,</span>
+<span>  poisson_test <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  env <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sys.parent.html" class="external-link">parent.frame</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  event_names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ae"</span><span class="op">)</span></span>
+<span>  event_names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"event"</span><span class="op">)</span>,</span>
+<span>  col_names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>study_id <span class="op">=</span> <span class="st">"study_id"</span>, site_id <span class="op">=</span> <span class="st">"site_id"</span>, patient_id <span class="op">=</span> <span class="st">"patient_id"</span>,</span>
+<span>    visit <span class="op">=</span> <span class="st">"visit"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">simaerep_inframe</span><span class="op">(</span></span>
+<span>  <span class="va">df_visit</span>,</span>
+<span>  r <span class="op">=</span> <span class="fl">1000</span>,</span>
+<span>  under_only <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  visit_med75 <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  check <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  env <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sys.parent.html" class="external-link">parent.frame</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  event_names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"event"</span><span class="op">)</span>,</span>
+<span>  mult_corr <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  col_names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>study_id <span class="op">=</span> <span class="st">"study_id"</span>, site_id <span class="op">=</span> <span class="st">"site_id"</span>, patient_id <span class="op">=</span> <span class="st">"patient_id"</span>,</span>
+<span>    visit <span class="op">=</span> <span class="st">"visit"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">simaerep_classic</span><span class="op">(</span></span>
+<span>  <span class="va">df_visit</span>,</span>
+<span>  check <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  progress <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  env <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sys.parent.html" class="external-link">parent.frame</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  under_only <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  r <span class="op">=</span> <span class="fl">1000</span>,</span>
+<span>  mult_corr <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  poisson_test <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  event_names <span class="op">=</span> <span class="st">"event"</span>,</span>
+<span>  col_names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>study_id <span class="op">=</span> <span class="st">"study_id"</span>, site_id <span class="op">=</span> <span class="st">"site_id"</span>, patient_id <span class="op">=</span> <span class="st">"patient_id"</span>,</span>
+<span>    visit <span class="op">=</span> <span class="st">"visit"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -98,18 +117,20 @@ TRUE.</p></dd>
 
 <dt id="arg-under-only">under_only<a class="anchor" aria-label="anchor" href="#arg-under-only"></a></dt>
 <dd><p>Logical, compute under-reporting probabilities only.
-Supersedes under_only parameter passed to <code><a href="eval_sites.html">eval_sites()</a></code> and <code><a href="sim_sites.html">sim_sites()</a></code>.
-Default: TRUE.</p></dd>
+only applies to the classic algorithm in which a one-sided evaluation can
+save computation time. Default: FALSE</p></dd>
 
 
 <dt id="arg-visit-med-">visit_med75<a class="anchor" aria-label="anchor" href="#arg-visit-med-"></a></dt>
-<dd><p>Logical, should evaluation point visit_med75 be used.
-Default: TRUE.</p></dd>
+<dd><p>Logical, should evaluation point visit_med75 be used. Compatible
+with inframe and classic version of the algorithm.
+Default: FALSE</p></dd>
 
 
 <dt id="arg-inframe">inframe<a class="anchor" aria-label="anchor" href="#arg-inframe"></a></dt>
-<dd><p>Logical, only table operations to be used; does not require
-visit_med75. Compatible with dbplyr supported database backends.</p></dd>
+<dd><p>Logical, when FALSE classic simaerep algorithm will be used. The
+default inframe method uses only table operations and is compatible with
+dbplyr supported database backends. Default: TRUE</p></dd>
 
 
 <dt id="arg-progress">progress<a class="anchor" aria-label="anchor" href="#arg-progress"></a></dt>
@@ -120,19 +141,9 @@ visit_med75. Compatible with dbplyr supported database backends.</p></dd>
 <dd><p>Logical, multiplicity correction, Default: TRUE</p></dd>
 
 
-<dt id="arg-param-site-aggr">param_site_aggr<a class="anchor" aria-label="anchor" href="#arg-param-site-aggr"></a></dt>
-<dd><p>List of parameters passed to <code><a href="site_aggr.html">site_aggr()</a></code>. Default:
-list(method = "med75_adj", min_pat_pool = 0.2).</p></dd>
-
-
-<dt id="arg-param-sim-sites">param_sim_sites<a class="anchor" aria-label="anchor" href="#arg-param-sim-sites"></a></dt>
-<dd><p>List of parameters passed to <code><a href="sim_sites.html">sim_sites()</a></code>. Default:
-list(r = 1000, poisson_test = FALSE, prob_lower = TRUE).</p></dd>
-
-
-<dt id="arg-param-eval-sites">param_eval_sites<a class="anchor" aria-label="anchor" href="#arg-param-eval-sites"></a></dt>
-<dd><p>List of parameters passed to <code><a href="eval_sites.html">eval_sites()</a></code>. Default:
-list(method = "BH").</p></dd>
+<dt id="arg-poisson-test">poisson_test<a class="anchor" aria-label="anchor" href="#arg-poisson-test"></a></dt>
+<dd><p>logical, compute p-value with poisson test, only supported
+by the classic algorithm using visit_med75. Default: FALSE</p></dd>
 
 
 <dt id="arg-env">env<a class="anchor" aria-label="anchor" href="#arg-env"></a></dt>
@@ -141,13 +152,22 @@ parent.frame().</p></dd>
 
 
 <dt id="arg-event-names">event_names<a class="anchor" aria-label="anchor" href="#arg-event-names"></a></dt>
-<dd><p>vector, contains the event names, default = "ae"</p></dd>
+<dd><p>vector, contains the event names, default = "event"</p></dd>
+
+
+<dt id="arg-col-names">col_names<a class="anchor" aria-label="anchor" href="#arg-col-names"></a></dt>
+<dd><p>named list, indicate study_id, site_id, patient_id and visit
+column in df_visit input dataframe. Default: list(
+study_id = "study_id",
+site_id = "site_id",
+patient_id = "patient_id",
+visit = "visit"
+)</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A simaerep object.</p>
-    </div>
+    <p>A simaerep object. Results are contained in the attached df_eval dataframe.</p><table class="table table"><tr><td>Column Name</td><td>Description</td><td>Type</td></tr><tr><td>study_id</td><td>The study ID</td><td>Character</td></tr><tr><td>site_id.</td><td>The site ID</td><td>Character</td></tr><tr><td>(event)_count</td><td>Site event count</td><td>Numeric</td></tr><tr><td>(event)_per_visit_site</td><td>Site Ratio of event count divided by visits</td><td>Numeric</td></tr><tr><td>visits</td><td>Site visit count</td><td>Numeric</td></tr><tr><td>n_pat</td><td>Site patient count</td><td>Numeric</td></tr><tr><td>(event)_per_visit_study</td><td>Simulated study ratio</td><td>Numeric</td></tr><tr><td>(event)_prob</td><td>Site event ratio probability from -1 to 1</td><td>Numeric</td></tr><tr><td>(event)_delta</td><td>Difference expected vs reported events</td><td>Numeric</td></tr></table></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>Executes <code><a href="site_aggr.html">site_aggr()</a></code>, <code><a href="sim_sites.html">sim_sites()</a></code>, and <code><a href="eval_sites.html">eval_sites()</a></code> on original
@@ -156,11 +176,10 @@ original visit data for facilitated plotting using generic plot(x).</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p><code><a href="site_aggr.html">site_aggr()</a></code>, <code><a href="sim_sites.html">sim_sites()</a></code>, <code><a href="eval_sites.html">eval_sites()</a></code>, <code><a href="orivisit.html">orivisit()</a></code>,
-<code><a href="plot.simaerep.html">plot.simaerep()</a></code></p>
-<p><a href="site_aggr.html">site_aggr()</a>, <a href="sim_sites.html">sim_sites()</a>,
-<a href="eval_sites.html">eval_sites()</a>, <a href="orivisit.html">orivisit()</a>,
-<a href="plot.simaerep.html">plot.simaerep()</a></p></div>
+    <div class="dont-index"><p><a href="site_aggr.html">site_aggr</a>, <a href="sim_sites.html">sim_sites</a>,
+<a href="eval_sites.html">eval_sites</a>, <a href="orivisit.html">orivisit</a>,
+<a href="plot.simaerep.html">plot.simaerep</a>, <a href="print.simaerep.html">print.simaerep</a>,
+simaerep_inframe</p></div>
     </div>
 
     <div class="section level2">
@@ -168,150 +187,195 @@ original visit data for facilitated plotting using generic plot(x).</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">df_visit</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim_test_data_study.html">sim_test_data_study</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  n_pat <span class="op">=</span> <span class="fl">100</span>,</span></span>
 <span class="r-in"><span>  n_sites <span class="op">=</span> <span class="fl">5</span>,</span></span>
-<span class="r-in"><span>  frac_site_with_ur <span class="op">=</span> <span class="fl">0.4</span>,</span></span>
-<span class="r-in"><span>  ur_rate <span class="op">=</span> <span class="fl">0.6</span></span></span>
+<span class="r-in"><span>  ratio_out <span class="op">=</span> <span class="fl">0.4</span>,</span></span>
+<span class="r-in"><span>  factor_event_rate <span class="op">=</span> <span class="op">-</span> <span class="fl">0.6</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">df_visit</span><span class="op">$</span><span class="va">study_id</span> <span class="op">&lt;-</span> <span class="st">"A"</span></span></span>
-<span class="r-in"><span><span class="va">aerep</span> <span class="op">&lt;-</span> <span class="fu">simaerep</span><span class="op">(</span><span class="va">df_visit</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">aerep</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">evrep</span> <span class="op">&lt;-</span> <span class="fu">simaerep</span><span class="op">(</span><span class="va">df_visit</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">evrep</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> simaerep object:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Check aerep$df_eval prob_low_prob_ur column for under-reporting probabililty.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ----------------</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Plot results using plot() generic.</span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">aerep</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Full results available in "df_eval".</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Summary:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Number of sites: 5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Number of studies: 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Multiplicity correction applied to '*_prob' columns.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> First 10 rows of df_eval:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 5 × 10</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   study_id site_id event_count event_per_visit_site visits n_pat</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>                <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> A        S0001           101                0.254    398    20</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> A        S0002            87                0.223    390    20</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> A        S0003           237                0.578    410    20</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> A        S0004           251                0.678    370    20</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> A        S0005           239                0.631    379    20</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 4 more variables: event_per_visit_study &lt;dbl&gt;, event_prob_no_mult &lt;dbl&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   event_prob &lt;dbl&gt;, event_delta &lt;dbl&gt;</span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">evrep</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> List of 12</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ visit           :List of 4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ dim        : int [1:2] 1972 9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ visit       :List of 5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ dim        : int [1:2] 1947 9</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ df_summary : tibble [1 × 5] (S3: tbl_df/tbl/data.frame)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ n_studies : int 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ n_sites   : int 5</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ n_patients: int 100</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ n_visits  : int 1972</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ n_aes     : int 705</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ n_visits  : int 1947</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ n_events  : num 915</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ str_call   : chr "df_visit"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ event_names: chr "ae"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ event_names: chr "event"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ col_names  :List of 4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ study_id  : chr "study_id"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ site_id   : chr "site_id"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ patient_id: chr "patient_id"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ visit     : chr "visit"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..- attr(*, "class")= chr "orivisit"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ df_site         : tibble [5 × 6] (S3: tbl_df/tbl/data.frame)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ study_id          : chr [1:5] "A" "A" "A" "A" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ site_number       : chr [1:5] "S0001" "S0002" "S0003" "S0004" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ n_pat             : int [1:5] 20 20 20 20 20</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ n_pat_with_med75  : num [1:5] 18 18 17 20 16</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ visit_med75       : Named num [1:5] 17 15 16 15 16</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..- attr(*, "names")= chr [1:5] "80%" "80%" "80%" "80%" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ mean_ae_site_med75: num [1:5] 3.11 2.56 8.53 6.4 8.38</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ df_sim_sites    : tibble [5 × 9] (S3: tbl_df/tbl/data.frame)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ study_id              : chr [1:5] "A" "A" "A" "A" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ site_number           : chr [1:5] "S0001" "S0002" "S0003" "S0004" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ n_pat                 : int [1:5] 20 20 20 20 20</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ n_pat_with_med75      : num [1:5] 18 18 17 20 16</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ visit_med75           : Named num [1:5] 17 15 16 15 16</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..- attr(*, "names")= chr [1:5] "80%" "80%" "80%" "80%" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ mean_ae_site_med75    : num [1:5] 3.11 2.56 8.53 6.4 8.38</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ mean_ae_study_med75   : num [1:5] 7.03 6.21 5.26 5.21 5.34</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ n_pat_with_med75_study: int [1:5] 59 72 66 70 67</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ prob_low              : num [1:5] 0 0 1 1 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ df_eval         : tibble [5 × 11] (S3: tbl_df/tbl/data.frame)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ study_id              : chr [1:5] "A" "A" "A" "A" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ site_number           : chr [1:5] "S0001" "S0002" "S0003" "S0004" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ n_pat                 : int [1:5] 20 20 20 20 20</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ n_pat_with_med75      : num [1:5] 18 18 17 20 16</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ visit_med75           : Named num [1:5] 17 15 16 15 16</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..- attr(*, "names")= chr [1:5] "80%" "80%" "80%" "80%" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ mean_ae_site_med75    : num [1:5] 3.11 2.56 8.53 6.4 8.38</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ mean_ae_study_med75   : num [1:5] 7.03 6.21 5.26 5.21 5.34</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ n_pat_with_med75_study: int [1:5] 59 72 66 70 67</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ prob_low              : num [1:5] 0 0 1 1 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ prob_low_adj          : num [1:5] 0 0 1 1 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ prob_low_prob_ur      : num [1:5] 1 1 0 0 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ r               : num 1000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ visit_med75     : logi TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ inframe         : logi FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ under_only      : logi TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ param_site_aggr :List of 2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ method      : chr "med75_adj"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ min_pat_pool: num 0.2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ param_sim_sites :List of 4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ r           : num 1000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ poisson_test: logi FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ prob_lower  : logi TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ under_only  : logi TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ param_eval_sites:List of 2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ method    : chr "BH"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ under_only: logi TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ event_names     : chr "ae"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ df_site     : tibble [5 × 5] (S3: tbl_df/tbl/data.frame)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ study_id            : chr [1:5] "A" "A" "A" "A" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ site_id             : chr [1:5] "S0001" "S0002" "S0003" "S0004" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ max_visit           : num [1:5] 26 25 27 25 25</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ n_pat               : int [1:5] 20 20 20 20 20</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ n_pat_with_max_visit: int [1:5] 2 2 2 3 4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ df_sim_sites: tibble [5 × 9] (S3: tbl_df/tbl/data.frame)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ study_id             : chr [1:5] "A" "A" "A" "A" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ site_id              : chr [1:5] "S0001" "S0002" "S0003" "S0004" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ event_count          : num [1:5] 101 87 237 251 239</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ event_per_visit_site : num [1:5] 0.254 0.223 0.578 0.678 0.631</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ visits               : num [1:5] 398 390 410 370 379</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ n_pat                : int [1:5] 20 20 20 20 20</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ event_per_visit_study: num [1:5] 0.469 0.483 0.464 0.508 0.499</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ event_prob_grequal   : num [1:5] 1 1 0.024 0.001 0.016</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ event_prob_gr        : num [1:5] 1 1 0.021 0.001 0.013</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ df_eval     : tibble [5 × 10] (S3: tbl_df/tbl/data.frame)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ study_id             : chr [1:5] "A" "A" "A" "A" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ site_id              : chr [1:5] "S0001" "S0002" "S0003" "S0004" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ event_count          : num [1:5] 101 87 237 251 239</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ event_per_visit_site : num [1:5] 0.254 0.223 0.578 0.678 0.631</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ visits               : num [1:5] 398 390 410 370 379</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ n_pat                : int [1:5] 20 20 20 20 20</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ event_per_visit_study: num [1:5] 0.469 0.483 0.464 0.508 0.499</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ event_prob_no_mult   : num [1:5] -1 -1 0.976 0.999 0.984</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ event_prob           : num [1:5] -1 -1 0.96 0.995 0.96</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ event_delta          : num [1:5] -85.8 -101.5 46.7 63.1 50</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ r           : num 1000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ visit_med75 : logi FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ inframe     : logi TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ under_only  : logi FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ event_names : chr "event"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ mult_corr   : logi TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ poisson_test: logi FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ col_names   :List of 4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ study_id  : chr "study_id"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ site_id   : chr "site_id"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ patient_id: chr "patient_id"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ visit     : chr "visit"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - attr(*, "class")= chr "simaerep"</span>
 <span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># simaerep classic algorithm</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">df_visit_events_test</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim_test_data_events.html">sim_test_data_events</a></span><span class="op">(</span>n_pat <span class="op">=</span> <span class="fl">100</span>, n_sites <span class="op">=</span> <span class="fl">5</span>,</span></span>
-<span class="r-in"><span>                                 ae_per_visit_mean <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.4</span>, <span class="fl">0.5</span><span class="op">)</span>, event_names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ae"</span>, <span class="st">"pd"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">aerep_events</span> <span class="op">&lt;-</span> <span class="fu">simaerep</span><span class="op">(</span><span class="va">df_visit_events_test</span>, inframe <span class="op">=</span> <span class="cn">TRUE</span>,event_names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ae"</span>, <span class="st">"pd"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">aerep_events</span></span></span>
+<span class="r-in"><span><span class="va">evrep</span> <span class="op">&lt;-</span> <span class="fu">simaerep</span><span class="op">(</span><span class="va">df_visit</span>, inframe <span class="op">=</span> <span class="cn">FALSE</span>, under_only <span class="op">=</span> <span class="cn">TRUE</span>, mult_corr <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">evrep</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> simaerep object:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Check aerep$df_eval prob_low_prob_ur column for under-reporting probabililty.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ----------------</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Plot results using plot() generic.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Full results available in "df_eval".</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Summary:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Number of sites: 5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Number of studies: 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Classic algorithm used to calculate probabilities!!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Only under-reporting probability calculated !!!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Multiplicity correction applied to prob column.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> First 10 rows of df_eval:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 5 × 9</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   study_id site_id n_pat n_pat_with_med75 visit_med75 mean_event_site_med75</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>                 <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> A        S0001      20               19          15                  4.79</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> A        S0002      20               19          15                  4.05</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> A        S0003      20               17          16                 11.5 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> A        S0004      20               18          14                 12.1 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> A        S0005      20               16          16                 12.1 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 3 more variables: mean_event_study_med75 &lt;dbl&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   n_pat_with_med75_study &lt;int&gt;, prob &lt;dbl&gt;</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># multiple events</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">df_visit_events_test</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim_test_data_study.html">sim_test_data_study</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  n_pat <span class="op">=</span> <span class="fl">100</span>,</span></span>
+<span class="r-in"><span>  n_sites <span class="op">=</span> <span class="fl">5</span>,</span></span>
+<span class="r-in"><span>  ratio_out <span class="op">=</span> <span class="fl">0.4</span>,</span></span>
+<span class="r-in"><span>  factor_event_rate <span class="op">=</span> <span class="op">-</span> <span class="fl">0.6</span>,</span></span>
+<span class="r-in"><span>  event_rates <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fl">0.5</span>, <span class="fl">0.3</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  event_names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ae"</span>, <span class="st">"pd"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">evsrep</span> <span class="op">&lt;-</span> <span class="fu">simaerep</span><span class="op">(</span><span class="va">df_visit_events_test</span>, inframe <span class="op">=</span> <span class="cn">TRUE</span>, event_names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ae"</span>, <span class="st">"pd"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">evsrep</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> simaerep object:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ----------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Plot results using plot() generic.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Full results available in "df_eval".</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Summary:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Number of sites: 5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Number of studies: 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Multiplicity correction applied to '*_prob' columns.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Reporting probabilities calculated for: ae, pd </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> First 10 rows of df_eval:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 5 × 16</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   study_id site_id ae_count pd_count ae_per_visit_site pd_per_visit_site visits</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> A        S0001         76       43             0.203            0.115     374</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> A        S0002         67       29             0.189            0.081<span style="text-decoration: underline;">7</span>    355</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> A        S0003        185      107             0.465            0.269     398</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> A        S0004        182      111             0.483            0.294     377</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> A        S0005        199      125             0.504            0.316     395</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 9 more variables: n_pat &lt;int&gt;, ae_per_visit_study &lt;dbl&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   pd_per_visit_study &lt;dbl&gt;, ae_prob_no_mult &lt;dbl&gt;, ae_prob &lt;dbl&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   ae_delta &lt;dbl&gt;, pd_prob_no_mult &lt;dbl&gt;, pd_prob &lt;dbl&gt;, pd_delta &lt;dbl&gt;</span></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># \donttest{</span></span></span>
-<span class="r-in"><span>  <span class="co"># In-frame table operations</span></span></span>
-<span class="r-in"><span>  <span class="fu">simaerep</span><span class="op">(</span><span class="va">df_visit</span>, inframe <span class="op">=</span> <span class="cn">TRUE</span>, visit_med75 <span class="op">=</span> <span class="cn">FALSE</span>, under_only <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">$</span><span class="va">df_eval</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 5 × 13</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   study_id site_number events events_per_visit_site visits n_pat</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>                 <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> A        S0001           76                 0.183    415    20</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> A        S0002           75                 0.186    403    20</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> A        S0003          187                 0.496    377    20</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> A        S0004          180                 0.453    397    20</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> A        S0005          187                 0.492    380    20</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 7 more variables: events_per_visit_study &lt;dbl&gt;, prob_low &lt;dbl&gt;,</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   prob_low_adj &lt;dbl&gt;, prob_low_prob_ur &lt;dbl&gt;, prob_high &lt;dbl&gt;,</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   prob_high_adj &lt;dbl&gt;, prob_high_prob_or &lt;dbl&gt;</span></span>
-<span class="r-in"><span>  <span class="fu">simaerep</span><span class="op">(</span><span class="va">df_visit</span>, inframe <span class="op">=</span> <span class="cn">TRUE</span>, visit_med75 <span class="op">=</span> <span class="cn">TRUE</span>, under_only <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">$</span><span class="va">df_eval</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 5 × 15</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   study_id site_number events events_per_visit_site visits n_pat</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>                 <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> A        S0001           56                 0.183    306    18</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> A        S0002           46                 0.170    270    18</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> A        S0003          145                 0.533    272    17</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> A        S0004          128                 0.427    300    20</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> A        S0005          134                 0.523    256    16</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 9 more variables: events_per_visit_study &lt;dbl&gt;, prob_low &lt;dbl&gt;,</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   prob_low_adj &lt;dbl&gt;, prob_low_prob_ur &lt;dbl&gt;, prob_high &lt;dbl&gt;,</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   prob_high_adj &lt;dbl&gt;, prob_high_prob_or &lt;dbl&gt;, n_pat_with_med75 &lt;dbl&gt;,</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   visit_med75 &lt;dbl&gt;</span></span>
-<span class="r-in"><span>  <span class="co"># Database example</span></span></span>
-<span class="r-in"><span>  <span class="va">con</span> <span class="op">&lt;-</span> <span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbConnect.html" class="external-link">dbConnect</a></span><span class="op">(</span><span class="fu">duckdb</span><span class="fu">::</span><span class="fu"><a href="https://r.duckdb.org/reference/duckdb.html" class="external-link">duckdb</a></span><span class="op">(</span><span class="op">)</span>, dbdir <span class="op">=</span> <span class="st">":memory:"</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="va">df_r</span> <span class="op">&lt;-</span> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>rep <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1000</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/copy_to.html" class="external-link">copy_to</a></span><span class="op">(</span><span class="va">con</span>, <span class="va">df_visit</span>, <span class="st">"visit"</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/copy_to.html" class="external-link">copy_to</a></span><span class="op">(</span><span class="va">con</span>, <span class="va">df_r</span>, <span class="st">"r"</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="va">tbl_visit</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/tbl.html" class="external-link">tbl</a></span><span class="op">(</span><span class="va">con</span>, <span class="st">"visit"</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="va">tbl_r</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/tbl.html" class="external-link">tbl</a></span><span class="op">(</span><span class="va">con</span>, <span class="st">"r"</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="fu">simaerep</span><span class="op">(</span><span class="va">tbl_visit</span>, r <span class="op">=</span> <span class="va">tbl_r</span>, inframe <span class="op">=</span> <span class="cn">TRUE</span>, visit_med75 <span class="op">=</span> <span class="cn">FALSE</span>, under_only <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">$</span><span class="va">df_eval</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># Source:     SQL [?? x 13]</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># Database:   DuckDB v1.2.1 [koneswab@Darwin 23.6.0:R 4.4.1/:memory:]</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># Ordered by: study_id, site_number</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   study_id site_number events events_per_visit_site visits n_pat</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>                 <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> A        S0002           75                 0.186    403    20</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> A        S0001           76                 0.183    415    20</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> A        S0003          187                 0.496    377    20</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> A        S0005          187                 0.492    380    20</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> A        S0004          180                 0.453    397    20</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 7 more variables: events_per_visit_study &lt;dbl&gt;, prob_low &lt;dbl&gt;,</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   prob_low_adj &lt;dbl&gt;, prob_low_prob_ur &lt;dbl&gt;, prob_high &lt;dbl&gt;,</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   prob_high_adj &lt;dbl&gt;, prob_high_prob_or &lt;dbl&gt;</span></span>
-<span class="r-in"><span>  <span class="fu">simaerep</span><span class="op">(</span><span class="va">tbl_visit</span>, r <span class="op">=</span> <span class="va">tbl_r</span>, inframe <span class="op">=</span> <span class="cn">TRUE</span>, visit_med75 <span class="op">=</span> <span class="cn">TRUE</span>, under_only <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">$</span><span class="va">df_eval</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># Source:     SQL [?? x 15]</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># Database:   DuckDB v1.2.1 [koneswab@Darwin 23.6.0:R 4.4.1/:memory:]</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># Ordered by: study_id, site_number</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   study_id site_number events events_per_visit_site visits n_pat</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>                 <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> A        S0004          128                 0.427    300    20</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> A        S0001           56                 0.183    306    18</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> A        S0002           46                 0.170    270    18</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> A        S0005          134                 0.523    256    16</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> A        S0003          145                 0.533    272    17</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 9 more variables: events_per_visit_study &lt;dbl&gt;, prob_low &lt;dbl&gt;,</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   prob_low_adj &lt;dbl&gt;, prob_low_prob_ur &lt;dbl&gt;, prob_high &lt;dbl&gt;,</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   prob_high_adj &lt;dbl&gt;, prob_high_prob_or &lt;dbl&gt;, n_pat_with_med75 &lt;dbl&gt;,</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   visit_med75 &lt;int&gt;</span></span>
-<span class="r-in"><span>  <span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbDisconnect.html" class="external-link">dbDisconnect</a></span><span class="op">(</span><span class="va">con</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># Database example</span></span></span>
+<span class="r-in"><span><span class="va">con</span> <span class="op">&lt;-</span> <span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbConnect.html" class="external-link">dbConnect</a></span><span class="op">(</span><span class="fu">duckdb</span><span class="fu">::</span><span class="fu"><a href="https://r.duckdb.org/reference/duckdb.html" class="external-link">duckdb</a></span><span class="op">(</span><span class="op">)</span>, dbdir <span class="op">=</span> <span class="st">":memory:"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">df_r</span> <span class="op">&lt;-</span> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>rep <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1000</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/copy_to.html" class="external-link">copy_to</a></span><span class="op">(</span><span class="va">con</span>, <span class="va">df_visit</span>, <span class="st">"visit"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/copy_to.html" class="external-link">copy_to</a></span><span class="op">(</span><span class="va">con</span>, <span class="va">df_r</span>, <span class="st">"r"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">tbl_visit</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/tbl.html" class="external-link">tbl</a></span><span class="op">(</span><span class="va">con</span>, <span class="st">"visit"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">tbl_r</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/tbl.html" class="external-link">tbl</a></span><span class="op">(</span><span class="va">con</span>, <span class="st">"r"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">simaerep</span><span class="op">(</span><span class="va">tbl_visit</span>, r <span class="op">=</span> <span class="va">tbl_r</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> simaerep object:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ----------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Plot results using plot() generic.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Full results available in "df_eval".</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Summary:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Multiplicity correction applied to '*_prob' columns.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> First 10 rows of df_eval:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># Source:     SQL [?? x 10]</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># Database:   DuckDB 1.4.0 [koneswab@Darwin 23.6.0:R 4.4.1/:memory:]</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># Ordered by: study_id, site_id</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   study_id site_id event_count event_per_visit_site visits n_pat</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>                <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> A        S0005           239                0.631    379    20</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> A        S0001           101                0.254    398    20</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> A        S0002            87                0.223    390    20</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> A        S0003           237                0.578    410    20</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> A        S0004           251                0.678    370    20</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 4 more variables: event_per_visit_study &lt;dbl&gt;, event_prob_no_mult &lt;dbl&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   event_prob &lt;dbl&gt;, event_delta &lt;dbl&gt;</span></span>
+<span class="r-in"><span><span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbDisconnect.html" class="external-link">dbDisconnect</a></span><span class="op">(</span><span class="va">con</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>

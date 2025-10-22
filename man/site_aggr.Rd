@@ -8,7 +8,6 @@ site_aggr(
   df_visit,
   method = "med75_adj",
   min_pat_pool = 0.2,
-  check = TRUE,
   event_names = c("ae")
 )
 }
@@ -16,15 +15,11 @@ site_aggr(
 \item{df_visit}{dataframe with columns: study_id, site_number, patnum, visit,
 n_ae}
 
-\item{method}{character, one of c("med75", "med75_adj") defining method for
+\item{method}{character, one of c("med75", "med75_adj", "max") defining method for
 defining evaluation point visit_med75 (see details), Default: "med75_adj"}
 
 \item{min_pat_pool, }{double, minimum ratio of available patients available for
 sampling. Determines maximum visit_med75 value see Details. Default: 0.2}
-
-\item{check, }{logical, perform data check and attempt repair with
-\link[=check_df_visit]{check_df_visit()}, computationally expensive on large data
-sets. Default: TRUE}
 
 \item{event_names}{vector, contains the event names, default = "ae"}
 }
@@ -38,7 +33,8 @@ criterion, site level} \item{\strong{mean_ae_site_med75}}{mean AE at visit_med75
 site level} }
 }
 \description{
-Calculates visit_med75, n_pat_with_med75 and mean_ae_site_med75
+Calculates visit_med75, n_pat_with_med75 and mean_ae_site_med75.
+Used by \code{\link[=simaerep_classic]{simaerep_classic()}}
 }
 \details{
 For determining the visit number at which we are going to evaluate AE
@@ -49,20 +45,28 @@ evaluate we take the minimum of all maximum visits hence ensuring that we
 take the highest visit number possible without excluding more patients from
 the analysis. In order to ensure that the sampling pool for that visit is
 large enough we limit the visit number by the 80\% quantile of maximum visits
-of all patients in the study.
+of all patients in the study. "max" will determine site max visit, flag patients
+that concluded max visit and count patients and patients that concluded max visit.
 }
 \examples{
 df_visit <- sim_test_data_study(
   n_pat = 100,
   n_sites = 5,
-  frac_site_with_ur = 0.4,
-  ur_rate = 0.6
-)
-
-df_visit$study_id <- "A"
+  ratio_out = 0.4,
+  factor_event_rate = 0.6
+  ) \%>\%
+  # internal functions require internal column names
+  dplyr::rename(
+    n_ae = n_event,
+    site_number = site_id,
+    patnum = patient_id
+  )
 
 df_site <- site_aggr(df_visit)
 
 df_site \%>\%
   knitr::kable(digits = 2)
+}
+\seealso{
+\code{\link[=simaerep_classic]{simaerep_classic()}}
 }

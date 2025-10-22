@@ -13,7 +13,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">simaerep</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.0.900</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -27,16 +27,8 @@
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/intro.html">Introduction</a></li>
-    <li><a class="dropdown-item" href="../articles/inframe.html">Inframe Simulation Using Table Operations</a></li>
-    <li><a class="dropdown-item" href="../articles/over.html">Over-Reporting Probability</a></li>
+    <li><a class="dropdown-item" href="../articles/classic.html">Classic Algorithm</a></li>
     <li><a class="dropdown-item" href="../articles/performance.html">Statistical Performance</a></li>
-    <li><a class="dropdown-item" href="../articles/funnel_perf.html">Comparing {simaerep} and Funnel Plot Performance</a></li>
-    <li><a class="dropdown-item" href="../articles/sas_files.html">SAS Files as a Data Source</a></li>
-    <li><a class="dropdown-item" href="../articles/portfolio_perf.html">(superseded) simaerep Portfolio Performance</a></li>
-    <li><a class="dropdown-item" href="../articles/visit_med75.html">Adjusted Evaluation Point visit_med75</a></li>
-    <li><a class="dropdown-item" href="../articles/usability_limits.html">Address Usability Limits of Bootstrap Method</a></li>
-    <li><a class="dropdown-item" href="../articles/check_poisson.html">Check Poisson Test Applicability</a></li>
-    <li><a class="dropdown-item" href="../articles/visits_or_days.html">Aggregate AEs by Days or Visit?</a></li>
   </ul></li>
 <li class="active nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><a class="external-link nav-link" href="https://github.com/openpharma/simaerep/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
@@ -52,7 +44,25 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="0.7.0" id="simaerep-070">simaerep 0.7.0<a class="anchor" aria-label="anchor" href="#simaerep-070"></a></h2>
+<h2 class="pkg-version" data-toc-text="1.0.0" id="simaerep-100">simaerep 1.0.0<a class="anchor" aria-label="anchor" href="#simaerep-100"></a></h2>
+<ul><li>use get_cum_mean_event_dev() instead of get_site_mean_ae_dev() for plotting which does not rely on visit_med75 to reduce noise</li>
+<li>eval_sites will combine over- and under-reporting probability into one column prob</li>
+<li>eval_sites with inframe method will calculate delta events</li>
+<li>new simaerep defaults inframe = TRUE, mult_corr = TRUE, visit_med75 = FALSE, under_only = FALSE</li>
+<li>retire sim_ur_scenarios, get_portf_perf, sim_studies, get_ecd_values, get_pat_pool_config portfolio performance will be calculated by removing events directly from the data with sim_out</li>
+<li>remove check argument from low-level interface functions site_aggr and sim_sites</li>
+<li>use test helper functions to generate data for unit testing</li>
+<li>reuse saved test data for regression testing towards earlier simaerep versions</li>
+<li>pass alternative column names in df_visit input data to simaerep via col_names argument and preserve names in simaerep results</li>
+<li>improved print output for simaerep and orivisit S3 objects</li>
+<li>adapt validation unit tests to include event over and under reporting</li>
+<li>minimize the number of exported functions</li>
+<li>deprecate event_per_visit_mean argument in favor of event_rates for data simulation</li>
+<li>use non-constant event rates by default during data simulation</li>
+<li>independent calculation of over-reporting to remove artifacts for zero reporters []</li>
+</ul></div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.7.0" id="simaerep-070">simaerep 0.7.0<a class="anchor" aria-label="anchor" href="#simaerep-070"></a></h2><p class="text-muted">CRAN release: 2025-04-09</p>
 <ul><li>event_names argument, allow to calculate multiple reporting probabilities at once <a href="https://github.com/openpharma/simaerep/issues/73" class="external-link uri">https://github.com/openpharma/simaerep/issues/73</a>
 </li>
 <li>fix <a href="https://github.com/openpharma/simaerep/issues/82" class="external-link uri">https://github.com/openpharma/simaerep/issues/82</a>
@@ -65,7 +75,7 @@
 <li>fix validation report action</li>
 </ul></div>
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="0.6.0" id="simaerep-060">simaerep 0.6.0<a class="anchor" aria-label="anchor" href="#simaerep-060"></a></h2>
+<h2 class="pkg-version" data-toc-text="0.6.0" id="simaerep-060">simaerep 0.6.0<a class="anchor" aria-label="anchor" href="#simaerep-060"></a></h2><p class="text-muted">CRAN release: 2024-09-30</p>
 <ul><li>inframe method use table operations only, do not use visit_med75</li>
 <li><a href="https://github.com/openpharma/simaerep/issues/59" class="external-link uri">https://github.com/openpharma/simaerep/issues/59</a></li>
 <li><a href="https://github.com/openpharma/simaerep/issues/16" class="external-link uri">https://github.com/openpharma/simaerep/issues/16</a></li>
@@ -73,7 +83,7 @@
 <li><a href="https://github.com/openpharma/simaerep/issues/62" class="external-link uri">https://github.com/openpharma/simaerep/issues/62</a></li>
 </ul></div>
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="0.5.0" id="simaerep-050">simaerep 0.5.0<a class="anchor" aria-label="anchor" href="#simaerep-050"></a></h2>
+<h2 class="pkg-version" data-toc-text="0.5.0" id="simaerep-050">simaerep 0.5.0<a class="anchor" aria-label="anchor" href="#simaerep-050"></a></h2><p class="text-muted">CRAN release: 2024-04-03</p>
 <ul><li>allow flexible AE rates in data simulations</li>
 <li>add vignette comparing simaerep to gsm performance</li>
 <li>add over-reporting probability</li>
@@ -82,11 +92,11 @@
 <li><a href="https://github.com/openpharma/simaerep/issues/45" class="external-link uri">https://github.com/openpharma/simaerep/issues/45</a></li>
 </ul></div>
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="0.4.3" id="simaerep-043">simaerep 0.4.3<a class="anchor" aria-label="anchor" href="#simaerep-043"></a></h2>
+<h2 class="pkg-version" data-toc-text="0.4.3" id="simaerep-043">simaerep 0.4.3<a class="anchor" aria-label="anchor" href="#simaerep-043"></a></h2><p class="text-muted">CRAN release: 2023-03-03</p>
 <ul><li>delete performance unit tests (poisson faster than bootstrap) to accommodate CRAN request</li>
 </ul></div>
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="0.4.2" id="simaerep-042">simaerep 0.4.2<a class="anchor" aria-label="anchor" href="#simaerep-042"></a></h2>
+<h2 class="pkg-version" data-toc-text="0.4.2" id="simaerep-042">simaerep 0.4.2<a class="anchor" aria-label="anchor" href="#simaerep-042"></a></h2><p class="text-muted">CRAN release: 2023-02-25</p>
 <ul><li>CRAN submission</li>
 </ul></div>
     <div class="section level2">
