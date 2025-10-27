@@ -1,5 +1,5 @@
---- 
-title: "Binary Event Over-Reporting e.g. Subject Discontinuation"
+---
+title: "Binary Event Over-Reporting - Subject Discontinuation"
 output:
   html_document:
     toc: true
@@ -41,8 +41,8 @@ The sample data is from the open source r package [{clindata}](https://github.co
 
 # Implementation
 
-## AE vs Discontinuities 
-The main difference between detecting AEs and discontinuation is that with AE detection there can be multiple occurrences per patient, but with discontinuities detection there can only be one event per patient. This difference needs to be addressed and the data must be formulated into a version that {simaerep} can process, otherwise the algorithm's output will not make sense. The other major difference is that AE detection is focused on determining sites below the norm (under-reporting), but with discontinuation detection we want to look for sites that are above the norm (over-reporting). 
+## Cumulative vs Binary events 
+The main difference between detecting cumulative clinical events such as AEs and and binary events such as discontinuations is that with cumulative events there can be multiple occurrences per patient, but with binary events  there can only be one event per patient. This difference needs to be addressed and the data must be formulated into a version that {simaerep} can process, otherwise the algorithm's output will not make sense. The other major difference is that AE detection is focused on determining sites below the norm (under-reporting), but with discontinuation detection we want to look for sites that are above the norm (over-reporting). 
 
 ## Data Preparation
 
@@ -179,7 +179,7 @@ discrep <- simaerep(
 discrep
 ```
 
-```{r}
+```{r fig.width=10, fig.height=7}
 plot(discrep)
 ```
 
