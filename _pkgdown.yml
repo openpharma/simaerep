@@ -33,6 +33,7 @@ articles:
   - intro
   - classic
   - performance
+  - discontinuity
 
 reference:
 - title: S3 Interface
