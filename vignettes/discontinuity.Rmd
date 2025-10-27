@@ -1,0 +1,226 @@
+---
+title: "Binary Event Over-Reporting - Subject Discontinuation"
+output:
+  html_document:
+    toc: true
+    toc_depth: 3
+    toc_float: true
+    number_sections: true
+    code_folding: show
+    collapse: false
+editor_options:
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, cache = FALSE)
+```
+
+# Load
+```{r}
+suppressPackageStartupMessages(library(tibble))
+suppressPackageStartupMessages(library(knitr))
+suppressPackageStartupMessages(library(simaerep))
+suppressPackageStartupMessages(library(dplyr))
+suppressPackageStartupMessages(library(clindata))
+
+rawplus_studcomp <- clindata::rawplus_studcomp
+rawplus_visdt <- clindata::rawplus_visdt
+```
+
+# Introduction
+
+This vignette will explore the process and viability of using the {simaerep} algorithm to detect patient discontinuities and flag sites where there are more discontinuations than expected.
+
+# Patient Discontinuations 
+
+A discontinuation occurs any time a patient leaves a clinical trial for any reason. It is important to minimize patient discontinuation in order to maintain patient participation and therefore robust data collection in clinical studies. 
+
+# Sample Data
+The sample data is from the open source r package [{clindata}](https://github.com/Gilead-BioStats/clindata). Sampled data is from data frames rawplus_visdt and rawplus_studcomp. 
+
+# Implementation
+
+## Cumulative vs Binary events 
+The main difference between detecting cumulative clinical events such as AEs and and binary events such as discontinuations is that with cumulative events there can be multiple occurrences per patient, but with binary events  there can only be one event per patient. This difference needs to be addressed and the data must be formulated into a version that {simaerep} can process, otherwise the algorithm's output will not make sense. The other major difference is that AE detection is focused on determining sites below the norm (under-reporting), but with discontinuation detection we want to look for sites that are above the norm (over-reporting). 
+
+## Data Preparation
+
+`rawplus_studycomp` contains one entry for each patient that has discontinued. We interpret column `mincreated_dts` to be the timestamp the discontinuation has been entered and therefore to be a good proxy for the actual discontinuation date.
+
+```{r}
+rawplus_studcomp
+```
+
+```{r}
+df_disc <- rawplus_studcomp %>%
+  rename(date = mincreated_dts) %>%
+  mutate(event = "disc") %>%
+  distinct(studyid, siteid, subjid, date, event)
+
+df_disc %>%
+  head() %>%
+  knitr::kable()
+```
+
+We continue to build another event table for visits and horizontally bind both event tables
+
+```{r}
+df_vs <- rawplus_visdt %>%
+  rename(date = visit_dt) %>%
+  mutate(event = "visit") %>%
+  # We ignore visits that have no date
+  filter(! is.na(date)) %>%
+  # We are not interested in same day visits
+  distinct(studyid, siteid, subjid, date, event)
+
+df_events <- bind_rows(df_vs, df_disc) %>%
+  arrange(studyid, siteid, subjid, date)
+
+df_events %>%
+  filter(subjid == "0002") %>%
+  knitr::kable()
+```
+
+We add the cumulative event counts and aggregate on visit level to prepare data in a format that is ready to use by {simaerep}.
+
+```{r}
+df_visit <- df_events %>%
+  mutate(
+    cum_visit = cumsum(ifelse(event == "visit", 1, 0)),
+    cum_disc = cumsum(ifelse(event == "disc", 1, 0)),
+    .by = c("studyid", "siteid", "subjid")
+  ) %>%
+  # aggregate counts on visit level
+  summarise(
+    cum_disc = max(cum_disc),
+    .by = c("studyid", "siteid", "subjid", "cum_visit")
+  ) %>%
+  # remove patients with 0 visits
+  filter(max(cum_visit) > 0 , .by = c("studyid", "siteid", "subjid"))
+
+df_visit %>%
+  filter(subjid == "0002") %>%
+  knitr::kable()
+```
+
+
+## Sampling Correction 
+
+Notice that patient 0002 only has 5 entries, due to their early departure. The limited records of discontinued patients will create a problem with {simaerep}'s sampling algorithm, as the algorithm samples patients that have at least the same number of visits as the patient that is being replaced. This leads to an survivor bias where discontinued patients, since they have less visits, are unable to be used as replacement values for patients who had more visits. 
+
+To address this we would have to use the planned visits instead of the occurred visits, but {clindata} does not provide those.
+
+As an approximation to the planned visits the discontinued patient's records will be artificially inflated to 15 visits, a cut off point that includes roughly 80% of the patients not discontinued have reached during the study. This change allows for the proper sampling to occur and for the production of correct results.
+
+```{r}
+
+subj_disc <- df_visit %>%
+  filter(cum_disc == 1) %>%
+  pull(subjid) %>%
+  unique()
+
+df_fill <- df_visit %>%
+  distinct(studyid, siteid, subjid) %>%
+  filter(subjid %in% subj_disc) %>%
+  cross_join(
+    tibble(
+      cum_visit = seq(1, 15),
+      disc_fill = 1
+    )
+  )
+
+df_visit_disc <- df_visit %>%
+  filter(subjid %in% subj_disc) %>%
+  full_join(
+    df_fill,
+    by = c("studyid", "siteid" ,"subjid" ,"cum_visit")
+  ) %>%
+  mutate(
+    cum_disc = coalesce(cum_disc, disc_fill)
+  ) %>%
+  select(- disc_fill) %>%
+  arrange(subjid, cum_visit)
+
+df_visit_not_disc <- df_visit %>%
+  filter(! subjid %in% subj_disc)
+
+df_visit_fill <- bind_rows(df_visit_disc, df_visit_not_disc) %>%
+  rename(n_disc = cum_disc)
+
+# Displays patient 0002, modified to 15 visits
+df_visit_fill %>%
+  filter(subjid == "0002") %>%
+  arrange(cum_visit) %>%
+  kable()
+
+```
+
+## {simaerep}
+
+Since discontinuities are inherently more rare than AEs, it is necessary to run {simaerep} with a larger bootstrap iteration so that the results in between runs are more stable. The following code is run with 50,000 bootstrap repetitions, which is much higher than {simaereps}'s default of 1,000. This change allows the algorithm to provide a more stable and therefore more accurate model. 
+
+Here is the output of a {simaerep} call on df_visit modified for discontinuities.
+
+```{r}
+
+discrep <- simaerep(
+    df_visit_fill,
+    r = 50000,
+    event_names = "disc",
+    col_names = list(
+      study_id = "studyid",
+      site_id = "siteid",
+      patient_id = "subjid",
+      visit = "cum_visit"
+    )
+  )
+
+discrep
+```
+
+```{r fig.width=10, fig.height=7}
+plot(discrep)
+```
+
+Top 100 out of 176 sites by discontinuation probability without multiplicity correction in descending order.
+
+```{r}
+discrep$df_eval %>%
+  mutate(disc_ratio_per_pat = disc_count / n_pat) %>%
+  select(
+    siteid,
+    disc_count,
+    visits,
+    n_pat,
+    disc_ratio_per_pat,
+    disc_per_visit_site,
+    disc_per_visit_study,
+    disc_prob_no_mult,
+    disc_prob,
+    disc_delta
+  ) %>%
+  arrange(desc(disc_prob_no_mult)) %>%
+  mutate(rank = row_number(), .before = siteid) %>%
+  head(100) %>%
+  knitr::kable(digits = 3)
+```
+
+We find 4 sites that have a high reporting probability (>= 99% w/o multiplicity correction and >= 95% with) for discontinuations. As is expected the discontinuation ratio per patient which is a common monitoring metric is a poor indicator for which sites have high over-reporting probability as ratios from small samples tend to have more variability and are more likely to have outlier.
+
+## Summary
+
+In order to use {simaerep} for binary events such as patient discontinuation we have to account for survival bias by using planned visits rather than actual visits. Then {simaerep} can produce very plausible over-reporting probabilities with the same advantages we expect {simaerep} to have over parametric statistical methods for other event reporting metrics.
+
+
+
+
+
+
+
+
+
+
+
+
+

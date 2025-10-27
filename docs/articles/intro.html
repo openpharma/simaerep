@@ -51,6 +51,7 @@
 <li><a class="dropdown-item" href="../articles/intro.html">Introduction</a></li>
     <li><a class="dropdown-item" href="../articles/classic.html">Classic Algorithm</a></li>
     <li><a class="dropdown-item" href="../articles/performance.html">Statistical Performance</a></li>
+    <li><a class="dropdown-item" href="../articles/discontinuity.html">Binary Event Over-Reporting - Subject Discontinuation</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -852,16 +853,16 @@ table object.</p>
 <span><span class="co">## <span style="color: #949494;"># Ordered by: study_id, site_id</span></span></span>
 <span><span class="co">##    study_id site_id event_count event_per_visit_site visits n_pat</span></span>
 <span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>                <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> A        S0008           103                0.462    223    10</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> A        S0007           122                0.552    221    10</span></span>
 <span><span class="co">## <span style="color: #BCBCBC;"> 2</span> A        S0005            96                0.381    252    10</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> A        S0010           107                0.480    223    10</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> A        S0001            61                0.302    202    10</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> A        S0007           122                0.552    221    10</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> A        S0004           116                0.483    240    10</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> A        S0009           123                0.530    232    10</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> A        S0006           119                0.463    257    10</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> A        S0002           105                0.544    193    10</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">10</span> A        S0003           125                0.595    210    10</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> A        S0002           105                0.544    193    10</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> A        S0006           119                0.463    257    10</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> A        S0009           123                0.530    232    10</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> A        S0003           125                0.595    210    10</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> A        S0001            61                0.302    202    10</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> A        S0008           103                0.462    223    10</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> A        S0010           107                0.480    223    10</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">10</span> A        S0004           116                0.483    240    10</span></span>
 <span><span class="co">## <span style="color: #949494;"># ℹ 4 more variables: event_per_visit_study &lt;dbl&gt;, event_prob_no_mult &lt;dbl&gt;,</span></span></span>
 <span><span class="co">## <span style="color: #949494;">#   event_prob &lt;dbl&gt;, event_delta &lt;dbl&gt;</span></span></span></code></pre>
 <p>We can convert it to sql code. The <code>cte</code> option makes the
@@ -912,16 +913,16 @@ statement</p>
 <span><span class="co">## <span style="color: #949494;"># Database: DuckDB 1.4.0 [koneswab@Darwin 23.6.0:R 4.4.1/:memory:]</span></span></span>
 <span><span class="co">##    study_id site_id event_count event_per_visit_site visits n_pat</span></span>
 <span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>                <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> A        S0001            61                0.302    202    10</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> A        S0008           103                0.462    223    10</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> A        S0005            96                0.381    252    10</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> A        S0009           123                0.530    232    10</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> A        S0002           105                0.544    193    10</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> A        S0003           125                0.595    210    10</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> A        S0010           107                0.480    223    10</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> A        S0004           116                0.483    240    10</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> A        S0007           122                0.552    221    10</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">10</span> A        S0006           119                0.463    257    10</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> A        S0006           119                0.463    257    10</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> A        S0001            61                0.302    202    10</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> A        S0002           105                0.544    193    10</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> A        S0008           103                0.462    223    10</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> A        S0009           123                0.530    232    10</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> A        S0010           107                0.480    223    10</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> A        S0003           125                0.595    210    10</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> A        S0007           122                0.552    221    10</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> A        S0004           116                0.483    240    10</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">10</span> A        S0005            96                0.381    252    10</span></span>
 <span><span class="co">## <span style="color: #949494;"># ℹ 4 more variables: event_per_visit_study &lt;dbl&gt;, event_prob_no_mult &lt;dbl&gt;,</span></span></span>
 <span><span class="co">## <span style="color: #949494;">#   event_prob &lt;dbl&gt;, event_delta &lt;dbl&gt;</span></span></span></code></pre>
 <p>We plot the results from the {simaerep} object.</p>
