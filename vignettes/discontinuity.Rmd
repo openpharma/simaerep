@@ -1,5 +1,5 @@
 --- 
-title: "Patient Discontinuation Rate: Performance Metric for Clinical Trial Sites"
+title: "Binary Event Over-Reporting e.g. Subject Discontinuation"
 output:
   html_document:
     toc: true
@@ -9,17 +9,16 @@ output:
     code_folding: show
     collapse: false
 editor_options:
-  chunk_output_type: inline
+  chunk_output_type: console
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, cache = FALSE)
-
 ```
 
 # Load
 ```{r}
-suppressPackageStartupMessages(library(tidyverse))
+suppressPackageStartupMessages(library(tibble))
 suppressPackageStartupMessages(library(knitr))
 suppressPackageStartupMessages(library(simaerep))
 suppressPackageStartupMessages(library(dplyr))
@@ -27,181 +26,193 @@ suppressPackageStartupMessages(library(clindata))
 
 rawplus_studcomp <- clindata::rawplus_studcomp
 rawplus_visdt <- clindata::rawplus_visdt
-
 ```
 
 # Introduction
-Simaerep is a software package originally intended to detect the under reporting of Adverse Events (AEs) for different clinical sites.
-This vignette will explore the process and viability of using the Simaerep algorithm to detect patient discontinuities and flag sites where there are more discontinuations than expected.
 
+This vignette will explore the process and viability of using the {simaerep} algorithm to detect patient discontinuities and flag sites where there are more discontinuations than expected.
 
 # Patient Discontinuations 
+
 A discontinuation occurs any time a patient leaves a clinical trial for any reason. It is important to minimize patient discontinuation in order to maintain patient participation and therefore robust data collection in clinical studies. 
 
 # Sample Data
-The sample data is from the open source r package clindata. Sampled data is from data frames rawplus_visdt and rawplus_studcomp.
-  See clindata Github for more information: https://github.com/Gilead-BioStats/clindat 
+The sample data is from the open source r package [{clindata}](https://github.com/Gilead-BioStats/clindata). Sampled data is from data frames rawplus_visdt and rawplus_studcomp. 
 
 # Implementation
 
 ## AE vs Discontinuities 
-  The main difference between using Simaerep to examine AEs versus discontinuations is that the number of occurring events per patient changes.
-With AE detection there can be multiple occurrences per patient, but with discontinuity detection there can only be one event, when the patient leaves the trial, after which no more data is collected.
-This difference needs to be addressed and the data must be formulated into a version that Simaerep can process, otherwise the algorithm's output will not make sense.
-The other major difference is that AE detection is focused on determining sites below the norm (under-reporting), but with discontinuation detection we want to look for sites that are above the norm (over-reporting). 
+The main difference between detecting AEs and discontinuation is that with AE detection there can be multiple occurrences per patient, but with discontinuities detection there can only be one event per patient. This difference needs to be addressed and the data must be formulated into a version that {simaerep} can process, otherwise the algorithm's output will not make sense. The other major difference is that AE detection is focused on determining sites below the norm (under-reporting), but with discontinuation detection we want to look for sites that are above the norm (over-reporting). 
 
-## Changing Focus to Discontinuities
-  Detecting over-reporting and under-reporting is simple. All simaerep objects contain a column named event_prob which contains this probability. The event_prob column returns a value of -1 to 1, where positive values represent over-reporting, and can be accessed through aerep\$df_eval\$event_prob. 
+## Data Preparation
 
-  Transitioning from AEs with multiple event counts to discontinuations with singular events is more difficult, and requires understanding the input of the Simaerep() function. The function's input is a data frame, df_visit, with five columns: study_id, site_id, patnum, n_ae, visit. The columns study_id, site_id, and pat_num do not change between AEs and discontinuations, so they remain the same. 
-The other two columns, n_ae and visit, need to be changed. The n_ae column needs to change from counting AEs to counting discontinuations, and also must reformatted. Each discontinued patient will hold a binary value in the n_ae column, as a patient can only discontinue once. All other patients will only hold zeros for n_ae as they did not leave the study. 
+`rawplus_studycomp` contains one entry for each patient that has discontinued. We interpret column `mincreated_dts` to be the timestamp the discontinuation has been entered and therefore to be a good proxy for the actual discontinuation date.
 
-  The visit column's data will need to be artificially inflated to make sure the sampling algorithm is unbiased. This change is covered in detail in the "Sampling Correction" Section.
-
-  Here is the creation of df_visit.
 ```{r}
-# Numbers visits per patient
-rawplus_visdt_v2 <- rawplus_visdt %>%
-  arrange(subjid, visit_dt) %>%
-  group_by(subjid) %>%
-  mutate(visit_num = row_number())
+rawplus_studcomp
+```
 
-# Imports rawplus_visdt data into formating code
-df_visit_prep <- select(rawplus_visdt_v2, studyid, siteid, subjid, visit_num)
-df_subjid <- unique(select(df_visit_prep, subjid))
+```{r}
+df_disc <- rawplus_studcomp %>%
+  rename(date = mincreated_dts) %>%
+  mutate(event = "disc") %>%
+  distinct(studyid, siteid, subjid, date, event)
 
-# Changes terminology to reflect discontinuities 
-df_studcomp <- rawplus_studcomp %>%
-  rename(DY = maxupdated_dts) %>%
-  mutate(EVENT = "discontinuity")
+df_disc %>%
+  head() %>%
+  knitr::kable()
+```
 
-# Formats visit dates
+We continue to build another event table for visits and horizontally bind both event tables
+
+```{r}
 df_vs <- rawplus_visdt %>%
-  rename(DY = visit_dt) %>%
-  mutate(EVENT = "VS") %>%
+  rename(date = visit_dt) %>%
+  mutate(event = "visit") %>%
   # We ignore visits that have no date
-  filter(! is.na(DY)) %>%
+  filter(! is.na(date)) %>%
   # We are not interested in same day visits
-  distinct()
+  distinct(studyid, siteid, subjid, date, event)
 
-# Populates discontinuity field
-df_studcompvs <- bind_rows(df_studcomp, df_vs) %>%
-  # NA's get sorted towards the end thus AEs with no date get sorted towards last visit
-  arrange(studyid, siteid, subjid, DY) %>%
-  group_by(studyid, siteid, subjid) %>%
-  mutate(DISC_NO = cumsum(ifelse(EVENT == "discontinuity", 1, 0)),
-         VS_NO = cumsum(ifelse(EVENT == "VS", 1, 0))) %>%
-  # We remove patients with 0 visits
-  filter(max(VS_NO) > 0) %>%
-  # Discontinuities before fist visit should register to visit 1 not zero
-  mutate(VS_NO = ifelse(VS_NO == 0, 1, VS_NO))
+df_events <- bind_rows(df_vs, df_disc) %>%
+  arrange(studyid, siteid, subjid, date)
 
-# Create df_visit columns
-df_studcompvs_aggr <- df_studcompvs %>%
-  group_by(studyid, siteid, subjid, VS_NO) %>%
-  summarise(MIN_AE_NO = min(DISC_NO),
-            MAX_AE_NO = max(DISC_NO),
-            .groups = "drop") %>%
-  group_by(studyid, siteid, subjid) %>%
-  mutate(MAX_VS_PAT = max(VS_NO)) %>%
-  ungroup() %>%
-  # Assign discontinuities that occur after last visit to last discontinuities
+df_events %>%
+  filter(subjid == "0002") %>%
+  knitr::kable()
+```
+
+We add the cumulative event counts and aggregate on visit level to prepare data in a format that is ready to use by {simaerep}.
+
+```{r}
+df_visit <- df_events %>%
   mutate(
-    CUM_AE = ifelse(
-      VS_NO == MAX_VS_PAT,
-      MAX_AE_NO,
-      MIN_AE_NO)
+    cum_visit = cumsum(ifelse(event == "visit", 1, 0)),
+    cum_disc = cumsum(ifelse(event == "disc", 1, 0)),
+    .by = c("studyid", "siteid", "subjid")
+  ) %>%
+  # aggregate counts on visit level
+  summarise(
+    cum_disc = max(cum_disc),
+    .by = c("studyid", "siteid", "subjid", "cum_visit")
+  ) %>%
+  # remove patients with 0 visits
+  filter(max(cum_visit) > 0 , .by = c("studyid", "siteid", "subjid"))
+
+df_visit %>%
+  filter(subjid == "0002") %>%
+  knitr::kable()
+```
+
+
+## Sampling Correction 
+
+Notice that patient 0002 only has 5 entries, due to their early departure. The limited records of discontinued patients will create a problem with {simaerep}'s sampling algorithm, as the algorithm samples patients that have at least the same number of visits as the patient that is being replaced. This leads to an survivor bias where discontinued patients, since they have less visits, are unable to be used as replacement values for patients who had more visits. 
+
+To address this we would have to use the planned visits instead of the occurred visits, but {clindata} does not provide those.
+
+As an approximation to the planned visits the discontinued patient's records will be artificially inflated to 15 visits, a cut off point that includes roughly 80% of the patients not discontinued have reached during the study. This change allows for the proper sampling to occur and for the production of correct results.
+
+```{r}
+
+subj_disc <- df_visit %>%
+  filter(cum_disc == 1) %>%
+  pull(subjid) %>%
+  unique()
+
+df_fill <- df_visit %>%
+  distinct(studyid, siteid, subjid) %>%
+  filter(subjid %in% subj_disc) %>%
+  cross_join(
+    tibble(
+      cum_visit = seq(1, 15),
+      disc_fill = 1
+    )
   )
 
-# Names df_visit columns
-df_visit <- df_studcompvs_aggr %>%
-  rename(
-    study_id = "studyid",
-    site_number = "siteid",
-    patnum = "subjid",
-    n_disc = "CUM_AE",
-    visit = "VS_NO"
-  )  %>%
-  select(study_id, site_number, patnum, n_disc, visit)
+df_visit_disc <- df_visit %>%
+  filter(subjid %in% subj_disc) %>%
+  full_join(
+    df_fill,
+    by = c("studyid", "siteid" ,"subjid" ,"cum_visit")
+  ) %>%
+  mutate(
+    cum_disc = coalesce(cum_disc, disc_fill)
+  ) %>%
+  select(- disc_fill) %>%
+  arrange(subjid, cum_visit)
 
-```
+df_visit_not_disc <- df_visit %>%
+  filter(! subjid %in% subj_disc)
 
-
-  Here is the display of patient 0002, who discontinued on visit five
-```{r}
-#Displays patient 0002
-df_visit %>%
-  filter(patnum == "0002") %>%
-  arrange(visit) %>%
-  kable()
-
-```
-
-# Sampling Correction 
-Notice that patient 0002 only has 5 entries, due to their early departure. The limited records of discontinued patients created a problem with simaerep's sampling algorithm, as the algorithm samples patients that have at least the same number of visits as the patient that is being replaced. This led to an effect where discontinued patients, since they have less visits, were unable to be used as replacement values for patients who had more visits. This changed the final event_prob values by measuring against an incorrectly lower amount of discontinued patients.
-In order to address this issue the discontinued patient's records were artificially inflated to 15 visits, a cut off point that includes roughly 80% of the data. This data manipulation only affects the visit counts, and every other value remained the same as they were when the patient discontinued. This change allows for the proper sampling to occur and for the production of correct results.
-
-  Here is the display of patient 0002, modified to 15 visits. 
-```{r}
-# Creates list of discontinued patients
-list <- filter(df_visit, n_disc == 1)
-unique_list <- unique(list$patnum)
-discontinued <- subset(df_visit, df_visit$patnum %in% unique_list)
-
-# Fits discontinued data to 15 visit entries
-df_15 <- data.frame(visit = seq(1, 15), n_disc = 1)
-num_df <- data.frame(patnum = unique_list)
-cross_df <- cross_join(num_df, df_15)
-final_df <- left_join(cross_df, discontinued, by = join_by(patnum, visit))
-fitted_15 <- final_df %>%
-  mutate(n_disc.final = ifelse(is.na(n_disc.y), n_disc.x, n_disc.y))
-
-# Replace N/A study_id and site_number data values
-fitted_15_fixdisc <- fitted_15 %>%
-  group_by(patnum) %>%
-  mutate(study_id = first(study_id[!is.na(study_id)])) %>%
-  mutate(site_number = first(site_number[!is.na(site_number)])) %>%
-  ungroup()
-
-# Trims fitted_15 to simaerep entry form 
-fitted_discontinuity <- select(fitted_15_fixdisc, study_id, site_number, patnum, n_disc.final, visit)
-fitted_discontinuity <- fitted_discontinuity %>% rename(n_disc = n_disc.final)
-
-# Joins fitted_discontinuity and not_discontinued 
-not_discontinued <- subset(df_visit, !(df_visit$patnum %in% unique_list))
-final_df_visit <- bind_rows(fitted_discontinuity, not_discontinued)
+df_visit_fill <- bind_rows(df_visit_disc, df_visit_not_disc) %>%
+  rename(n_disc = cum_disc)
 
 # Displays patient 0002, modified to 15 visits
-final_df_visit %>%
-  filter(patnum == "0002") %>%
-  arrange(visit) %>%
+df_visit_fill %>%
+  filter(subjid == "0002") %>%
+  arrange(cum_visit) %>%
   kable()
 
 ```
 
-## Simaerep Output
-Since discontinuities are inheritantly more rare than AEs, it is neccessary to run simaerep with a larger bootstrap iteration. The following code is run with 50,000 bootstrap repitions, which is much higher than Simaereps's default of 1,000. This change allows the algorithm to provide a more stable and therefore more accurate model. 
+## {simaerep}
 
-  Here is the output of a simaerep call on df_visit modified for discontinuities.
+Since discontinuities are inherently more rare than AEs, it is necessary to run {simaerep} with a larger bootstrap iteration so that the results in between runs are more stable. The following code is run with 50,000 bootstrap repetitions, which is much higher than {simaereps}'s default of 1,000. This change allows the algorithm to provide a more stable and therefore more accurate model. 
+
+Here is the output of a {simaerep} call on df_visit modified for discontinuities.
+
 ```{r}
-# Runs simaerep on final_df_visit
-new_discrep <- simaerep(final_df_visit, 50000)
 
-#Displays simaerep output
-new_discrep$df_eval %>%
-  select(site_id, disc_count, disc_per_visit_site, disc_prob) %>%
-  arrange(desc(new_discrep$disc_prob_no_mult)) %>%
-  kable(digits = 3)
+discrep <- simaerep(
+    df_visit_fill,
+    r = 50000,
+    event_names = "disc",
+    col_names = list(
+      study_id = "studyid",
+      site_id = "siteid",
+      patient_id = "subjid",
+      visit = "cum_visit"
+    )
+  )
 
+discrep
 ```
 
+```{r}
+plot(discrep)
+```
 
-## Discussion
-In the clindata provided dataset, there are 4/176 sites with high discontinuation over-reporting probabilities.
-Due to the high number of tested sites, multiplicity correction is required, and is implemented by inflating visit counts to 15. 
-After the multiplicity correction, the sites disc_prob falls slightly below the proposed threshold of 0.95 but remains well above 0.9.
-Sites with both low patient counts and high discontinuation rates no longer have high over-reporting probabilities with increased bootstrapping repetitions, as the likelihood for outliers is greater when sample sizes are smaller.
-This method maintains a clear advantage over the simaerep method of flagging by patient discontinuation rate alone.
+Top 100 out of 176 sites by discontinuation probability without multiplicity correction in descending order.
+
+```{r}
+discrep$df_eval %>%
+  mutate(disc_ratio_per_pat = disc_count / n_pat) %>%
+  select(
+    siteid,
+    disc_count,
+    visits,
+    n_pat,
+    disc_ratio_per_pat,
+    disc_per_visit_site,
+    disc_per_visit_study,
+    disc_prob_no_mult,
+    disc_prob,
+    disc_delta
+  ) %>%
+  arrange(desc(disc_prob_no_mult)) %>%
+  mutate(rank = row_number(), .before = siteid) %>%
+  head(100) %>%
+  knitr::kable(digits = 3)
+```
+
+We find 4 sites that have a high reporting probability (>= 99% w/o multiplicity correction and >= 95% with) for discontinuations. As is expected the discontinuation ratio per patient which is a common monitoring metric is a poor indicator for which sites have high over-reporting probability as ratios from small samples tend to have more variability and are more likely to have outlier.
+
+## Summary
+
+In order to use {simaerep} for binary events such as patient discontinuation we have to account for survival bias by using planned visits rather than actual visits. Then {simaerep} can produce very plausible over-reporting probabilities with the same advantages we expect {simaerep} to have over parametric statistical methods for other event reporting metrics.
+
+
 
 
 

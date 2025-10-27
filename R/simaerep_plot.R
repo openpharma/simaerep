@@ -745,6 +745,9 @@ plot_study <- function(df_visit,
     df_label <- df_label %>%
       left_join(
         df_eval %>%
+          mutate(
+            site_number = fct_relevel(.data$site_number, sites_ordered)
+          ) %>%
           select(all_of(c("study_id", "site_number", colname_delta))),
         by = c("study_id", "site_number")
       )
