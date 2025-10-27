@@ -8,12 +8,12 @@
 [![R build
 status](https://github.com/openpharma/simaerep/workflows/R-CMD-check/badge.svg)](https://github.com/openpharma/simaerep/actions)
 [![codecov](https://codecov.io/gh/openpharma/simaerep/branch/master/graph/badge.svg)](https://app.codecov.io/gh/openpharma/simaerep)
-[![Lifecycle:
-experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 [![R Package Validation
 report](https://github.com/openpharma/simaerep/actions/workflows/validation.yml/badge.svg)](https://github.com/openpharma/simaerep/actions/workflows/validation.yml)
 [![CRAN
 release](https://www.r-pkg.org/badges/version/simaerep)](https://CRAN.R-project.org/package=simaerep)
+[![Lifecycle:
+stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
 <!-- badges: end -->
 
 Simulate subject-level event reporting of clinical trial sites with the
