@@ -30,6 +30,7 @@ al
 analytics
 anonymize
 benjamini
+clindata
 coMPany
 codecov
 config
@@ -69,15 +70,18 @@ purrr
 pval
 pvalue
 quALity
+rawplus
 reproducibly
 rnorm
 rpois
 sd
 sql
+studcomp
 tbl
 thevalidatoR
 tibble
 ttest
 ur
+visdt
 workproduct
 zi
