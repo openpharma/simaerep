@@ -4,6 +4,7 @@ linters: linters_with_defaults(
   cyclocomp_linter = lintr::cyclocomp_linter(25),
   indentation_linter = NULL,
   object_name_linter = NULL,
+  pipe_consistency_linter = lintr::pipe_consistency_linter("auto"),
   return_linter = NULL)
 exclusions: list(
   "inst/logo/logo.R",
