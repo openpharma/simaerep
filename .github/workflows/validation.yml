@@ -20,11 +20,11 @@ jobs:
       deployments: write
     steps:
       - name: Checkout repo 🛎
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Build report 🏗
         id: validation
-        uses: insightsengineering/thevalidatoR@v4
+        uses: insightsengineering/thevalidatoR@v2
         # see parameters above for custom templates and other formats
 
       # Upload the validation report to the release
